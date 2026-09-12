@@ -7,7 +7,7 @@ import { Icon } from '@/components/Icon'
 import { SectionHeading } from '@/components/SectionHeading'
 import { AgentShowcaseClient, type PromptData } from './Client'
 
-export const AgentShowcaseBlock: React.FC<Props> = ({ header, prompts, points, links }) => {
+export const AgentShowcaseBlock: React.FC<Props> = ({ header, prompts, points, channels, links }) => {
   const list: PromptData[] = (prompts || [])
     .filter((p) => p.question && p.answer)
     .map((p, i) => ({
@@ -22,12 +22,13 @@ export const AgentShowcaseBlock: React.FC<Props> = ({ header, prompts, points, l
   if (list.length === 0) return null
   const buttons = (links || []).filter((l) => l.link?.label)
   const trust = (points || []).filter((p) => p.title)
+  const chips = (channels || []).map((c) => c.name).filter(Boolean)
 
   return (
     <div className="container flex flex-col gap-12 md:gap-16">
       <SectionHeading align="center" className="mx-auto reveal" header={header} />
       <div className="reveal">
-        <AgentShowcaseClient prompts={list} />
+        <AgentShowcaseClient channels={chips} prompts={list} />
       </div>
       {(trust.length > 0 || buttons.length > 0) && (
         <div className="reveal flex flex-col items-center gap-8">

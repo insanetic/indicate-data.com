@@ -231,6 +231,7 @@ export interface Page {
     | HeroBlock
     | LogoWallBlock
     | FeatureTabsBlock
+    | FeatureStoryBlock
     | AgentShowcaseBlock
     | StepsBlock
     | IntegrationsBlock
@@ -536,7 +537,21 @@ export interface HeroBlock {
   };
   visual?: {
     type?: ('illustration' | 'image') | null;
-    illustration?: ('dashboard' | 'agent' | 'comparison' | 'sources' | 'team' | 'integrations' | 'alerts') | null;
+    illustration?:
+      | (
+          | 'dashboard'
+          | 'agent'
+          | 'comparison'
+          | 'sources'
+          | 'team'
+          | 'integrations'
+          | 'alerts'
+          | 'builder'
+          | 'flyingKpis'
+          | 'portfolio'
+          | 'campaigns'
+        )
+      | null;
     image?: (number | null) | Media;
   };
   settings?: {
@@ -666,7 +681,21 @@ export interface FeatureTabsBlock {
           | null;
         visual?: {
           type?: ('illustration' | 'image') | null;
-          illustration?: ('dashboard' | 'agent' | 'comparison' | 'sources' | 'team' | 'integrations' | 'alerts') | null;
+          illustration?:
+            | (
+                | 'dashboard'
+                | 'agent'
+                | 'comparison'
+                | 'sources'
+                | 'team'
+                | 'integrations'
+                | 'alerts'
+                | 'builder'
+                | 'flyingKpis'
+                | 'portfolio'
+                | 'campaigns'
+              )
+            | null;
           image?: (number | null) | Media;
         };
         links?:
@@ -704,6 +733,109 @@ export interface FeatureTabsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'featureTabs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureStoryBlock".
+ */
+export interface FeatureStoryBlock {
+  header: {
+    eyebrow?: string | null;
+    heading: string;
+    lead?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  layout?: ('stacked' | 'visual-right' | 'visual-left') | null;
+  visual?: {
+    type?: ('illustration' | 'image') | null;
+    illustration?:
+      | (
+          | 'dashboard'
+          | 'agent'
+          | 'comparison'
+          | 'sources'
+          | 'team'
+          | 'integrations'
+          | 'alerts'
+          | 'builder'
+          | 'flyingKpis'
+          | 'portfolio'
+          | 'campaigns'
+        )
+      | null;
+    image?: (number | null) | Media;
+  };
+  points?:
+    | {
+        icon?:
+          | (
+              | 'chart'
+              | 'sparkles'
+              | 'message'
+              | 'plug'
+              | 'database'
+              | 'layers'
+              | 'users'
+              | 'shield'
+              | 'lock'
+              | 'clock'
+              | 'calendar'
+              | 'target'
+              | 'trending'
+              | 'bell'
+              | 'globe'
+              | 'building'
+              | 'buildings'
+              | 'briefcase'
+              | 'code'
+              | 'check'
+              | 'euro'
+              | 'percent'
+              | 'bed'
+              | 'upload'
+              | 'palette'
+              | 'eye'
+              | 'zap'
+              | 'search'
+            )
+          | null;
+        title: string;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * How the link is rendered.
+           */
+          appearance?: ('default' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+    anchor?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featureStory';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -769,6 +901,12 @@ export interface AgentShowcaseBlock {
           | null;
         title: string;
         text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  channels?:
+    | {
+        name: string;
         id?: string | null;
       }[]
     | null;
@@ -877,7 +1015,21 @@ export interface IntegrationsBlock {
   };
   visual?: {
     type?: ('illustration' | 'image') | null;
-    illustration?: ('dashboard' | 'agent' | 'comparison' | 'sources' | 'team' | 'integrations' | 'alerts') | null;
+    illustration?:
+      | (
+          | 'dashboard'
+          | 'agent'
+          | 'comparison'
+          | 'sources'
+          | 'team'
+          | 'integrations'
+          | 'alerts'
+          | 'builder'
+          | 'flyingKpis'
+          | 'portfolio'
+          | 'campaigns'
+        )
+      | null;
     image?: (number | null) | Media;
   };
   groups?:
@@ -2103,6 +2255,7 @@ export interface PagesSelect<T extends boolean = true> {
         hero?: T | HeroBlockSelect<T>;
         logoWall?: T | LogoWallBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
+        featureStory?: T | FeatureStoryBlockSelect<T>;
         agentShowcase?: T | AgentShowcaseBlockSelect<T>;
         steps?: T | StepsBlockSelect<T>;
         integrations?: T | IntegrationsBlockSelect<T>;
@@ -2293,6 +2446,60 @@ export interface FeatureTabsBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureStoryBlock_select".
+ */
+export interface FeatureStoryBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        lead?: T;
+        align?: T;
+      };
+  layout?: T;
+  visual?:
+    | T
+    | {
+        type?: T;
+        illustration?: T;
+        image?: T;
+      };
+  points?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  settings?:
+    | T
+    | {
+        background?: T;
+        spacing?: T;
+        anchor?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "AgentShowcaseBlock_select".
  */
 export interface AgentShowcaseBlockSelect<T extends boolean = true> {
@@ -2321,6 +2528,12 @@ export interface AgentShowcaseBlockSelect<T extends boolean = true> {
         icon?: T;
         title?: T;
         text?: T;
+        id?: T;
+      };
+  channels?:
+    | T
+    | {
+        name?: T;
         id?: T;
       };
   links?:

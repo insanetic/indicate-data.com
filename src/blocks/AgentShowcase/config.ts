@@ -99,6 +99,13 @@ export const AgentShowcase: Block = {
         { name: 'text', type: 'textarea', localized: true, label: { de: 'Text', en: 'Text' } },
       ],
     },
+    {
+      name: 'channels',
+      type: 'array',
+      label: { de: 'Verfügbar in (Chips unter dem Chat, z. B. Claude, ChatGPT)', en: 'Available in (chips under the chat, e.g. Claude, ChatGPT)' },
+      maxRows: 6,
+      fields: [{ name: 'name', type: 'text', required: true, label: { de: 'Name', en: 'Name' } }],
+    },
     linkGroup({
       appearances: ['default', 'outline', 'link'],
       localized: true,

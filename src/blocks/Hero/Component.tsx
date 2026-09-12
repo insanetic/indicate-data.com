@@ -6,7 +6,7 @@ import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import { SectionHeading } from '@/components/SectionHeading'
 import { HeroIntro } from './Intro'
-import { HeroPanel } from './Panel'
+import { HeroStage } from './Stage'
 
 /** Centred, typography-first hero with the animated product stage underneath. */
 export const HeroBlock: React.FC<HeroBlockProps> = ({ header, links, trust, visual }) => {
@@ -54,7 +54,7 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({ header, links, trust, visu
           {image ? (
             <Media htmlElement={null} imgClassName="w-full rounded-[1rem] border border-line" resource={image} />
           ) : (
-            <HeroPanel />
+            <HeroStage />
           )}
         </div>
       </div>

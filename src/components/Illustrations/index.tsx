@@ -6,9 +6,13 @@ import { cn } from '@/utilities/ui'
 
 import { AgentIllustration } from './Agent'
 import { AlertsIllustration } from './Alerts'
+import { BuilderIllustration } from './Builder'
+import { CampaignsIllustration } from './Campaigns'
 import { ComparisonIllustration } from './Comparison'
 import { DashboardIllustration } from './Dashboard'
+import { FlyingKpisIllustration } from './FlyingKpis'
 import { IntegrationsIllustration } from './Integrations'
+import { PortfolioIllustration } from './Portfolio'
 import { SourcesIllustration } from './Sources'
 import { TeamIllustration } from './Team'
 import type { IllustrationKey } from './registry'
@@ -25,6 +29,10 @@ export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>>
   team: TeamIllustration,
   integrations: IntegrationsIllustration,
   alerts: AlertsIllustration,
+  builder: BuilderIllustration,
+  flyingKpis: FlyingKpisIllustration,
+  portfolio: PortfolioIllustration,
+  campaigns: CampaignsIllustration,
 }
 
 export type VisualData = {

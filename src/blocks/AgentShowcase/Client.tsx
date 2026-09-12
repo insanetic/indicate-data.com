@@ -33,6 +33,8 @@ const copy = {
     agent: 'Indicate Agent',
     thinking: 'Kennzahlen werden geprüft …',
     chips: 'Beispielfragen',
+    channels: 'Derselbe Agent, Ihr Chat',
+    via: 'via MCP',
     placeholder: 'Fragen Sie nach Auslastung, Kanälen, Stornos …',
     direct: 'Direkt',
     ota: 'OTA',
@@ -44,6 +46,8 @@ const copy = {
     agent: 'Indicate agent',
     thinking: 'Checking the figures …',
     chips: 'Example questions',
+    channels: 'Same agent, your chat',
+    via: 'via MCP',
     placeholder: 'Ask about occupancy, channels, cancellations …',
     direct: 'Direct',
     ota: 'OTA',
@@ -55,11 +59,19 @@ const copy = {
 /**
  * The agent stage. A question types in, the three bars think, the answer streams word by
  * word, then the chart draws. Plays once when scrolled into view, then only on click.
+ * `channels` (App, Claude, ChatGPT, …) render as a switch in the header: the conversation
+ * stays the same, only the surface label changes, which is the point.
  */
-export const AgentShowcaseClient: React.FC<{ prompts: PromptData[] }> = ({ prompts }) => {
+export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: string[] }> = ({
+  prompts,
+  channels = [],
+}) => {
   const locale = useLocale()
   const t = copy[locale]
   const [active, setActive] = useState(0)
+  const [channel, setChannel] = useState(0)
+  const surface = channels[channel]
+  const external = channel > 0 && surface
   const [phase, setPhase] = useState<Phase>('idle')
   const [typed, setTyped] = useState(0)
   const [words, setWords] = useState(0)
@@ -131,8 +143,31 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[] }> = ({ promp
 
   return (
     <div className="relative" ref={rootRef}>
-      <div aria-hidden="true" className="glow-accent pointer-events-none absolute -inset-x-16 -top-32 h-96" />
-      <div className="relative grid overflow-hidden rounded-[1.25rem] border border-line-strong bg-surface-2 shadow-float lg:grid-cols-[minmax(16rem,20rem)_1fr]">
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-line-strong bg-surface-2 shadow-float">
+        {channels.length > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-2.5 md:px-5">
+            <span className="flex items-center gap-2 type-caption font-medium text-ink-2">
+              <BrandBars size={12} /> {t.channels}
+            </span>
+            <div aria-label={t.channels} className="flex gap-1 rounded-btn border border-line bg-surface p-1" role="group">
+              {channels.map((name, i) => (
+                <button
+                  aria-pressed={i === channel}
+                  className={cn(
+                    'h-7 rounded-[0.25rem] px-2.5 type-caption font-medium transition-colors duration-150',
+                    i === channel ? 'bg-surface-3 text-ink' : 'text-ink-3 hover:text-ink',
+                  )}
+                  key={name}
+                  onClick={() => setChannel(i)}
+                  type="button"
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="grid lg:grid-cols-[minmax(16rem,20rem)_1fr]">
         <aside className="flex flex-col gap-2 border-b border-line p-4 lg:border-b-0 lg:border-r lg:p-5">
           <p className="px-2 pb-1 type-eyebrow">{t.chips}</p>
           <div aria-label={t.chips} className="flex flex-col gap-1" role="group">
@@ -182,7 +217,10 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[] }> = ({ promp
               <p className="pt-2 type-small text-ink-3">{t.thinking}</p>
             ) : (
               <div className="flex w-full max-w-[36rem] flex-col gap-4 rounded-[1rem] rounded-tl-sm border border-line bg-surface p-4 md:p-5">
-                <p className="type-caption font-medium text-ink-3">{t.agent}</p>
+                <p className="type-caption font-medium text-ink-3">
+                  {t.agent}
+                  {external && <span className="text-ink-3"> · {surface} {t.via}</span>}
+                </p>
                 <p className={cn('type-body text-ink pretty min-h-[3.2em]', phase === 'streaming' && 'caret')}>
                   {showAnswer ? answerText : ''}
                 </p>
@@ -244,6 +282,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[] }> = ({ promp
             <span className="flex-1">{t.placeholder}</span>
             <span className="rounded-[0.25rem] bg-surface-3 px-1.5 py-0.5 type-caption text-ink-2">↵</span>
           </div>
+        </div>
         </div>
       </div>
     </div>

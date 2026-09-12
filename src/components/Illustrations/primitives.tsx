@@ -63,7 +63,8 @@ export const Chip: React.FC<{
   className?: string
   children: React.ReactNode
   tone?: 'blue' | 'yellow' | 'coral' | 'neutral' | 'green'
-}> = ({ className, children, tone = 'neutral' }) => {
+  style?: React.CSSProperties
+}> = ({ className, children, tone = 'neutral', style }) => {
   const tones = {
     blue: 'bg-brand-blue-soft text-brand-blue-deep',
     yellow: 'bg-brand-yellow-soft text-ink',
@@ -78,6 +79,7 @@ export const Chip: React.FC<{
         tones[tone],
         className,
       )}
+      style={style}
     >
       {children}
     </span>

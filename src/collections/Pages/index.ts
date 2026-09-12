@@ -11,6 +11,7 @@ import { AgentShowcase } from '../../blocks/AgentShowcase/config'
 import { CardGrid } from '../../blocks/CardGrid/config'
 import { CtaSection } from '../../blocks/CtaSection/config'
 import { Faq } from '../../blocks/Faq/config'
+import { FeatureStory } from '../../blocks/FeatureStory/config'
 import { FeatureTabs } from '../../blocks/FeatureTabs/config'
 import { Hero } from '../../blocks/Hero/config'
 import { Integrations } from '../../blocks/Integrations/config'
@@ -91,6 +92,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 Hero,
                 LogoWall,
                 FeatureTabs,
+                FeatureStory,
                 AgentShowcase,
                 Steps,
                 Integrations,

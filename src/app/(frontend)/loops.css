@@ -1,0 +1,499 @@
+/* ------------------------------------------------------------------ */
+/* Looping product scenes                                                */
+/*                                                                       */
+/* Every scene runs on one shared clock (`--loop`). Each element gets a  */
+/* keyframe track whose percentages are its window on that clock, so a   */
+/* scene stays in sync without JavaScript. `--delay` staggers siblings.  */
+/* The resting (no animation) state of every element is the finished    */
+/* frame: under reduced motion the animation is removed and the complete */
+/* scene is simply shown.                                                */
+/* ------------------------------------------------------------------ */
+
+.loop {
+  --loop: 10s;
+}
+
+.loop [class*='loop-'] {
+  animation-duration: var(--loop);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  animation-delay: var(--delay, 0s);
+}
+
+/* --- Builder (10 s): a dashboard is described, thought about, then assembled --- */
+
+/* Typed prompt: text is revealed left to right, then the bubble fades before the reset. */
+@keyframes loop-type {
+  0%,
+  2% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+  }
+  14%,
+  90% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  94%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+.loop-type {
+  animation-name: loop-type;
+  animation-timing-function: steps(28, end);
+}
+
+/* Thinking row: visible only between the prompt and the first widget. */
+@keyframes loop-think {
+  0%,
+  14% {
+    opacity: 0;
+  }
+  16%,
+  22% {
+    opacity: 1;
+  }
+  24%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-think {
+  animation-name: loop-think;
+}
+
+/* Widgets pop in one after another (`--delay` staggers them) and leave before the reset. */
+@keyframes loop-widget {
+  0%,
+  22% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  25%,
+  78% {
+    opacity: 1;
+    transform: none;
+  }
+  81%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-widget {
+  animation-name: loop-widget;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* A chart line draws inside its widget. */
+@keyframes loop-draw {
+  0%,
+  28% {
+    stroke-dashoffset: 1;
+  }
+  42%,
+  78% {
+    stroke-dashoffset: 0;
+  }
+  81%,
+  100% {
+    stroke-dashoffset: 1;
+  }
+}
+.loop-draw {
+  stroke-dasharray: 1;
+  animation-name: loop-draw;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Confirmation chip after the dashboard is complete. */
+@keyframes loop-done {
+  0%,
+  56% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  59%,
+  78% {
+    opacity: 1;
+    transform: none;
+  }
+  81%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-done {
+  animation-name: loop-done;
+}
+
+/* --- Log lines (hero, 8 s): entries appear one after another, then the log clears --- */
+
+@keyframes loop-log {
+  0%,
+  2% {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  5%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  90%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-log {
+  animation-name: loop-log;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Flying KPIs (8 s): a report leaves the dashboard on schedule and lands with recipients --- */
+
+.loop-fly {
+  --loop: 8s;
+}
+
+/* The report card lifts off the dashboard, travels along `--fly-x`/`--fly-y` and fades. */
+@keyframes loop-fly-card {
+  0%,
+  6% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.92);
+  }
+  12%,
+  20% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  44% {
+    opacity: 1;
+    transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.96);
+  }
+  50%,
+  100% {
+    opacity: 0;
+    transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.96);
+  }
+}
+.loop-fly-card {
+  animation-name: loop-fly-card;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Schedule chip highlights when the send fires. */
+@keyframes loop-fly-clock {
+  0%,
+  4% {
+    background-color: var(--surface-3);
+    color: var(--ink-2);
+  }
+  7%,
+  20% {
+    background-color: var(--brand-yellow-soft);
+    color: var(--ink);
+  }
+  26%,
+  100% {
+    background-color: var(--surface-3);
+    color: var(--ink-2);
+  }
+}
+.loop-fly-clock {
+  animation-name: loop-fly-clock;
+}
+
+/* Delivery ticks appear one recipient after the other. */
+@keyframes loop-fly-tick {
+  0%,
+  44% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  48%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  90%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-fly-tick {
+  animation-name: loop-fly-tick;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Timeline dot travels from "scheduled" to "sent" while the card flies. */
+@keyframes loop-fly-dot {
+  0%,
+  10% {
+    transform: translateX(0);
+  }
+  44%,
+  100% {
+    transform: translateX(var(--dot-x, 0));
+  }
+}
+.loop-fly-dot {
+  animation-name: loop-fly-dot;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* --- Slots: N stacked panels that take turns (portfolio, campaigns) --- */
+
+/* Four slots, each a quarter of the clock. `--delay` = slot index × 25 % of `--loop`. */
+@keyframes loop-slot-4 {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  3%,
+  22% {
+    opacity: 1;
+    transform: none;
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.loop-slot-4 {
+  animation-name: loop-slot-4;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes loop-row-4 {
+  0% {
+    background-color: transparent;
+    color: var(--ink-2);
+  }
+  3%,
+  22% {
+    background-color: var(--surface-3);
+    color: var(--ink);
+  }
+  25%,
+  100% {
+    background-color: transparent;
+    color: var(--ink-2);
+  }
+}
+.loop-row-4 {
+  animation-name: loop-row-4;
+}
+
+/* Everything stays visible; the pair whose four-slot window is open comes to the front. */
+@keyframes loop-focus-4 {
+  0% {
+    opacity: 0.35;
+  }
+  3%,
+  22% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0.35;
+  }
+}
+.loop-focus-4 {
+  animation-name: loop-focus-4;
+}
+
+/* Three slots, each a third of the clock. `--delay` = slot index × 33.33 % of `--loop`. */
+@keyframes loop-slot-3 {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  3%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.loop-slot-3 {
+  animation-name: loop-slot-3;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes loop-row-3 {
+  0% {
+    background-color: transparent;
+    color: var(--ink-2);
+  }
+  3%,
+  30% {
+    background-color: var(--surface-3);
+    color: var(--ink);
+  }
+  33.33%,
+  100% {
+    background-color: transparent;
+    color: var(--ink-2);
+  }
+}
+.loop-row-3 {
+  animation-name: loop-row-3;
+}
+
+@keyframes loop-rise-3 {
+  0%,
+  3% {
+    transform: scaleY(0.06);
+  }
+  10%,
+  30% {
+    transform: scaleY(1);
+  }
+  33.33%,
+  100% {
+    transform: scaleY(0.06);
+  }
+}
+.loop-rise-3 {
+  transform-origin: bottom;
+  animation-name: loop-rise-3;
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* A comment/notification pops in during a three-slot window. */
+@keyframes loop-pop-3 {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  15%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-pop-3 {
+  animation-name: loop-pop-3;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Integration tree (6 s): sources light up and their line draws into Indicate --- */
+
+.loop-tree {
+  --loop: 6s;
+}
+
+/* Source path: draws from the tile to the centre, holds, then fades. `--delay` staggers. */
+@keyframes loop-tree-path {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  18% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  28% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  34%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.loop-tree-path {
+  stroke-dasharray: 1;
+  animation-name: loop-tree-path;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* The tile lights up while its data travels. */
+@keyframes loop-tree-tile {
+  0% {
+    border-color: var(--line-strong);
+    box-shadow: 0 0 0 0 transparent;
+  }
+  3%,
+  26% {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px oklch(0.85 0.17 88 / 0.18);
+  }
+  34%,
+  100% {
+    border-color: var(--line-strong);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.loop-tree-tile {
+  animation-name: loop-tree-tile;
+}
+
+/* Output paths: a short dash keeps travelling from the centre to each output. */
+@keyframes loop-tree-out {
+  from {
+    stroke-dashoffset: 1.2;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.loop-tree-out {
+  stroke-dasharray: 0.2 1;
+  animation-name: loop-tree-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop [class*='loop-'] {
+    animation: none;
+  }
+  .loop .loop-draw,
+  .loop .loop-tree-path {
+    stroke-dashoffset: 0;
+  }
+  .loop .loop-tree-out {
+    stroke-dasharray: none;
+  }
+  .loop .loop-type {
+    clip-path: none;
+  }
+  .loop .loop-think {
+    display: none;
+  }
+  /* Slots: show only the first panel and highlight its row. */
+  .loop .loop-slot-4:not([data-first]),
+  .loop .loop-slot-3:not([data-first]) {
+    display: none;
+  }
+  .loop .loop-row-4[data-first],
+  .loop .loop-row-3[data-first] {
+    background-color: var(--surface-3);
+    color: var(--ink);
+  }
+  .loop .loop-focus-4 {
+    opacity: 1;
+  }
+  .loop .loop-fly-card {
+    opacity: 1;
+    transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.96);
+  }
+  .loop .loop-fly-dot {
+    transform: translateX(var(--dot-x, 0));
+  }
+}

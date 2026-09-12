@@ -10,6 +10,7 @@ import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { LinkFeatureClient as LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { TabRowLabel as TabRowLabel_8bb9acbce77ae8fabb72332d708cdf64 } from '@/blocks/FeatureTabs/RowLabel'
+import { PointRowLabel as PointRowLabel_749cd47cba41f5f03b01a4fcd7fbe144 } from '@/blocks/FeatureStory/RowLabel'
 import { PromptRowLabel as PromptRowLabel_167f586440646f82e4b9e9c0af2d2dff } from '@/blocks/AgentShowcase/RowLabel'
 import { StepRowLabel as StepRowLabel_bbd03add28adc34dc7d2cdb5edfe7c77 } from '@/blocks/Steps/RowLabel'
 import { ItemRowLabel as ItemRowLabel_a37e68ef26f6faa02976cc6026cd0318 } from '@/blocks/Integrations/RowLabel'
@@ -58,6 +59,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#LinkFeatureClient": LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/blocks/FeatureTabs/RowLabel#TabRowLabel": TabRowLabel_8bb9acbce77ae8fabb72332d708cdf64,
+  "@/blocks/FeatureStory/RowLabel#PointRowLabel": PointRowLabel_749cd47cba41f5f03b01a4fcd7fbe144,
   "@/blocks/AgentShowcase/RowLabel#PromptRowLabel": PromptRowLabel_167f586440646f82e4b9e9c0af2d2dff,
   "@/blocks/Steps/RowLabel#StepRowLabel": StepRowLabel_bbd03add28adc34dc7d2cdb5edfe7c77,
   "@/blocks/Integrations/RowLabel#ItemRowLabel": ItemRowLabel_a37e68ef26f6faa02976cc6026cd0318,

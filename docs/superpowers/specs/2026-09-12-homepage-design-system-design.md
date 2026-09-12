@@ -192,3 +192,33 @@ MCP plugin: new global and the extended pages description are registered so the 
 ## 8. Iteration 2 (same day, after feedback)
 
 Direction changed to a dark-first page in the spirit of ClickHouse: near-black ground, the brand yellow as the single accent (blue and coral only inside charts), big centred typography, hairline borders and a faint grid instead of soft cards, tracked yellow eyebrows without the logo glyph, 6 px button radius, arrow links. Pricing, steps and the audience card grid were removed from the home page (blocks still exist); a "Why Indicate" pillars-and-tiles block replaced them. The hero got an animated product stage (count-ups, drawing chart, rising bars, typed agent answer), the agent section a streaming conversation that plays once when scrolled into view, and integrations a data-flow diagram with moving connectors. The final call to action is a full-bleed yellow band.
+
+## 9. Iteration 3 (same day, after feedback)
+
+Feedback: the headline was too long, sections looked unfinished because the scroll-linked reveal hid content, the copy was negative ("not for data teams") and repetitive, testimonials and the flow diagram were dull, hotels and agencies were mixed into one "why" block, and the announcement bar and logo marquee had to go.
+
+Changes:
+
+- Hero: "Agentic Analytics für die Hotellerie." with a two-sentence lead; trust logos, the logo marquee, the product tabs and the pillars block leave the home page (blocks still exist).
+- Motion: `.reveal` no longer uses `animation-timeline: view()`. `RevealObserver` (layout) sets `data-in` once per element via IntersectionObserver; content is only hidden after `html[data-js]` is set before first paint, so crawlers and reduced motion see everything. Looping product scenes run on a shared CSS clock in `src/app/(frontend)/loops.css`: every element has a keyframe track whose percentages are its window, no JavaScript, deterministic, reduced motion shows the finished frame.
+- New reusable block `featureStory` (text + points + links beside a scene, side selectable). Used four times: Dashboards & reporting (scene `builder`: a dashboard is described and assembled), Flying KPIs (scene `flyingKpis`: a report flies to recipients on schedule), Hotels & hotel groups (scene `portfolio`: properties take turns, plan gap and campaign ROI), Agencies & consultants (scene `campaigns`: client tabs, spend vs bookings vs revenue, ROI, strategy gap).
+- Integrations: `SyncStage` replaces the flow diagram. Four sources sync one after another (progress bar, status odometer, lit connector), then the outputs flash "all current". Wording borrows from data-movement products (connect, sync, done; history from day one; tells you when a source stalls).
+- Agent section: headline "Ask your data. In the app or in your chat.", MCP framed as "your agent, your choice" (Claude, ChatGPT, Langdock) with the data-safety promise (released KPIs only, guest data stays until explicitly released, permissions apply everywhere); new `channels` chips under the stage; one prompt now asks about campaign ROI.
+- Testimonials: editorial layout (heading left, large quotes with a yellow opening mark, hairlines), lead names the customers instead of a marquee.
+- FAQ: "Do I need a data team?" answered positively; new question on what Claude or ChatGPT sees.
+- Header announcement disabled; nav and footer anchors point at `#build`, `#agent`, `#flying-kpis`, `#integrations`, `#hotels`, `#agencies`.
+- Mobile drawer is `invisible` when parked (it widened the page on phones).
+
+## 10. Iteration 4 (same day, after feedback)
+
+Feedback: the chip row under the chat made no sense, the hero lead had to be shorter, the side-by-side feature format wasted space, the sync animation was too long and slow with buggy lines and a dull right side, the hero stage was dull, the logo marquee and the "why" pillars with number tiles were wanted back, agencies needed multi-tenancy, automation and collaboration, and the yellow glows had to go.
+
+Changes:
+
+- Hero lead is one line of two sentences. `HeroStage` replaces the panel: layered fragments (sync log and KPI Studio definition behind, dashboard in front, agent answering, a report that just went out); log lines loop on the CSS clock.
+- `featureStory` gained a `stacked` layout (heading row with the lead beside it, scene at full width, points in one row) and it is the default; all four home sections use it. Scenes are wide-format now: builder (chat column + six widgets), Flying KPIs (dashboard, timeline scheduled→created→sent with a travelling dot, recipients), portfolio (property list, detail, plan-vs-actual group chart with the active pair in focus), campaigns (client tabs with "12 Spaces", ROI figures, a shared strategy thread with client reply, automation card).
+- Integrations: `IntegrationTree` (ClickHouse-style): logo tiles on two rows, orthogonal grey lines into a yellow Indicate block, each source lights up and draws its line every 6 s, three outputs under the centre with a travelling dash. Plain grid on phones. The sync stage was removed.
+- Agent: the channel chips became a segmented switch in the stage header ("Derselbe Agent, Ihr Chat": Indicate App, Claude, ChatGPT, Langdock); the agent label adds "· Claude via MCP" when a chat is selected.
+- Logo marquee is back under the hero; the "Warum Indicate" pillars block is back after the agencies section with three positive pillars and the number tiles (30+, 13 months, 40 %) plus links to hotel groups and agencies. Tile links no longer render their label twice.
+- Agencies section: one login for every client (multi-tenant, connect links), revenue per campaign, automated routine for agency and clients, strategy shared with the client.
+- All `glow-accent` / `glow-pulse` decoration removed. Section eyebrows name the product part (Dashboards & Assistent, Indicate Agent & MCP, Flying KPIs, Indicate Connect).

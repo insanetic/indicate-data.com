@@ -14,6 +14,7 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { isLocale, localeTags, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { RevealObserver } from '@/components/Reveal/Observer'
 import { Providers } from '@/providers'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -53,9 +54,12 @@ export default async function RootLayout({ children, params }: Args) {
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link href="/favicon-32.png" rel="icon" sizes="32x32" type="image/png" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
-        {/* Decides before first paint whether the hero entrance plays (once per session). */}
+        {/*
+         * Before first paint: marks that scripts run (so `.reveal` may hide until in view) and
+         * decides whether the hero entrance plays (once per session).
+         */}
         <Script id="intro-gate" strategy="beforeInteractive">
-          {`try{if(sessionStorage.getItem('indicate:intro'))document.documentElement.setAttribute('data-intro-seen','')}catch(e){}`}
+          {`document.documentElement.setAttribute('data-js','');try{if(sessionStorage.getItem('indicate:intro'))document.documentElement.setAttribute('data-intro-seen','')}catch(e){}`}
         </Script>
       </head>
       <body>
@@ -73,6 +77,7 @@ export default async function RootLayout({ children, params }: Args) {
             {children}
           </main>
           <Footer locale={locale} />
+          <RevealObserver />
         </Providers>
       </body>
     </html>

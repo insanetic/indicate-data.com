@@ -17,7 +17,6 @@ export const PillarsBlock: React.FC<Props> = ({ header, pillars, tiles }) => {
   return (
     <div className="container">
       <div className="relative overflow-hidden rounded-[1.25rem] border border-line bg-surface-2">
-        <div aria-hidden="true" className="glow-accent pointer-events-none absolute inset-x-0 top-0 h-64" />
         <div className="relative px-6 pt-12 md:px-12 md:pt-16">
           <SectionHeading align="center" className="mx-auto reveal" header={header} />
         </div>
@@ -60,9 +59,7 @@ export const PillarsBlock: React.FC<Props> = ({ header, pillars, tiles }) => {
                   ) : null}
                   <p className={cn(t.value ? 'type-small text-ink-2' : 'type-h4 text-ink')}>{t.label}</p>
                   {link && (
-                    <CMSLink {...link} appearance="inline" className="link-arrow mt-auto type-small">
-                      {link.label}
-                    </CMSLink>
+                    <CMSLink {...link} appearance="inline" className="link-arrow mt-auto type-small" />
                   )}
                 </li>
               )

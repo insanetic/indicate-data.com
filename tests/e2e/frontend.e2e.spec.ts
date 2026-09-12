@@ -32,12 +32,11 @@ test.describe('Home page', () => {
   test('renders the hero, navigation and sections', async ({ page }) => {
     await page.goto(`${base}/de`)
     await expect(page).toHaveTitle(/Indicate Data/)
-    await expect(page.locator('h1').first()).toContainText('Hotelzahlen')
+    await expect(page.locator('h1').first()).toContainText('Agentic Analytics')
     await expect(page.getByRole('navigation', { name: 'Hauptnavigation' }).first()).toBeVisible()
-    await expect(page.locator('#agent')).toBeVisible()
-    await expect(page.locator('#integrations')).toBeVisible()
-    await expect(page.locator('#why')).toBeVisible()
-    await expect(page.locator('#faq')).toBeVisible()
+    for (const id of ['build', 'agent', 'flying-kpis', 'integrations', 'hotels', 'agencies', 'faq']) {
+      await expect(page.locator(`#${id}`)).toBeVisible()
+    }
   })
 
   test('switches the language and keeps the page', async ({ page }) => {
@@ -45,17 +44,23 @@ test.describe('Home page', () => {
     await page.getByRole('link', { name: 'English' }).first().click()
     await expect(page).toHaveURL(/\/en$/)
     await expect(page.locator('html')).toHaveAttribute('lang', 'en')
-    await expect(page.locator('h1').first()).toContainText('hotel number')
+    await expect(page.locator('h1').first()).toContainText('Agentic analytics')
   })
 
-  test('product tabs switch panels with the keyboard', async ({ page }) => {
+  test('agent stage switches questions on click', async ({ page }) => {
+    await page.goto(`${base}/de#agent`)
+    const chips = page.locator('#agent aside [role="group"] button')
+    await expect(chips).toHaveCount(4)
+    await chips.nth(1).click()
+    await expect(chips.nth(1)).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  test('sections reveal once they are scrolled into view', async ({ page }) => {
     await page.goto(`${base}/de`)
-    const tabs = page.getByRole('tab')
-    await expect(tabs).toHaveCount(3)
-    await tabs.nth(0).focus()
-    await page.keyboard.press('ArrowRight')
-    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
-    await expect(page.getByRole('tabpanel').first()).toContainText('Vorjahr')
+    const heading = page.locator('#hotels .reveal').first()
+    await heading.scrollIntoViewIfNeeded()
+    await expect(heading).toHaveAttribute('data-in', '')
+    await expect(heading).toHaveCSS('opacity', '1')
   })
 
   test('faq opens and closes', async ({ page }) => {

@@ -39,8 +39,8 @@ const pageRef = <A extends Appearance>(id: number, label: string, appearance?: A
 export const siteSettings = (t: T, refs: Refs): Partial<SiteSetting> => ({
   siteName: 'Indicate Data',
   tagline: t(
-    'Die Analytics-Plattform mit KI-Agent für Hotels, Hotelgruppen und ihre Partner.',
-    'The analytics platform with an AI agent for hotels, hotel groups and their partners.',
+    'Agentic Analytics für Hotels, Hotelgruppen und ihre Agenturen.',
+    'Agentic analytics for hotels, hotel groups and their agencies.',
   ),
   contact: {
     email: 'hello@indicate-data.io',
@@ -55,7 +55,7 @@ export const siteSettings = (t: T, refs: Refs): Partial<SiteSetting> => ({
 
 export const header = (t: T, refs: Refs): Partial<Header> => ({
   announcement: {
-    enabled: true,
+    enabled: false,
     text: t(
       'Der Indicate Agent arbeitet jetzt auch in ChatGPT und Claude.',
       'The Indicate agent now also works inside ChatGPT and Claude.',
@@ -71,24 +71,24 @@ export const header = (t: T, refs: Refs): Partial<Header> => ({
           title: t('Plattform', 'Platform'),
           links: [
             {
-              ...anchor('product', t('Dashboards & Kennzahlen', 'Dashboards & KPIs')),
-              description: t('Fertige Kennzahlen für jedes System', 'Ready-made KPIs for every system'),
+              ...anchor('build', t('Dashboards & Reporting', 'Dashboards & reporting')),
+              description: t('Per Beschreibung gebaut, fertig für jedes Haus', 'Built from a description, ready for every property'),
               icon: 'chart',
             },
             {
-              ...anchor('agent', t('KI-Agent', 'AI agent')),
-              description: t('Fragen in normalen Worten stellen', 'Ask questions in plain words'),
+              ...anchor('agent', t('KI-Agent & MCP', 'AI agent & MCP')),
+              description: t('In der App, in Claude, ChatGPT oder Langdock', 'In the app, in Claude, ChatGPT or Langdock'),
               icon: 'sparkles',
             },
             {
-              ...anchor('integrations', t('Integrationen', 'Integrations')),
-              description: t('PMS, Kanäle, Marketing, Web', 'PMS, channels, marketing, web'),
-              icon: 'plug',
+              ...anchor('flying-kpis', 'Flying KPIs'),
+              description: t('Reports nach Zeitplan an jeden', 'Reports on a schedule, to anyone'),
+              icon: 'calendar',
             },
             {
-              ...anchor('why', t('Sicherheit & Rechte', 'Security & permissions')),
-              description: t('Spaces, Rollen, Zwei-Faktor', 'Spaces, roles, two-factor'),
-              icon: 'shield',
+              ...anchor('integrations', t('Integrationen & Sync', 'Integrations & sync')),
+              description: t('Über 30 Anbindungen, automatisch aktuell', 'More than 30 connections, always current'),
+              icon: 'plug',
             },
           ],
         },
@@ -116,9 +116,9 @@ export const header = (t: T, refs: Refs): Partial<Header> => ({
         {
           title: t('Für wen', 'Who it is for'),
           links: [
-            { ...anchor('why', t('Einzelhotels', 'Independent hotels')), icon: 'building', description: t('Alle Zahlen des Hauses', 'Every number of the property') },
-            { ...anchor('why', t('Hotelgruppen', 'Hotel groups')), icon: 'buildings', description: t('Ein Space pro Haus', 'One space per property') },
-            { ...anchor('why', t('Agenturen', 'Agencies')), icon: 'briefcase', description: t('Kundenberichte mit Buchungsdaten', 'Client reports with booking data') },
+            { ...anchor('hotels', t('Hotels', 'Hotels')), icon: 'building', description: t('Kanäle, Kampagnen und Plan im Blick', 'Channels, campaigns and plan in view') },
+            { ...anchor('hotels', t('Hotelgruppen', 'Hotel groups')), icon: 'buildings', description: t('Ein Space pro Haus, ein Blick für alle', 'One space per property, one view for all') },
+            { ...anchor('agencies', t('Agenturen & Berater', 'Agencies & consultants')), icon: 'briefcase', description: t('Kampagnen-ROI je Kunde, Reports automatisch', 'Campaign ROI per client, reports on autopilot') },
             { ...external(refs.links.docsUrl, t('Software-Anbieter', 'Software providers')), icon: 'code', description: t('Analytics für Ihre Kunden', 'Analytics for your customers') },
           ],
         },
@@ -149,18 +149,18 @@ export const footer = (t: T, refs: Refs): Partial<Footer> => ({
     {
       title: t('Produkt', 'Product'),
       links: [
-        anchor('product', t('Dashboards & Kennzahlen', 'Dashboards & KPIs')),
-        anchor('agent', t('KI-Agent', 'AI agent')),
-        anchor('integrations', t('Integrationen', 'Integrations')),
-        anchor('why', t('Warum Indicate', 'Why Indicate')),
+        anchor('build', t('Dashboards & Reporting', 'Dashboards & reporting')),
+        anchor('agent', t('KI-Agent & MCP', 'AI agent & MCP')),
+        anchor('flying-kpis', 'Flying KPIs'),
+        anchor('integrations', t('Integrationen & Sync', 'Integrations & sync')),
       ],
     },
     {
       title: t('Lösungen', 'Solutions'),
       links: [
-        anchor('why', t('Einzelhotels', 'Independent hotels')),
-        anchor('why', t('Hotelgruppen', 'Hotel groups')),
-        anchor('why', t('Agenturen', 'Agencies')),
+        anchor('hotels', t('Hotels', 'Hotels')),
+        anchor('hotels', t('Hotelgruppen', 'Hotel groups')),
+        anchor('agencies', t('Agenturen & Berater', 'Agencies & consultants')),
         external(refs.links.docsUrl, t('Software-Anbieter', 'Software providers')),
       ],
     },
@@ -201,10 +201,10 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
   _status: 'published',
   hero: { type: 'none' },
   seo: {
-    title: t('Hotel-Analytics mit KI-Agent', 'Hotel analytics with an AI agent'),
+    title: t('Agentic Analytics für die Hotellerie', 'Agentic analytics for hospitality'),
     description: t(
-      'Indicate verbindet PMS, Buchungskanäle und Marketing in einem Dashboard. Ein KI-Agent erklärt Auslastung, ADR und RevPAR in einfachen Worten.',
-      'Indicate brings PMS, booking channels and marketing into one dashboard. An AI agent explains occupancy, ADR and RevPAR in plain words.',
+      'Indicate verbindet PMS, Vertrieb und Marketing zu einem Datenmodell. Dashboards per Beschreibung, ein KI-Agent in App, Claude und ChatGPT, Reports nach Zeitplan.',
+      'Indicate joins PMS, distribution and marketing into one data model. Dashboards from a description, an AI agent in the app, Claude and ChatGPT, reports on a schedule.',
     ),
   },
   layout: [
@@ -212,24 +212,18 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
       blockType: 'hero',
       blockName: 'Hero',
       header: {
-        heading: t(
-          'Alle Hotelzahlen an einem Ort. Und ein Agent, der sie erklärt.',
-          'Every hotel number in one place. And an agent that explains them.',
-        ),
+        heading: t('Agentic Analytics für die Hotellerie.', 'Agentic analytics for hospitality.'),
         lead: t(
-          'Indicate verbindet PMS, Buchungskanäle und Marketing in einem Dashboard und beantwortet Ihre Fragen aus geprüften Kennzahlen. Einsatzbereit in Minuten.',
-          'Indicate brings your PMS, booking channels and marketing into one dashboard and answers your questions from verified figures. Ready in minutes.',
+          'Ein Datenmodell für PMS, Vertrieb und Marketing. Dashboards auf Zuruf, Antworten vom Agenten, Reports nach Zeitplan.',
+          'One data model for PMS, distribution and marketing. Dashboards on request, answers from the agent, reports on a schedule.',
         ),
         align: 'center',
       },
       links: [
         external(refs.links.demoUrl, t('Demo buchen', 'Book a demo'), 'default'),
-        anchor('agent', t('Agent ansehen', 'See the agent'), 'outline'),
+        anchor('build', t('So funktioniert es', 'See how it works'), 'outline'),
       ],
-      trust: {
-        text: t('Im Einsatz bei', 'Used by'),
-        logos: [{ name: 'Familotel' }, { name: 'Alpenhof' }, { name: 'Feldberger Hof' }, { name: 'Hochegger Klippitz' }],
-      },
+      trust: { text: null, logos: [] },
       visual: { type: 'illustration', illustration: 'dashboard' },
       settings: { background: 'default', spacing: 'default' },
     },
@@ -254,120 +248,65 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
       settings: { background: 'default', spacing: 'compact' },
     },
     {
-      blockType: 'featureTabs',
-      blockName: t('Plattform', 'Platform'),
+      blockType: 'featureStory',
+      blockName: t('Dashboards & Reporting', 'Dashboards & reporting'),
       header: {
-        eyebrow: t('Die Plattform', 'The platform'),
-        heading: t('Ein Ort für alle Hotelzahlen', 'One place for every hotel number'),
+        eyebrow: t('Dashboards & Assistent', 'Dashboards & assistant'),
+        heading: t('Beschreiben Sie den Bericht. Indicate baut ihn.', 'Describe the report. Indicate builds it.'),
         lead: t(
-          'Verständlich für die Rezeption, belastbar für die Geschäftsführung.',
-          'Clear enough for the front desk, solid enough for the owner.',
+          'Ein Satz an den Assistenten in der App, und das Dashboard steht. Aus fertigen Kennzahlen, mit Vergleich und Ziel.',
+          'One sentence to the assistant in the app, and the dashboard is there. From ready-made KPIs, with comparison and target.',
         ),
-        align: 'center',
+        align: 'left',
       },
-      tabs: [
+      layout: 'stacked',
+      visual: { type: 'illustration', illustration: 'builder' },
+      points: [
         {
-          label: t('Dashboards & Kennzahlen', 'Dashboards & KPIs'),
           icon: 'chart',
-          heading: t('Auslastung, ADR und RevPAR auf einen Blick', 'Occupancy, ADR and RevPAR at a glance'),
-          description: t(
-            'Fertige Kennzahlen für jedes angebundene System. Sie wählen Zeitraum und Hotel, Indicate zeigt die Zahlen, die zählen.',
-            'Ready-made KPIs for every connected system. Pick the period and the property, Indicate shows the numbers that matter.',
+          title: t('Fertige Kennzahlen je System', 'Ready-made KPIs per system'),
+          text: t(
+            'Umsatz, Auslastung, ADR, RevPAR, Pickup, Kanalmix und Kampagnenkosten, sauber definiert und für jedes Haus gleich berechnet.',
+            'Revenue, occupancy, ADR, RevPAR, pickup, channel mix and campaign cost, cleanly defined and calculated the same way for every property.',
           ),
-          points: [
-            {
-              icon: 'chart',
-              title: t('Fertige Kennzahlensets', 'Ready-made KPI sets'),
-              text: t(
-                'Umsatz, Auslastung, ADR, RevPAR, Buchungen und Kanalmix kommen mit jeder Integration mit.',
-                'Revenue, occupancy, ADR, RevPAR, bookings and channel mix arrive with every integration.',
-              ),
-            },
-            {
-              icon: 'sparkles',
-              title: t('Dashboards per Beschreibung', 'Dashboards from a description'),
-              text: t(
-                'Beschreiben Sie den Bericht, den Sie brauchen. Der Assistent baut ihn aus Ihren geprüften Kennzahlen.',
-                'Describe the report you need. The assistant builds it from your verified KPIs.',
-              ),
-            },
-            {
-              icon: 'palette',
-              title: t('In Ihren Farben', 'In your colours'),
-              text: t(
-                'Diagramme, Tabellen und Scorecards in der Palette Ihres Hauses.',
-                'Charts, tables and scorecards in the palette of your property.',
-              ),
-            },
-          ],
-          visual: { type: 'illustration', illustration: 'dashboard' },
         },
         {
-          label: t('Vergleiche & Ziele', 'Comparisons & targets'),
+          icon: 'sparkles',
+          title: t('Ein Satz statt einer Klickstrecke', 'One sentence instead of a click path'),
+          text: t(
+            '„Auslastung und ADR nach Kanal, Q4 gegen Vorjahr.“ Der Assistent wählt Widgets, Zeitraum und Vergleich, Sie passen per Klick an.',
+            '“Occupancy and ADR by channel, Q4 against last year.” The assistant picks widgets, period and comparison; you adjust with a click.',
+          ),
+        },
+        {
           icon: 'target',
-          heading: t('Vormonat, Vorjahr oder Plan, immer daneben', 'Last month, last year or plan, always side by side'),
-          description: t(
-            'Jede Kennzahl lässt sich mit der Vorperiode, dem Vorjahr oder Ihrem Budget vergleichen. Ziellinien zeigen sofort, wo Sie stehen.',
-            'Every KPI compares against the previous period, the previous year or your budget. Guide lines show at once where you stand.',
+          title: t('Plan gegen Ist, immer daneben', 'Plan against actual, always side by side'),
+          text: t(
+            'Budgets aus Excel hochladen, Ziellinien setzen, Abweichungen sofort sehen.',
+            'Upload budgets from Excel, set guide lines, see every deviation at once.',
           ),
-          points: [
-            {
-              icon: 'calendar',
-              title: t('Zeitreise per Klick', 'Time travel in one click'),
-              text: t('Monat gegen Monat, Jahr gegen Jahr, nach Ankunfts- oder Buchungsdatum.', 'Month over month, year over year, by arrival or booking date.'),
-            },
-            {
-              icon: 'target',
-              title: t('Plan gegen Ist', 'Plan versus actual'),
-              text: t('Budgets aus Excel hochladen und jede Abweichung sehen.', 'Upload budgets from Excel and see every deviation.'),
-            },
-            {
-              icon: 'trending',
-              title: t('Pickup und Forecast', 'Pickup and forecast'),
-              text: t('Vorausbuchungen für die nächsten 7 bis 365 Tage.', 'Bookings on the books for the next 7 to 365 days.'),
-            },
-          ],
-          visual: { type: 'illustration', illustration: 'comparison' },
         },
         {
-          label: t('Datenquellen', 'Data sources'),
-          icon: 'plug',
-          heading: t('PMS, Kanäle und Marketing in Minuten verbunden', 'PMS, channels and marketing connected in minutes'),
-          description: t(
-            'Verbinden Sie Ihre Systeme mit wenigen Klicks. Indicate holt die Daten täglich ab und meldet sich, wenn etwas nicht stimmt.',
-            'Connect your systems in a few clicks. Indicate fetches the data every day and tells you when something is off.',
+          icon: 'palette',
+          title: t('Teilen in Ihren Farben', 'Share in your colours'),
+          text: t(
+            'Dashboards im Branding Ihres Hauses oder Ihres Kunden, per Link oder als PDF.',
+            'Dashboards in the branding of your property or your client, by link or as PDF.',
           ),
-          points: [
-            {
-              icon: 'plug',
-              title: t('Marketplace mit über 30 Anbindungen', 'Marketplace with more than 30 connections'),
-              text: t('Mews, Oracle, ASA, Re:Guest, vioma, Google, Meta und mehr.', 'Mews, Oracle, ASA, Re:Guest, vioma, Google, Meta and more.'),
-            },
-            {
-              icon: 'upload',
-              title: t('Eigene Tabellen dazu', 'Your own spreadsheets too'),
-              text: t('Budgets oder Zielwerte als CSV hochladen.', 'Upload budgets or targets as CSV.'),
-            },
-            {
-              icon: 'bell',
-              title: t('Verbindungsstatus im Blick', 'Connection health at a glance'),
-              text: t('Jede Quelle zeigt, ob sie gesund ist, und pausiert bei Problemen.', 'Every source shows whether it is healthy and pauses when there is a problem.'),
-            },
-          ],
-          visual: { type: 'illustration', illustration: 'sources' },
         },
       ],
-      settings: { background: 'default', spacing: 'default', anchor: 'product' },
+      links: [external(refs.links.helpUrl, t('Mehr zu Dashboards im Hilfe-Center', 'More about dashboards in the help centre'), 'link')],
+      settings: { background: 'default', spacing: 'default', anchor: 'build' },
     },
     {
       blockType: 'agentShowcase',
-      blockName: t('KI-Agent', 'AI agent'),
+      blockName: t('KI-Agent & MCP', 'AI agent & MCP'),
       header: {
-        eyebrow: t('KI-Agent', 'AI agent'),
-        heading: t('Fragen Sie Ihr Hotel.', 'Ask your hotel.'),
+        eyebrow: t('Indicate Agent & MCP', 'Indicate agent & MCP'),
+        heading: t('Fragen Sie Ihre Daten. In der App oder in Ihrem Chat.', 'Ask your data. In the app or in your chat.'),
         lead: t(
-          'Der Agent antwortet aus Ihren geprüften Kennzahlen und sagt dazu, woher die Zahl kommt. In der App, in ChatGPT oder in Claude.',
-          'The agent answers from your verified figures and tells you where each number comes from. In the app, in ChatGPT or in Claude.',
+          'Der Indicate Agent antwortet aus geprüften Kennzahlen und nennt die Quelle. Über MCP auch in Claude, ChatGPT oder Langdock, mit denselben Rechten wie in der App.',
+          'The Indicate agent answers from verified KPIs and names the source. Through MCP also in Claude, ChatGPT or Langdock, with the same permissions as in the app.',
         ),
         align: 'center',
       },
@@ -384,15 +323,15 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           kpiDelta: '−14',
         },
         {
-          question: t('Lohnt sich Google Ads für uns im Winter?', 'Is Google Ads worth it for us in winter?'),
+          question: t('Hat die Sommerkampagne auf Meta gebracht, was wir geplant hatten?', 'Did the summer campaign on Meta deliver what we planned?'),
           answer: t(
-            'Ja, aber knapper als im Sommer: 38 € Kosten pro Buchung im Januar gegenüber 22 € im Juli. Die Buchungen aus Ads haben mit 176 € trotzdem den höchsten ADR.',
-            'Yes, but by a smaller margin than in summer: €38 per booking in January versus €22 in July. Bookings from Ads still have the highest ADR at €176.',
+            'Fast: 212 Buchungen statt 240 geplant, dafür mit 168 € ADR über Plan. ROI 6,4× nach Werbekosten. Die Lücke liegt in KW 29 bis 31, dort lief keine Anzeige.',
+            'Almost: 212 bookings against 240 planned, but with an ADR of €168 above plan. ROI 6.4× after ad spend. The gap sits in weeks 29 to 31, when no ad was running.',
           ),
           chart: 'line',
-          kpiLabel: t('Kosten pro Buchung, Januar', 'Cost per booking, January'),
-          kpiValue: '38 €',
-          kpiDelta: '+16 €',
+          kpiLabel: t('ROI Sommerkampagne Meta', 'ROI, summer campaign on Meta'),
+          kpiValue: '6,4×',
+          kpiDelta: '+1,2×',
         },
         {
           question: t('Wie viele Stornos kamen letzte Woche über Booking.com?', 'How many cancellations came through Booking.com last week?'),
@@ -420,32 +359,85 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
       points: [
         {
           icon: 'shield',
-          title: t('Nur geprüfte Kennzahlen', 'Verified KPIs only'),
-          text: t('Der Agent liest freigegebene Kennzahlen, nie rohe Tabellen.', 'The agent reads released KPIs, never raw tables.'),
+          title: t('Nur freigegebene Kennzahlen', 'Released KPIs only'),
+          text: t(
+            'Der Agent liest das Datenmodell, nie rohe Tabellen. Gästedaten bleiben in Ihrem Space, bis Sie sie ausdrücklich freigeben.',
+            'The agent reads the data model, never raw tables. Guest data stays in your space until you explicitly release it.',
+          ),
         },
         {
           icon: 'lock',
-          title: t('Rechte gelten auch hier', 'Permissions apply here too'),
-          text: t('Jede Person bekommt nur Antworten zu Häusern, die sie sehen darf.', 'Everyone gets answers only about the properties they may see.'),
+          title: t('Rechte gelten überall', 'Permissions apply everywhere'),
+          text: t(
+            'Ob in der App, in Claude oder in ChatGPT: Jede Person sieht nur die Häuser, für die sie freigeschaltet ist.',
+            'In the app, in Claude or in ChatGPT: everyone sees only the properties they are cleared for.',
+          ),
         },
         {
           icon: 'message',
-          title: t('In ChatGPT und Claude', 'In ChatGPT and Claude'),
-          text: t('Über den MCP-Server, im Werkzeug, das Ihr Team schon nutzt.', 'Through the MCP server, in the tool your team already uses.'),
+          title: t('Ihr Agent, Ihre Wahl', 'Your agent, your choice'),
+          text: t(
+            'Der MCP-Server verbindet jede Datenquelle mit dem Assistenten, den Ihr Team schon nutzt. Ein Zugang, kein Export.',
+            'The MCP server connects every data source to the assistant your team already uses. One access, no export.',
+          ),
         },
       ],
-      links: [external(refs.links.demoUrl, t('Agent im Gespräch erleben', 'See the agent in a demo'), 'default')],
+      channels: [{ name: 'Indicate App' }, { name: 'Claude' }, { name: 'ChatGPT' }, { name: 'Langdock' }],
+      links: [external(refs.links.demoUrl, t('Agent live erleben', 'See the agent live'), 'default')],
       settings: { background: 'tinted', spacing: 'default', anchor: 'agent' },
     },
     {
-      blockType: 'integrations',
-      blockName: t('Integrationen', 'Integrations'),
+      blockType: 'featureStory',
+      blockName: 'Flying KPIs',
       header: {
-        eyebrow: t('Integrationen', 'Integrations'),
-        heading: t('Passt zu der Software, die Sie schon haben', 'Works with the software you already run'),
+        eyebrow: 'Flying KPIs',
+        heading: t('Berichte, die von allein ankommen.', 'Reports that arrive on their own.'),
         lead: t(
-          'Die Daten kommen aus den Systemen, die Sie schon haben, und landen dort, wo Ihr Team arbeitet.',
-          'The data comes from the systems you already run and lands where your team works.',
+          'Jedes Dashboard als E-Mail, PDF oder Digest, zum Termin Ihrer Wahl, an wen Sie wollen. Auch ohne Login.',
+          'Any dashboard as email, PDF or digest, at the time you choose, to whoever you choose. No login needed.',
+        ),
+        align: 'left',
+      },
+      layout: 'stacked',
+      visual: { type: 'illustration', illustration: 'flyingKpis' },
+      points: [
+        {
+          icon: 'calendar',
+          title: t('Zeitplan statt Erinnerung', 'A schedule instead of a reminder'),
+          text: t(
+            'Täglich, wöchentlich, monatlich oder zum Monatsabschluss. Einmal eingestellt, nie wieder vergessen.',
+            'Daily, weekly, monthly or at month end. Set once, never forgotten.',
+          ),
+        },
+        {
+          icon: 'users',
+          title: t('An jeden, auch ohne Login', 'To anyone, even without a login'),
+          text: t(
+            'Eigentümer, Beirat, Kunden oder die Bank bekommen den Report, ohne Zugang zur Plattform.',
+            'Owners, board, clients or the bank receive the report without platform access.',
+          ),
+        },
+        {
+          icon: 'sparkles',
+          title: t('Mit Zusammenfassung vom Agenten', 'With a summary from the agent'),
+          text: t(
+            'Auf Wunsch schreibt der Agent die drei wichtigsten Veränderungen der Woche in normalen Worten dazu.',
+            'On request the agent adds the three biggest changes of the week in plain words.',
+          ),
+        },
+      ],
+      links: [],
+      settings: { background: 'default', spacing: 'default', anchor: 'flying-kpis' },
+    },
+    {
+      blockType: 'integrations',
+      blockName: t('Integrationen & Sync', 'Integrations & sync'),
+      header: {
+        eyebrow: t('Indicate Connect', 'Indicate Connect'),
+        heading: t('Verbinden, synchronisieren, fertig.', 'Connect, sync, done.'),
+        lead: t(
+          'Über 30 Anbindungen an PMS, Vertrieb, Marketing und Betrieb, alle 15 Minuten aktuell, Historie ab dem ersten Tag. Hakt eine Quelle, meldet sich Indicate.',
+          'More than 30 connections to PMS, distribution, marketing and operations, refreshed every 15 minutes, history from day one. If a source stalls, Indicate tells you.',
         ),
         align: 'center',
       },
@@ -499,49 +491,151 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
       settings: { background: 'default', spacing: 'default', anchor: 'integrations' },
     },
     {
+      blockType: 'featureStory',
+      blockName: t('Für Hotels und Hotelgruppen', 'For hotels and hotel groups'),
+      header: {
+        eyebrow: t('Für Hotels und Hotelgruppen', 'For hotels and hotel groups'),
+        heading: t('Strategie mit Zahlen, nicht mit Bauchgefühl.', 'Strategy on numbers, not gut feeling.'),
+        lead: t(
+          'Welche Kanäle, Segmente und Kampagnen bringen Umsatz, und wo hat der Plan Lücken? Für ein Haus oder die ganze Gruppe.',
+          'Which channels, segments and campaigns bring revenue, and where does the plan have gaps? For one property or the whole group.',
+        ),
+        align: 'left',
+      },
+      layout: 'stacked',
+      visual: { type: 'illustration', illustration: 'portfolio' },
+      points: [
+        {
+          icon: 'buildings',
+          title: t('Ein Space pro Haus, ein Blick für die Gruppe', 'One space per property, one view for the group'),
+          text: t(
+            'Jedes Hotel behält seine Daten und Rechte, die Zentrale vergleicht alle Häuser nebeneinander.',
+            'Every hotel keeps its data and permissions; head office compares all properties side by side.',
+          ),
+        },
+        {
+          icon: 'euro',
+          title: t('Kampagnen-ROI statt Klickzahlen', 'Campaign ROI instead of click counts'),
+          text: t(
+            'Werbekosten aus Google und Meta treffen auf Buchungen und ADR aus dem PMS. Sie sehen, ob eine Kampagne gebracht hat, was geplant war.',
+            'Ad spend from Google and Meta meets bookings and ADR from the PMS. You see whether a campaign delivered what was planned.',
+          ),
+        },
+        {
+          icon: 'target',
+          title: t('Lücken in der Strategie finden', 'Find the gaps in your strategy'),
+          text: t(
+            'Wochen ohne Kampagne, Segmente unter Plan, Kanäle mit sinkender Marge: Indicate zeigt sie, bevor der Monat vorbei ist.',
+            'Weeks without a campaign, segments below plan, channels with shrinking margin: Indicate shows them before the month is over.',
+          ),
+        },
+        {
+          icon: 'code',
+          title: t('Offen für Ihr Datenteam', 'Open for your data team'),
+          text: t(
+            'Eigene Kennzahlen im KPI Studio, Semantic Layer, API und Export. Ihr Team baut darauf auf, statt bei null anzufangen.',
+            'Your own KPIs in KPI Studio, a semantic layer, API and export. Your team builds on it instead of starting from zero.',
+          ),
+        },
+      ],
+      links: [external(refs.links.demoUrl, t('Demo für Ihr Haus', 'Demo for your property'), 'default')],
+      settings: { background: 'default', spacing: 'default', anchor: 'hotels' },
+    },
+    {
+      blockType: 'featureStory',
+      blockName: t('Für Agenturen und Berater', 'For agencies and consultants'),
+      header: {
+        eyebrow: t('Für Agenturen und Berater', 'For agencies and consultants'),
+        heading: t('Alle Kunden, ein Arbeitsplatz, messbare Wirkung.', 'Every client, one workspace, measurable results.'),
+        lead: t(
+          'Ein Login für alle Kunden, sauber getrennt. Kampagnen treffen auf Buchungen, Reports laufen von allein, Strategie entsteht gemeinsam.',
+          'One login for every client, cleanly separated. Campaigns meet bookings, reports run by themselves, strategy is built together.',
+        ),
+        align: 'left',
+      },
+      layout: 'stacked',
+      visual: { type: 'illustration', illustration: 'campaigns' },
+      points: [
+        {
+          icon: 'buildings',
+          title: t('Mandantenfähig von Haus aus', 'Multi-tenant by design'),
+          text: t(
+            'Ein Space pro Kunde, Rollen bis zum Owner, Zwei-Faktor. Der Kunde gibt sein PMS per Connect-Link selbst frei, Sie sehen nie ein Passwort.',
+            'One space per client, roles up to owner, two-factor. The client authorises their PMS through a connect link; you never see a password.',
+          ),
+        },
+        {
+          icon: 'euro',
+          title: t('Umsatz pro Kampagne, nicht nur Klicks', 'Revenue per campaign, not just clicks'),
+          text: t(
+            'Google Ads, Meta und Newsletter gegen Buchungen, ADR und Stornos. Was hat gegriffen, wo fehlt eine Kampagne?',
+            'Google Ads, Meta and newsletter against bookings, ADR and cancellations. What worked, where is a campaign missing?',
+          ),
+        },
+        {
+          icon: 'zap',
+          title: t('Routine automatisiert, für Sie und den Kunden', 'Routine automated, for you and the client'),
+          text: t(
+            'Monatsreports im Kunden-Branding, Hinweise bei Abweichungen und die Zusammenfassung vom Agenten gehen von allein raus, an jeden Kunden.',
+            'Monthly reports in the client’s branding, alerts on deviations and the agent’s summary go out by themselves, to every client.',
+          ),
+        },
+        {
+          icon: 'users',
+          title: t('Strategie gemeinsam, im selben Dashboard', 'Strategy together, in the same dashboard'),
+          text: t(
+            'Plan, Kampagnen und Kommentare teilen Sie mit dem Kunden. Beide sehen dieselben Zahlen, Entscheidungen bleiben dokumentiert.',
+            'Share plan, campaigns and comments with the client. Both see the same numbers, decisions stay on record.',
+          ),
+        },
+      ],
+      links: [external(refs.links.demoUrl, t('Demo für Agenturen', 'Demo for agencies'), 'default')],
+      settings: { background: 'tinted', spacing: 'default', anchor: 'agencies' },
+    },
+    {
       blockType: 'pillars',
       blockName: t('Warum Indicate', 'Why Indicate'),
       header: {
         eyebrow: t('Warum Indicate', 'Why Indicate'),
-        heading: t('Gemacht für Hotels, nicht für Datenteams', 'Built for hotels, not for data teams'),
+        heading: t('Ein Datenmodell. Ein Agent. Alle Häuser.', 'One data model. One agent. Every property.'),
         lead: t(
-          'Fertig eingerichtet, verständlich für jeden im Haus und offen für alles, was Sie schon nutzen.',
-          'Set up from the start, clear for everyone in the house and open to everything you already use.',
+          'Gebaut für die Hotellerie, offen für Ihr Team und Ihre Partner.',
+          'Built for hospitality, open to your team and your partners.',
         ),
         align: 'center',
       },
       pillars: [
         {
           icon: 'zap',
-          title: t('In Minuten startklar', 'Ready in minutes'),
+          title: t('Fertig in Minuten, nicht in Monaten', 'Ready in minutes, not months'),
           text: t(
-            'PMS und Kanäle verbinden, fertige Dashboards bekommen. Kein Projekt, keine Schulung, keine Excel-Abende.',
-            'Connect PMS and channels, get ready-made dashboards. No project, no training, no evenings in Excel.',
+            'Anbindung per Klick, Kennzahlen und Dashboards kommen fertig mit. Kein Projekt, keine Migration, 13 Monate Historie ab dem ersten Tag.',
+            'Connect with a click, KPIs and dashboards come ready. No project, no migration, 13 months of history from day one.',
           ),
         },
         {
-          icon: 'message',
-          title: t('Antworten statt Tabellen', 'Answers instead of tables'),
+          icon: 'sparkles',
+          title: t('KI, die Ihre Zahlen kennt', 'AI that knows your numbers'),
           text: t(
-            'Fragen Sie in normalen Worten. Der Agent antwortet aus geprüften Kennzahlen und sagt, woher sie kommen.',
-            'Ask in plain words. The agent answers from verified KPIs and tells you where they come from.',
+            'Assistent, Agent und MCP arbeiten auf geprüften Kennzahlen mit Quelle, nie auf rohen Tabellen. In der App oder in Claude, ChatGPT und Langdock.',
+            'Assistant, agent and MCP work on verified KPIs with a source, never on raw tables. In the app or in Claude, ChatGPT and Langdock.',
           ),
         },
         {
           icon: 'shield',
-          title: t('Sicher pro Haus', 'Secure per property'),
+          title: t('Sicher pro Haus und Kunde', 'Secure per property and client'),
           text: t(
-            'Ein Space pro Hotel, Rollen von Gast bis Owner, Zwei-Faktor für alle. Gruppen und Agenturen behalten jedes Haus getrennt.',
-            'One space per hotel, roles from guest to owner, two-factor for everyone. Groups and agencies keep every property separate.',
+            'Ein Space je Hotel oder Kunde, Rollen von Gast bis Owner, Zwei-Faktor und Audit-Log. Gästedaten bleiben, wo sie sind.',
+            'One space per hotel or client, roles from guest to owner, two-factor and audit log. Guest data stays where it is.',
           ),
         },
       ],
       tiles: [
-        { value: '40', suffix: ' %', label: t('geringere Betriebskosten durch Automatisierung', 'lower operating costs through automation') },
         { value: '30', suffix: '+', label: t('Anbindungen an Hotel- und Marketing-Systeme', 'connections to hotel and marketing systems'), links: [anchor('integrations', t('Alle ansehen', 'See all'), 'link')] },
         { value: '13', label: t('Monate Historie ab dem ersten Tag', 'months of history from day one') },
-        { label: t('Für Hotelgruppen und Agenturen', 'For hotel groups and agencies'), links: [pageRef(refs.contactPageId, t('Gespräch vereinbaren', 'Talk to us'), 'link')] },
-        { label: t('Für Software-Anbieter', 'For software providers'), links: [external(refs.links.docsUrl, t('Entwickler-Dokumentation', 'Developer docs'), 'link')] },
+        { value: '40', suffix: ' %', label: t('geringere Betriebskosten durch Automatisierung', 'lower operating costs through automation') },
+        { label: t('Für Hotelgruppen', 'For hotel groups'), links: [anchor('hotels', t('Mehr erfahren', 'Learn more'), 'link')] },
+        { label: t('Für Agenturen', 'For agencies'), links: [anchor('agencies', t('Mehr erfahren', 'Learn more'), 'link')] },
       ],
       settings: { background: 'default', spacing: 'default', anchor: 'why' },
     },
@@ -550,8 +644,12 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
       blockName: t('Kundenstimmen', 'Testimonials'),
       header: {
         eyebrow: t('Kundenstimmen', 'Customers'),
-        heading: t('Was Hoteliers über Indicate sagen', 'What hoteliers say about Indicate'),
-        align: 'center',
+        heading: t('Was Hotels und Partner über Indicate sagen', 'What hotels and partners say about Indicate'),
+        lead: t(
+          'Im Einsatz bei Familotel AG, Alpenhof, Feldberger Hof, Hochegger Klippitz und Hotel Seeklause.',
+          'In use at Familotel AG, Alpenhof, Feldberger Hof, Hochegger Klippitz and Hotel Seeklause.',
+        ),
+        align: 'left',
       },
       items: [
         {
@@ -573,14 +671,14 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           company: 'Familotel AG',
         },
       ],
-      settings: { background: 'tinted', spacing: 'default' },
+      settings: { background: 'default', spacing: 'default' },
     },
     {
       blockType: 'faq',
       blockName: 'FAQ',
       header: {
         eyebrow: t('Häufige Fragen', 'Common questions'),
-        heading: t('Was Hoteliers uns vor dem Start fragen', 'What hoteliers ask before they start'),
+        heading: t('Was Sie vor dem Start wissen wollen', 'What you want to know before you start'),
         lead: t('Nicht dabei? Schreiben Sie uns.', 'Not answered here? Write to us.'),
         align: 'left',
       },
@@ -595,11 +693,20 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ]),
         },
         {
-          question: t('Muss ich technisch sein, um Indicate zu nutzen?', 'Do I need to be technical to use Indicate?'),
+          question: t('Brauche ich ein Datenteam?', 'Do I need a data team?'),
           answer: paragraphs([
             t(
-              'Nein. Sie verbinden Ihre Systeme mit wenigen Klicks, alles andere kommt fertig. Wer tiefer will, kann eigene Kennzahlen im KPI Studio bauen, muss aber nicht.',
-              'No. You connect your systems in a few clicks and everything else comes ready. Anyone who wants to go deeper can build their own KPIs in KPI Studio, but nobody has to.',
+              'Nein. Sie verbinden Ihre Systeme mit wenigen Klicks, Kennzahlen und Dashboards kommen fertig. Wenn Sie ein Datenteam haben, bekommt es KPI Studio, Semantic Layer, API und Export und baut auf dem Modell auf, statt bei null anzufangen.',
+              'No. You connect your systems in a few clicks; KPIs and dashboards come ready. If you do have a data team, it gets KPI Studio, a semantic layer, API and export and builds on the model instead of starting from zero.',
+            ),
+          ]),
+        },
+        {
+          question: t('Welche Daten sieht Claude oder ChatGPT?', 'What data does Claude or ChatGPT see?'),
+          answer: paragraphs([
+            t(
+              'Nur die Kennzahlen, die Sie über den MCP-Server freigeben, mit den Rechten der angemeldeten Person. Gästedaten und rohe Tabellen werden nicht übertragen, es sei denn, Sie legen sie ausdrücklich in die Anfrage.',
+              'Only the KPIs you release through the MCP server, with the permissions of the signed-in person. Guest data and raw tables are not transferred unless you explicitly put them into the request.',
             ),
           ]),
         },
@@ -609,15 +716,6 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
             t(
               'Unter anderem Mews, Oracle Hospitality, elite PMS, ASA, simplify hospitality und Shiji, dazu Re:Guest, vioma, Customer Alliance und die gängigen Google- und Meta-Werkzeuge. Die vollständige Liste steht im Hilfe-Center.',
               'Among others Mews, Oracle Hospitality, elite PMS, ASA, simplify hospitality and Shiji, plus Re:Guest, vioma, Customer Alliance and the usual Google and Meta tools. The full list is in the help centre.',
-            ),
-          ]),
-        },
-        {
-          question: t('Wer sieht unsere Daten?', 'Who can see our data?'),
-          answer: paragraphs([
-            t(
-              'Ihre Daten liegen in Ihrem eigenen Space. Rollen legen fest, wer was sieht, und Zwei-Faktor-Anmeldung lässt sich für alle erzwingen. Der Agent sieht nur freigegebene Kennzahlen.',
-              'Your data lives in your own space. Roles define who sees what, and two-factor sign-in can be required for everyone. The agent only sees released KPIs.',
             ),
           ]),
         },
@@ -634,8 +732,8 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           question: t('Was kostet der KI-Agent?', 'What does the AI agent cost?'),
           answer: paragraphs([
             t(
-              'Der Agent kommt als Erweiterung ab 20 € pro Nutzer und Monat dazu. Fragen in der App, in ChatGPT oder in Claude laufen über denselben Zugang.',
-              'The agent is an add-on from €20 per user and month. Questions in the app, in ChatGPT or in Claude all run through the same access.',
+              'Der Agent kommt als Erweiterung ab 20 € pro Nutzer und Monat dazu. Fragen in der App, in Claude, ChatGPT oder Langdock laufen über denselben Zugang.',
+              'The agent is an add-on from €20 per user and month. Questions in the app, in Claude, ChatGPT or Langdock all run through the same access.',
             ),
           ]),
         },
@@ -646,10 +744,10 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
       blockType: 'ctaSection',
       blockName: t('Abschluss', 'Closing'),
       header: {
-        heading: t('Bereit, Ihre Zahlen zu verstehen?', 'Ready to understand your numbers?'),
+        heading: t('Sehen Sie Indicate mit Ihren Zahlen.', 'See Indicate with your numbers.'),
         lead: t(
-          'In 30 Minuten zeigen wir Ihnen Indicate mit Daten aus einem Hotel wie Ihrem.',
-          'In 30 minutes we show you Indicate with data from a hotel like yours.',
+          '30 Minuten, echte Daten aus einem Haus wie Ihrem. Danach wissen Sie, ob es passt.',
+          '30 minutes, real data from a property like yours. Then you know whether it fits.',
         ),
         align: 'center',
       },
@@ -657,7 +755,7 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         external(refs.links.demoUrl, t('Demo buchen', 'Book a demo'), 'default'),
         pageRef(refs.contactPageId, t('Kontakt aufnehmen', 'Get in touch'), 'outline'),
       ],
-      note: t('Unverbindlich und ohne IT-Projekt.', 'No commitment, no IT project.'),
+      note: t('Unverbindlich, kein IT-Projekt.', 'No commitment, no IT project.'),
       settings: { background: 'accent', spacing: 'default' },
     },
   ],

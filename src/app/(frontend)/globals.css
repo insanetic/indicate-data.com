@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './loops.css';
 
 @config '../../../tailwind.config.mjs';
 
@@ -217,6 +218,8 @@
     @apply bg-surface text-ink font-sans min-h-[100vh] flex flex-col;
     font-size: 1.0625rem;
     line-height: 1.6;
+    /* The parked mobile drawer (fixed, translated off-screen) otherwise widens the page on phones. */
+    overflow-x: clip;
   }
 
   h1,
@@ -422,11 +425,6 @@
   mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, black 20%, transparent 75%);
 }
 
-/* Soft yellow glow used once behind the hero panel and behind the agent stage. */
-@utility glow-accent {
-  background: radial-gradient(55% 55% at 50% 0%, oklch(0.85 0.17 88 / 0.16), transparent 70%);
-}
-
 /* Arrow after a text link, ClickHouse style. */
 @utility link-arrow {
   display: inline-flex;
@@ -462,26 +460,23 @@
   transform: scale(0.97);
 }
 
-/* Scroll-linked reveal: 1:1 with scroll, reversible, no JavaScript. */
-@keyframes reveal-in {
-  from {
+/*
+ * Reveal: a block rises into place once when it first scrolls into view.
+ * `RevealObserver` (mounted in the layout) sets `data-in` on every `.reveal` and on the
+ * children of `.reveal-stagger`. Elements are only hidden once the script has announced
+ * itself via `html[data-js]`, so crawlers, print and no-JS visitors see everything.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-js] :is(.reveal, .reveal-stagger > *):not([data-in]) {
     opacity: 0;
-    transform: translateY(28px);
+    transform: translateY(22px);
   }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
 
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal,
-    .reveal-stagger > * {
-      animation: reveal-in linear both;
-      animation-timeline: view();
-      animation-range: entry calc(var(--i, 0) * 6%) entry calc(45% + var(--i, 0) * 6%);
-    }
+  html[data-js] :is(.reveal, .reveal-stagger > *) {
+    transition:
+      opacity 700ms var(--ease-out-quart),
+      transform 800ms var(--ease-out-quart);
+    transition-delay: calc(var(--i, 0) * 90ms);
   }
 }
 
@@ -495,20 +490,6 @@
 .flow-line {
   stroke-dasharray: 6 18;
   animation: flow 1.4s linear infinite;
-}
-
-@keyframes glow-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.glow-pulse {
-  animation: glow-pulse 3s var(--ease-in-out-cubic) infinite;
 }
 
 /* Bars rising in the hero panel. */
@@ -547,7 +528,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .flow-line,
-  .glow-pulse,
   .rise,
   .caret::after {
     animation: none;

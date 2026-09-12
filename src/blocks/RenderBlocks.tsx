@@ -12,6 +12,7 @@ import { AgentShowcaseBlock } from '@/blocks/AgentShowcase/Component'
 import { CardGridBlock } from '@/blocks/CardGrid/Component'
 import { CtaSectionBlock } from '@/blocks/CtaSection/Component'
 import { FaqBlock } from '@/blocks/Faq/Component'
+import { FeatureStoryBlock } from '@/blocks/FeatureStory/Component'
 import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { HeroBlock } from '@/blocks/Hero/Component'
 import { IntegrationsBlock } from '@/blocks/Integrations/Component'
@@ -35,6 +36,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   hero: HeroBlock,
   logoWall: LogoWallBlock,
   featureTabs: FeatureTabsBlock,
+  featureStory: FeatureStoryBlock,
   agentShowcase: AgentShowcaseBlock,
   steps: StepsBlock,
   integrations: IntegrationsBlock,

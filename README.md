@@ -356,9 +356,9 @@ Everything a visitor sees lives in the admin under **Website**:
 
 Languages: the language switch at the top of every document (DE / EN) edits one language at a time. German is the default; English falls back to German until it is filled in. Fields marked "Gilt für alle Sprachen / Shared across languages" (prices, KPI numbers, names of systems) are the same in every language.
 
-Illustrations: blocks with a **Visual** field offer built-in illustrations by name (dashboard, agent, comparison, sources, team, integrations, alerts) or an uploaded image.
+Illustrations: blocks with a **Visual** field offer built-in illustrations by name (dashboard, agent, comparison, sources, team, integrations, alerts) and four looping product scenes (builder, flyingKpis, portfolio, campaigns), or an uploaded image.
 
-Available sections: Hero (with the animated product stage), Logo wall, Product tabs, AI agent (streaming question & answer), Integrations (data-flow diagram), Why Indicate (pillars + tiles), Steps, Card grid, Stats strip, Testimonials, Pricing overview, FAQ (with FAQ structured data), Call to action (use the yellow background for the closing band), plus the starter template's rich text, media, form and archive blocks.
+Available sections: Hero (with the layered product stage), Feature story (heading row, wide looping scene, points in a row; or text beside the scene; used for dashboards, Flying KPIs, hotels and agencies), AI agent (streaming question & answer with a switch for the chats it works in), Integrations (ClickHouse-style tree of sources lighting up into Indicate), Testimonials (editorial quotes), FAQ (with FAQ structured data), Call to action (use the yellow background for the closing band), Logo wall, Product tabs, Why Indicate (pillars + tiles), Steps, Card grid, Stats strip, Pricing overview, plus the starter template's rich text, media, form and archive blocks.
 
 ## For developers
 
