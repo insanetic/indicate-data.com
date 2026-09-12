@@ -44,15 +44,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, labels, settin
   return (
     <header className="sticky top-0 z-40" data-scrolled={scrolled ? 'true' : 'false'}>
       {announcement?.text && (
-        <div className="bg-night text-[oklch(0.985_0.005_262)]" data-theme="dark">
-          <div className="container flex min-h-10 items-center justify-center gap-3 py-2 text-center type-small">
+        <div className="bg-accent text-accent-ink" data-theme="accent">
+          <div className="container flex min-h-9 items-center justify-center gap-3 py-1.5 text-center type-small font-medium">
             <span>{announcement.text}</span>
             {announcement.link?.label && (
-              <CMSLink
-                {...announcement.link}
-                appearance="inline"
-                className="font-medium underline underline-offset-4 decoration-brand-yellow hover:decoration-2"
-              />
+              <CMSLink {...announcement.link} appearance="inline" className="link-arrow !text-accent-ink" />
             )}
           </div>
         </div>
@@ -62,7 +58,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, labels, settin
         className={cn(
           'border-b transition-[background-color,border-color,box-shadow] duration-200 ease-out',
           scrolled
-            ? 'border-line bg-surface/85 shadow-header backdrop-blur-md supports-[backdrop-filter]:bg-surface/75'
+            ? 'border-line bg-surface/80 backdrop-blur-md supports-[backdrop-filter]:bg-surface/70'
             : 'border-transparent bg-surface',
         )}
       >

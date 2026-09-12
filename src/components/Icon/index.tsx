@@ -88,12 +88,12 @@ export const IconTile: React.FC<Props & { tone?: 'blue' | 'yellow' | 'coral' | '
     blue: 'bg-brand-blue-soft text-brand-blue-deep',
     yellow: 'bg-brand-yellow-soft text-ink',
     coral: 'bg-brand-coral-soft text-brand-coral',
-    neutral: 'bg-surface-2 text-ink',
+    neutral: 'border border-line bg-surface-3 text-accent',
   }
   return (
     <span
       className={cn(
-        'inline-flex size-10 shrink-0 items-center justify-center rounded-card-inner',
+        'inline-flex size-10 shrink-0 items-center justify-center rounded-btn',
         tones[tone],
         className,
       )}

@@ -26,16 +26,16 @@ export const Backdrop: React.FC<{ className?: string; tone?: 'blue' | 'yellow' |
   tone = 'blue',
 }) => {
   const tones = {
-    blue: 'from-brand-blue-soft to-transparent',
-    yellow: 'from-brand-yellow-soft to-transparent',
-    coral: 'from-brand-coral-soft to-transparent',
-    mix: 'from-brand-blue-soft via-brand-yellow-soft/70 to-transparent',
+    blue: 'from-brand-blue-soft/70 to-transparent',
+    yellow: 'from-brand-yellow-soft/70 to-transparent',
+    coral: 'from-brand-coral-soft/70 to-transparent',
+    mix: 'from-brand-blue-soft/60 via-brand-yellow-soft/40 to-transparent',
   }
   return (
     <div
       aria-hidden="true"
       className={cn(
-        'absolute inset-0 rounded-[2rem] bg-gradient-to-br dot-grid',
+        'absolute inset-0 rounded-[1.5rem] border border-line bg-gradient-to-br dot-grid',
         tones[tone],
         className,
       )}
@@ -68,7 +68,7 @@ export const Chip: React.FC<{
     blue: 'bg-brand-blue-soft text-brand-blue-deep',
     yellow: 'bg-brand-yellow-soft text-ink',
     coral: 'bg-brand-coral-soft text-brand-coral',
-    green: 'bg-[oklch(0.94_0.05_160)] text-[oklch(0.42_0.12_160)]',
+    green: 'bg-[oklch(0.3_0.07_160)] text-[oklch(0.8_0.15_160)]',
     neutral: 'bg-surface-2 text-ink-2',
   }
   return (

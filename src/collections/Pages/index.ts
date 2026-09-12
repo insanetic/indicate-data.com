@@ -15,6 +15,7 @@ import { FeatureTabs } from '../../blocks/FeatureTabs/config'
 import { Hero } from '../../blocks/Hero/config'
 import { Integrations } from '../../blocks/Integrations/config'
 import { LogoWall } from '../../blocks/LogoWall/config'
+import { Pillars } from '../../blocks/Pillars/config'
 import { PricingTeaser } from '../../blocks/PricingTeaser/config'
 import { Stats } from '../../blocks/Stats/config'
 import { Steps } from '../../blocks/Steps/config'
@@ -93,6 +94,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 AgentShowcase,
                 Steps,
                 Integrations,
+                Pillars,
                 CardGrid,
                 Stats,
                 Testimonials,

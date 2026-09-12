@@ -358,12 +358,12 @@ Languages: the language switch at the top of every document (DE / EN) edits one 
 
 Illustrations: blocks with a **Visual** field offer built-in illustrations by name (dashboard, agent, comparison, sources, team, integrations, alerts) or an uploaded image.
 
-Available sections: Hero, Logo wall, Product tabs, AI agent (question & answer), Steps, Integrations, Card grid (3 / 4 columns or bento), Stats strip, Testimonials, Pricing overview, FAQ (with FAQ structured data), Call to action, plus the starter template's rich text, media, form and archive blocks.
+Available sections: Hero (with the animated product stage), Logo wall, Product tabs, AI agent (streaming question & answer), Integrations (data-flow diagram), Why Indicate (pillars + tiles), Steps, Card grid, Stats strip, Testimonials, Pricing overview, FAQ (with FAQ structured data), Call to action (use the yellow background for the closing band), plus the starter template's rich text, media, form and archive blocks.
 
 ## For developers
 
 - Routes live under `src/app/(frontend)/[locale]`; `src/proxy.ts` redirects unprefixed paths to the visitor's language. Add a language in `src/i18n/config.ts` and `payload.config.ts`.
-- Design tokens (colours in oklch, type scale, motion curves, shadows) are in `src/app/(frontend)/globals.css`. Blocks render inside `<Section>`; shared field factories are in `src/fields/` (`sectionHeader`, `sectionSettings`, `visual`, `iconSelect`).
+- Design tokens (dark-first colours in oklch with the brand yellow as the single accent, type scale, motion curves, shadows) are in `src/app/(frontend)/globals.css`. Section backgrounds: default, slightly raised, deeper dark, yellow accent. Blocks render inside `<Section>`; shared field factories are in `src/fields/` (`sectionHeader`, `sectionSettings`, `visual`, `iconSelect`).
 - A new block = `src/blocks/<Name>/config.ts` + `Component.tsx`, registered in `src/collections/Pages/index.ts`, `src/blocks/RenderBlocks.tsx` and `src/blocks/registry.ts` (a test checks the three stay in sync).
 - Motion: one hero entrance per session, scroll-linked reveals via `animation-timeline: view()`, everything else answers user input. Every animation has a `prefers-reduced-motion` variant.
 - Schema changes in the Docker dev setup: the container has no TTY, so a schema push that would delete data or needs a "created or renamed?" answer blocks the server. Keep changes additive, or run `scripts/reset-content.ts` (clears pages and nav items) before a destructive change. The starter template's `meta` group on pages and `navItems` on header/footer are kept hidden for this reason; remove them with a migration once a TTY (or `pnpm payload migrate`) is available.

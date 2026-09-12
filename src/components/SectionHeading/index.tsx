@@ -13,7 +13,7 @@ type HeaderData = {
 type Props = {
   header?: HeaderData | null
   as?: 'h1' | 'h2' | 'h3'
-  size?: 'display' | 'h2' | 'h3'
+  size?: 'display-xl' | 'display' | 'h2' | 'h3'
   className?: string
   /** Forces alignment regardless of the CMS setting. */
   align?: 'left' | 'center'
@@ -31,22 +31,27 @@ export const SectionHeading: React.FC<Props> = ({
 }) => {
   if (!header?.heading && !header?.lead) return null
   const alignment = align || header.align || 'left'
-  const sizeClass = { display: 'type-display', h2: 'type-h2', h3: 'type-h3' }[size]
+  const sizeClass = {
+    'display-xl': 'type-display-xl',
+    display: 'type-display',
+    h2: 'type-h2',
+    h3: 'type-h3',
+  }[size]
 
   return (
     <div
       className={cn(
-        'flex flex-col gap-4',
+        'flex flex-col gap-5',
         alignment === 'center' ? 'items-center text-center' : 'items-start',
         className,
       )}
     >
       {header.eyebrow && <Eyebrow>{header.eyebrow}</Eyebrow>}
       {header.heading && (
-        <Tag className={cn(sizeClass, 'max-w-[22ch] text-ink')}>{header.heading}</Tag>
+        <Tag className={cn(sizeClass, 'max-w-[20ch] text-ink')}>{header.heading}</Tag>
       )}
       {header.lead && (
-        <p className={cn('type-lead max-w-[56ch] text-ink-2', leadClassName)}>{header.lead}</p>
+        <p className={cn('type-lead max-w-[58ch] text-ink-2', leadClassName)}>{header.lead}</p>
       )}
     </div>
   )

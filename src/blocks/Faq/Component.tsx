@@ -30,7 +30,7 @@ export const FaqBlock: React.FC<Props> = ({ header, items }) => {
   return (
     <div className="container">
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
-        <SectionHeading className="reveal lg:col-span-4" header={header} />
+        <SectionHeading className="reveal lg:col-span-4 lg:sticky lg:top-28 lg:self-start" header={header} />
         <div className="lg:col-span-8">
           <FaqClient items={data} />
         </div>

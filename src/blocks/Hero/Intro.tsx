@@ -17,5 +17,9 @@ export const HeroIntro: React.FC<{ children: React.ReactNode }> = ({ children })
       // storage unavailable (private mode); the intro simply plays again
     }
   }, [])
-  return <div data-intro="play">{children}</div>
+  return (
+    <div className="relative" data-intro="play">
+      {children}
+    </div>
+  )
 }

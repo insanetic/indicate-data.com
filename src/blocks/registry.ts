@@ -10,6 +10,7 @@ export const blockSlugs = [
   'agentShowcase',
   'steps',
   'integrations',
+  'pillars',
   'cardGrid',
   'stats',
   'testimonials',

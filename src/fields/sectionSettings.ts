@@ -3,7 +3,7 @@ import type { Field, GroupField, TextFieldSingleValidation } from 'payload'
 import deepMerge from '@/utilities/deepMerge'
 
 type Options = {
-  defaultBackground?: 'default' | 'tinted' | 'dark'
+  defaultBackground?: 'default' | 'tinted' | 'dark' | 'accent'
   overrides?: Partial<GroupField>
 }
 
@@ -25,9 +25,10 @@ export const sectionSettings = ({ defaultBackground = 'default', overrides = {} 
             label: { de: 'Hintergrund', en: 'Background' },
             admin: { width: '33%' },
             options: [
-              { label: { de: 'Weiß', en: 'White' }, value: 'default' },
-              { label: { de: 'Leicht getönt', en: 'Tinted' }, value: 'tinted' },
-              { label: { de: 'Dunkel', en: 'Dark' }, value: 'dark' },
+              { label: { de: 'Standard (dunkel)', en: 'Default (dark)' }, value: 'default' },
+              { label: { de: 'Leicht abgehoben', en: 'Slightly raised' }, value: 'tinted' },
+              { label: { de: 'Tiefer dunkel', en: 'Deeper dark' }, value: 'dark' },
+              { label: { de: 'Gelb (Akzent)', en: 'Yellow (accent)' }, value: 'accent' },
             ],
           },
           {

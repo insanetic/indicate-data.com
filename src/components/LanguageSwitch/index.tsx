@@ -47,7 +47,7 @@ export const LanguageSwitch: React.FC<Props> = ({ className, label, variant = 'p
     <nav
       aria-label={label}
       className={cn(
-        'inline-flex items-center rounded-pill border border-line bg-surface p-0.5 type-caption font-medium',
+        'inline-flex items-center rounded-btn border border-line bg-surface-2 p-0.5 type-caption font-medium',
         className,
       )}
     >
@@ -55,8 +55,8 @@ export const LanguageSwitch: React.FC<Props> = ({ className, label, variant = 'p
         <Link
           aria-current={locale === current ? 'true' : undefined}
           className={cn(
-            'rounded-pill px-2.5 py-1 uppercase tracking-[0.04em] transition-colors duration-150',
-            locale === current ? 'bg-ink text-surface' : 'text-ink-3 hover:text-ink',
+            'rounded-[0.25rem] px-2.5 py-1 uppercase tracking-[0.04em] transition-colors duration-150',
+            locale === current ? 'bg-surface-3 text-ink' : 'text-ink-3 hover:text-ink',
           )}
           href={switchLocale(pathname, locale)}
           hrefLang={localeTags[locale]}

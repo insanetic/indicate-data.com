@@ -70,7 +70,7 @@ export const FeatureTabsClient: React.FC<{ tabs: TabData[] }> = ({ tabs }) => {
           {indicator && (
             <span
               aria-hidden="true"
-              className="absolute top-1 bottom-1 left-0 rounded-pill bg-surface shadow-card transition-[transform,width] duration-250 ease-out-quart"
+              className="absolute top-1 bottom-1 left-0 rounded-btn bg-surface-3 border border-line-strong transition-[transform,width] duration-250 ease-out-quart"
               style={{ transform: `translateX(${indicator.x}px)`, width: indicator.w }}
             />
           )}
@@ -79,7 +79,7 @@ export const FeatureTabsClient: React.FC<{ tabs: TabData[] }> = ({ tabs }) => {
               aria-controls={`${baseId}-panel-${i}`}
               aria-selected={i === active}
               className={cn(
-                'relative z-10 flex h-10 shrink-0 items-center gap-2 rounded-pill px-4 text-[0.9375rem] font-medium transition-colors duration-150',
+                'relative z-10 flex h-10 shrink-0 items-center gap-2 rounded-btn px-4 text-[0.9375rem] font-medium transition-colors duration-150',
                 i === active ? 'text-ink' : 'text-ink-3 hover:text-ink',
               )}
               data-tab-index={i}

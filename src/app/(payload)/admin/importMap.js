@@ -14,6 +14,8 @@ import { PromptRowLabel as PromptRowLabel_167f586440646f82e4b9e9c0af2d2dff } fro
 import { StepRowLabel as StepRowLabel_bbd03add28adc34dc7d2cdb5edfe7c77 } from '@/blocks/Steps/RowLabel'
 import { ItemRowLabel as ItemRowLabel_a37e68ef26f6faa02976cc6026cd0318 } from '@/blocks/Integrations/RowLabel'
 import { GroupRowLabel as GroupRowLabel_a37e68ef26f6faa02976cc6026cd0318 } from '@/blocks/Integrations/RowLabel'
+import { PillarRowLabel as PillarRowLabel_528de31143c10bc75008b08b84b56e12 } from '@/blocks/Pillars/RowLabel'
+import { TileRowLabel as TileRowLabel_528de31143c10bc75008b08b84b56e12 } from '@/blocks/Pillars/RowLabel'
 import { CardRowLabel as CardRowLabel_143cc043a8033f7dfc7c9c6b7df4425c } from '@/blocks/CardGrid/RowLabel'
 import { StatRowLabel as StatRowLabel_081da0575d0ec9247990b7ab673a618a } from '@/blocks/Stats/RowLabel'
 import { QuoteRowLabel as QuoteRowLabel_7d0512708dc3b45d4316940f413f8c38 } from '@/blocks/Testimonials/RowLabel'
@@ -60,6 +62,8 @@ export const importMap = {
   "@/blocks/Steps/RowLabel#StepRowLabel": StepRowLabel_bbd03add28adc34dc7d2cdb5edfe7c77,
   "@/blocks/Integrations/RowLabel#ItemRowLabel": ItemRowLabel_a37e68ef26f6faa02976cc6026cd0318,
   "@/blocks/Integrations/RowLabel#GroupRowLabel": GroupRowLabel_a37e68ef26f6faa02976cc6026cd0318,
+  "@/blocks/Pillars/RowLabel#PillarRowLabel": PillarRowLabel_528de31143c10bc75008b08b84b56e12,
+  "@/blocks/Pillars/RowLabel#TileRowLabel": TileRowLabel_528de31143c10bc75008b08b84b56e12,
   "@/blocks/CardGrid/RowLabel#CardRowLabel": CardRowLabel_143cc043a8033f7dfc7c9c6b7df4425c,
   "@/blocks/Stats/RowLabel#StatRowLabel": StatRowLabel_081da0575d0ec9247990b7ab673a618a,
   "@/blocks/Testimonials/RowLabel#QuoteRowLabel": QuoteRowLabel_7d0512708dc3b45d4316940f413f8c38,

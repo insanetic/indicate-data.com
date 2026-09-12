@@ -29,7 +29,7 @@ export const TestimonialsBlock: React.FC<Props> = ({ header, items }) => {
             .join('')
           return (
             <li
-              className={cn('card-surface flex flex-col justify-between gap-8 p-7 md:p-8', single && 'md:p-12 text-center items-center')}
+              className={cn('card-surface flex flex-col justify-between gap-8 p-7 md:p-9', single && 'md:p-12 text-center items-center')}
               key={t.id || i}
               style={{ '--i': i } as React.CSSProperties}
             >

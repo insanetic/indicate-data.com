@@ -114,7 +114,7 @@ export const DesktopNav: React.FC<{ items: NavItem[]; label: string }> = ({ item
 }
 
 const navLinkClass =
-  'inline-flex h-10 items-center gap-1 rounded-pill px-3.5 text-[0.9375rem] font-medium text-ink-2 transition-colors duration-150 hover:text-ink focus-visible:text-ink'
+  'inline-flex h-10 items-center gap-1 rounded-btn px-3 text-[0.9375rem] font-medium text-ink-2 transition-colors duration-150 hover:text-ink focus-visible:text-ink'
 
 const MenuItem: React.FC<{
   item: NavItem
@@ -194,7 +194,7 @@ const MenuItem: React.FC<{
                         {...(entry.link.newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {})}
                       >
                         {entry.icon && (
-                          <span className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-blue-soft text-brand-blue-deep">
+                          <span className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-line bg-surface-3 text-accent">
                             <Icon name={entry.icon} size={17} />
                           </span>
                         )}

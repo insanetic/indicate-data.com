@@ -234,6 +234,7 @@ export interface Page {
     | AgentShowcaseBlock
     | StepsBlock
     | IntegrationsBlock
+    | PillarsBlock
     | CardGridBlock
     | StatsBlock
     | TestimonialsBlock
@@ -539,7 +540,7 @@ export interface HeroBlock {
     image?: (number | null) | Media;
   };
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -568,7 +569,7 @@ export interface LogoWallBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -696,7 +697,7 @@ export interface FeatureTabsBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -796,7 +797,7 @@ export interface AgentShowcaseBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -855,7 +856,7 @@ export interface StepsBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -917,13 +918,107 @@ export interface IntegrationsBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
   id?: string | null;
   blockName?: string | null;
   blockType: 'integrations';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PillarsBlock".
+ */
+export interface PillarsBlock {
+  header: {
+    eyebrow?: string | null;
+    heading: string;
+    lead?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  pillars?:
+    | {
+        icon?:
+          | (
+              | 'chart'
+              | 'sparkles'
+              | 'message'
+              | 'plug'
+              | 'database'
+              | 'layers'
+              | 'users'
+              | 'shield'
+              | 'lock'
+              | 'clock'
+              | 'calendar'
+              | 'target'
+              | 'trending'
+              | 'bell'
+              | 'globe'
+              | 'building'
+              | 'buildings'
+              | 'briefcase'
+              | 'code'
+              | 'check'
+              | 'euro'
+              | 'percent'
+              | 'bed'
+              | 'upload'
+              | 'palette'
+              | 'eye'
+              | 'zap'
+              | 'search'
+            )
+          | null;
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  tiles?:
+    | {
+        /**
+         * Shared across languages.
+         */
+        value?: string | null;
+        suffix?: string | null;
+        label: string;
+        links?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label: string;
+                /**
+                 * How the link is rendered.
+                 */
+                appearance?: 'link' | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+    anchor?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pillars';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1008,7 +1103,7 @@ export interface CardGridBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -1037,7 +1132,7 @@ export interface StatsBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -1068,7 +1163,7 @@ export interface TestimonialsBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -1156,7 +1251,7 @@ export interface PricingTeaserBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -1197,7 +1292,7 @@ export interface FaqBlock {
       }[]
     | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -1242,7 +1337,7 @@ export interface CtaSectionBlock {
     | null;
   note?: string | null;
   settings?: {
-    background?: ('default' | 'tinted' | 'dark') | null;
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
     spacing?: ('default' | 'compact' | 'none') | null;
     anchor?: string | null;
   };
@@ -2011,6 +2106,7 @@ export interface PagesSelect<T extends boolean = true> {
         agentShowcase?: T | AgentShowcaseBlockSelect<T>;
         steps?: T | StepsBlockSelect<T>;
         integrations?: T | IntegrationsBlockSelect<T>;
+        pillars?: T | PillarsBlockSelect<T>;
         cardGrid?: T | CardGridBlockSelect<T>;
         stats?: T | StatsBlockSelect<T>;
         testimonials?: T | TestimonialsBlockSelect<T>;
@@ -2328,6 +2424,60 @@ export interface IntegrationsBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+            };
+        id?: T;
+      };
+  settings?:
+    | T
+    | {
+        background?: T;
+        spacing?: T;
+        anchor?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PillarsBlock_select".
+ */
+export interface PillarsBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        lead?: T;
+        align?: T;
+      };
+  pillars?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  tiles?:
+    | T
+    | {
+        value?: T;
+        suffix?: T;
+        label?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                  };
+              id?: T;
             };
         id?: T;
       };

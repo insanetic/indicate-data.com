@@ -27,7 +27,7 @@ export const FeatureTabsBlock: React.FC<Props & { locale?: Locale }> = ({ header
           <ul className="flex flex-col gap-4">
             {tab.points!.map((p, pi) => (
               <li className="flex gap-4" key={p.id || pi}>
-                <IconTile name={p.icon} tone={(['blue', 'yellow', 'coral'] as const)[pi % 3]} />
+                <IconTile name={p.icon} tone="neutral" />
                 <div className="flex flex-col gap-0.5 pt-1">
                   <p className="font-medium text-ink">{p.title}</p>
                   {p.text && <p className="type-small text-ink-2 pretty">{p.text}</p>}

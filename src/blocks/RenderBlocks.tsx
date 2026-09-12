@@ -16,6 +16,7 @@ import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { HeroBlock } from '@/blocks/Hero/Component'
 import { IntegrationsBlock } from '@/blocks/Integrations/Component'
 import { LogoWallBlock } from '@/blocks/LogoWall/Component'
+import { PillarsBlock } from '@/blocks/Pillars/Component'
 import { PricingTeaserBlock } from '@/blocks/PricingTeaser/Component'
 import { StatsBlock } from '@/blocks/Stats/Component'
 import { StepsBlock } from '@/blocks/Steps/Component'
@@ -37,6 +38,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   agentShowcase: AgentShowcaseBlock,
   steps: StepsBlock,
   integrations: IntegrationsBlock,
+  pillars: PillarsBlock,
   cardGrid: CardGridBlock,
   stats: StatsBlock,
   testimonials: TestimonialsBlock,
@@ -54,7 +56,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
 const legacyBlocks: BlockType[] = ['archive', 'content', 'cta', 'formBlock', 'mediaBlock']
 
 type Settings = {
-  background?: 'default' | 'tinted' | 'dark' | null
+  background?: 'default' | 'tinted' | 'dark' | 'accent' | null
   spacing?: 'default' | 'compact' | 'none' | null
   anchor?: string | null
 }

@@ -35,7 +35,8 @@ test.describe('Home page', () => {
     await expect(page.locator('h1').first()).toContainText('Hotelzahlen')
     await expect(page.getByRole('navigation', { name: 'Hauptnavigation' }).first()).toBeVisible()
     await expect(page.locator('#agent')).toBeVisible()
-    await expect(page.locator('#pricing')).toBeVisible()
+    await expect(page.locator('#integrations')).toBeVisible()
+    await expect(page.locator('#why')).toBeVisible()
     await expect(page.locator('#faq')).toBeVisible()
   })
 
@@ -50,7 +51,7 @@ test.describe('Home page', () => {
   test('product tabs switch panels with the keyboard', async ({ page }) => {
     await page.goto(`${base}/de`)
     const tabs = page.getByRole('tab')
-    await expect(tabs).toHaveCount(4)
+    await expect(tabs).toHaveCount(3)
     await tabs.nth(0).focus()
     await page.keyboard.press('ArrowRight')
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')

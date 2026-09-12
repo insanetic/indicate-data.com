@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronDown } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import React, { useId, useState } from 'react'
 
 import { cn } from '@/utilities/ui'
@@ -22,17 +22,18 @@ export const FaqClient: React.FC<{ items: FaqItemData[] }> = ({ items }) => {
               <button
                 aria-controls={`${baseId}-${i}`}
                 aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-6 py-5 text-left type-h4 text-ink transition-colors duration-150 hover:text-brand-blue-deep"
+                className="flex w-full items-center justify-between gap-6 py-5 text-left type-h4 text-ink transition-colors duration-150 hover:text-accent"
                 onClick={() => setOpen(isOpen ? null : i)}
                 type="button"
               >
                 <span>{item.question}</span>
-                <ChevronDown
+                <Plus
                   aria-hidden="true"
                   className={cn(
-                    'size-5 shrink-0 text-ink-3 transition-transform duration-250 ease-out-quart',
-                    isOpen && 'rotate-180',
+                    'size-5 shrink-0 text-accent transition-transform duration-250 ease-out-quart',
+                    isOpen && 'rotate-45',
                   )}
+                  strokeWidth={2}
                 />
               </button>
             </h3>

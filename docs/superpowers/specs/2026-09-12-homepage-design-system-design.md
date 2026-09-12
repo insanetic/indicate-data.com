@@ -188,3 +188,7 @@ MCP plugin: new global and the extended pages description are registered so the 
 - drizzle-kit prompts not only on data loss but also whenever a table both gains and loses columns ("created or renamed?"). Rule for this repo: additive changes only, or empty the affected tables first.
 - `revalidateTag(tag, 'max')` serves stale data to the next request; for globals rendered into cached routes the hooks use `{ expire: 0 }`.
 - The hero entrance is gated by a `beforeInteractive` script in the root layout (`html[data-intro-seen]`), not by an inline script inside the component.
+
+## 8. Iteration 2 (same day, after feedback)
+
+Direction changed to a dark-first page in the spirit of ClickHouse: near-black ground, the brand yellow as the single accent (blue and coral only inside charts), big centred typography, hairline borders and a faint grid instead of soft cards, tracked yellow eyebrows without the logo glyph, 6 px button radius, arrow links. Pricing, steps and the audience card grid were removed from the home page (blocks still exist); a "Why Indicate" pillars-and-tiles block replaced them. The hero got an animated product stage (count-ups, drawing chart, rising bars, typed agent answer), the agent section a streaming conversation that plays once when scrolled into view, and integrations a data-flow diagram with moving connectors. The final call to action is a full-bleed yellow band.
