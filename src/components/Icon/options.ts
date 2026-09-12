@@ -1,0 +1,33 @@
+/** Icon keys and their friendly labels. Keep in sync with `iconMap` in ./index.tsx. */
+export const iconOptions = [
+  { value: 'chart', label: { de: 'Diagramm', en: 'Chart' } },
+  { value: 'sparkles', label: { de: 'KI / Funken', en: 'AI / sparkles' } },
+  { value: 'message', label: { de: 'Sprechblase', en: 'Chat bubble' } },
+  { value: 'plug', label: { de: 'Stecker (Integration)', en: 'Plug (integration)' } },
+  { value: 'database', label: { de: 'Datenbank', en: 'Database' } },
+  { value: 'layers', label: { de: 'Ebenen', en: 'Layers' } },
+  { value: 'users', label: { de: 'Team', en: 'Team' } },
+  { value: 'shield', label: { de: 'Schild (Sicherheit)', en: 'Shield (security)' } },
+  { value: 'lock', label: { de: 'Schloss', en: 'Lock' } },
+  { value: 'clock', label: { de: 'Uhr', en: 'Clock' } },
+  { value: 'calendar', label: { de: 'Kalender', en: 'Calendar' } },
+  { value: 'target', label: { de: 'Ziel', en: 'Target' } },
+  { value: 'trending', label: { de: 'Trend aufwärts', en: 'Trending up' } },
+  { value: 'bell', label: { de: 'Glocke (Hinweis)', en: 'Bell (alert)' } },
+  { value: 'globe', label: { de: 'Globus', en: 'Globe' } },
+  { value: 'building', label: { de: 'Hotel / Gebäude', en: 'Hotel / building' } },
+  { value: 'buildings', label: { de: 'Hotelgruppe', en: 'Hotel group' } },
+  { value: 'briefcase', label: { de: 'Agentur / Koffer', en: 'Agency / briefcase' } },
+  { value: 'code', label: { de: 'Code', en: 'Code' } },
+  { value: 'check', label: { de: 'Haken', en: 'Check' } },
+  { value: 'euro', label: { de: 'Euro', en: 'Euro' } },
+  { value: 'percent', label: { de: 'Prozent', en: 'Percent' } },
+  { value: 'bed', label: { de: 'Bett', en: 'Bed' } },
+  { value: 'upload', label: { de: 'Upload', en: 'Upload' } },
+  { value: 'palette', label: { de: 'Farbpalette', en: 'Palette' } },
+  { value: 'eye', label: { de: 'Auge', en: 'Eye' } },
+  { value: 'zap', label: { de: 'Blitz', en: 'Zap' } },
+  { value: 'search', label: { de: 'Lupe', en: 'Search' } },
+] as const
+
+export type IconKey = (typeof iconOptions)[number]['value']

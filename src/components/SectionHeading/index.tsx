@@ -1,0 +1,53 @@
+import React from 'react'
+
+import { Eyebrow } from '@/components/Eyebrow'
+import { cn } from '@/utilities/ui'
+
+type HeaderData = {
+  eyebrow?: string | null
+  heading?: string | null
+  lead?: string | null
+  align?: 'left' | 'center' | null
+}
+
+type Props = {
+  header?: HeaderData | null
+  as?: 'h1' | 'h2' | 'h3'
+  size?: 'display' | 'h2' | 'h3'
+  className?: string
+  /** Forces alignment regardless of the CMS setting. */
+  align?: 'left' | 'center'
+  leadClassName?: string
+}
+
+/** Eyebrow + heading + lead, shared by every block so sections read alike. */
+export const SectionHeading: React.FC<Props> = ({
+  header,
+  as: Tag = 'h2',
+  size = 'h2',
+  className,
+  align,
+  leadClassName,
+}) => {
+  if (!header?.heading && !header?.lead) return null
+  const alignment = align || header.align || 'left'
+  const sizeClass = { display: 'type-display', h2: 'type-h2', h3: 'type-h3' }[size]
+
+  return (
+    <div
+      className={cn(
+        'flex flex-col gap-4',
+        alignment === 'center' ? 'items-center text-center' : 'items-start',
+        className,
+      )}
+    >
+      {header.eyebrow && <Eyebrow>{header.eyebrow}</Eyebrow>}
+      {header.heading && (
+        <Tag className={cn(sizeClass, 'max-w-[22ch] text-ink')}>{header.heading}</Tag>
+      )}
+      {header.lead && (
+        <p className={cn('type-lead max-w-[56ch] text-ink-2', leadClassName)}>{header.lead}</p>
+      )}
+    </div>
+  )
+}

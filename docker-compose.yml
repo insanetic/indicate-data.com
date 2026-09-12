@@ -1,0 +1,64 @@
+# Local stack for indicate-data.com.demo (Payload CMS 3 + Next.js 16 + PostgreSQL 18)
+#
+#   docker compose up                       # Postgres + app in dev mode (hot reload), http://localhost:3000
+#   docker compose up postgres              # only the database; then `pnpm dev` on the host
+#   docker compose --profile prod up --build app-prod   # production image from the Dockerfile
+#
+# Postgres is published on host port 5433 because 5432 is taken by the indicate stack.
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: payload
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U payload -d payload']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Dev mode: source is bind-mounted, node_modules lives in a container volume
+  # (host node_modules carries macOS binaries and must not be shared).
+  app:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "corepack enable pnpm && pnpm install --frozen-lockfile && pnpm dev"
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://payload:payload@postgres:5432/payload
+      NEXT_TELEMETRY_DISABLED: '1'
+    volumes:
+      - .:/app
+      - app_node_modules:/app/node_modules
+      - app_next:/app/.next
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Production build (multi-stage Dockerfile, Next standalone output).
+  app-prod:
+    profiles: ['prod']
+    build: .
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://payload:payload@postgres:5432/payload
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  app_node_modules:
+  app_next:

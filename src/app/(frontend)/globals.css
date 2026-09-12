@@ -1,0 +1,685 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@config '../../../tailwind.config.mjs';
+
+@custom-variant dark (&:is([data-theme='dark'] *));
+@custom-variant sm (@media (width >= theme(--breakpoint-sm)));
+@custom-variant md (@media (width >= theme(--breakpoint-md)));
+@custom-variant lg (@media (width >= theme(--breakpoint-lg)));
+@custom-variant xl (@media (width >= theme(--breakpoint-xl)));
+@custom-variant 2xl (@media (width >= theme(--breakpoint-2xl)));
+
+@plugin "@tailwindcss/typography";
+
+@source inline("lg:col-span-4");
+@source inline("lg:col-span-6");
+@source inline("lg:col-span-8");
+@source inline("lg:col-span-12");
+@source inline("border-border");
+@source inline("bg-card");
+@source inline("border-error");
+@source inline("bg-error/30");
+@source inline("border-success");
+@source inline("bg-success/30");
+@source inline("border-warning");
+@source inline("bg-warning/30");
+
+/* ------------------------------------------------------------------ */
+/* Design tokens                                                        */
+/* Brand: three bars from the logo. Blue #4889f4, yellow #f4b608,       */
+/* coral #ff4d58. Neutrals are cool (hue 262) so they agree with blue.  */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 86rem;
+
+  --font-display: var(--font-outfit), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --radius-card: 1.25rem;
+  --radius-card-inner: 0.75rem;
+  --radius-pill: 9999px;
+
+  --shadow-float:
+    0 1px 2px oklch(0 0 0 / 0.04), 0 8px 24px -8px oklch(0.2 0.03 262 / 0.14),
+    0 24px 48px -16px oklch(0.2 0.03 262 / 0.18);
+  --shadow-card:
+    0 1px 2px oklch(0 0 0 / 0.04), 0 6px 16px -8px oklch(0.2 0.03 262 / 0.12);
+  --shadow-header: 0 1px 0 oklch(0 0 0 / 0.06), 0 8px 24px -12px oklch(0.2 0.03 262 / 0.12);
+}
+
+:root {
+  --brand-blue: oklch(0.64 0.19 262);
+  --brand-blue-deep: oklch(0.5 0.19 262);
+  --brand-blue-soft: oklch(0.94 0.035 262);
+  --brand-yellow: oklch(0.8 0.17 80);
+  --brand-yellow-soft: oklch(0.96 0.06 90);
+  --brand-coral: oklch(0.66 0.22 20);
+  --brand-coral-soft: oklch(0.95 0.035 20);
+
+  --ink: oklch(0.2 0.025 262);
+  --ink-2: oklch(0.38 0.02 262);
+  --ink-3: oklch(0.55 0.015 262);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.975 0.004 262);
+  --surface-3: oklch(0.955 0.006 262);
+  --line: oklch(0 0 0 / 0.08);
+  --line-strong: oklch(0 0 0 / 0.14);
+  --night: oklch(0.19 0.03 262);
+  --night-2: oklch(0.24 0.03 262);
+  --line-on-night: oklch(0.32 0.03 262);
+
+  --btn-primary-bg: var(--ink);
+  --btn-primary-fg: oklch(1 0 0);
+  --focus: var(--brand-blue);
+
+  /* Component library aliases (shadcn-style names used by the form and UI primitives). */
+  --background: var(--surface);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--surface-3);
+  --accent-foreground: var(--ink);
+  --destructive: var(--brand-coral);
+  --destructive-foreground: oklch(1 0 0);
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--brand-blue);
+  --radius: 0.75rem;
+  --success: oklch(0.62 0.15 160);
+  --warning: var(--brand-yellow);
+  --error: var(--brand-coral);
+}
+
+/* Dark sections (agent showcase, CTA, footer): remap, do not repaint. */
+[data-theme='dark'] {
+  --ink: oklch(0.985 0.005 262);
+  --ink-2: oklch(0.82 0.015 262);
+  --ink-3: oklch(0.66 0.015 262);
+  --surface: var(--night);
+  --surface-2: var(--night-2);
+  --surface-3: oklch(0.29 0.03 262);
+  --line: var(--line-on-night);
+  --line-strong: oklch(0.4 0.03 262);
+  --brand-blue-deep: oklch(0.78 0.13 262);
+  --brand-blue-soft: oklch(0.3 0.06 262);
+  --brand-yellow-soft: oklch(0.32 0.06 85);
+  --brand-coral-soft: oklch(0.32 0.06 20);
+
+  --btn-primary-bg: oklch(1 0 0);
+  --btn-primary-fg: var(--night);
+
+  --background: var(--surface);
+  --foreground: var(--ink);
+  --card: var(--surface-2);
+  --card-foreground: var(--ink);
+  --popover: var(--surface-2);
+  --popover-foreground: var(--ink);
+  --primary: oklch(1 0 0);
+  --primary-foreground: var(--night);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--surface-3);
+  --accent-foreground: var(--ink);
+  --border: var(--line);
+  --input: var(--line-strong);
+}
+
+@theme inline {
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-deep: var(--brand-blue-deep);
+  --color-brand-blue-soft: var(--brand-blue-soft);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-yellow-soft: var(--brand-yellow-soft);
+  --color-brand-coral: var(--brand-coral);
+  --color-brand-coral-soft: var(--brand-coral-soft);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-night: var(--night);
+  --color-night-2: var(--night-2);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                 */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5.5rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-surface text-ink font-sans min-h-[100vh] flex flex-col;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: unset;
+    font-size: unset;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--brand-blue-soft);
+    color: var(--ink);
+  }
+
+  [data-theme='dark'] ::selection {
+    background: oklch(0.4 0.12 262);
+    color: white;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  a {
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: from-font;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout                                                               */
+/* ------------------------------------------------------------------ */
+
+@layer utilities {
+  .container {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @variant md {
+    .container {
+      padding-inline: 2rem;
+    }
+  }
+
+  @variant xl {
+    .container {
+      padding-inline: 2.5rem;
+    }
+  }
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: 1rem;
+  z-index: 100;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 500;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Type scale                                                           */
+/* ------------------------------------------------------------------ */
+
+@utility type-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(2.625rem, 1.4rem + 4.2vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+}
+
+@utility type-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.3rem + 3vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.022em;
+  font-weight: 500;
+}
+
+@utility type-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 1.3rem + 2vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+@utility type-h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 1.15rem + 0.7vw, 1.625rem);
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  font-weight: 500;
+}
+
+@utility type-h4 {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  line-height: 1.3;
+  letter-spacing: -0.008em;
+  font-weight: 500;
+}
+
+@utility type-lead {
+  font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@utility type-body {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+@utility type-small {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+@utility type-caption {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+@utility type-stat {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility measure {
+  max-width: 65ch;
+}
+
+@utility pretty {
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------------ */
+/* Surfaces                                                             */
+/* ------------------------------------------------------------------ */
+
+@utility card-surface {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+@utility card-float {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(oklch(0.2 0.03 262 / 0.1) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+[data-theme='dark'] .dot-grid {
+  background-image: radial-gradient(oklch(1 0 0 / 0.08) 1px, transparent 1px);
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion                                                               */
+/* ------------------------------------------------------------------ */
+
+.pressable {
+  transition:
+    transform 150ms var(--ease-out-quart),
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.pressable:active {
+  transform: scale(0.97);
+}
+
+/* Scroll-linked reveal: 1:1 with scroll, reversible, no JavaScript. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal,
+    .reveal-stagger > * {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 5%) entry calc(38% + var(--i, 0) * 5%);
+    }
+  }
+}
+
+/* Steps connector grows with scroll. */
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.steps-line {
+  transform-origin: left center;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .steps-line {
+      animation: grow-x linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+  }
+}
+
+/* Hero intro: plays once per session (see HeroIntro). */
+@keyframes intro-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+[data-intro='play'] .intro-item {
+  animation: intro-in 900ms var(--ease-out-expo) both;
+  animation-delay: calc(var(--i, 0) * 85ms);
+}
+
+[data-intro='play'] .intro-visual {
+  animation: intro-in 1100ms var(--ease-out-expo) both;
+  animation-delay: 320ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-intro='play'] .intro-item,
+  [data-intro='play'] .intro-visual {
+    animation: intro-fade 300ms ease both;
+    animation-delay: 0ms;
+  }
+}
+
+/* Returning visitors in the same session: no entrance. */
+html[data-intro-seen] [data-intro='play'] .intro-item,
+html[data-intro-seen] [data-intro='play'] .intro-visual {
+  animation: none;
+}
+
+/* Line drawing for illustration charts. */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.draw-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1100ms var(--ease-out-quart) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Marquee: constant speed, pauses on hover/focus, static grid under reduced motion. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 45s) linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .marquee-track [data-clone] {
+    display: none;
+  }
+}
+
+/* Three-bar "thinking" pulse. */
+@keyframes bar-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+.bars-thinking > * {
+  animation: bar-pulse 900ms var(--ease-in-out-cubic) infinite;
+}
+
+.bars-thinking > :nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.bars-thinking > :nth-child(3) {
+  animation-delay: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bars-thinking > * {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Answer card enter. */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.card-enter {
+  animation: card-in 350ms var(--ease-out-expo) both;
+}
+
+/* Tab panel crossfade with a small directional hint. */
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.panel-enter {
+  animation: panel-in 260ms var(--ease-out-quart) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-enter,
+  .panel-enter {
+    animation: intro-fade 200ms ease both;
+  }
+}
+
+/* Route change crossfade (React ViewTransition). */
+::view-transition-old(page-fade) {
+  animation: intro-fade 180ms ease-in reverse;
+}
+
+::view-transition-new(page-fade) {
+  animation: intro-fade 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page-fade),
+  ::view-transition-new(page-fade) {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Rich text on marketing pages                                         */
+/* ------------------------------------------------------------------ */
+
+.prose {
+  --tw-prose-body: var(--ink-2);
+  --tw-prose-headings: var(--ink);
+  --tw-prose-links: var(--brand-blue-deep);
+  --tw-prose-bold: var(--ink);
+  --tw-prose-counters: var(--ink-3);
+  --tw-prose-bullets: var(--ink-3);
+  --tw-prose-quotes: var(--ink);
+  --tw-prose-code: var(--ink);
+  --tw-prose-hr: var(--line);
+  --tw-prose-th-borders: var(--line);
+  --tw-prose-td-borders: var(--line);
+}
+
+.prose :where(h1, h2, h3, h4) {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}

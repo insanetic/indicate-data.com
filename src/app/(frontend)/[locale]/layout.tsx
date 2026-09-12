@@ -1,0 +1,88 @@
+import type { Metadata } from 'next'
+
+import { cn } from '@/utilities/ui'
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
+import { Outfit } from 'next/font/google'
+import { draftMode } from 'next/headers'
+import { notFound } from 'next/navigation'
+import Script from 'next/script'
+import React from 'react'
+
+import { AdminBar } from '@/components/AdminBar'
+import { Footer } from '@/Footer/Component'
+import { Header } from '@/Header/Component'
+import { isLocale, localeTags, locales, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/dictionaries'
+import { Providers } from '@/providers'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getServerSideURL } from '@/utilities/getURL'
+
+import '../globals.css'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-outfit',
+})
+
+export async function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
+
+type Args = {
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
+}
+
+export default async function RootLayout({ children, params }: Args) {
+  const { locale: localeParam } = await params
+  if (!isLocale(localeParam)) notFound()
+  const locale: Locale = localeParam
+
+  const { isEnabled } = await draftMode()
+  const dict = getDictionary(locale)
+
+  return (
+    <html
+      className={cn(outfit.variable, GeistSans.variable, GeistMono.variable)}
+      lang={localeTags[locale]}
+      suppressHydrationWarning
+    >
+      <head>
+        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="/favicon-32.png" rel="icon" sizes="32x32" type="image/png" />
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+        {/* Decides before first paint whether the hero entrance plays (once per session). */}
+        <Script id="intro-gate" strategy="beforeInteractive">
+          {`try{if(sessionStorage.getItem('indicate:intro'))document.documentElement.setAttribute('data-intro-seen','')}catch(e){}`}
+        </Script>
+      </head>
+      <body>
+        <Providers locale={locale}>
+          <AdminBar
+            adminBarProps={{
+              preview: isEnabled,
+            }}
+          />
+          <a className="skip-link" href="#content">
+            {dict.skipToContent}
+          </a>
+          <Header locale={locale} />
+          <main id="content" className="flex-1">
+            {children}
+          </main>
+          <Footer locale={locale} />
+        </Providers>
+      </body>
+    </html>
+  )
+}
+
+export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
+  openGraph: mergeOpenGraph(),
+  twitter: {
+    card: 'summary_large_image',
+  },
+}
