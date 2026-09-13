@@ -174,13 +174,23 @@ const faq = (t: T, items: { q: string; a: string }[]): Block => ({
   settings: { ...defaults },
 })
 
-export const closing = (t: T, refs: Refs, heading: string, lead: string, demoLabel?: string): Block => ({
+/** The closing CTA. `secondary` replaces the default "Kontakt aufnehmen" link when given. */
+export const closing = (
+  t: T,
+  refs: Refs,
+  heading: string,
+  lead: string,
+  demoLabel?: string,
+  secondary?: { url: string; label: string; external?: boolean },
+): Block => ({
   blockType: 'ctaSection',
   blockName: t('Abschluss', 'Closing'),
   header: { heading, lead, align: 'center' },
   links: [
     external(refs.links.demoUrl, demoLabel || t('Demo buchen', 'Book a demo'), 'default'),
-    internal('/contact', t('Kontakt aufnehmen', 'Get in touch'), 'outline'),
+    secondary
+      ? (secondary.external ? external : internal)(secondary.url, secondary.label, 'outline')
+      : internal('/contact', t('Kontakt aufnehmen', 'Get in touch'), 'outline'),
   ],
   note: t('Unverbindlich, kein IT-Projekt.', 'No commitment, no IT project.'),
   settings: { ...defaults, background: 'accent' },

@@ -87,6 +87,13 @@ export const aboutPage = (t: T, refs: Refs): Partial<PageData> => ({
       ],
     }),
     testimonials(t),
-    closing(t, refs, t('Lernen Sie Indicate kennen.', 'Get to know Indicate.'), t('Eine halbe Stunde mit Ihren Zahlen sagt mehr als jede Seite über uns.', 'Half an hour with your numbers says more than any page about us.')),
+    closing(
+      t,
+      refs,
+      t('Lernen Sie Indicate kennen.', 'Get to know Indicate.'),
+      t('Eine halbe Stunde mit Ihren Zahlen sagt mehr als jede Seite über uns.', 'Half an hour with your numbers says more than any page about us.'),
+      undefined,
+      { url: t('https://indicate-data.io/de/jobs', 'https://indicate-data.io/en/jobs'), label: t('Karriere', 'Careers'), external: true },
+    ),
   ],
 })

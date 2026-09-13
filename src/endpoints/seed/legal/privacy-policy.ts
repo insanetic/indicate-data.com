@@ -37,7 +37,7 @@ Indicate Data analysiert auch anonym gesammelte Daten und Statistiken, um Ihr Er
 
 Unternehmensinformationen - Sie können weitere Informationen über sich und Ihr Unternehmen bereitstellen, wie Ihre Rolle, Branche, Unternehmensgröße, Jahresumsatz usw. Solche Informationen werden sicher gespeichert und können für Benchmarking und andere Zielsetzungen verwendet werden. Indicate Data kann solche Informationen mit Hilfe von Drittanbietern als Unterauftragnehmer erfassen, um ein besseres Erlebnis und Profiling zu gewährleisten. Sie können diese Informationen jederzeit aktualisieren oder korrigieren, indem Sie sich in Ihr Konto einloggen.
 
-Diese personenbezogenen Daten werden nicht an Dritte weitergegeben. Sie können sich jederzeit von unserem Online-Newsletter abmelden, indem Sie auf den Link "Abmelden" am Ende unserer E-Mails klicken oder uns direkt unter: &nbps;[compliance@indicate-data.io](mailto:compliance@indicate-data.io) kontaktieren.
+Diese personenbezogenen Daten werden nicht an Dritte weitergegeben. Sie können sich jederzeit von unserem Online-Newsletter abmelden, indem Sie auf den Link "Abmelden" am Ende unserer E-Mails klicken oder uns direkt unter: [compliance@indicate-data.io](mailto:compliance@indicate-data.io) kontaktieren.
 
 ## Benchmarks
 
@@ -227,7 +227,7 @@ Indicate Data also analyzes anonymously collected data and statistics in order t
 
 Company information - You may provide further information about yourself and your company, such as your role, industry, company size, annual revenue, etc. Such information is stored securely and may be used for benchmarking and other purposes. Indicate Data may collect such information with the help of third-party providers acting as subcontractors in order to ensure a better experience and profiling. You can update or correct this information at any time by logging in to your account.
 
-This personal data is not passed on to third parties. You can unsubscribe from our online newsletter at any time by clicking the "Unsubscribe" link at the end of our e-mails or by contacting us directly at: &nbps;[compliance@indicate-data.io](mailto:compliance@indicate-data.io).
+This personal data is not passed on to third parties. You can unsubscribe from our online newsletter at any time by clicking the "Unsubscribe" link at the end of our e-mails or by contacting us directly at: [compliance@indicate-data.io](mailto:compliance@indicate-data.io).
 
 ## Benchmarks
 
