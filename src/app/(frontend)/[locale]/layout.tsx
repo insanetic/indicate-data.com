@@ -14,6 +14,7 @@ import { ConsentBanner } from '@/consent/components/ConsentBanner'
 import { ConsentDefaults } from '@/consent/components/ConsentDefaults'
 import { ConsentSettings } from '@/consent/components/ConsentSettings'
 import { TagManager } from '@/consent/components/TagManager'
+import { resolveConsent } from '@/consent/defaults'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { isLocale, localeTags, locales, type Locale } from '@/i18n/config'
@@ -50,8 +51,9 @@ export default async function RootLayout({ children, params }: Args) {
   const dict = getDictionary(locale)
 
   const consentSettings = await getCachedGlobal('consent', 1, locale)()
+  const consent = resolveConsent(consentSettings, locale)
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID
-  const trackingEnabled = Boolean(gtmId && consentSettings?.enabled !== false && !isEnabled)
+  const trackingEnabled = Boolean(gtmId && consent.enabled && !isEnabled)
 
   return (
     <html
@@ -73,7 +75,7 @@ export default async function RootLayout({ children, params }: Args) {
         <ConsentDefaults enabled={trackingEnabled} />
       </head>
       <body>
-        <Providers consent={{ settings: consentSettings, gtmId, disabled: isEnabled }} locale={locale}>
+        <Providers consent={{ settings: consent, gtmId, disabled: isEnabled }} locale={locale}>
           <AdminBar
             adminBarProps={{
               preview: isEnabled,

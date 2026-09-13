@@ -4,10 +4,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 import type { Locale } from '@/i18n/config'
-import type { Consent } from '@/payload-types'
 import { useLocale } from '@/providers/Locale'
 
-import { resolveConsent, type ConsentTexts } from '../defaults'
+import type { ConsentTexts, ResolvedConsent } from '../defaults'
 import { allChoices, needsDecision, readRecord, writeRecord, type Choices, type ConsentRecord } from '../store'
 import { setTrackingEnabled } from '../track'
 
@@ -37,7 +36,7 @@ export type ConsentContextValue = {
 const ConsentContext = createContext<ConsentContextValue | null>(null)
 
 type Props = {
-  settings: Consent | null | undefined
+  settings: ResolvedConsent
   gtmId?: string | null
   /** True in draft mode / live preview: no banner, no tracking. */
   disabled?: boolean
@@ -46,8 +45,7 @@ type Props = {
 
 export const ConsentProvider: React.FC<Props> = ({ settings, gtmId, disabled, children }) => {
   const locale = useLocale()
-  const resolved = useMemo(() => resolveConsent(settings, locale), [settings, locale])
-  const enabled = Boolean(gtmId && settings?.enabled !== false && !disabled)
+  const enabled = Boolean(gtmId && settings.enabled && !disabled)
 
   const [status, setStatus] = useState<ConsentStatus>('loading')
   const [record, setRecord] = useState<ConsentRecord | null>(null)
@@ -59,18 +57,18 @@ export const ConsentProvider: React.FC<Props> = ({ settings, gtmId, disabled, ch
     const existing = readRecord()
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration-safe cookie read; SSR has no cookie access.
     setRecord(existing)
-    setStatus(needsDecision(existing, resolved.revision) ? 'pending' : 'decided')
-  }, [enabled, resolved.revision])
+    setStatus(needsDecision(existing, settings.revision) ? 'pending' : 'decided')
+  }, [enabled, settings.revision])
 
   const decide = useCallback(
     (choices: Choices) => {
-      const next: ConsentRecord = { v: resolved.revision, t: new Date().toISOString(), c: choices }
+      const next: ConsentRecord = { v: settings.revision, t: new Date().toISOString(), c: choices }
       writeRecord(next)
       setRecord(next)
       setStatus('decided')
       setDialogOpen(false)
     },
-    [resolved.revision],
+    [settings.revision],
   )
 
   const value = useMemo<ConsentContextValue>(
@@ -81,10 +79,10 @@ export const ConsentProvider: React.FC<Props> = ({ settings, gtmId, disabled, ch
       status,
       record,
       choices: record?.c || allChoices(false),
-      texts: resolved.texts,
-      revision: resolved.revision,
-      privacyHref: resolved.privacyHref,
-      imprintHref: resolved.imprintHref,
+      texts: settings.texts,
+      revision: settings.revision,
+      privacyHref: settings.privacyHref,
+      imprintHref: settings.imprintHref,
       dialogOpen,
       acceptAll: () => decide(allChoices(true)),
       rejectAll: () => decide(allChoices(false)),
@@ -93,7 +91,7 @@ export const ConsentProvider: React.FC<Props> = ({ settings, gtmId, disabled, ch
       closeSettings: () => setDialogOpen(false),
       hasConsent: (category) => status === 'decided' && Boolean(record?.c[category]),
     }),
-    [enabled, gtmId, locale, status, record, resolved, dialogOpen, decide],
+    [enabled, gtmId, locale, status, record, settings, dialogOpen, decide],
   )
 
   return <ConsentContext.Provider value={value}>{children}</ConsentContext.Provider>

@@ -3,7 +3,14 @@ import type { Consent } from '@/payload-types'
 
 import { consentConfig, type CategoryKey } from './config'
 
-export type ServiceText = { name: string; provider?: string; purpose?: string; cookies?: string; privacyUrl?: string }
+export type ServiceText = {
+  id?: string
+  name: string
+  provider?: string
+  purpose?: string
+  cookies?: string
+  privacyUrl?: string
+}
 export type CategoryText = { key: CategoryKey; required: boolean; label: string; description: string; services: ServiceText[] }
 
 type CategoryDefaults = Record<CategoryKey, { label: string; description: string }>
@@ -33,6 +40,7 @@ type Strings = {
 export type ConsentTexts = Omit<Strings, 'categories'> & { categories: CategoryText[] }
 
 export type ResolvedConsent = {
+  enabled: boolean
   texts: ConsentTexts
   revision: number
   privacyHref: string | null
@@ -114,6 +122,7 @@ export function resolveConsent(global: Consent | null | undefined, locale: Local
       label: text(row?.label, base.categories[category.key].label),
       description: text(row?.description, base.categories[category.key].description),
       services: (row?.services || []).map((s) => ({
+        id: s.id || undefined,
         name: s.name,
         provider: s.provider || undefined,
         purpose: s.purpose || undefined,
@@ -123,6 +132,7 @@ export function resolveConsent(global: Consent | null | undefined, locale: Local
     }
   })
   return {
+    enabled: global?.enabled !== false,
     revision: global?.revision || 1,
     privacyHref: pageHref(locale, global?.privacyPage),
     imprintHref: pageHref(locale, global?.imprintPage),

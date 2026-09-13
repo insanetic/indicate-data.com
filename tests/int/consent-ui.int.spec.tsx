@@ -9,7 +9,7 @@ import { ConsentProvider, useConsent } from '@/consent/components/ConsentProvide
 import { ConsentSettings } from '@/consent/components/ConsentSettings'
 import { TagManager } from '@/consent/components/TagManager'
 import { defaults, resolveConsent } from '@/consent/defaults'
-import { readRecord, writeRecord } from '@/consent/store'
+import { readRecord, writeRecord, type Choices } from '@/consent/store'
 import { isTrackingEnabled } from '@/consent/track'
 import { CMSLink } from '@/components/Link'
 import type { Consent } from '@/payload-types'
@@ -17,10 +17,16 @@ import type { Consent } from '@/payload-types'
 describe('resolveConsent', () => {
   it('falls back to the code defaults when the global is empty', () => {
     const resolved = resolveConsent(null, 'de')
+    expect(resolved.enabled).toBe(true)
     expect(resolved.revision).toBe(1)
     expect(resolved.texts.bannerTitle).toBe(defaults.de.bannerTitle)
     expect(resolved.texts.categories.map((c) => c.key)).toEqual(['necessary', 'analytics', 'marketing'])
     expect(resolved.privacyHref).toBeNull()
+  })
+
+  it('is disabled only when the global explicitly turns it off', () => {
+    expect(resolveConsent({ enabled: false } as unknown as Consent, 'de').enabled).toBe(false)
+    expect(resolveConsent({ enabled: true } as unknown as Consent, 'de').enabled).toBe(true)
   })
 
   it('prefers CMS texts and services field by field', () => {
@@ -33,11 +39,12 @@ describe('resolveConsent', () => {
         {
           key: 'analytics',
           label: 'Statistik',
-          services: [{ name: 'Google Analytics 4', provider: 'Google Ireland Limited', purpose: 'Reichweite' }],
+          services: [{ id: 'svc-1', name: 'Google Analytics 4', provider: 'Google Ireland Limited', purpose: 'Reichweite' }],
         },
       ],
     } as unknown as Consent
     const resolved = resolveConsent(global, 'de')
+    expect(resolved.enabled).toBe(true)
     expect(resolved.revision).toBe(3)
     expect(resolved.texts.bannerTitle).toBe('Cookies?')
     expect(resolved.texts.bannerText).toBe(defaults.de.bannerText)
@@ -46,6 +53,7 @@ describe('resolveConsent', () => {
     expect(analytics.label).toBe('Statistik')
     expect(analytics.description).toBe(defaults.de.categories.analytics.description)
     expect(analytics.services[0].name).toBe('Google Analytics 4')
+    expect(analytics.services[0].id).toBe('svc-1')
   })
 
   it('uses English for an unknown locale', () => {
@@ -74,7 +82,7 @@ describe('ConsentProvider', () => {
   it('is pending without a cookie and decided after acceptAll', async () => {
     clearConsentCookie()
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
         <Probe />
       </ConsentProvider>,
     )
@@ -88,7 +96,7 @@ describe('ConsentProvider', () => {
   it('is decided when a current cookie exists', async () => {
     writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
         <Probe />
       </ConsentProvider>,
     )
@@ -98,7 +106,7 @@ describe('ConsentProvider', () => {
   it('is disabled without a container id', async () => {
     clearConsentCookie()
     render(
-      <ConsentProvider settings={null}>
+      <ConsentProvider settings={resolveConsent(null, 'de')}>
         <Probe />
       </ConsentProvider>,
     )
@@ -113,7 +121,7 @@ describe('ConsentBanner', () => {
   it('shows when pending, accept all grants both categories', async () => {
     clearConsentCookie()
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
         <ConsentBanner />
       </ConsentProvider>,
     )
@@ -127,7 +135,7 @@ describe('ConsentBanner', () => {
   it('reject writes both categories as false', async () => {
     clearConsentCookie()
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
         <ConsentBanner />
       </ConsentProvider>,
     )
@@ -139,7 +147,7 @@ describe('ConsentBanner', () => {
   it('renders nothing when disabled', () => {
     clearConsentCookie()
     render(
-      <ConsentProvider settings={null}>
+      <ConsentProvider settings={resolveConsent(null, 'de')}>
         <ConsentBanner />
       </ConsentProvider>,
     )
@@ -173,7 +181,7 @@ describe('ConsentSettings', () => {
     ensureDialogSupport()
     clearConsentCookie()
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
         <OpenSettings />
         <ConsentSettings />
       </ConsentProvider>,
@@ -198,13 +206,13 @@ describe('ConsentSettings', () => {
   it('lists services under their category', async () => {
     ensureDialogSupport()
     clearConsentCookie()
-    const settings = {
+    const global = {
       enabled: true,
       revision: 1,
       categories: [{ key: 'analytics', services: [{ name: 'Google Analytics 4', provider: 'Google Ireland Limited' }] }],
     } as unknown as Consent
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={settings}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(global, 'de')}>
         <OpenSettings />
         <ConsentSettings />
       </ConsentProvider>,
@@ -226,7 +234,7 @@ describe('TagManager', () => {
   it('loads GTM and pushes a page view once analytics is granted', async () => {
     clearConsentCookie()
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
         <Probe />
         <TagManager />
       </ConsentProvider>,
@@ -242,13 +250,79 @@ describe('TagManager', () => {
   it('never loads GTM after reject', async () => {
     writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
     render(
-      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
         <Probe />
         <TagManager />
       </ConsentProvider>,
     )
     await screen.findByText('decided')
     expect(document.querySelector('script[data-gtm]')).toBeNull()
+  })
+
+  it('purges cookies, updates consent mode and reloads on withdrawal', async () => {
+    writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false } })
+    document.cookie = '_ga=GA1.1.1; Path=/'
+
+    const original = window.location
+    const reload = vi.fn()
+    let reloadSpy: ReturnType<typeof vi.spyOn> | null = null
+    try {
+      Object.defineProperty(window, 'location', {
+        value: { ...window.location, reload, hostname: 'localhost', protocol: 'http:' },
+        writable: true,
+        configurable: true,
+      })
+    } catch {
+      // jsdom refuses to redefine window.location outright in some versions; fall back to
+      // spying on reload directly if that property happens to be configurable there.
+      reloadSpy = vi.spyOn(window.location, 'reload').mockImplementation(reload)
+    }
+
+    try {
+      const withdraw: Choices = { analytics: false, marketing: false }
+      const SaveProbe = () => {
+        const consent = useConsent()
+        return (
+          <div>
+            <span data-testid="status">{consent.status}</span>
+            <button onClick={() => consent.save(withdraw)}>withdraw</button>
+          </div>
+        )
+      }
+
+      render(
+        <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
+          <SaveProbe />
+          <TagManager />
+        </ConsentProvider>,
+      )
+
+      // Return visit with an existing "analytics granted" record: GTM loads without a banner.
+      await screen.findByText('decided')
+      expect(document.querySelector('script[data-gtm]')?.getAttribute('data-gtm')).toBe('GTM-TEST')
+
+      ;(window as unknown as { dataLayer: unknown[] }).dataLayer = []
+      document.querySelectorAll('script[data-gtm]').forEach((s) => s.remove())
+
+      await act(async () => screen.getByText('withdraw').click())
+
+      const dl = (window as unknown as { dataLayer: unknown[] }).dataLayer
+      const updateCalls = dl
+        .map((entry) => Array.from(entry as unknown as ArrayLike<unknown>))
+        .filter((args) => args[0] === 'consent' && args[1] === 'update')
+      expect(updateCalls.length).toBeGreaterThan(0)
+      expect((updateCalls[updateCalls.length - 1][2] as Record<string, string>).analytics_storage).toBe('denied')
+
+      expect(document.cookie).not.toContain('_ga=')
+      expect(reload).toHaveBeenCalledTimes(1)
+      expect(document.querySelector('script[data-gtm]')).toBeNull()
+    } finally {
+      if (reloadSpy) {
+        reloadSpy.mockRestore()
+      } else {
+        Object.defineProperty(window, 'location', { value: original, writable: true, configurable: true })
+      }
+    }
   })
 })
 

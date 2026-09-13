@@ -10,9 +10,14 @@ event helper. Self-contained: copy this folder into another Payload + Next.js pr
 2. Payload config: `globals: [..., Consent]` from `./consent/global`. Run `payload generate:types`
    and `payload generate:importmap`.
 3. Layout `<head>`: `<ConsentDefaults enabled={trackingEnabled} />` where
-   `trackingEnabled = Boolean(gtmId && settings?.enabled !== false && !draftMode)`.
-4. Wrap the tree in `<ConsentProvider settings={global} gtmId={process.env.NEXT_PUBLIC_GTM_ID} disabled={draftMode}>`
-   inside your locale provider. Fetch the global with `depth: 1` so page links resolve.
+   `trackingEnabled = Boolean(gtmId && consent.enabled && !draftMode)`.
+4. Call `const consent = resolveConsent(global, locale)` on the server (in the layout, right after
+   fetching the global) and wrap the tree in
+   `<ConsentProvider settings={consent} gtmId={process.env.NEXT_PUBLIC_GTM_ID} disabled={draftMode}>`
+   inside your locale provider. An absent global counts as enabled. Fetch the global with `depth: 1`
+   so page links resolve, but resolve it before it reaches the client: the global's `privacyPage`
+   and `imprintPage` are full `Page` documents (whole Lexical body), and passing the raw global to a
+   client component would serialize all of that rich text into every page's Flight payload.
 5. Render `<ConsentBanner />` right after the skip link, `<ConsentSettings />` and `<TagManager />`
    near the end of `<body>`. Put `<ConsentTrigger />` in the footer.
 6. Set `NEXT_PUBLIC_GTM_ID` (empty = no banner, no tracking). Never put the id in the CMS: a copied

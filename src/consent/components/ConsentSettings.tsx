@@ -104,8 +104,8 @@ export const ConsentSettings: React.FC = () => {
                     {texts.showServices} ({category.services.length})
                   </summary>
                   <ul className="mt-2 flex flex-col gap-3">
-                    {category.services.map((service) => (
-                      <li className="rounded-card-inner bg-surface-2 p-3" key={service.name}>
+                    {category.services.map((service, index) => (
+                      <li className="rounded-card-inner bg-surface-2 p-3" key={service.id || `${service.name}-${index}`}>
                         <p className="font-medium">
                           {service.name}
                           {service.provider && <span className="font-normal text-ink-3"> · {service.provider}</span>}

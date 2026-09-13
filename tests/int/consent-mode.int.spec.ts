@@ -88,11 +88,19 @@ describe('track', () => {
     document.body.innerHTML =
       '<a href="/demo" data-track data-track-location="hero"><span>Demo buchen</span></a>' +
       '<button data-track="outbound_click" data-track-label="Docs">Docs</button>'
+    // jsdom has no navigation implementation: the real <a href> would otherwise log
+    // "Not implemented: navigation to another Document" when the click's default action runs.
+    const preventNavigation = (e: MouseEvent) => e.preventDefault()
+    document.addEventListener('click', preventNavigation)
     const stop = installClickTracking()
-    document.querySelector('span')!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    expect(dl().at(-1)).toEqual({ event: 'cta_click', label: 'Demo buchen', location: 'hero', href: '/demo' })
-    document.querySelector('button')!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    expect(dl().at(-1)).toEqual({ event: 'outbound_click', label: 'Docs' })
-    stop()
+    try {
+      document.querySelector('span')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+      expect(dl().at(-1)).toEqual({ event: 'cta_click', label: 'Demo buchen', location: 'hero', href: '/demo' })
+      document.querySelector('button')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+      expect(dl().at(-1)).toEqual({ event: 'outbound_click', label: 'Docs' })
+    } finally {
+      stop()
+      document.removeEventListener('click', preventNavigation)
+    }
   })
 })
