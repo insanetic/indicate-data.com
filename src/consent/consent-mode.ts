@@ -35,6 +35,7 @@ export function signalsFor(choices: Choices): Record<ConsentSignal, 'granted' | 
 
 export const anyGranted = (choices: Choices): boolean => optionalCategories.some((c) => choices[c.key])
 
+// Fallback gtag when head script did not run; intentionally mirrors the bootstrapSnippet.
 function gtag(...args: unknown[]) {
   if (typeof window === 'undefined') return
   window.dataLayer = window.dataLayer || []

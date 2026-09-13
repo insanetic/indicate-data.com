@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { anyGranted, applyConsent, isGtmLoaded, loadGtm, signalsFor } from '@/consent/consent-mode'
+import { anyGranted, applyConsent, bootstrapSnippet, isGtmLoaded, loadGtm, signalsFor } from '@/consent/consent-mode'
 import { installClickTracking, setTrackingEnabled, track } from '@/consent/track'
 
 type DL = Record<string, unknown>[]
@@ -10,6 +10,31 @@ beforeEach(() => {
   ;(window as unknown as { dataLayer: DL }).dataLayer = []
   document.querySelectorAll('script[data-gtm]').forEach((s) => s.remove())
   setTrackingEnabled(true)
+})
+
+describe('bootstrapSnippet', () => {
+  it('sets every Consent Mode signal to denied before anything else runs', () => {
+    delete (window as { gtag?: unknown }).gtag
+    ;(window as unknown as { dataLayer: DL }).dataLayer = []
+    new Function(bootstrapSnippet)()
+    const calls = dl().map((entry) => Array.from(entry as unknown as ArrayLike<unknown>))
+    expect(calls[0]).toEqual([
+      'consent',
+      'default',
+      {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'granted',
+        personalization_storage: 'granted',
+        security_storage: 'granted',
+        wait_for_update: 0,
+      },
+    ])
+    expect(calls[1]).toEqual(['set', 'ads_data_redaction', true])
+    expect(typeof window.gtag).toBe('function')
+  })
 })
 
 describe('signalsFor', () => {
