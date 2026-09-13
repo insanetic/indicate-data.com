@@ -23,6 +23,18 @@ const de = {
   showing: 'Zeige',
   of: 'von',
   yourHotelData: 'Ihre Hoteldaten',
+  onThisPage: 'Auf dieser Seite',
+  moreDocuments: 'Weitere Dokumente',
+  lastUpdated: 'Stand',
+  effectiveFrom: 'Gültig ab',
+  version: 'Version',
+  bindingVersion: 'Verbindliche Fassung',
+  translationNotice: 'Diese Übersetzung dient nur zur Information. Verbindlich ist allein die Fassung auf {language}.',
+  readBindingVersion: 'Verbindliche Fassung lesen',
+  previousVersions: 'Frühere Fassungen',
+  copyLink: 'Link zu diesem Abschnitt',
+  contactQuestions: 'Fragen dazu?',
+  print: 'Drucken',
 }
 
 const en: typeof de = {
@@ -47,6 +59,18 @@ const en: typeof de = {
   showing: 'Showing',
   of: 'of',
   yourHotelData: 'Your hotel data',
+  onThisPage: 'On this page',
+  moreDocuments: 'More documents',
+  lastUpdated: 'Last updated',
+  effectiveFrom: 'Effective from',
+  version: 'Version',
+  bindingVersion: 'Binding version',
+  translationNotice: 'This translation is for information only. Only the {language} version is legally binding.',
+  readBindingVersion: 'Read the binding version',
+  previousVersions: 'Previous versions',
+  copyLink: 'Link to this section',
+  contactQuestions: 'Questions?',
+  print: 'Print',
 }
 
 export type Dictionary = typeof de
