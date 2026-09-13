@@ -93,7 +93,9 @@ export const aboutPage = (t: T, refs: Refs): Partial<PageData> => ({
       t('Lernen Sie Indicate kennen.', 'Get to know Indicate.'),
       t('Eine halbe Stunde mit Ihren Zahlen sagt mehr als jede Seite über uns.', 'Half an hour with your numbers says more than any page about us.'),
       undefined,
-      { url: t('https://indicate-data.io/de/jobs', 'https://indicate-data.io/en/jobs'), label: t('Karriere', 'Careers'), external: true },
+      // Only the label is localised in the link field, so the URL is the same one the footer
+      // already uses for both languages (indicate-data.io/de/jobs serves the careers page).
+      { url: 'https://indicate-data.io/de/jobs', label: t('Karriere', 'Careers'), external: true },
     ),
   ],
 })
