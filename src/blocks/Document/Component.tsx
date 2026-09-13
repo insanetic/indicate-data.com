@@ -9,7 +9,7 @@ import { DocumentMeta, formatDate, isoDate } from '@/components/DocumentLayout/D
 import { PrintButton } from '@/components/DocumentLayout/PrintButton'
 import { SidebarNav } from '@/components/DocumentLayout/SidebarNav'
 import { Toc } from '@/components/DocumentLayout/Toc'
-import { TranslationNotice } from '@/components/DocumentLayout/TranslationNotice'
+import { shouldShowTranslationNotice, TranslationNotice } from '@/components/DocumentLayout/TranslationNotice'
 import { sidebarGroupsFromDoc } from '@/components/DocumentLayout/sidebarData'
 import { getDictionary } from '@/i18n/dictionaries'
 import { extractHeadings } from '@/utilities/lexical/headings'
@@ -33,6 +33,7 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
   const headings = showToc === false ? [] : extractHeadings(body)
   const hasToc = headings.length > 1
   const entries = (history || []).filter((h) => h.date && h.note)
+  const hasNotice = shouldShowTranslationNotice(locale, bindingLanguage)
 
   return (
     <article className="document">
@@ -56,15 +57,17 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
       <div className="container py-10 md:py-14">
         <div className={hasSidebar ? 'grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-16' : ''}>
           {hasSidebar && (
-            <div className="lg:sticky lg:top-24 lg:self-start print:hidden">
+            <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto print:hidden">
               <SidebarNav contact={sidebarDoc?.contact?.enabled ? sidebarDoc.contact : null} groups={groups} labels={{ more: dict.moreDocuments, questions: dict.contactQuestions }} />
             </div>
           )}
           <div className={hasToc ? 'grid gap-10 xl:grid-cols-[minmax(0,1fr)_14rem] xl:gap-16' : ''}>
             <div className="flex min-w-0 flex-col gap-8">
-              <div className="print:hidden">
-                <TranslationNotice binding={bindingLanguage} locale={locale} slug={slug} />
-              </div>
+              {hasNotice && (
+                <div className="print:hidden">
+                  <TranslationNotice binding={bindingLanguage} locale={locale} slug={slug} />
+                </div>
+              )}
               <RichText
                 className="prose-document mx-0 max-w-[70ch]"
                 copyLinkLabel={dict.copyLink}
@@ -89,7 +92,7 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
               )}
             </div>
             {hasToc && (
-              <div className="-order-1 xl:sticky xl:top-24 xl:order-none xl:self-start print:hidden">
+              <div className="-order-1 xl:sticky xl:top-24 xl:order-none xl:max-h-[calc(100vh-8rem)] xl:self-start xl:overflow-y-auto print:hidden">
                 <Toc headings={headings} label={dict.onThisPage} />
               </div>
             )}

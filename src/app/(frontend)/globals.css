@@ -800,6 +800,11 @@ html[data-intro-seen] [data-intro='play'] .intro-visual {
 .prose-document :where(p, li) {
   text-wrap: pretty;
 }
+/* These unlayered rules outrank the typography plugin's `.prose > :first-child`,
+   so the opening heading would otherwise push the article below the sidebar. */
+.prose-document > :first-child {
+  margin-top: 0;
+}
 .prose-document :where(h2) {
   margin-top: 2.75em;
   font-size: 1.5rem;
@@ -868,7 +873,17 @@ html[data-intro-seen] [data-intro='play'] .intro-visual {
   }
   .document .container {
     max-width: none;
-    padding: 0;
+    /* No page gutter (the printer adds its own margin), but keep the article off the header rule. */
+    padding-inline: 0;
+    padding-block: 0.75rem;
+  }
+  /* Sidebar and TOC are hidden, so their grid tracks must collapse — otherwise the
+     article keeps the 16rem sidebar column and the header keeps its matching offset. */
+  .document .grid {
+    display: block !important;
+  }
+  .document header .container > * {
+    margin-left: 0 !important;
   }
   .prose-document {
     max-width: none;
