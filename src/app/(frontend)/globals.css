@@ -768,3 +768,22 @@ html[data-intro-seen] [data-intro='play'] .intro-visual {
   font-weight: 500;
   letter-spacing: -0.015em;
 }
+
+/* Hover anchor on document headings (RichText `headingIds`). */
+.heading-anchor {
+  margin-left: 0.4em;
+  color: var(--ink-3);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+.group\/heading:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+@media (hover: none) {
+  .heading-anchor {
+    opacity: 0.6;
+  }
+}
