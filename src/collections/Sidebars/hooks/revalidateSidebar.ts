@@ -8,7 +8,7 @@ import type { Sidebar } from '../../../payload-types'
  * Any page may embed any sidebar, and a sidebar carries no back-reference to the pages that
  * use it, so an edit revalidates the whole dynamic page route rather than single paths.
  */
-const PAGE_ROUTE = '/[locale]/[slug]'
+const PAGE_ROUTE = '/(frontend)/[locale]/[slug]'
 
 export const revalidateSidebar: CollectionAfterChangeHook<Sidebar> = ({
   doc,
