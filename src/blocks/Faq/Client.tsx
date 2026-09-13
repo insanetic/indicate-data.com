@@ -5,7 +5,7 @@ import React, { useId, useState } from 'react'
 
 import { cn } from '@/utilities/ui'
 
-export type FaqItemData = { id: string; question: string; answer: React.ReactNode }
+export type FaqItemData = { id: string; question: React.ReactNode; answer: React.ReactNode }
 
 /** Accordion: one open at a time, height animated via grid rows (transform-free, interruptible). */
 export const FaqClient: React.FC<{ items: FaqItemData[] }> = ({ items }) => {

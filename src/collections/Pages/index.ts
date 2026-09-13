@@ -10,6 +10,7 @@ import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { AgentShowcase } from '../../blocks/AgentShowcase/config'
 import { CardGrid } from '../../blocks/CardGrid/config'
 import { CtaSection } from '../../blocks/CtaSection/config'
+import { Spotlight } from '../../blocks/Spotlight/config'
 import { Document } from '../../blocks/Document/config'
 import { Faq } from '../../blocks/Faq/config'
 import { FeatureStory } from '../../blocks/FeatureStory/config'
@@ -106,6 +107,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 PricingTeaser,
                 Faq,
                 CtaSection,
+                Spotlight,
                 Document,
                 Content,
                 MediaBlock,

@@ -8,6 +8,7 @@ import { IconTile } from '@/components/Icon'
 import { findMcpClient } from '@/integrations/clients'
 import { SectionHeading } from '@/components/SectionHeading'
 import { cn } from '@/utilities/ui'
+import { withResi } from '@/components/Resi'
 
 export const CardGridBlock: React.FC<Props> = ({ header, layout, cards }) => {
   const list = (cards || []).filter((c) => c.title)
@@ -51,15 +52,15 @@ export const CardGridBlock: React.FC<Props> = ({ header, layout, cards }) => {
                 return card.icon ? <IconTile name={card.icon} tone={tones[i % tones.length]} /> : null
               })()}
               <div className="flex flex-col gap-2">
-                <h3 className="type-h4 text-ink">{card.title}</h3>
-                {card.text && <p className="type-small text-ink-2 pretty">{card.text}</p>}
+                <h3 className="type-h4 text-ink">{withResi(card.title)}</h3>
+                {card.text && <p className="type-small text-ink-2 pretty">{withResi(card.text)}</p>}
               </div>
               {(card.points || []).length > 0 && (
                 <ul className="flex flex-col gap-2">
                   {card.points!.map((p, pi) => (
                     <li className="flex items-start gap-2 type-small text-ink-2" key={p.id || pi}>
                       <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-blue-deep" strokeWidth={2} />
-                      <span>{p.text}</span>
+                      <span>{withResi(p.text)}</span>
                     </li>
                   ))}
                 </ul>

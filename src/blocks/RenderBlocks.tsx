@@ -12,6 +12,7 @@ import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { AgentShowcaseBlock } from '@/blocks/AgentShowcase/Component'
 import { CardGridBlock } from '@/blocks/CardGrid/Component'
 import { CtaSectionBlock } from '@/blocks/CtaSection/Component'
+import { SpotlightBlock } from '@/blocks/Spotlight/Component'
 import { FaqBlock } from '@/blocks/Faq/Component'
 import { FeatureStoryBlock } from '@/blocks/FeatureStory/Component'
 import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
@@ -50,6 +51,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   pricingTeaser: PricingTeaserBlock,
   faq: FaqBlock,
   ctaSection: CtaSectionBlock,
+  spotlight: SpotlightBlock,
   document: DocumentBlock,
   archive: ArchiveBlock,
   content: ContentBlock,

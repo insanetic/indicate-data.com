@@ -6,6 +6,7 @@ import { cn } from '@/utilities/ui'
 import { Backdrop, Card, Chip, Frame, Sparkline } from './primitives'
 import { labelsFor } from './labels'
 import type { IllustrationProps } from './index'
+import { withResi } from '@/components/Resi'
 
 /** A short exchange with the agent: question, answer with a small chart, and where it works. */
 export const AgentIllustration: React.FC<IllustrationProps> = ({ className, locale }) => {
@@ -25,7 +26,7 @@ export const AgentIllustration: React.FC<IllustrationProps> = ({ className, loca
             <BrandBars size={12} />
           </span>
           <div className="flex w-full flex-col gap-3 rounded-[1rem] rounded-tl-sm border border-line bg-surface-2 p-3.5">
-            <span className="type-caption text-ink-3">{l.agent}</span>
+            <span className="type-caption text-ink-3">{withResi(l.agent)}</span>
             <span className="type-small text-ink pretty">{l.a1}</span>
             <div className="rounded-card-inner bg-surface p-3">
               <div className="flex items-baseline justify-between">

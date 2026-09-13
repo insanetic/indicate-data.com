@@ -6,9 +6,13 @@ import { cn } from '@/utilities/ui'
 
 import { AgentIllustration } from './Agent'
 import { AgentChatIllustration } from './AgentChat'
+import { CollectionsIllustration } from './Collections'
+import { DimensionsIllustration } from './Dimensions'
+import { SemanticLayerIllustration } from './SemanticLayer'
 import { GovernanceIllustration } from './Governance'
 import { KpiStudioIllustration } from './KpiStudio'
 import { McpIllustration } from './Mcp'
+import { ResiIllustration } from './Resi'
 import { SyncIllustration } from './Sync'
 import { TemplatesIllustration } from './Templates'
 import { AlertsIllustration } from './Alerts'
@@ -43,10 +47,14 @@ export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>>
   campaigns: CampaignsIllustration,
   agentChat: AgentChatIllustration,
   mcp: McpIllustration,
+  resi: ResiIllustration,
   kpiStudio: KpiStudioIllustration,
   templates: TemplatesIllustration,
   governance: GovernanceIllustration,
   sync: SyncIllustration,
+  semanticLayer: SemanticLayerIllustration,
+  dimensions: DimensionsIllustration,
+  collections: CollectionsIllustration,
 }
 
 export type VisualData = {

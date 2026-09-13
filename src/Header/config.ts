@@ -161,6 +161,13 @@ export const Header: GlobalConfig = {
                     iconSelect({ admin: { width: '30%' } }),
                   ],
                 },
+                {
+                  name: 'badge',
+                  type: 'text',
+                  localized: true,
+                  label: { de: 'Kleines Etikett (z. B. „Neu“)', en: 'Small tag (e.g. “New”)' },
+                  admin: { description: { de: 'Erscheint neben dem Eintrag.', en: 'Shown next to the entry.' } },
+                },
               ],
             },
           ],

@@ -6,6 +6,7 @@ import { CMSLink } from '@/components/Link'
 import { Icon } from '@/components/Icon'
 import { SectionHeading } from '@/components/SectionHeading'
 import { AgentShowcaseClient, type PromptData } from './Client'
+import { withResi } from '@/components/Resi'
 
 export const AgentShowcaseBlock: React.FC<Props> = ({ header, prompts, points, channels, links }) => {
   const list: PromptData[] = (prompts || [])
@@ -38,8 +39,8 @@ export const AgentShowcaseBlock: React.FC<Props> = ({ header, prompts, points, c
                 <li className="flex gap-4 bg-surface p-5" key={p.id || i}>
                   <Icon className="mt-0.5 shrink-0 text-accent" name={p.icon} size={20} />
                   <div className="flex flex-col gap-1">
-                    <p className="font-medium text-ink">{p.title}</p>
-                    {p.text && <p className="type-small text-ink-2 pretty">{p.text}</p>}
+                    <p className="font-medium text-ink">{withResi(p.title)}</p>
+                    {p.text && <p className="type-small text-ink-2 pretty">{withResi(p.text)}</p>}
                   </div>
                 </li>
               ))}

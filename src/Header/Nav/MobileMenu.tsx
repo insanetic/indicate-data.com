@@ -11,7 +11,8 @@ import { LocaleLink } from '@/components/LocaleLink'
 import { cn } from '@/utilities/ui'
 
 import type { HeaderLabels } from '../Component.client'
-import type { NavItem } from './DesktopNav'
+import { NavBadge, type NavItem } from './DesktopNav'
+import { withResi } from '@/components/Resi'
 
 type LinkData = NonNullable<Header['primaryCta']>['link'] | null | undefined
 
@@ -174,9 +175,9 @@ export const MobileMenu: React.FC<{
                             className="flex flex-col gap-0.5 rounded-card-inner border border-line bg-surface-2 px-3 py-3"
                             href={resolveLinkHref(item.featured.link) as string}
                           >
-                            <span className="type-small font-medium text-ink">{item.featured.title}</span>
+                            <span className="type-small font-medium text-ink">{withResi(item.featured.title)}</span>
                             {item.featured.link?.label && (
-                              <span className="link-arrow type-caption font-medium">{item.featured.link.label}</span>
+                              <span className="link-arrow type-caption font-medium">{withResi(item.featured.link.label)}</span>
                             )}
                           </LocaleLink>
                         </div>
@@ -193,10 +194,11 @@ export const MobileMenu: React.FC<{
                               return (
                                 <li key={entry.id || li}>
                                   <LocaleLink
-                                    className="flex min-h-11 items-center rounded-lg px-2 text-[0.9375rem] text-ink-2 hover:bg-surface-2 hover:text-ink"
+                                    className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-[0.9375rem] text-ink-2 hover:bg-surface-2 hover:text-ink"
                                     href={href}
                                   >
-                                    {entry.link.label}
+                                    {withResi(entry.link.label)}
+                                    {entry.badge && <NavBadge>{entry.badge}</NavBadge>}
                                   </LocaleLink>
                                 </li>
                               )

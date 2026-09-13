@@ -7,6 +7,7 @@ import { ClientMark } from '@/components/ClientMark'
 import { Bars, Donut, Sparkline } from '@/components/Illustrations/primitives'
 import { useLocale } from '@/providers/Locale'
 import { cn } from '@/utilities/ui'
+import { ResiMark, withResi } from '@/components/Resi'
 
 export type PromptData = {
   id: string
@@ -31,12 +32,12 @@ const series = [
 const copy = {
   de: {
     you: 'Sie',
-    agent: 'Indicate Agent',
+    agent: 'Resi',
     thinking: 'Kennzahlen werden geprüft …',
     chips: 'Beispielfragen',
-    channels: 'Derselbe Agent, Ihr Chat',
+    channels: 'Resi, in Ihrem Chat',
     via: 'via MCP',
-    placeholder: 'Fragen Sie nach Auslastung, Kanälen, Stornos …',
+    placeholder: 'Fragen Sie Resi nach Auslastung, Kanälen, Stornos …',
     direct: 'Direkt',
     ota: 'OTA',
     other: 'Andere',
@@ -44,12 +45,12 @@ const copy = {
   },
   en: {
     you: 'You',
-    agent: 'Indicate agent',
+    agent: 'Resi',
     thinking: 'Checking the figures …',
     chips: 'Example questions',
-    channels: 'Same agent, your chat',
+    channels: 'Resi, in your chat',
     via: 'via MCP',
-    placeholder: 'Ask about occupancy, channels, cancellations …',
+    placeholder: 'Ask Resi about occupancy, channels, cancellations …',
     direct: 'Direct',
     ota: 'OTA',
     other: 'Other',
@@ -148,7 +149,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
         {channels.length > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-2.5 md:px-5">
             <span className="flex items-center gap-2 type-caption font-medium text-ink-2">
-              <BrandBars size={12} /> {t.channels}
+              <BrandBars size={12} /> {withResi(t.channels)}
             </span>
             <div aria-label={t.channels} className="flex gap-1 rounded-btn border border-line bg-surface p-1" role="group">
               {channels.map((name, i) => (
@@ -211,15 +212,13 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
           </div>
 
           <div className={cn('flex gap-3 transition-opacity duration-300', phase === 'idle' || phase === 'typing' ? 'opacity-0' : 'opacity-100')}>
-            <span className="mt-1 inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-line bg-surface">
-              <BrandBars size={14} thinking={phase === 'thinking'} />
-            </span>
+            <ResiMark className="mt-1" size={32} thinking={phase === 'thinking'} />
             {phase === 'thinking' ? (
               <p className="pt-2 type-small text-ink-3">{t.thinking}</p>
             ) : (
               <div className="flex w-full max-w-[36rem] flex-col gap-4 rounded-[1rem] rounded-tl-sm border border-line bg-surface p-4 md:p-5">
                 <p className="type-caption font-medium text-ink-3">
-                  {t.agent}
+                  {withResi(t.agent)}
                   {external && <span className="text-ink-3"> · {surface} {t.via}</span>}
                 </p>
                 <p className={cn('type-body text-ink pretty min-h-[3.2em]', phase === 'streaming' && 'caret')}>
@@ -280,7 +279,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
           </div>
 
           <div className="mt-auto flex items-center gap-3 rounded-btn border border-line bg-surface px-4 py-3 type-small text-ink-3">
-            <span className="flex-1">{t.placeholder}</span>
+            <span className="flex-1">{withResi(t.placeholder)}</span>
             <span className="rounded-[0.25rem] bg-surface-3 px-1.5 py-0.5 type-caption text-ink-2">↵</span>
           </div>
         </div>

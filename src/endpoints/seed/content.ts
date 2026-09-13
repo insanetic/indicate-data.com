@@ -85,14 +85,17 @@ export const header = (t: T, refs: Refs): Partial<Header> => ({
       type: 'menu',
       featured: {
         enabled: true,
-        title: t('Sehen Sie Indicate mit Ihren Zahlen.', 'See Indicate with your numbers.'),
-        text: t('30 Minuten, echte Daten aus einem Haus wie Ihrem.', '30 minutes, real data from a property like yours.'),
-        ...external(refs.links.demoUrl, t('Demo buchen', 'Book a demo')),
+        title: t('Sag hallo zu Resi.', 'Meet Resi.'),
+        text: t(
+          'Ihre KI-Agentin für Hotelzahlen. Fragen wie im Flur, Antworten mit Zahl, Diagramm und Quelle.',
+          'Your AI agent for hotel numbers. Ask like in the hallway, get the number, the chart and the source.',
+        ),
+        ...subpage(refs, 'agent', t('Resi kennenlernen', 'Meet Resi')),
       },
       columns: [
         {
           title: 'Agentic Analytics',
-          links: [menuEntry(t, refs, 'agent'), menuEntry(t, refs, 'mcp'), menuEntry(t, refs, 'build-with-ai')],
+          links: [{ ...menuEntry(t, refs, 'agent'), badge: t('Neu', 'New') }, menuEntry(t, refs, 'mcp'), menuEntry(t, refs, 'build-with-ai')],
         },
         {
           title: t('Datenbasis', 'Trusted data'),
@@ -204,8 +207,8 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
   seo: {
     title: t('Agentic Analytics für die Hotellerie', 'Agentic analytics for hospitality'),
     description: t(
-      'Indicate verbindet PMS, Vertrieb und Marketing zu einem Datenmodell. Dashboards per Beschreibung, ein KI-Agent in App, Claude und ChatGPT, Reports nach Zeitplan.',
-      'Indicate joins PMS, distribution and marketing into one data model. Dashboards from a description, an AI agent in the app, Claude and ChatGPT, reports on a schedule.',
+      'Indicate verbindet PMS, Vertrieb und Marketing zu einem Datenmodell. Dashboards per Beschreibung, Resi als KI-Agentin in App, Claude und ChatGPT, Reports nach Zeitplan.',
+      'Indicate joins PMS, distribution and marketing into one data model. Dashboards from a description, Resi as AI agent in the app, Claude and ChatGPT, reports on a schedule.',
     ),
   },
   layout: [
@@ -245,6 +248,22 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         { name: 'Hochegger Klippitz' },
         { name: 'Hotel Seeklause' },
         { name: 'Re:Guest' },
+      ],
+      settings: { background: 'default', spacing: 'compact' },
+    },
+    {
+      blockType: 'spotlight',
+      blockName: 'Resi',
+      layout: 'banner',
+      eyebrow: t('Neu in Indicate', 'New in Indicate'),
+      heading: t('Sag hallo zu Resi.', 'Meet Resi.'),
+      text: t(
+        'Ihre KI-Agentin für Hotelzahlen. Fragen Sie „Wie lief das Wochenende?“, und Resi antwortet in Sekunden, mit Zahl, Diagramm und Quelle. In der App, in Claude und in ChatGPT.',
+        'Your AI agent for hotel numbers. Ask “How did the weekend go?” and Resi answers in seconds, with the number, the chart and the source. In the app, in Claude and in ChatGPT.',
+      ),
+      links: [
+        subpage(refs, 'agent', t('Resi kennenlernen', 'Meet Resi'), 'outline'),
+        subpage(refs, 'mcp', t('Auch in Claude und ChatGPT', 'Also in Claude and ChatGPT'), 'link'),
       ],
       settings: { background: 'default', spacing: 'compact' },
     },
@@ -301,13 +320,13 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
     },
     {
       blockType: 'agentShowcase',
-      blockName: t('KI-Agent & MCP', 'AI agent & MCP'),
+      blockName: t('Resi & MCP', 'Resi & MCP'),
       header: {
-        eyebrow: t('Indicate Agent & MCP', 'Indicate agent & MCP'),
-        heading: t('Fragen Sie Ihre Daten. In der App oder in Ihrem Chat.', 'Ask your data. In the app or in your chat.'),
+        eyebrow: t('Resi & MCP', 'Resi & MCP'),
+        heading: t('Fragen Sie Resi. In der App oder in Ihrem Chat.', 'Ask Resi. In the app or in your chat.'),
         lead: t(
-          'Der Indicate Agent antwortet aus geprüften Kennzahlen und nennt die Quelle. Über MCP auch in Claude, ChatGPT oder Langdock, mit denselben Rechten wie in der App.',
-          'The Indicate agent answers from verified KPIs and names the source. Through MCP also in Claude, ChatGPT or Langdock, with the same permissions as in the app.',
+          'Resi antwortet aus geprüften Kennzahlen und nennt die Quelle. Über MCP auch in Claude, ChatGPT oder Langdock, mit denselben Rechten wie in der App.',
+          'Resi answers from verified KPIs and names the source. Through MCP also in Claude, ChatGPT or Langdock, with the same permissions as in the app.',
         ),
         align: 'center',
       },
@@ -362,8 +381,8 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           icon: 'shield',
           title: t('Nur freigegebene Kennzahlen', 'Released KPIs only'),
           text: t(
-            'Der Agent liest das Datenmodell, nie rohe Tabellen. Gästedaten bleiben in Ihrem Space, bis Sie sie ausdrücklich freigeben.',
-            'The agent reads the data model, never raw tables. Guest data stays in your space until you explicitly release it.',
+            'Resi liest das Datenmodell, nie rohe Tabellen. Gästedaten bleiben in Ihrem Space, bis Sie sie ausdrücklich freigeben.',
+            'Resi reads the data model, never raw tables. Guest data stays in your space until you explicitly release it.',
           ),
         },
         {
@@ -376,17 +395,17 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         },
         {
           icon: 'message',
-          title: t('Ihr Agent, Ihre Wahl', 'Your agent, your choice'),
+          title: t('Resi, wo Ihr Team schon arbeitet', 'Resi, where your team already works'),
           text: t(
-            'Der MCP-Server verbindet jede Datenquelle mit dem Assistenten, den Ihr Team schon nutzt. Ein Zugang, kein Export.',
-            'The MCP server connects every data source to the assistant your team already uses. One access, no export.',
+            'Der MCP-Server bringt Resi in den Assistenten, den Ihr Team schon nutzt. Ein Zugang, kein Export.',
+            'The MCP server brings Resi into the assistant your team already uses. One access, no export.',
           ),
         },
       ],
       channels: [{ name: 'Indicate App' }, { name: 'Claude' }, { name: 'ChatGPT' }, { name: 'Langdock' }],
       links: [
-        external(refs.links.demoUrl, t('Agent live erleben', 'See the agent live'), 'default'),
-        subpage(refs, 'mcp', t('Mehr zu MCP', 'More about MCP'), 'outline'),
+        external(refs.links.demoUrl, t('Live erleben', 'See it live'), 'default'),
+        subpage(refs, 'agent', t('Resi kennenlernen', 'Meet Resi'), 'outline'),
       ],
       settings: { background: 'tinted', spacing: 'default', anchor: 'agent' },
     },
@@ -423,7 +442,7 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         },
         {
           icon: 'sparkles',
-          title: t('Mit Zusammenfassung vom Agenten', 'With a summary from the agent'),
+          title: t('Mit Zusammenfassung von Resi', 'With a summary from Resi'),
           text: t(
             'Auf Wunsch schreibt der Agent die drei wichtigsten Veränderungen der Woche in normalen Worten dazu.',
             'On request the agent adds the three biggest changes of the week in plain words.',
@@ -739,11 +758,11 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ]),
         },
         {
-          question: t('Was kostet der KI-Agent?', 'What does the AI agent cost?'),
+          question: t('Was kostet Resi?', 'What does Resi cost?'),
           answer: paragraphs([
             t(
-              'Der Agent kommt als Erweiterung ab 20 € pro Nutzer und Monat dazu. Fragen in der App, in Claude, ChatGPT oder Langdock laufen über denselben Zugang.',
-              'The agent is an add-on from €20 per user and month. Questions in the app, in Claude, ChatGPT or Langdock all run through the same access.',
+              'Die KI-Agentin kommt als Erweiterung ab 20 € pro Nutzer und Monat dazu. Fragen in der App, in Claude, ChatGPT oder Langdock laufen über denselben Zugang.',
+              'The AI agent is an add-on from €20 per user and month. Questions in the app, in Claude, ChatGPT or Langdock all run through the same access.',
             ),
           ]),
         },

@@ -71,6 +71,11 @@
   --brand-coral: oklch(0.7 0.19 20);
   --brand-coral-soft: oklch(0.3 0.07 20);
 
+  /* Resi, the agent. Her name is always set in this gradient (see `.resi-name`). */
+  --resi-teal: oklch(0.8 0.12 200);
+  --resi-mint: oklch(0.87 0.15 160);
+  --gradient-resi: linear-gradient(100deg, var(--brand-blue) 0%, var(--resi-teal) 55%, var(--resi-mint) 100%);
+
   /* Dark-first neutrals, near-black with a hint of the brand hue. */
   --ink: oklch(0.975 0.003 260);
   --ink-2: oklch(0.76 0.008 260);
@@ -134,6 +139,7 @@
   --line: oklch(0.7 0.14 88);
   --line-strong: oklch(0.55 0.12 88);
   --brand-blue-deep: oklch(0.3 0.1 262);
+  --gradient-resi: linear-gradient(100deg, oklch(0.36 0.13 262) 0%, oklch(0.36 0.09 200) 55%, oklch(0.36 0.1 160) 100%);
   --btn-primary-bg: oklch(0.16 0.01 88);
   --btn-primary-fg: var(--brand-yellow);
   --focus: oklch(0.16 0.01 88);
@@ -150,6 +156,8 @@
   --color-brand-yellow-soft: var(--brand-yellow-soft);
   --color-brand-coral: var(--brand-coral);
   --color-brand-coral-soft: var(--brand-coral-soft);
+  --color-resi-teal: var(--resi-teal);
+  --color-resi-mint: var(--resi-mint);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
@@ -441,6 +449,113 @@
 
 .link-arrow:hover::after {
   transform: translateX(3px);
+}
+
+/* ------------------------------------------------------------------ */
+/* Resi                                                                 */
+/* ------------------------------------------------------------------ */
+
+/* The name, wherever it appears (`withResi()` wraps it in CMS text). */
+.resi-name {
+  background: var(--gradient-resi);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+:is(h1, h2, h3, .font-display, .type-display-xl, .type-display, .type-h2, .type-h3) .resi-name {
+  font-weight: inherit;
+}
+
+/* Gradient border with a light travelling around the box (spotlight banner, featured card). */
+@property --resi-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes resi-spin {
+  to {
+    --resi-angle: 360deg;
+  }
+}
+
+.resi-ring {
+  position: relative;
+  isolation: isolate;
+}
+
+.resi-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: var(--resi-ring-width, 1px);
+  pointer-events: none;
+  background:
+    conic-gradient(
+      from var(--resi-angle),
+      transparent 0 58%,
+      var(--brand-blue) 74%,
+      var(--resi-teal) 88%,
+      var(--resi-mint) 97%,
+      transparent 100%
+    ),
+    linear-gradient(
+      100deg,
+      color-mix(in oklch, var(--brand-blue) 40%, var(--line)),
+      color-mix(in oklch, var(--resi-teal) 40%, var(--line)),
+      color-mix(in oklch, var(--resi-mint) 40%, var(--line))
+    );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: resi-spin 7s linear infinite;
+}
+
+.resi-ring:hover::before,
+.resi-ring:focus-within::before {
+  animation-duration: 3.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resi-ring::before {
+    animation: none;
+    background: var(--gradient-resi);
+  }
+}
+
+/* Soft aura behind the mark, breathing slowly. */
+@keyframes resi-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.7;
+  }
+}
+
+.resi-aura {
+  background: var(--gradient-resi);
+  filter: blur(18px);
+  animation: resi-breathe 4s var(--ease-in-out-cubic) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resi-aura {
+    animation: none;
+  }
 }
 
 /* ------------------------------------------------------------------ */

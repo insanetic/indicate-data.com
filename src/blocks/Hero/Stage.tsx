@@ -8,6 +8,7 @@ import { Chip, Sparkline } from '@/components/Illustrations/primitives'
 import { labelsFor } from '@/components/Illustrations/labels'
 import { useLocale } from '@/providers/Locale'
 import { cn } from '@/utilities/ui'
+import { withResi } from '@/components/Resi'
 
 const kpis = [
   { key: 'occupancy', value: 84, format: (v: number) => `${Math.round(v)} %`, delta: '+6' },
@@ -152,7 +153,7 @@ export const HeroStage: React.FC<{ className?: string }> = ({ className }) => {
 
         {/* Front layer: the agent answering */}
         <div className="relative z-20 mt-4 flex flex-col gap-3 rounded-[0.875rem] border border-line-strong bg-surface-2 p-4 shadow-float md:absolute md:right-0 md:top-[24%] md:mt-0 md:w-[30%]">
-          <span className="type-caption font-medium text-ink-3">{l.agent}</span>
+          <span className="type-caption font-medium text-ink-3">{withResi(l.agent)}</span>
           <div className="ml-auto max-w-[92%] rounded-[0.875rem] rounded-tr-sm bg-surface-3 px-3.5 py-2.5 type-small text-ink">
             {l.question}
           </div>

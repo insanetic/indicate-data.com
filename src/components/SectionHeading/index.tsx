@@ -2,6 +2,7 @@ import React from 'react'
 
 import { Eyebrow } from '@/components/Eyebrow'
 import { cn } from '@/utilities/ui'
+import { withResi } from '@/components/Resi'
 
 type HeaderData = {
   eyebrow?: string | null
@@ -46,12 +47,12 @@ export const SectionHeading: React.FC<Props> = ({
         className,
       )}
     >
-      {header.eyebrow && <Eyebrow>{header.eyebrow}</Eyebrow>}
+      {header.eyebrow && <Eyebrow>{withResi(header.eyebrow)}</Eyebrow>}
       {header.heading && (
-        <Tag className={cn(sizeClass, 'max-w-[20ch] text-ink')}>{header.heading}</Tag>
+        <Tag className={cn(sizeClass, 'max-w-[20ch] text-ink')}>{withResi(header.heading)}</Tag>
       )}
       {header.lead && (
-        <p className={cn('type-lead max-w-[58ch] text-ink-2', leadClassName)}>{header.lead}</p>
+        <p className={cn('type-lead max-w-[58ch] text-ink-2', leadClassName)}>{withResi(header.lead)}</p>
       )}
     </div>
   )

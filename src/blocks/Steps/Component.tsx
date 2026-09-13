@@ -4,6 +4,7 @@ import type { StepsBlock as Props } from '@/payload-types'
 
 import { Icon } from '@/components/Icon'
 import { SectionHeading } from '@/components/SectionHeading'
+import { withResi } from '@/components/Resi'
 
 export const StepsBlock: React.FC<Props> = ({ header, steps }) => {
   const list = (steps || []).filter((s) => s.title)
@@ -29,9 +30,9 @@ export const StepsBlock: React.FC<Props> = ({ header, steps }) => {
             <div className="flex flex-col gap-2 md:pr-8">
               <h3 className="flex items-center gap-2 type-h4 text-ink">
                 {step.icon && <Icon className="text-ink-3" name={step.icon} size={20} />}
-                {step.title}
+                {withResi(step.title)}
               </h3>
-              <p className="type-body text-ink-2 pretty max-w-[38ch]">{step.text}</p>
+              <p className="type-body text-ink-2 pretty max-w-[38ch]">{withResi(step.text)}</p>
             </div>
           </li>
         ))}

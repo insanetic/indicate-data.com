@@ -245,6 +245,7 @@ export interface Page {
     | PricingTeaserBlock
     | FaqBlock
     | CtaSectionBlock
+    | SpotlightBlock
     | DocumentBlock
     | ContentBlock
     | MediaBlock
@@ -556,11 +557,15 @@ export interface HeroBlock {
           | 'portfolio'
           | 'campaigns'
           | 'agentChat'
+          | 'resi'
           | 'mcp'
           | 'kpiStudio'
           | 'templates'
           | 'governance'
           | 'sync'
+          | 'semanticLayer'
+          | 'dimensions'
+          | 'collections'
         )
       | null;
     image?: (number | null) | Media;
@@ -707,11 +712,15 @@ export interface FeatureTabsBlock {
                 | 'portfolio'
                 | 'campaigns'
                 | 'agentChat'
+                | 'resi'
                 | 'mcp'
                 | 'kpiStudio'
                 | 'templates'
                 | 'governance'
                 | 'sync'
+                | 'semanticLayer'
+                | 'dimensions'
+                | 'collections'
               )
             | null;
           image?: (number | null) | Media;
@@ -781,11 +790,15 @@ export interface FeatureStoryBlock {
           | 'portfolio'
           | 'campaigns'
           | 'agentChat'
+          | 'resi'
           | 'mcp'
           | 'kpiStudio'
           | 'templates'
           | 'governance'
           | 'sync'
+          | 'semanticLayer'
+          | 'dimensions'
+          | 'collections'
         )
       | null;
     image?: (number | null) | Media;
@@ -1055,11 +1068,15 @@ export interface IntegrationsBlock {
           | 'portfolio'
           | 'campaigns'
           | 'agentChat'
+          | 'resi'
           | 'mcp'
           | 'kpiStudio'
           | 'templates'
           | 'governance'
           | 'sync'
+          | 'semanticLayer'
+          | 'dimensions'
+          | 'collections'
         )
       | null;
     image?: (number | null) | Media;
@@ -1567,6 +1584,48 @@ export interface CtaSectionBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'ctaSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpotlightBlock".
+ */
+export interface SpotlightBlock {
+  layout?: ('banner' | 'compact') | null;
+  eyebrow?: string | null;
+  heading: string;
+  text?: string | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * How the link is rendered.
+           */
+          appearance?: ('default' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+    anchor?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'spotlight';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2437,6 +2496,7 @@ export interface PagesSelect<T extends boolean = true> {
         pricingTeaser?: T | PricingTeaserBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
         ctaSection?: T | CtaSectionBlockSelect<T>;
+        spotlight?: T | SpotlightBlockSelect<T>;
         document?: T | DocumentBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -3163,6 +3223,40 @@ export interface CtaSectionBlockSelect<T extends boolean = true> {
         id?: T;
       };
   note?: T;
+  settings?:
+    | T
+    | {
+        background?: T;
+        spacing?: T;
+        anchor?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpotlightBlock_select".
+ */
+export interface SpotlightBlockSelect<T extends boolean = true> {
+  layout?: T;
+  eyebrow?: T;
+  heading?: T;
+  text?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
   settings?:
     | T
     | {
@@ -3987,6 +4081,10 @@ export interface Header {
                           | 'search'
                         )
                       | null;
+                    /**
+                     * Shown next to the entry.
+                     */
+                    badge?: string | null;
                     id?: string | null;
                   }[]
                 | null;
@@ -4236,6 +4334,7 @@ export interface HeaderSelect<T extends boolean = true> {
                         };
                     description?: T;
                     icon?: T;
+                    badge?: T;
                     id?: T;
                   };
               id?: T;

@@ -12,6 +12,7 @@ import { Icon } from '@/components/Icon'
 import { LocaleLink } from '@/components/LocaleLink'
 import { splitLocale } from '@/i18n/href'
 import { cn } from '@/utilities/ui'
+import { mentionsResi, ResiMark, withResi } from '@/components/Resi'
 
 export type NavItem = NonNullable<Header['items']>[number]
 
@@ -114,6 +115,13 @@ export const DesktopNav: React.FC<{ items: NavItem[]; label: string }> = ({ item
   )
 }
 
+/** Small tag next to a menu entry ("Neu"), in the Resi gradient. */
+export const NavBadge: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span className="inline-flex h-5 items-center rounded-btn px-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[oklch(0.16_0.01_262)]" style={{ background: 'var(--gradient-resi)' }}>
+    {children}
+  </span>
+)
+
 const navLinkClass =
   'inline-flex h-10 items-center gap-1 rounded-btn px-3 text-[0.9375rem] font-medium text-ink-2 transition-colors duration-150 hover:text-ink focus-visible:text-ink'
 
@@ -203,9 +211,12 @@ const MenuItem: React.FC<{
                           </span>
                         )}
                         <span className="flex flex-col">
-                          <span className="text-[0.9375rem] font-medium text-ink">{entry.link.label}</span>
+                          <span className="flex items-center gap-2 text-[0.9375rem] font-medium text-ink">
+                            {withResi(entry.link.label)}
+                            {entry.badge && <NavBadge>{entry.badge}</NavBadge>}
+                          </span>
                           {entry.description && (
-                            <span className="type-caption text-ink-3 pretty">{entry.description}</span>
+                            <span className="type-caption text-ink-3 pretty">{withResi(entry.description)}</span>
                           )}
                         </span>
                       </LocaleLink>
@@ -218,17 +229,20 @@ const MenuItem: React.FC<{
 
           {featured && featuredHref && (
             <LocaleLink
-              className="group hidden w-[16rem] flex-col justify-between gap-6 rounded-card-inner border border-line bg-surface-3 p-4 transition-colors duration-150 hover:border-line-strong focus-visible:border-line-strong xl:flex"
+              className={cn(
+                'group hidden w-[16rem] flex-col justify-between gap-6 rounded-card-inner border border-line bg-surface-3 p-4 transition-colors duration-150 hover:border-line-strong focus-visible:border-line-strong xl:flex',
+                mentionsResi(featured.title) && 'resi-ring border-transparent',
+              )}
               href={featuredHref}
               onClick={close}
               {...(featured.link?.newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {})}
             >
-              <BrandBars size={18} />
+              {mentionsResi(featured.title) ? <ResiMark size={32} /> : <BrandBars size={18} />}
               <span className="flex flex-col gap-1.5">
-                <span className="font-display text-lg font-medium leading-tight text-ink">{featured.title}</span>
-                {featured.text && <span className="type-caption text-ink-2 pretty">{featured.text}</span>}
+                <span className="font-display text-lg font-medium leading-tight text-ink">{withResi(featured.title)}</span>
+                {featured.text && <span className="type-caption text-ink-2 pretty">{withResi(featured.text)}</span>}
                 {featured.link?.label && (
-                  <span className="link-arrow mt-2 type-small font-medium">{featured.link.label}</span>
+                  <span className="link-arrow mt-2 type-small font-medium">{withResi(featured.link.label)}</span>
                 )}
               </span>
             </LocaleLink>

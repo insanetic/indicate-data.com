@@ -774,3 +774,248 @@
     transform: translateX(var(--dot-x, 0));
   }
 }
+
+/* --- Resi (9 s): three exchanges take turns; question, thinking, then the answer --- */
+
+/* The question of the exchange whose third of the clock is open. `--delay` = slot × 3 s. */
+@keyframes loop-resi-q {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  3%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.loop-resi-q {
+  animation-name: loop-resi-q;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Resi checks the figures between the question and the answer. */
+@keyframes loop-resi-think {
+  0%,
+  4% {
+    opacity: 0;
+  }
+  6%,
+  11% {
+    opacity: 1;
+  }
+  13%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-resi-think {
+  animation-name: loop-resi-think;
+}
+
+/* The answer lands after the thinking pause and leaves with the question. */
+@keyframes loop-resi-a {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  15%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.loop-resi-a {
+  animation-name: loop-resi-a;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Dashed ring around the mark turns slowly (not on the scene clock). */
+@keyframes resi-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.resi-orbit {
+  animation: resi-orbit 24s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resi-orbit {
+    animation: none;
+  }
+  /* Only the first exchange, finished; the others stay hidden. */
+  .loop-resi-think,
+  .loop-resi-q:not([data-slot='0']),
+  .loop-resi-a:not([data-slot='0']) {
+    opacity: 0;
+  }
+}
+
+/* --- Semantic layer (9 s): three KPIs take turns; every consumer receives the same value --- */
+
+/* The value of the KPI whose third of the clock is open; `--delay` = slot × 3 s + consumer stagger. */
+@keyframes loop-sem-value {
+  0%,
+  8% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  11%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+.loop-sem-value {
+  animation-name: loop-sem-value;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Dimensions (9 s): perspective toggles every half cycle; `--delay` = 0 or 4.5 s --- */
+
+@keyframes loop-dim-on {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  3%,
+  47% {
+    opacity: 1;
+    transform: none;
+  }
+  50%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+.loop-dim-on {
+  animation-name: loop-dim-on;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes loop-dim-row {
+  0% {
+    background-color: transparent;
+    border-color: var(--line);
+  }
+  3%,
+  47% {
+    background-color: var(--surface-3);
+    border-color: var(--line-strong);
+  }
+  50%,
+  100% {
+    background-color: transparent;
+    border-color: var(--line);
+  }
+}
+.loop-dim-row {
+  animation-name: loop-dim-row;
+}
+
+/* --- Share (8 s): a collection is released, the connectors draw, every recipient ticks --- */
+
+.loop-share {
+  --loop: 8s;
+}
+
+/* "Released" chip pops in right after the reset. */
+@keyframes loop-share-pub {
+  0%,
+  3% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  6%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  94%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-share-pub {
+  animation-name: loop-share-pub;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Connector draws from the collection to a group (`--delay` staggers), holds, fades before the reset. */
+@keyframes loop-share-path {
+  0%,
+  8% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  26%,
+  90% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  94%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.loop-share-path {
+  stroke-dasharray: 1;
+  animation-name: loop-share-path;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Delivery tick on each recipient, after its connector has arrived. */
+@keyframes loop-share-tick {
+  0%,
+  26% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  30%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  94%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-share-tick {
+  animation-name: loop-share-tick;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Only the first KPI and the first perspective, finished. */
+  .loop .loop-sem-value:not([data-first]),
+  .loop .loop-dim-on:not([data-first]) {
+    opacity: 0;
+  }
+  .loop .loop-dim-row[data-first] {
+    background-color: var(--surface-3);
+    border-color: var(--line-strong);
+  }
+  .loop .loop-share-path {
+    stroke-dashoffset: 0;
+  }
+}

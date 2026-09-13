@@ -16,11 +16,15 @@ export const illustrationOptions = [
   { value: 'portfolio', label: { de: 'Hotelgruppe: Häuser im Vergleich (Loop)', en: 'Hotel group: properties compared (loop)' } },
   { value: 'campaigns', label: { de: 'Agentur: Kampagnen-ROI je Kunde (Loop)', en: 'Agency: campaign ROI per client (loop)' } },
   { value: 'agentChat', label: { de: 'Agent: Chat mit Quelle und Kontext (Loop)', en: 'Agent: chat with source and context (loop)' } },
+  { value: 'resi', label: { de: 'Resi bei der Arbeit: Quellen, Frage, Antwort (Loop)', en: 'Resi at work: sources, question, answer (loop)' } },
   { value: 'mcp', label: { de: 'MCP: Claude ruft Indicate-Kennzahlen ab (Loop)', en: 'MCP: Claude calling Indicate KPIs (loop)' } },
   { value: 'kpiStudio', label: { de: 'KPI Studio: Definition, Vorschau, Version (Loop)', en: 'KPI Studio: definition, preview, version (loop)' } },
   { value: 'templates', label: { de: 'Vorlagen: Template anwenden (Loop)', en: 'Templates: applying a template (loop)' } },
   { value: 'governance', label: { de: 'Governance: Spaces, Rollen, Audit-Log (Loop)', en: 'Governance: spaces, roles, audit log (loop)' } },
   { value: 'sync', label: { de: 'Sync: Verbindungen und Historie (Loop)', en: 'Sync: connections and history (loop)' } },
+  { value: 'semanticLayer', label: { de: 'Semantic Layer: Katalog, Definition, überall gleich (Loop)', en: 'Semantic layer: catalogue, definition, same everywhere (loop)' } },
+  { value: 'dimensions', label: { de: 'Dimensionen: Gruppierung und Perspektive (Loop)', en: 'Dimensions: grouping and perspective (loop)' } },
+  { value: 'collections', label: { de: 'KPI-Sammlung: freigeben und teilen (Loop)', en: 'KPI collection: release and share (loop)' } },
 ] as const
 
 export type IllustrationKey = (typeof illustrationOptions)[number]['value']

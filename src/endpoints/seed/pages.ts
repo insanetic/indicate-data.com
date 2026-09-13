@@ -23,7 +23,7 @@ const internal = <A extends Appearance>(url: string, label: string, appearance?:
 
 /** Names of the subpages as they appear in menus, cross-links and eyebrows. */
 export const pageNames = (t: T): Record<SubpageSlug, string> => ({
-  agent: 'Indicate Agent',
+  agent: t('Resi, Ihre KI-Agentin', 'Resi, your AI agent'),
   mcp: 'Indicate MCP',
   'build-with-ai': t('Mit KI bauen', 'Build with AI'),
   integrations: t('Integrationen', 'Integrations'),
@@ -38,7 +38,7 @@ export const pageNames = (t: T): Record<SubpageSlug, string> => ({
 
 /** One-line descriptions, shared by the menus and the "goes well with" cards. */
 export const pageBlurbs = (t: T): Record<SubpageSlug, string> => ({
-  agent: t('Fragen in normaler Sprache, Antworten aus geprüften Kennzahlen', 'Ask in plain language, answers from verified KPIs'),
+  agent: t('Fragen wie im Flur, Antworten mit Zahl, Diagramm und Quelle', 'Ask like in the hallway, get the number, the chart and the source'),
   mcp: t('Ihre Zahlen in Claude, ChatGPT und Ihrem Editor', 'Your numbers in Claude, ChatGPT and your editor'),
   'build-with-ai': t('Dashboard beschreiben, fertig', 'Describe a dashboard, done'),
   integrations: t('Über 30 Anbindungen, Historie ab Tag eins', 'More than 30 connections, history from day one'),
@@ -260,22 +260,55 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
     t,
     'agent',
     {
-      title: t('Indicate Agent: Chat mit Ihren Hoteldaten', 'Indicate Agent: chat with your hotel data'),
+      title: t('Resi: Ihre KI-Agentin für Hotelzahlen', 'Resi: your AI agent for hotel numbers'),
       description: t(
-        'Fragen Sie Auslastung, Stornos oder Kampagnen in normaler Sprache. Der Agent antwortet aus geprüften Kennzahlen, mit Diagramm und Quelle.',
-        'Ask about occupancy, cancellations or campaigns in plain language. The agent answers from verified KPIs, with chart and source.',
+        'Fragen Sie Resi, wie das Wochenende lief. Sie antwortet in Sekunden, mit Zahl, Diagramm und Quelle, aus den Daten Ihres Hauses.',
+        'Ask Resi how the weekend went. She answers in seconds, with the number, the chart and the source, from your property’s own data.',
       ),
     },
     [
       hero(t, refs, {
-        eyebrow: 'Indicate Agent',
-        heading: t('Fragen Sie Ihre Zahlen. In normaler Sprache.', 'Ask your numbers. In plain language.'),
+        eyebrow: t('Resi · Ihre KI-Agentin für Hotelzahlen', 'Resi · your AI agent for hotel numbers'),
+        heading: t('Sag hallo zu Resi.', 'Meet Resi.'),
         lead: t(
-          'Der Agent antwortet aus geprüften Kennzahlen, zeigt das Diagramm dazu und nennt die Quelle.',
-          'The agent answers from verified KPIs, shows the chart and names its source.',
+          '„Wie lief das Wochenende?“ Resi antwortet in Sekunden, mit Zahl, Diagramm und Quelle. Kein Export, kein Warten auf Montag.',
+          '“How did the weekend go?” Resi answers in seconds, with the number, the chart and the source. No export, no waiting for Monday.',
         ),
         illustration: 'agentChat',
         secondary: { url: '/mcp', label: t('Auch in Claude und ChatGPT', 'Also in Claude and ChatGPT') },
+      }),
+      story({
+        name: t('Resi bei der Arbeit', 'Resi at work'),
+        eyebrow: t('Wer Resi ist', 'Who Resi is'),
+        heading: t('Resi kennt Ihre Zahlen. Und Ihr Haus.', 'Resi knows your numbers. And your property.'),
+        lead: t(
+          'Resi ist die KI-Agentin in Indicate: Sie kennt jede Kennzahl Ihres Hauses, antwortet in normaler Sprache und zeigt, woher jede Zahl kommt.',
+          'Resi is the AI agent in Indicate: she knows every KPI of your property, answers in plain language and shows where every number comes from.',
+        ),
+        illustration: 'resi',
+        points: [
+          {
+            icon: 'database',
+            title: t('Sieht nur, was Sie freigeben', 'Sees only what you release'),
+            text: t('PMS, Ads, CRM: Sie wählen je Chat, worauf Resi schauen darf. Rohe Tabellen bleiben zu, bis Sie sie öffnen.', 'PMS, ads, CRM: you pick per chat what Resi may look at. Raw tables stay closed until you open them.'),
+          },
+          {
+            icon: 'message',
+            title: t('Behält den Faden', 'Keeps the thread'),
+            text: t('„Und im November?“ „Gegen Vorjahr?“ Resi weiß noch, worum es ging, wie im Gespräch.', '“And in November?” “Against last year?” Resi remembers what you were talking about, like in a conversation.'),
+          },
+          {
+            icon: 'globe',
+            title: t('Deutsch, Englisch, Italienisch', 'German, English, Italian'),
+            text: t('Fragen Sie, wie Sie wollen. Resi antwortet in der Sprache, die Ihr Admin für das Haus eingestellt hat.', 'Ask however you like. Resi answers in the language your admin set for the property.'),
+          },
+          {
+            icon: 'sparkles',
+            title: t('In der App und in Ihrem Chat', 'In the app and in your chat'),
+            text: t('Dieselbe Resi, dieselben Rechte: in Indicate, in Claude, in ChatGPT und in Langdock.', 'The same Resi, the same permissions: in Indicate, in Claude, in ChatGPT and in Langdock.'),
+          },
+        ],
+        links: [internal('/mcp', t('Resi in Claude und ChatGPT', 'Resi in Claude and ChatGPT'), 'link')],
       }),
       steps(
         t,
@@ -294,8 +327,8 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
             icon: 'message',
             title: t('Fragen wie einem Kollegen', 'Ask as you would a colleague'),
             text: t(
-              'Auslastung, Stornos, Kampagnen, Herkunft. Rückfragen sind erlaubt, der Agent behält den Faden.',
-              'Occupancy, cancellations, campaigns, origin. Follow-ups are welcome; the agent keeps the thread.',
+              'Auslastung, Stornos, Kampagnen, Herkunft. Rückfragen sind erlaubt, Resi behält den Faden.',
+              'Occupancy, cancellations, campaigns, origin. Follow-ups are welcome; Resi keeps the thread.',
             ),
           },
           {
@@ -313,8 +346,8 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
         eyebrow: t('Geprüfte Kennzahlen', 'Verified KPIs'),
         heading: t('Antworten, die Sie prüfen können.', 'Answers you can check.'),
         lead: t(
-          'Der Agent rechnet mit den Kennzahlen aus Ihrem Katalog, nie mit Vermutungen. Jede Antwort trägt ihre Quelle.',
-          'The agent works with the KPIs in your catalogue, never with guesses. Every answer carries its source.',
+          'Resi rechnet mit den Kennzahlen aus Ihrem Katalog, nie mit Vermutungen. Jede Antwort trägt ihre Quelle.',
+          'Resi works with the KPIs in your catalogue, never with guesses. Every answer carries its source.',
         ),
         illustration: 'agent',
         layout: 'visual-right',
@@ -332,7 +365,7 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
           {
             icon: 'eye',
             title: t('Über ein Dashboard chatten', 'Chat about a dashboard'),
-            text: t('Dashboard links, Chat rechts. Der Agent kennt jedes Widget darauf.', 'Dashboard on the left, chat on the right. The agent knows every widget on it.'),
+            text: t('Dashboard links, Chat rechts. Resi kennt jedes Widget darauf.', 'Dashboard on the left, chat on the right. Resi knows every widget on it.'),
           },
           {
             icon: 'upload',
@@ -344,7 +377,7 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
       cards({
         name: t('Rahmen', 'Guardrails'),
         eyebrow: t('Vom Admin gesetzt', 'Set by the admin'),
-        heading: t('Der Rahmen, in dem der Agent arbeitet.', 'The frame the agent works in.'),
+        heading: t('Der Rahmen, in dem Resi arbeitet.', 'The frame Resi works in.'),
         lead: t(
           'Administratoren legen fest, welches Modell antwortet, in welcher Sprache, mit welchem Budget und wie tief es in die Daten darf.',
           'Administrators decide which model answers, in which language, on what budget and how deep it may go into the data.',
@@ -353,9 +386,9 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
         background: 'tinted',
         cards: [
           { icon: 'sparkles', title: t('Modell', 'Model'), text: t('Von schnell bis gründlich: Claude Haiku, Sonnet, Opus oder Fable, je Space wählbar.', 'From fast to thorough: Claude Haiku, Sonnet, Opus or Fable, chosen per space.') },
-          { icon: 'globe', title: t('Sprache', 'Language'), text: t('Der Agent antwortet auf Deutsch, Englisch oder Italienisch, unabhängig von der Frage.', 'The agent answers in German, English or Italian, whatever the question was in.') },
-          { icon: 'database', title: t('Warehouse-Zugriff', 'Warehouse access'), text: t('Standard ist der Kennzahlen-Katalog. Rohe Tabellen sieht der Agent nur, wenn Sie es freigeben.', 'The KPI catalogue is the default. The agent sees raw tables only if you allow it.') },
-          { icon: 'euro', title: t('KI-Budget', 'AI budget'), text: t('Ein Limit je Space mit Anzeige im Menü. Ist es erreicht, wartet der Agent bis zum Reset.', 'A limit per space, shown in the menu. When it is reached, the agent waits for the reset.') },
+          { icon: 'globe', title: t('Sprache', 'Language'), text: t('Resi antwortet auf Deutsch, Englisch oder Italienisch, unabhängig von der Frage.', 'Resi answers in German, English or Italian, whatever the question was in.') },
+          { icon: 'database', title: t('Warehouse-Zugriff', 'Warehouse access'), text: t('Standard ist der Kennzahlen-Katalog. Rohe Tabellen sieht Resi nur, wenn Sie es freigeben.', 'The KPI catalogue is the default. Resi sees raw tables only if you allow it.') },
+          { icon: 'euro', title: t('KI-Budget', 'AI budget'), text: t('Ein Limit je Space mit Anzeige im Menü. Ist es erreicht, wartet Resi bis zum Reset.', 'A limit per space, shown in the menu. When it is reached, Resi waits for the reset.') },
         ],
       }),
       {
@@ -404,13 +437,13 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
         ],
         points: [],
         channels: [{ name: 'Indicate App' }, { name: 'Claude' }, { name: 'ChatGPT' }],
-        links: [external(refs.links.demoUrl, t('Agent live erleben', 'See the agent live'), 'default')],
+        links: [external(refs.links.demoUrl, t('Live erleben', 'See it live'), 'default')],
         settings: { ...defaults },
       },
       related(t, ['mcp', 'build-with-ai', 'governance']),
       faq(t, [
         {
-          q: t('Welche Daten sieht der Agent?', 'What data does the agent see?'),
+          q: t('Welche Daten sieht Resi?', 'What data does Resi see?'),
           a: t(
             'Die Kennzahlen aus Ihrem Katalog für die Quellen, die Sie im Chat gewählt haben. Rohe Tabellen sieht er nur, wenn ein Admin den Warehouse-Zugriff freigibt.',
             'The KPIs in your catalogue for the sources you picked in the chat. It sees raw tables only if an admin enables warehouse access.',
@@ -424,14 +457,14 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
           ),
         },
         {
-          q: t('Was kostet der Agent?', 'What does the agent cost?'),
+          q: t('Was kostet Resi?', 'What does Resi cost?'),
           a: t(
-            'Der Agent kommt als Erweiterung ab 20 € pro Nutzer und Monat dazu. Fragen in der App und über MCP laufen über denselben Zugang und dasselbe Budget.',
-            'The agent is an add-on from €20 per user and month. Questions in the app and through MCP share the same access and budget.',
+            'Die KI-Agentin kommt als Erweiterung ab 20 € pro Nutzer und Monat dazu. Fragen in der App und über MCP laufen über denselben Zugang und dasselbe Budget.',
+            'The AI agent is an add-on from €20 per user and month. Questions in the app and through MCP share the same access and budget.',
           ),
         },
       ]),
-      closing(t, refs, t('Stellen Sie die erste Frage mit Ihren Zahlen.', 'Ask the first question with your numbers.'), t('30 Minuten, echte Daten, echte Antworten.', '30 minutes, real data, real answers.')),
+      closing(t, refs, t('Stellen Sie Resi die erste Frage.', 'Ask Resi the first question.'), t('30 Minuten, Ihre Daten, echte Antworten.', '30 minutes, your data, real answers.')),
     ],
   )
 
@@ -488,6 +521,19 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
           },
         ],
       ),
+      {
+        blockType: 'spotlight',
+        blockName: 'Resi',
+        layout: 'compact',
+        eyebrow: t('Die Agentin dahinter', 'The agent behind it'),
+        heading: t('In Claude antwortet Resi. Dieselbe wie in der App.', 'In Claude, Resi answers. The same as in the app.'),
+        text: t(
+          'Was Resi in der App weiß, weiß sie auch in Claude: dieselben Kennzahlen, dieselben Rechte, über MCP.',
+          'What Resi knows in the app, she knows in Claude too: the same KPIs, the same permissions, through MCP.',
+        ),
+        links: [internal('/agent', t('Resi kennenlernen', 'Meet Resi'), 'outline')],
+        settings: { ...defaults, spacing: 'compact' },
+      },
       story({
         name: t('Katalog statt Tabelle', 'Catalogue, not table'),
         eyebrow: t('Semantic Layer', 'Semantic layer'),
@@ -496,7 +542,7 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
           'Der Assistent bekommt Kennzahlen mit ihrer Definition, nicht Zugriff auf Rohdaten. So rechnet Claude RevPAR genauso wie Ihr Dashboard.',
           'The assistant gets KPIs with their definition, not access to raw data. So Claude calculates RevPAR exactly like your dashboard.',
         ),
-        illustration: 'sources',
+        illustration: 'semanticLayer',
         layout: 'visual-right',
         points: [
           {
@@ -1176,7 +1222,7 @@ const kpiStudioPage = (t: T, refs: Refs): Partial<PageData> =>
       }),
       steps(
         t,
-        t('Vom Schema zur freigegebenen Kennzahl', 'From schema to released KPI'),
+        t('Kennzahl, Dimension, Sammlung', 'KPI, dimension, collection'),
         t('Das Studio führt durch jeden Schritt, die Vorschau rechnet mit.', 'The studio walks you through each step; the preview keeps calculating.'),
         [
           {
@@ -1186,16 +1232,48 @@ const kpiStudioPage = (t: T, refs: Refs): Partial<PageData> =>
           },
           {
             icon: 'code',
-            title: t('Definition schreiben', 'Write the definition'),
-            text: t('Als Definition im Editor, geprüft gegen das Schema des Semantic Layer. Der Dry Run zeigt das Ergebnis.', 'As a definition in the editor, validated against the semantic layer’s schema. The dry run shows the result.'),
+            title: t('Kennzahl definieren', 'Define the KPI'),
+            text: t('Formel als Definition im Editor, geprüft gegen das Schema. Der Dry Run zeigt das Ergebnis mit echten Daten.', 'The formula as a definition in the editor, validated against the schema. The dry run shows the result with real data.'),
+          },
+          {
+            icon: 'layers',
+            title: t('Dimensionen anlegen', 'Add dimensions'),
+            text: t('Gruppierung und Perspektive aus einer Spalte: Kanal, Zimmerkategorie, Buchungs- oder Ankunftsdatum.', 'Grouping and perspective from a column: channel, room category, booking or arrival date.'),
           },
           {
             icon: 'check',
-            title: t('Freigeben', 'Release'),
-            text: t('Als Version in Ihrer KPI-Sammlung. Dashboards, Agent und MCP rechnen ab sofort damit.', 'As a version in your KPI collection. Dashboards, agent and MCP use it from now on.'),
+            title: t('In der Sammlung freigeben', 'Release into the collection'),
+            text: t('Als Version in Ihrer KPI-Sammlung. Dashboards, Resi und MCP rechnen ab sofort damit, überall gleich.', 'As a version in your KPI collection. Dashboards, Resi and MCP use it from now on, the same everywhere.'),
           },
         ],
       ),
+      cards({
+        name: t('Bausteine', 'Building blocks'),
+        eyebrow: t('Was Sie bauen', 'What you build'),
+        heading: t('Drei Bausteine, eine Sprache.', 'Three building blocks, one language.'),
+        lead: t(
+          'Kennzahlen, Dimensionen und Sammlungen sind Definitionen im Semantic Layer. Was hier steht, gilt in jedem Dashboard, für Resi und in Claude.',
+          'KPIs, dimensions and collections are definitions in the semantic layer. What is defined here holds in every dashboard, for Resi and in Claude.',
+        ),
+        layout: 'grid-3',
+        cards: [
+          {
+            icon: 'code',
+            title: t('Kennzahl', 'KPI'),
+            text: t('Eine Formel über Tabellen und Spalten, mit Filter und Version. RevPAR, Kosten je Buchung oder Ihre eigene.', 'A formula over tables and columns, with filter and version. RevPAR, cost per booking or your own.'),
+          },
+          {
+            icon: 'layers',
+            title: t('Dimension', 'Dimension'),
+            text: t('Wonach eine Kennzahl aufgeteilt wird und welches Datum zählt. Einmal angelegt, in jedem Widget wählbar.', 'What a KPI is split by and which date counts. Created once, selectable in every widget.'),
+          },
+          {
+            icon: 'users',
+            title: t('Sammlung', 'Collection'),
+            text: t('Kennzahlen und Dimensionen gebündelt und versioniert. Die Einheit, die Sie freigeben und teilen.', 'KPIs and dimensions bundled and versioned. The unit you release and share.'),
+          },
+        ],
+      }),
       story({
         name: t('Dimensionen', 'Dimensions'),
         eyebrow: t('Dimensionen', 'Dimensions'),
@@ -1204,7 +1282,7 @@ const kpiStudioPage = (t: T, refs: Refs): Partial<PageData> =>
           'Zwei Arten: Gruppierung teilt die Kennzahl auf, Perspektive entscheidet, welches Datum zählt. Buchungsdatum oder Ankunft macht bei Pickup den Unterschied.',
           'Two kinds: grouping splits the KPI, perspective decides which date counts. Booking date or arrival makes all the difference for pickup.',
         ),
-        illustration: 'sources',
+        illustration: 'dimensions',
         layout: 'visual-right',
         points: [
           {
@@ -1226,6 +1304,39 @@ const kpiStudioPage = (t: T, refs: Refs): Partial<PageData> =>
             icon: 'eye',
             title: t('Insights-Explorer', 'Insights explorer'),
             text: t('Kennzahl, Gruppierung, Zeitraum, Filter: prüfen, bevor es aufs Dashboard geht.', 'KPI, grouping, period, filters: check before it goes on a dashboard.'),
+          },
+        ],
+      }),
+      story({
+        name: t('Sammlungen teilen', 'Sharing collections'),
+        eyebrow: t('KPI-Sammlungen', 'KPI collections'),
+        heading: t('Einmal gebaut, für alle freigegeben.', 'Built once, released to everyone.'),
+        lead: t(
+          'Kennzahlen und Dimensionen bündeln Sie in einer Sammlung. Die teilen Sie mit Ihrer Hotelgruppe, Ihren Kunden oder der Community, und jedes Update kommt bei allen an.',
+          'You bundle KPIs and dimensions into a collection. Share it with your hotel group, your clients or the community, and every update reaches all of them.',
+        ),
+        illustration: 'collections',
+        layout: 'visual-left',
+        points: [
+          {
+            icon: 'buildings',
+            title: t('Hotelgruppe', 'Hotel group'),
+            text: t('Die Zentrale definiert den Standard, jedes Haus rechnet damit. Vergleiche stimmen, weil die Definition dieselbe ist.', 'Head office defines the standard, every property uses it. Comparisons hold because the definition is the same.'),
+          },
+          {
+            icon: 'briefcase',
+            title: t('Kunden', 'Clients'),
+            text: t('Agenturen und Berater geben ihr Kennzahlen-Set an alle Kunden weiter, mit Version und Änderungshistorie.', 'Agencies and consultants pass their KPI set on to every client, with version and change history.'),
+          },
+          {
+            icon: 'globe',
+            title: t('Community', 'Community'),
+            text: t('Öffentliche Sammlungen übernehmen, eigene veröffentlichen. Branchenstandards wie RevPAR sind schon da.', 'Adopt public collections, publish your own. Industry standards like RevPAR are already there.'),
+          },
+          {
+            icon: 'lock',
+            title: t('Lesend geteilt', 'Shared read-only'),
+            text: t('Empfänger nutzen die Sammlung, ändern sie aber nicht. Neue Versionen erscheinen bei allen, alte bleiben gültig.', 'Recipients use the collection but do not change it. New versions appear for everyone, old ones stay valid.'),
           },
         ],
       }),
@@ -1253,8 +1364,8 @@ const kpiStudioPage = (t: T, refs: Refs): Partial<PageData> =>
           a: t('Die Schicht, in der jede Kennzahl genau einmal definiert ist. Dashboards, der Agent und MCP lesen dieselbe Definition, deshalb stimmen die Zahlen überall überein.', 'The layer where every KPI is defined exactly once. Dashboards, the agent and MCP read the same definition, which is why the numbers agree everywhere.'),
         },
         {
-          q: t('Kann ich Kennzahlen mit anderen Häusern teilen?', 'Can I share KPIs with other properties?'),
-          a: t('Ja. Insights auf Basis einer KPI-Sammlung lassen sich nur lesend mit anderen Spaces teilen, etwa von der Zentrale an die Häuser.', 'Yes. Insights built on a KPI collection can be shared read-only with other spaces, for example from head office to the properties.'),
+          q: t('Kann ich Kennzahlen mit anderen teilen?', 'Can I share KPIs with others?'),
+          a: t('Ja. Eine KPI-Sammlung teilen Sie lesend mit anderen Spaces: von der Zentrale an die Häuser, von der Agentur an ihre Kunden oder öffentlich mit der Community. Updates kommen bei allen an.', 'Yes. You share a KPI collection read-only with other spaces: from head office to the properties, from an agency to its clients or publicly with the community. Updates reach everyone.'),
         },
       ]),
       closing(t, refs, t('Bringen Sie Ihre erste eigene Kennzahl mit.', 'Bring your first KPI of your own.'), t('In der Demo definieren wir sie gemeinsam.', 'We define it together in the demo.')),
@@ -1501,7 +1612,7 @@ const hotelsPage = (t: T, refs: Refs): Partial<PageData> =>
         },
         {
           q: t('Was kostet Indicate für ein Haus?', 'What does Indicate cost for one property?'),
-          a: t('Core ab 100 € im Monat, Pro ab 500 €, einmalig 800 € Onboarding. Der Agent kommt ab 20 € je Nutzer dazu.', 'Core from €100 a month, Pro from €500, a one-off €800 onboarding. The agent is added from €20 per user.'),
+          a: t('Core ab 100 € im Monat, Pro ab 500 €, einmalig 800 € Onboarding. Die KI-Agentin kommt ab 20 € je Nutzer dazu.', 'Core from €100 a month, Pro from €500, a one-off €800 onboarding. The AI agent is added from €20 per user.'),
         },
       ]),
       closing(t, refs, t('Sehen Sie Indicate mit den Zahlen Ihres Hauses.', 'See Indicate with your property’s numbers.'), t('30 Minuten, echte Daten aus einem Haus wie Ihrem.', '30 minutes, real data from a property like yours.'), t('Demo für Ihr Haus', 'Demo for your property')),

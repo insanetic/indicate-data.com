@@ -8,6 +8,7 @@ import { Media } from '@/components/Media'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Visual } from '@/components/Illustrations'
 import { HeroIntro } from './Intro'
+import { withResi } from '@/components/Resi'
 
 /**
  * Centred, typography-first hero with a wide product scene underneath: the layered stage on
@@ -40,7 +41,7 @@ export const HeroBlock: React.FC<HeroBlockProps & { locale?: Locale }> = ({ head
 
         {(trust?.text || logos.length > 0) && (
           <div className="intro-item mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2" style={{ '--i': 3 } as React.CSSProperties}>
-            {trust?.text && <span className="type-small text-ink-3">{trust.text}</span>}
+            {trust?.text && <span className="type-small text-ink-3">{withResi(trust.text)}</span>}
             {logos.map((logo, i) => (
               <span className="flex items-center" key={logo.id || i}>
                 {logo.image && typeof logo.image === 'object' ? (

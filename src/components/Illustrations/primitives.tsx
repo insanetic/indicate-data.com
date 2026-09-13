@@ -10,12 +10,14 @@ import { cn } from '@/utilities/ui'
 export const Frame: React.FC<{
   label: string
   className?: string
+  style?: React.CSSProperties
   children: React.ReactNode
-}> = ({ label, className, children }) => (
+}> = ({ label, className, style, children }) => (
   <div
     aria-label={label}
     className={cn('relative select-none pointer-events-none text-left', className)}
     role="img"
+    style={style}
   >
     {children}
   </div>

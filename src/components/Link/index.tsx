@@ -4,6 +4,7 @@ import { cn } from '@/utilities/ui'
 import React from 'react'
 
 import type { Page, Post } from '@/payload-types'
+import { withResi } from '@/components/Resi'
 
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']
@@ -50,7 +51,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   const anchor = (
     <LocaleLink className={cn(className)} href={href} {...newTabProps}>
-      {label && label}
+      {label && (appearance === 'primary' || appearance === 'default' ? label : withResi(label))}
       {children && children}
     </LocaleLink>
   )

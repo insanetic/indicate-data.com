@@ -8,6 +8,7 @@ import { Icon } from '@/components/Icon'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Visual } from '@/components/Illustrations'
 import { cn } from '@/utilities/ui'
+import { withResi } from '@/components/Resi'
 
 /**
  * A feature told with a product scene. `stacked` (default): heading row, the scene at full
@@ -67,7 +68,7 @@ export const FeatureStoryBlock: React.FC<Props & { locale?: Locale }> = ({
       <div className="reveal grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-12">
         <SectionHeading align="left" className="lg:col-span-8" header={{ ...header, lead: null }} />
         {header?.lead && (
-          <p className="type-lead max-w-[48ch] text-ink-2 lg:col-span-4 lg:pb-1">{header.lead}</p>
+          <p className="type-lead max-w-[48ch] text-ink-2 lg:col-span-4 lg:pb-1">{withResi(header.lead)}</p>
         )}
       </div>
       <div className="reveal" style={{ '--i': 1 } as React.CSSProperties}>
@@ -100,8 +101,8 @@ const Point: React.FC<PointProps> = ({ icon, title, text }) => (
   <li className="flex gap-3.5">
     <Icon className="mt-1 shrink-0 text-accent" name={icon} size={20} />
     <div className="flex flex-col gap-1">
-      <p className="font-medium text-ink">{title}</p>
-      {text && <p className="type-small text-ink-2 pretty max-w-[40ch]">{text}</p>}
+      <p className="font-medium text-ink">{withResi(title)}</p>
+      {text && <p className="type-small text-ink-2 pretty max-w-[40ch]">{withResi(text)}</p>}
     </div>
   </li>
 )

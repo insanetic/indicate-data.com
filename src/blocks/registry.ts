@@ -19,6 +19,7 @@ export const blockSlugs = [
   'pricingTeaser',
   'faq',
   'ctaSection',
+  'spotlight',
   'document',
   'content',
   'mediaBlock',

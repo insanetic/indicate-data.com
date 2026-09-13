@@ -7,6 +7,7 @@ import { CountUp } from '@/components/CountUp'
 import { Icon } from '@/components/Icon'
 import { SectionHeading } from '@/components/SectionHeading'
 import { cn } from '@/utilities/ui'
+import { withResi } from '@/components/Resi'
 
 /** One rounded container: three pillars with hairline dividers, then a row of tiles. */
 export const PillarsBlock: React.FC<Props> = ({ header, pillars, tiles }) => {
@@ -30,8 +31,8 @@ export const PillarsBlock: React.FC<Props> = ({ header, pillars, tiles }) => {
             {list.map((p, i) => (
               <li className="reveal flex flex-col gap-4 px-6 py-8 md:px-10 md:py-10" key={p.id || i} style={{ '--i': i } as React.CSSProperties}>
                 {p.icon && <Icon className="text-accent" name={p.icon} size={26} />}
-                <h3 className="type-h4 text-ink">{p.title}</h3>
-                <p className="type-small text-ink-2 pretty">{p.text}</p>
+                <h3 className="type-h4 text-ink">{withResi(p.title)}</h3>
+                <p className="type-small text-ink-2 pretty">{withResi(p.text)}</p>
               </li>
             ))}
           </ul>
@@ -57,7 +58,7 @@ export const PillarsBlock: React.FC<Props> = ({ header, pillars, tiles }) => {
                       {t.suffix && <span className="text-accent">{t.suffix}</span>}
                     </p>
                   ) : null}
-                  <p className={cn(t.value ? 'type-small text-ink-2' : 'type-h4 text-ink')}>{t.label}</p>
+                  <p className={cn(t.value ? 'type-small text-ink-2' : 'type-h4 text-ink')}>{withResi(t.label)}</p>
                   {link && (
                     <CMSLink {...link} appearance="inline" className="link-arrow mt-auto type-small" />
                   )}

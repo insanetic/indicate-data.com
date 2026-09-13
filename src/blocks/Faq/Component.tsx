@@ -6,6 +6,7 @@ import RichText from '@/components/RichText'
 import { SectionHeading } from '@/components/SectionHeading'
 import { FaqClient, type FaqItemData } from './Client'
 import { lexicalToPlainText } from '@/utilities/lexicalToPlainText'
+import { withResi } from '@/components/Resi'
 
 export const FaqBlock: React.FC<Props> = ({ header, items }) => {
   const list = (items || []).filter((i) => i.question && i.answer)
@@ -13,7 +14,7 @@ export const FaqBlock: React.FC<Props> = ({ header, items }) => {
 
   const data: FaqItemData[] = list.map((item, i) => ({
     id: item.id || String(i),
-    question: item.question,
+    question: withResi(item.question),
     answer: <RichText className="prose-sm md:prose-base" data={item.answer} enableGutter={false} />,
   }))
 
