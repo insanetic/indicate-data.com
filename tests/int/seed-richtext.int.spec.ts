@@ -27,11 +27,22 @@ Ein Absatz
     const types = doc.root.children.map((n) => n.type)
     expect(types).toEqual(['heading', 'paragraph', 'list', 'list', 'horizontalrule', 'quote'])
     expect(doc.root.children[0]).toMatchObject({ tag: 'h2', children: [{ type: 'text', text: 'Titel' }] })
-    expect(doc.root.children[1].children?.[0]).toMatchObject({ text: 'Ein Absatz über zwei Zeilen.' })
+    expect(doc.root.children[1].children?.map((n) => n.type)).toEqual(['text', 'linebreak', 'text'])
+    expect(doc.root.children[1].children?.[0]).toMatchObject({ text: 'Ein Absatz' })
+    expect(doc.root.children[1].children?.[2]).toMatchObject({ text: 'über zwei Zeilen.' })
     expect(doc.root.children[2]).toMatchObject({ listType: 'bullet', tag: 'ul' })
     expect(doc.root.children[2].children).toHaveLength(2)
     expect(doc.root.children[3]).toMatchObject({ listType: 'number', tag: 'ol' })
     expect(doc.root.children[3].children?.[1]).toMatchObject({ type: 'listitem', value: 2 })
+  })
+
+  it('converts consecutive lines in a paragraph into soft line breaks', () => {
+    const doc = richText('Zeile eins\nZeile zwei')
+    expect(doc.root.children).toHaveLength(1)
+    const children = doc.root.children[0].children!
+    expect(children.map((n) => n.type)).toEqual(['text', 'linebreak', 'text'])
+    expect(children[0]).toMatchObject({ text: 'Zeile eins' })
+    expect(children[2]).toMatchObject({ text: 'Zeile zwei' })
   })
 
   it('converts bold and links inline', () => {

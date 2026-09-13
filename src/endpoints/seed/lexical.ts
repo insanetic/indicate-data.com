@@ -55,7 +55,13 @@ export const inline = (line: string): SeedNode[] => {
   return out
 }
 
-const paragraph = (line: string): SeedNode => ({ type: 'paragraph', ...base, textFormat: 0, children: inline(line) })
+/** One paragraph; several lines become soft line breaks (rendered as `<br>`). */
+const paragraph = (...lines: string[]): SeedNode => ({
+  type: 'paragraph',
+  ...base,
+  textFormat: 0,
+  children: lines.flatMap((line, i) => (i === 0 ? inline(line) : [{ type: 'linebreak', version: 1 }, ...inline(line)])),
+})
 
 const list = (items: string[], ordered: boolean): SeedNode => ({
   type: 'list',
@@ -90,7 +96,9 @@ const table = (rows: string[]): SeedNode => {
 /**
  * Tiny markdown subset → Lexical, for seeding long documents. Blocks are separated by blank
  * lines: `##`/`###`/`####` headings, `- ` bullets, `1. ` numbers, `> ` quotes, `---` rules,
- * `|` tables, everything else a paragraph. Inline: `**bold**`, `[label](url)`.
+ * `|` tables, everything else a paragraph. Several lines inside one paragraph block become
+ * soft line breaks (`<br>`); quote lines still join with a space. Inline: `**bold**`,
+ * `[label](url)`.
  */
 export const richText = (md: string): { root: SeedNode & { children: SeedNode[] } } => {
   const blocks = md
@@ -113,7 +121,7 @@ export const richText = (md: string): { root: SeedNode & { children: SeedNode[] 
     if (lines.every((l) => l.startsWith('> '))) {
       return { type: 'quote', ...base, children: inline(lines.map((l) => l.slice(2)).join(' ')) }
     }
-    return paragraph(lines.join(' '))
+    return paragraph(...lines)
   })
 
   return { root: { type: 'root', ...base, children } }
