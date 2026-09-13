@@ -2,7 +2,7 @@ import { Languages } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-import { isLocale, localeLabels, type Locale } from '@/i18n/config'
+import { isLocale, localeLabels, localeTags, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
 export type BindingLanguage = 'none' | Locale | null | undefined
@@ -27,7 +27,7 @@ export const TranslationNotice: React.FC<Props> = ({ locale, binding, slug }) =>
         <Languages aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" strokeWidth={1.75} />
         <span>{dict.translationNotice.replace('{language}', language)}</span>
       </p>
-      <Link className="shrink-0 font-medium text-ink underline-offset-4 hover:underline" href={`/${binding}/${slug}`} hrefLang={binding}>
+      <Link className="shrink-0 font-medium text-ink underline-offset-4 hover:underline" href={`/${binding}/${slug}`} hrefLang={localeTags[binding]}>
         {dict.readBindingVersion} ({language})
       </Link>
     </aside>
