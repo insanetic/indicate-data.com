@@ -15,7 +15,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { extractHeadings } from '@/utilities/lexical/headings'
 
 /** Long-form document: tinted header band, sidebar, article with anchored headings, TOC, history. */
-export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> = ({
+export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string; isFirst?: boolean }> = ({
   header,
   sidebar,
   meta,
@@ -25,6 +25,7 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
   history,
   locale,
   slug = '',
+  isFirst,
 }) => {
   const dict = getDictionary(locale)
   const sidebarDoc = sidebar && typeof sidebar === 'object' ? (sidebar as Sidebar) : null
@@ -40,7 +41,8 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
       <header className="border-b border-line bg-surface-2">
         <div className="container py-12 md:py-16">
           <div className={hasSidebar ? 'lg:ml-[calc(16rem+4rem)]' : ''}>
-            <SectionHeading as="h1" size="display" header={header} align="left" />
+            {/* Only the page's first block owns the h1; a document further down is an h2 section. */}
+            <SectionHeading as={isFirst === false ? 'h2' : 'h1'} size="display" header={header} />
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
               <DocumentMeta
                 binding={bindingLanguage}
@@ -63,11 +65,8 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
           )}
           <div className={hasToc ? 'grid gap-10 xl:grid-cols-[minmax(0,1fr)_14rem] xl:gap-16' : ''}>
             <div className="flex min-w-0 flex-col gap-8">
-              {hasNotice && (
-                <div className="print:hidden">
-                  <TranslationNotice binding={bindingLanguage} locale={locale} slug={slug} />
-                </div>
-              )}
+              {/* The disclaimer stays in print (only its link is hidden), it is part of the document. */}
+              {hasNotice && <TranslationNotice binding={bindingLanguage} locale={locale} slug={slug} />}
               <RichText
                 className="prose-document mx-0 max-w-[70ch]"
                 copyLinkLabel={dict.copyLink}

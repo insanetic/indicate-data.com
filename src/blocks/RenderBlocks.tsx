@@ -98,7 +98,7 @@ export const RenderBlocks: React.FC<{
             key={block.id || index}
             spacing={settings?.spacing}
           >
-            <Block {...block} locale={locale} slug={slug} />
+            <Block {...block} isFirst={index === 0} locale={locale} slug={slug} />
           </Section>
         )
       })}

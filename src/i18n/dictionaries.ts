@@ -30,6 +30,8 @@ const de = {
   version: 'Version',
   bindingVersion: 'Verbindliche Fassung',
   translationNotice: 'Diese Übersetzung dient nur zur Information. Verbindlich ist allein die Fassung auf {language}.',
+  /** Language names in the reader's language, for `{language}` in `translationNotice`. */
+  languageNames: { de: 'Deutsch', en: 'Englisch' } as Record<Locale, string>,
   readBindingVersion: 'Verbindliche Fassung lesen',
   previousVersions: 'Frühere Fassungen',
   copyLink: 'Link zu diesem Abschnitt',
@@ -66,6 +68,7 @@ const en: typeof de = {
   version: 'Version',
   bindingVersion: 'Binding version',
   translationNotice: 'This translation is for information only. Only the {language} version is legally binding.',
+  languageNames: { de: 'German', en: 'English' },
   readBindingVersion: 'Read the binding version',
   previousVersions: 'Previous versions',
   copyLink: 'Link to this section',
