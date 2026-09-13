@@ -32,10 +32,10 @@ export const consentGlobal = (t: T, refs: Refs): Partial<Consent> => ({
       ),
       services: [
         {
-          name: t('Cookie-Auswahl', 'Cookie choice'),
+          name: 'Consent-Cookie',
           provider: 'Indicate Data GmbH',
           purpose: t('Speichert Ihre Entscheidung zu Cookies.', 'Stores your cookie decision.'),
-          cookies: t('consent · 12 Monate', 'consent · 12 months'),
+          cookies: 'consent · 12 Monate / 12 months',
         },
       ],
     },
@@ -54,7 +54,7 @@ export const consentGlobal = (t: T, refs: Refs): Partial<Consent> => ({
             'Reichweitenmessung und Analyse der Nutzung unserer Website.',
             'Reach measurement and analysis of the use of our website.',
           ),
-          cookies: t('_ga, _ga_* · 2 Jahre', '_ga, _ga_* · 2 years'),
+          cookies: '_ga, _ga_* · 2 Jahre / 2 years',
           privacyUrl: 'https://policies.google.com/privacy',
         },
       ],
