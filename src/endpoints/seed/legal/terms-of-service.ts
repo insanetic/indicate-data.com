@@ -1,7 +1,7 @@
 /**
- * Verbatim from indicate-data.io (DE original). No English translation is
- * published for this page — /en/compliance/terms-of-service serves the same
- * German text, so \`en\` mirrors \`de\`.
+ * German text verbatim from indicate-data.io (DE original), which is the legally
+ * binding version. The live site publishes no English terms of service, so \`en\`
+ * is our own translation for convenience only.
  */
 const de = `Diese Allgemeinen Geschäftsbedingungen (die "Bedingungen") stellen eine rechtliche Vereinbarung dar, die Ihre Rechte und Pflichten sowie die der Indicate Data GmbH, einem in Deutschland eingetragenen Unternehmen ("Indicate Data", "wir" oder "unser"), in Bezug auf die Indicate Data-Website (die "Website") und unsere Webanwendungen oder andere Dienste (die "Dienste"), die von Indicate Data darüber angeboten werden, festlegt.
 
@@ -205,4 +205,206 @@ Per Post oder Kurier: Indicate Data GmbH Industriestr 27 D-77656 Offenburg Deuts
 
 Wenn wir unsere Benutzer über diese Bedingungen benachrichtigen müssen, können wir dies unter Verwendung der mit Ihrem Konto verknüpften Kontaktinformationen oder auf andere Weise tun, die uns zur Verfügung gestellt wurden.`
 
-export const termsOfService = { de, en: de }
+const en = `These General Terms and Conditions (the "Terms") constitute a legal agreement that sets out your rights and obligations as well as those of Indicate Data GmbH, a company registered in Germany ("Indicate Data", "we" or "our"), with regard to the Indicate Data website (the "Website") and our web applications or other services (the "Services") offered by Indicate Data through it.
+
+## Acceptance of the Agreement
+
+By using our website and/or services, you agree to comply with and to acknowledge all terms and conditions contained herein (the "Agreement"). Please read these Terms carefully. If you do not agree, you should not use the website or services. We reserve the right to update or revise these Terms without prior notice. Please review these Terms regularly for changes. Your continued use of our website or services after the publication of changes constitutes acceptance of those changes. Our Terms are always kept up to date at indicate-data.io/terms-of-service.
+
+## Ownership of Intellectual Property
+
+The Company alone owns all rights, title and interest, including all associated intellectual property rights, in our technology, the content and the service as well as in all suggestions, ideas, improvement requests, feedback, recommendations or other information provided by you or by any other party with regard to Indicate Data. The company name, the company logo and the product names associated with Indicate Data are trademarks of the Company or of third parties, and no right or license to use them is granted. The copying, redistribution, use or publication by you of any such matters or of any part of Indicate Data is strictly prohibited. You do not acquire any ownership rights in content, documents or other materials that you view through Indicate Data. The publication of information or materials on Indicate Data does not constitute a waiver of any rights in such information and materials. Some content on the website consists of copyrighted works of third parties.
+
+If you have evidence, know or believe in good faith that content on or accessible through our website or services infringes a copyright that you own or for which you are a designated agent, please send a notification of the infringement by e-mail or regular mail to the designated Copyright Agent of Indicate Data for receiving notifications of claimed infringement:
+
+Indicate Data GmbH Industriestr 27 D-77656 Offenburg Germany By e-mail: [compliance@indicate-data.io](mailto:compliance@indicate-data.io)
+
+In such a notification, please include sufficient information to address the points listed below:
+
+Identify the copyrighted work that is alleged to have been infringed. If several copyrighted works are covered by a single notification, provide a representative list of such works. Identify the material that is claimed to be infringing or to be the subject of infringing activity. Provide information that sufficiently enables Indicate Data to locate the material. Please provide a URL and screenshots for each item. State the specific assets or pages that you claim are infringing. Say "entire work" ONLY if all assets/pages in a document are infringing. Provide details of your claim to the material or of your relationship to the copyright owner of the material. Provide your full name, your address and your telephone number in case we need to clarify your claim. Provide a working e-mail address at which we can contact you in order to confirm your claim. Where applicable, include the following statement: "I believe in good faith that the use of the copyrighted material described above as the allegedly infringing web pages is not authorized by the copyright owner, its agent or the law." Where applicable, include the following statement: "I swear under penalty of perjury that the information in the notification is accurate and that I am the copyright owner or am authorized to act on behalf of the copyright owner for this complaint." Sign the document physically or electronically.
+
+## Privacy Policy, Security Policy and Cookie Policy
+
+Our Privacy Policy, Security Policy and Cookie Policy are incorporated into these General Terms and Conditions and are governed by them. We reserve the right to change these policies from time to time at our reasonable discretion.
+
+## Account Access
+
+In some cases it is necessary for employees of the Company to access your account and your content in order to diagnose a problem. If you contact our support team, this implies that you permit the employees of the Company to access your account where necessary in order to be helpful. If you wish to receive support without granting permission to access your account, please state this in your communication with our support team, and these requests will be accommodated where possible.
+
+## User Content
+
+The Company does not own any data, information or materials that you or other users submit ("User Content"). You are solely responsible for the accuracy, quality, integrity, legality, reliability, appropriateness and intellectual property ownership of, or right to use, all User Content submitted by you, and the Company is not responsible or liable for the deletion, correction, destruction, damage or loss of User Content or for the failure to store it. At the request of the responsible administrator, the Company may remove, modify, edit or otherwise alter User Content. The administrator also has the authority to block, delete or otherwise modify the access of users under their responsible account and is solely responsible for adding and removing users under their account.
+
+The Company reserves the right to withhold, remove and/or discard User Content without notice in the event of any breach of the Agreement. Upon termination for breach of the Agreement, your right to access or use customer data ends immediately, and we are not obliged to retain or forward customer data.
+
+## Your Responsibilities
+
+All activities that take place under your user account are your responsibility and must comply with all applicable local, state, national and international laws, treaties and regulations in connection with your use of Indicate Data, including those relating to data protection, international communication and the transfer of technical or personal data. In addition, you are responsible for complying with all internal policies, procedures and regulations required by your employer and/or by the responsible administrators of your account.
+
+You must (1) notify us immediately of any unauthorized use of a password or account or of any other known or suspected security breach; (2) report to us immediately and make reasonable efforts to stop immediately any copying or distribution of content that is known or suspected by you or by other users to be a breach of this Agreement or of the intellectual property rights of third parties; (3) and not impersonate another user or provide false identity information in order to obtain access to or use of Indicate Data.
+
+## Permitted Uses and Grant of License
+
+The Company grants you a non-exclusive, non-transferable, worldwide right to use the Services, solely for your own internal business purposes, subject to the terms of this Agreement. All rights not expressly granted to you are reserved to Indicate Data and its licensors.
+
+You may not: (1) license, sublicense, sell, resell, transfer, assign, distribute or otherwise commercially exploit Indicate Data or the content, or make it available to third parties in any way; (2) modify Indicate Data or the content or create derivative works based on it; (3) create internet links to Indicate Data or "frame" or "mirror" any content on another server or wireless or internet-based device; (4) or reverse engineer Indicate Data or access it in order to (a) create a competing product or service, (b) create a product with ideas, features, functions or graphics similar to those of Indicate Data, or (c) copy ideas, features, functions or graphics of Indicate Data.
+
+You may use Indicate Data only for your internal business purposes and may not: (1) send spam or other duplicative or unsolicited messages in violation of applicable laws; (2) send or store infringing, obscene, threatening, defamatory or otherwise unlawful or harmful materials, including those that are harmful to children or that violate the privacy of third parties; (3) send or store material containing software viruses, worms, Trojan horses or other harmful computer code, files, scripts, agents or programs; (4) impair or disrupt the integrity or performance of the service or of the data contained in it; or (5) attempt to obtain unauthorized access to the service or to the systems or networks connected with it.
+
+## Prohibited Uses
+
+The user is prohibited from using the cloud software excessively and in a spamming manner. The user must take all precautions that exclude unlawful, spamming or otherwise excessive use.
+
+The user is prohibited from infecting or contaminating the software or the servers on which it runs with harmful code (computer viruses, worms or Trojans, etc.) or from negligently enabling such use.
+
+Any passing on, sub-letting, sublicensing or other resale of the software by the user is not permitted unless this has been expressly agreed.
+
+## Obligations of the User, Cooperation
+
+The user is obliged to provide the data required for the contract completely and truthfully. The obligation to provide truthful information concerns in particular the company, the first name and last name, the complete address as well as the contact details and the bank details. If the user provides untrue information, the provider may terminate the contract without notice for good cause.
+
+The user is obliged to keep their data up to date at all times and to notify the provider of changes without undue delay.
+
+The user receives the access credentials for the software from the provider. The purpose of the access credentials is to exclude the use of the hosted software by unauthorized persons. These access credentials must be protected by the user against unauthorized access by third parties and must be changed at regular intervals for security reasons. In digital form, the user may store user names and passwords only in securely encrypted form.
+
+If the access credentials are entered incorrectly several times, access may be blocked for the protection of the user. If the user is responsible for this blocking, the user is liable for the costs and expenses incurred by the provider for the unblocking, within the scope of the contractually agreed or locally customary and reasonable costs.
+
+The user is obliged to inform the provider without undue delay if the user becomes aware that third parties have access to their access credentials or have otherwise obtained access to their user profile. If the user does not notify the provider without undue delay, the user is obliged to compensate the provider for the damage resulting from this.
+
+The user may, insofar as technically possible, extract this data at any time for backup purposes and is obliged to do so at the end of each working day. Insofar as this is not possible, the provider makes the data available to the customer weekly as a backup.
+
+## Payment, Refunds, Upgrades and Downgrades
+
+A valid credit card is required for paying accounts.
+
+The Services are invoiced in advance on a monthly, quarterly or annual basis (at the user's choice) and are non-refundable. There are no refunds or credits for partial months of service, no refunds for upgrades/downgrades and no refunds for unused months on an open account. In order to treat everyone equally, no exceptions are made.
+
+All fees are exclusive of all taxes, levies or charges imposed by tax authorities, and you are responsible for the payment of all such taxes, levies or charges, with the exception of German taxes.
+
+Upon every upgrade or downgrade of the plan level, the credit card you have provided will automatically be charged at the new rate in your next billing cycle.
+
+A downgrade of your Services may lead to the loss of content, features or capacity of your account. Indicate Data accepts no liability for such losses.
+
+The payment term for all invoices is 14 days from the invoice date. Payment must be made within this period. In the event of late payment, we reserve the right to charge default interest at a rate of 5 % above the base interest rate of the European Central Bank. In addition, you are responsible for all costs and expenses incurred by us as a result of the late payment, including reasonable attorneys' fees and collection charges.
+
+## Changes to the Indicate Data App and to Prices
+
+We reserve the right to modify or discontinue the Indicate Data app (or any part of it) temporarily or permanently at any time and from time to time, with or without notice. We will, however, do our best to inform customers about upcoming system maintenance and/or service interruptions.
+
+The prices for all Indicate Data plans, discounts and grandfathering rights are subject to change. Should Indicate Data for any reason remove or modify the plan you have chosen or require an upgrade to a current plan, we will inform you by e-mail at least thirty (30) days in advance.
+
+We are not liable to you or to third parties for modifications, price changes, suspensions or discontinuations of the Indicate Data app.
+
+## Cancellation and Termination
+
+Cancellation is always possible at the end of the plan booked. With a monthly plan, cancellation is possible on a monthly basis, and with an annual plan at the end of the annual subscription. You are solely responsible for properly cancelling your account through the website or app. A telephone request to cancel your account does not count as a cancellation. You can cancel your account at any time by clicking the Legal link in the application. The account screen provides a simple cancellation link.
+
+All of your User Content is deleted from your account and from the Services immediately upon cancellation. This information cannot be restored once your account has been cancelled.
+
+Indicate Data has the right, at its own discretion, to suspend or terminate your account and to refuse any current or future use of the Services for any reason at any time. Such termination of the Services leads to the deactivation or deletion of your account or of your access to your account and to the loss and abandonment of all User Content in your account. Indicate Data reserves the right to refuse service to anyone for any reason at any time.
+
+## Third-Party Content
+
+Third-party content may appear on the website or be accessible via links. Any such activity and all associated terms, warranties or representations are solely between you and the respective third party. The Company and its licensors assume no liability, obligation or responsibility for any correspondence, purchase or promotion between you and any such third party. We do not endorse any sites on the internet that are linked through Indicate Data, and under no circumstances are the Company or its licensors responsible for content, products or other materials on or available from such sites. We make Indicate Data available to you in accordance with the terms of this Agreement. You acknowledge, however, that certain third-party providers of supplementary software, hardware or services may require your agreement to additional or different license or other terms before you use or access such software, hardware or services.
+
+## Indemnification
+
+You agree to indemnify and hold harmless the Company, its licensors and each such party's parent organizations, subsidiaries, affiliated companies, officers, directors, employees, attorneys and agents from and against all claims, costs, damages, losses, liabilities and expenses (including attorneys' fees and costs) arising out of or in connection with: (1) a claim alleging that the use of the customer data infringes the rights of a third party or has caused harm to a third party; (2) a claim which, if true, would constitute a breach of your representations and warranties; or (3) a claim resulting from your breach or another user's breach of this Agreement, provided in each such case that the Company (a) promptly reports the claim to you in writing; (b) gives you sole control over the defense and settlement of the claim (provided that you may not settle or defend any claim unless you unconditionally release the Company from all liability and such settlement does not affect the business or the service of the Company); (c) provides you with all available information and assistance; (d) and has not compromised or settled any such claim.
+
+## Representations and Warranties
+
+Each party represents and warrants that it has the legal power and authority to enter into this contract. The Company represents and warrants that it will provide the Services in a manner that, under normal circumstances and conditions, reasonably conforms with generally accepted industry standards.
+
+You represent and warrant that you have not falsely impersonated anyone else and have not provided false information in order to obtain access to the Services, and that your billing information is correct.
+
+## Disclaimer of Warranties
+
+The Company and its licensors give no representation, warranty or guarantee as to the reliability, timeliness, quality, suitability, truth, availability, accuracy or completeness of the service or of any content. The Company and its licensors do not represent or warrant that: (1) THE USE OF THE SERVICES IS SECURE, TIMELY, UNINTERRUPTED OR ERROR-FREE OR WILL OPERATE IN COMBINATION WITH OTHER HARDWARE, SOFTWARE, SYSTEMS OR DATA, (2) THE SERVICES WILL MEET YOUR REQUIREMENTS OR EXPECTATIONS, (3) ANY STORED DATA IS ACCURATE OR RELIABLE, (4) THE QUALITY OF ANY PRODUCTS, SERVICES, INFORMATION OR OTHER MATERIALS THAT YOU PURCHASE OR OBTAIN THROUGH THE SERVICES WILL MEET YOUR REQUIREMENTS OR EXPECTATIONS, (5) ERRORS OR DEFECTS WILL BE CORRECTED, OR (6) THE SERVICES OR THE SERVERS THAT MAKE THE SERVICES AVAILABLE ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS. THE SERVICES AND ALL CONTENT ARE MADE AVAILABLE TO YOU ON AN "AS IS" BASIS. ALL CONDITIONS, REPRESENTATIONS AND WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY OR OTHERWISE, INCLUDING, WITHOUT LIMITATION, ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT OF THIRD-PARTY RIGHTS, ARE HEREBY EXCLUDED BY THE COMPANY AND ITS LICENSORS TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW.
+
+## Disclaimer for Data Sources
+
+Our service is based on the connection and processing of data that we receive through external third-party interfaces. Since this data lies outside our sphere of influence, we accept no liability for its accuracy, completeness or availability. Errors or outages on the part of the data sources or interfaces are not our responsibility.
+
+## Limitation of Liability for Calculation Errors
+
+Although we work with the greatest care in developing our analyses and dashboards, calculation errors may occur in rare cases. For direct damages arising from such errors, we are liable only in cases of gross negligence or intent. Liability for consequential damages, such as lost profits or indirect damages, is excluded to the extent permitted by law.
+
+## Data Processing and Warranty
+
+The data we process and provide serves exclusively for analysis and visualization in dashboards. We give no warranty as to the accuracy or completeness of this data or of the analyses based on it, in particular where the data originates from external sources.
+
+## Reporting Errors and Support
+
+If errors or problems occur, our support team is at your disposal. Please report incidents through our ticket system or by e-mail to hello@indicate-data.io. During business hours, our team usually responds to your inquiries within 48 hours and handles them according to their priority.
+
+## Internet Delays
+
+The Services may be subject to limitations, delays and other problems that are inherent in the use of the internet and of electronic communications. INDICATE DATA IS NOT RESPONSIBLE FOR DELAYS, DELIVERY FAILURES OR OTHER DAMAGE RESULTING FROM SUCH PROBLEMS.
+
+## Limitation of Liability
+
+The provider warrants the software in accordance with the applicable statutory provisions, unless otherwise provided below. The provider gives the warranty only within the scope of the characteristics of the software it offers and describes. The provider gives no warranty that the software corresponds to the interests or operational particularities of the user, unless there is corresponding advisory or other fault on the part of the provider.
+
+The Company is not liable for losses, injuries, claims, liabilities or damages of any kind that result in any way from (a) errors or omissions of Indicate Data, (b) the unavailability or interruption of Indicate Data or of any of its features, (c) your use of Indicate Data, (d) the content contained on Indicate Data, or (e) any delay or failure of performance that lies outside our control.
+
+Any strict liability of the provider for initial defects pursuant to Section 536a of the German Civil Code (BGB) is excluded. The provider is liable for initial defects only if it knew or should have known of the defect and did not inform the user accordingly.
+
+The user has no claim on account of defects if the software does not function properly because the user is using it under conditions of use that have not been agreed, or in a system environment that has not been agreed, or otherwise in breach of Section 8 of this contract, or has altered it adversely themselves or through third parties and this is responsible for the defect.
+
+The user is obliged to report any defects in a comprehensible and detailed manner. In doing so, the user must state in particular the working steps that led to the occurrence of the defect, the way in which it manifests itself and the effects of the defect.
+
+If the user reports a defect although the user is responsible for the malfunction, the provider is entitled to charge the user for the costs of the support provided at the provider's consulting prices applicable at that time, or alternatively on the basis of the customary and reasonable costs for such a support service.
+
+Defects are remedied during the provider's business hours by way of a free-of-charge rectification of the software. The provider is entitled to a reasonable period of time for this.
+
+The user is obliged to support the provider to a reasonable extent in remedying defects.
+
+Claims of the user on account of material defects and/or defects of title become time-barred one year after delivery of the software. This does not apply if the provider acted intentionally or with gross negligence or if the defect caused injury to the life, body, freedom or health of the user.
+
+## Changes to the Terms and Conditions
+
+The Company reserves the right to change the terms and conditions of this contract or its policies with regard to Indicate Data at any time, effective upon publication of an updated version of this contract on the website. You are responsible for reviewing this contract regularly. Continued use of Indicate Data after such changes constitutes your acceptance of such changes. Our Terms are always kept up to date at indicate-data.io/terms-of-service.
+
+## Assignment
+
+This contract may not be assigned by you without the prior written consent of the Company, but may be assigned by the Company without your consent to (a) a parent or subsidiary company, (b) an acquirer of assets or (c) a successor by merger. Any purported assignment in breach of this section is void.
+
+## General
+
+These General Terms and Conditions are governed by German law, where Indicate Data has its registered office. No text or information set out in any other order, preprinted form or document shall supplement or vary the terms and conditions of this contract. If a provision of this contract is held to be invalid or unenforceable by a court of competent jurisdiction, then those provisions shall be construed so as to reflect the intentions of the invalid or unenforceable provisions, with all other provisions remaining in full force and effect.
+
+There is no joint venture, partnership, employment relationship or agency relationship between you and the Company as a result of this contract or of the use of Indicate Data.
+
+The failure of the Company to enforce a right or a provision of this contract does not constitute a waiver of that right or that provision, unless this is acknowledged and agreed by the Company in writing.
+
+This contract, together with any applicable invoices, comprises the entire agreement between you and the Company and supersedes all prior or contemporaneous negotiations, discussions or agreements, whether written or oral, between the parties regarding the subject matter contained herein.
+
+## Mediation
+
+In the event of disputes arising from the business relationship between the provider and the user, the parties are obliged to seek an amicable solution. If no agreement is reached, they undertake, before having recourse to the courts, to settle their differences in a mediation. The possibility of expedited proceedings by way of interim legal protection remains unaffected. The simple non-payment of the remuneration without substantiated objections on the part of the user is not a dispute within the meaning of this mediation clause.
+
+If one party requests a mediation from the other party, both parties are obliged to agree on a mediator within eight days. If this agreement is not reached within the time limit, an attorney mediator, whereby preference is to be given to mediators who offer online mediation, is to be appointed, binding on the parties, at the request of one of the parties by the president of the bar association or one of its representatives at the registered office of the provider. This is also the place of the mediation, unless the presiding board of the bar association makes a proposal for an online mediation. The language of the mediation is German, unless all parties involved agree on another language.
+
+Recourse to the courts (or to an alternatively agreed arbitration procedure, where applicable) is only permissible once the mediation has failed because (a) the parties declare the mediation ended by mutual agreement, (b) further negotiations are refused by one party after the first mediation session, (c) the mediator declares the mediation to have failed or (d) no agreement is reached within 3 months of the beginning of the first mediation session, insofar as the parties do not extend the period by mutual agreement.
+
+The costs of an unsuccessful mediation are to be borne internally in equal halves by the parties in relation to the mediator. Notwithstanding this arrangement in relation to the mediator, the parties remain free to claim reimbursement of these costs and of those of any accompanying legal advice as costs of legal prosecution in subsequent proceedings; the respective decision on the dispute then applies. If an agreement is reached, the cost arrangement agreed in it applies.
+
+## Place of Jurisdiction, Applicable Law
+
+The place of performance is the registered office of the provider.
+
+For all present and future claims arising from the business relationship with a user who is an entrepreneur within the meaning of Section 14 of the German Civil Code (BGB), the exclusive place of jurisdiction is the place of business of the provider. The same place of jurisdiction applies if the user has no general place of jurisdiction in Germany, relocates their domicile or habitual residence out of Germany after conclusion of the contract, or if their domicile or habitual residence is not known at the time the action is brought. The provider is, however, entitled at any time to sue the user at the user's place of business or at any other permissible place of jurisdiction.
+
+All legal relationships between the parties are governed exclusively by German law.
+
+## Questions About These General Terms and Conditions
+
+If you have questions or comments about these Terms, please contact us in one of the following ways:
+
+By post or courier: Indicate Data GmbH Industriestr 27 D-77656 Offenburg Germany By e-mail: [compliance@indicate-data.io](mailto:compliance@indicate-data.io)
+
+## Notifications Regarding These General Terms and Conditions
+
+If we need to notify our users about these Terms, we may do so using the contact information linked to your account or in another way that was provided to us.`
+
+export const termsOfService = { de, en }

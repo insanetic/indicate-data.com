@@ -1,7 +1,7 @@
 /**
- * Verbatim from indicate-data.io (DE original). No English translation is
- * published for this page — /en/compliance/privacy-policy serves the same
- * German text, so \`en\` mirrors \`de\`.
+ * German text verbatim from indicate-data.io (DE original), which is the legally
+ * binding version. The live site publishes no English privacy policy, so \`en\` is
+ * our own translation for convenience only.
  */
 const de = `Wir verpflichten uns, die Privatsphäre unserer Besucher und Mitglieder zu schützen. Diese Datenschutzerklärung erläutert, welche persönlichen und anderen Daten von Ihnen durch Indicate Data auf seiner Website (www.indicate-data.io) und unseren Webanwendungen erfasst werden, wie die Informationen verwendet werden und wie Sie die Erfassung, Nutzung, Korrektur und/oder Löschung Ihrer Informationen steuern können. Wir werden Ihre Informationen nicht an Dritte weitergeben oder mit diesen teilen, außer wie in dieser Datenschutzerklärung beschrieben.
 
@@ -193,4 +193,194 @@ Per Post oder Kurier: Indicate Data GmbH Industriestr 27 D-77656 Offenburg Deuts
 
 Wenn wir unsere Benutzer über diese Datenschutzerklärung benachrichtigen müssen, können wir dies unter Verwendung der Kontaktdaten tun, die mit Ihrem Konto verknüpft sind oder uns anderweitig zur Verfügung gestellt wurden.`
 
-export const privacyPolicy = { de, en: de }
+const en = `We are committed to protecting the privacy of our visitors and members. This Privacy Policy explains which personal and other data of yours is collected by Indicate Data on its website (www.indicate-data.io) and our web applications, how the information is used and how you can control the collection, use, correction and/or deletion of your information. We will not pass on or share your information with third parties except as described in this Privacy Policy.
+
+The "Company", "Indicate Data", "Indicate", "us", "we" or "our" refers to Indicate Data GmbH., the owner and operator of the website and web applications, a company registered in Germany.
+
+This Privacy Policy is part of our Terms of Service. BY USING OUR WEBSITE / WEB APPLICATIONS YOU AGREE TO THE TERMS OF THIS PRIVACY POLICY.
+
+Please read this Privacy Policy carefully in order to understand our privacy practices. If you do not agree to these practices, your remedy is not to use the website or web applications.
+
+## What Information We Collect
+
+Information you provide to us - You give us information about yourself, such as your name and your e-mail address, when you register with us. If you correspond with us by e-mail, telephone or through the website, we may store the content of your messages, your e-mail address or telephone number and our replies.
+
+Registration on our website - Persons who access our web applications are asked to register through our website (signing up for a free/paid account). During registration you will be asked to provide some personal information: your name, your company affiliation and your company e-mail address. A unique password for access to your account is also required. (Please do not disclose your password to anyone.)
+
+When you register and set up an account, and when accessing our web applications, you will be asked to confirm your associated profile settings, including information on how you would like to be contacted.
+
+You can also register and create an account via Google. Personal data that you have provided to Google will be made available to us in order to set up your account. If you sign up for an account with us via Google, you agree to this Privacy Policy and our Terms of Service.
+
+We do not collect "sensitive" or "special" categories of personal data.
+
+User content - There may be public areas on the website or in the web applications where users can post messages and take part in public bulletin boards. The rules for posting user content are governed by our Terms of Service.
+
+Information you provide automatically - When you access the website, we automatically collect certain personal and other information, for example about the device you are using and how you interact with the website and the web applications. Information collected may specifically include: (1) the browser types and versions used, (2) the operating system used by the device, (3) the website from which you access our website (known as the referrer), (4) the sub-websites, (5) the date and time (known as the time stamp) of access to the internet page and (6) the internet protocol address (IP address) assigned to your device. We store this information in server log files. We also automatically collect information about your use of the website and web applications, such as web requests, number of clicks, domain names, pages viewed and the time spent on particular pages.
+
+This information is required in order to (1) deliver the content of our website and web applications correctly, (2) optimize the content of our website and web applications, (3) ensure the long-term viability of our information technology systems and of the website technology and (4) provide law enforcement authorities with the information necessary for criminal prosecution in the event of a cyberattack.
+
+In addition, tracking information is collected as you navigate through our website or web applications. In order to meet your needs better, we use "cookies" to store and sometimes track user information. A cookie is a small amount of data that is sent from a web server to your browser and stored on the hard drive of your device. Cookies can be disabled or controlled through the settings in your browser. You can also delete or refuse cookies. Further information can be found in our Cookie Policy.
+
+In addition, log file information is reported automatically by your browser every time you call up a web page. When you register with or view our website or web applications, our servers automatically record certain information that your browser sends every time you visit a website.
+
+Indicate Data also analyzes anonymously collected data and statistics in order to improve your experience and to ensure an optimal level of protection for the personal data we process. The anonymous data from the server log files is stored separately from all personal data provided by users.
+
+Company information - You may provide further information about yourself and your company, such as your role, industry, company size, annual revenue, etc. Such information is stored securely and may be used for benchmarking and other purposes. Indicate Data may collect such information with the help of third-party providers acting as subcontractors in order to ensure a better experience and profiling. You can update or correct this information at any time by logging in to your account.
+
+This personal data is not passed on to third parties. You can unsubscribe from our online newsletter at any time by clicking the "Unsubscribe" link at the end of our e-mails or by contacting us directly at: &nbps;[compliance@indicate-data.io](mailto:compliance@indicate-data.io).
+
+## Benchmarks
+
+Indicate Data may use your data to calculate and provide benchmarking services. The data collected for participation in the benchmarking ecosystem is anonymized at all times and kept separate from any personal or sensitive information.
+
+In order to ensure anonymity, benchmarks are only calculated and made available if Indicate Data has at least 10 different data sources within the selected cohort.
+
+You can decline to take part in benchmarks at any time by logging in to your account and opting out.
+
+## How We Use Your Information
+
+In general, we use the personal data and other information collected in order to provide you with the best possible experience when using the Indicate Data website and web applications. This information also helps us to understand who uses our products and how we can improve our services, in order to provide our helpdesk service, to contact you for customer service and billing reasons and to facilitate the provision of Indicate Data marketing information about our products and services.
+
+We use the personal data you submit in order to operate, maintain and provide to you the features and functionalities of our products and services. Any personal data or user content that you voluntarily disclose by posting on Indicate Data may become available to the other users in your account. If you remove user content, copies may remain visible in cached and archived pages or where other users have copied or stored your user content.
+
+We will use your registered e-mail address to send you Indicate Data related notices about products or services you have requested, about the status of your account or about other administrative or technical information, including notices required by law. We may also use your e-mail address to send you other messages, such as newsletters, changes to features within Indicate Data or special offers. If you do not wish to receive such e-mail messages, you can unsubscribe at any time in your profile settings or click the "Unsubscribe" link at the end of our e-mails. You can also unsubscribe from receiving our marketing messages by contacting us at [compliance@indicate-data.io](mailto:compliance@indicate-data.io). We do not pass on your e-mail or other personal data to third parties for their marketing activities. We also do not engage in targeted advertising, neither on our website nor on third-party websites.
+
+We use cookies, clear GIFs and information from server log files in order to store information so that you do not have to enter it again during your visit or the next time you visit the website; to provide individual, personalized content and information; to monitor the effectiveness of our service; to monitor aggregate metrics such as the total number of visitors and traffic; to diagnose or fix technical problems reported by our users or engineers that are associated with the IP addresses of a particular web company or ISP; and to help you access your information efficiently after signing in. Further information about our use of cookies can be found in our Cookie Policy.
+
+## How We Share Your Information
+
+We may engage independent contractors, providers and suppliers (collectively "external contractors") in order to provide certain services and products in connection with the Indicate Data website and our services, such as hosting, customer service, credit card processing and fraud screening as well as hosting of mailing lists. In the course of providing products or services to us, these external contractors may have access to information collected via the Indicate Data website or web application, including your personal data. We require that these external contractors (1) protect the privacy of your personal data in accordance with this Privacy Policy and the Terms of Service and (2) do not use or disclose your personal data for purposes other than providing the products or services for which we engaged them, or as required by law.
+
+When you use our website and web applications, you may interact with our business partners. In order to provide you with additional support, your name and your e-mail address may be shared with partners.
+
+As we develop our business further, we may buy or sell assets or business offerings. Customer and visitor information is generally one of the business assets transferred in these types of transactions. We may also transfer such information in the course of corporate divestitures, mergers or dissolutions.
+
+Indicate Data may disclose personal data where this is required by law or by subpoena, or where we believe that such action is necessary in order to comply with the law, to comply with legal proceedings served on us or our affiliated companies, or to conduct investigations, to take precautions or to take measures with regard to suspected or actual illegal activities; to enforce our Terms of Service, to take precautions against liability, to defend ourselves against claims or allegations by third parties, to assist law enforcement authorities or to protect the security or integrity of our website; and to protect or exercise the rights, the property or the personal safety of Indicate Data, our users or others.
+
+In addition, we may carry out statistical analyses of customer usage in order to measure interest in and use of the various parts of the website, and we may share this information in the course of our business, but only in anonymized and/or aggregated form (statistics, etc.), and without personal data.
+
+Indicate Data does not rent or sell your personal data to third parties.
+
+## Processors We Engage
+
+In order to provide our services, we engage carefully selected service providers as processors within the meaning of Art. 28 GDPR. We have concluded a data processing agreement (DPA) with each of these service providers. The processors process personal data exclusively on our instructions and for the purposes stated below. The following overview lists the processors we currently engage:
+
+| Processor | Service and purpose of the processing | Place of processing | Basis of the transfer |
+|---|---|---|---|
+| Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, D04 E5W5, Ireland | Google Analytics – reach measurement and analysis of the use of our website | EU/EEA; transfer to Google LLC, USA | DPA pursuant to Art. 28 GDPR. Google LLC is certified under the EU-U.S. Data Privacy Framework (among other things for Google Analytics); transfers to the USA therefore take place on the basis of the adequacy decision pursuant to Art. 45 GDPR, supplemented by standard contractual clauses pursuant to Art. 46 GDPR. |
+| Microsoft Ireland Operations Limited, One Microsoft Place, South County Business Park, Leopardstown, Dublin 18, D18 P521, Ireland | Microsoft 365 – e-mail, office applications and collaboration, including the handling of customer inquiries | EU/EEA; transfer to Microsoft Corporation, USA | DPA pursuant to Art. 28 GDPR. Microsoft Corporation is certified under the EU-U.S. Data Privacy Framework; transfers to the USA therefore take place on the basis of the adequacy decision pursuant to Art. 45 GDPR, supplemented by standard contractual clauses pursuant to Art. 46 GDPR. |
+| Productlane GmbH, Albert-Roßhaupter-Straße 3b, 81369 Munich, Germany | Productlane – support platform for receiving and handling support requests and customer feedback | EU (hosting in Frankfurt am Main); individual sub-processors established in the USA | DPA pursuant to Art. 28 GDPR; for transfers to the USA, standard contractual clauses pursuant to Art. 46 GDPR. |
+| Linear Orbit, Inc., 2261 Market Street STE 10632, San Francisco, CA 94114, USA | Linear – issue and task management, among other things for tracking support requests | USA | DPA pursuant to Art. 28 GDPR in conjunction with the EU standard contractual clauses pursuant to Art. 46 GDPR. There is no certification under the EU-U.S. Data Privacy Framework. |
+| Slack Technologies Limited, Salesforce Tower, 60 R801, North Dock, Dublin, Ireland | Slack – internal communication and coordination, among other things when handling support requests | EU/EEA; transfer to Slack Technologies, LLC and Salesforce, Inc., USA | DPA pursuant to Art. 28 GDPR. Salesforce, Inc., including Slack Technologies, LLC, is certified under the EU-U.S. Data Privacy Framework; transfers to the USA therefore take place on the basis of the adequacy decision pursuant to Art. 45 GDPR, supplemented by standard contractual clauses pursuant to Art. 46 GDPR. |
+| Notion Labs, Inc., 2300 Harrison Street, San Francisco, CA 94110, USA | Notion – internal documentation and knowledge management, among other things for support processes | USA | DPA pursuant to Art. 28 GDPR in conjunction with the EU and UK standard contractual clauses pursuant to Art. 46 GDPR. |
+
+We review our processors regularly and update this overview when we add service providers or cease to engage them. If you have questions about any of the processors named or would like a copy of the safeguards put in place for third-country transfers, please contact [compliance@indicate-data.io](mailto:compliance@indicate-data.io).
+
+## California Privacy Rights
+
+California "Shine The Light" - As provided for in California Civil Code 1798.83, if you are a resident of California you have the right to receive information that (a) names every third-party company to which we disclosed your personal data in the past year; and (b) provides a description of the categories of personal data that were disclosed. To request such information, please send your request by e-mail to [compliance@indicate-data.io](mailto:compliance@indicate-data.io) with "California Privacy Rights Request" in the subject line.
+
+California Consumer Privacy Act - In providing its services to its customers, Indicate Data may be considered a "service provider" within the meaning of the California Consumer Privacy Act ("CCPA"). Indicate Data may also use the services of third parties that may likewise be regarded as "service providers" within the meaning of the CCPA. To the extent requested by our customers, we assist in responding to requests from California consumers regarding their privacy rights under the CCPA. If we receive a request from a California consumer to know or to delete which personal data we collect on behalf of our customer for whom we provide services, we will instruct the consumer to address the request directly to our customer. Where possible, we will provide the consumer with the contact details of the customer. You can contact us at [compliance@indicate-data.io](mailto:compliance@indicate-data.io) for further information about these rights.
+
+We do not sell your personal data to third parties for any purpose.
+
+## Location in Germany
+
+Indicate Data and our website and web applications are located in Germany and are subject to German law. If you are located outside Germany when you visit the website or the web application or communicate with us by post, e-mail or telephone, please note that your personal data may be transferred to, stored and processed in Germany, where our servers are located. All information that you provide to us or that we collect through your use of the websites or web applications is stored, processed and transferred in Germany. Please note that Germany and jurisdictions other than the one in which you are located may not offer the same standard of data protection as is considered adequate in your country. Please also note that your personal data may be available to the German government or its authorities in the course of legal proceedings in Germany.
+
+## Privacy Rights in the European Economic Area and in the United Kingdom
+
+### The Legal Basis for the Use of Personal Data in the EEA and in the United Kingdom
+
+For residents of the European Economic Area (EEA) and of the United Kingdom (UK) we point out that your personal data is transferred to and processed in Germany, which has data protection laws that differ from those in your country and may not be as protective. Germany has not sought or obtained an "adequacy decision" from the European Union pursuant to Article 45 of the General Data Protection Regulation ("GDPR"). Our legal basis for collecting and using your personal data is to do so with your consent; where we require the personal data for the performance of a contract or of a requested service, including the provision of our newsletter; or where the collection and use is in our legitimate interest or that of another party and is not overridden by your data protection interests or fundamental rights and freedoms. In some cases we may also be legally obliged to collect the personal data. Where we have collected your personal data with your consent, you may withdraw your consent at any time.
+
+Our retention of your personal data and of all subsequent communications is based on our legitimate interest in providing you with new and potentially relevant materials based on your geography, role or company. As always, you can choose to decline such future communications.
+
+To the extent that we transfer personal data from the EEA to a territory outside the EEA that has not been deemed adequate by the European Commission (such as Germany), we will ensure that such personal data is protected by appropriate contractual provisions or other approved mechanisms.
+
+### Our Legal Obligation to Disclose Your Information
+
+We will disclose a user's personal data without their prior consent only where we have reason to believe that the disclosure of this information is necessary in order to establish the identity of, to contact, or to take legal action against a person or persons who are suspected of having infringed rights or property of Indicate Data or of others who could be harmed by the user's activities, or persons who could infringe these rights and property (intentionally or otherwise). We may also disclose personal data where we have good reason to believe that this is required by law.
+
+### Rights for Residents of the EEA and of the United Kingdom
+
+In addition, if you are a resident of the EEA or of the United Kingdom, you have the right:
+
+- To find out whether we use your personal data, to access your personal data and to obtain copies of your personal data.
+- To withdraw at any time and without penalty any express consent you have given to the processing of your personal data.
+- To access your personal data and to correct or amend it if it is inaccurate or incomplete.
+- To receive a portable copy of some of your personal data which can be transferred to another provider, where the personal data was processed on the basis of your consent.
+- If you believe that your personal data is inaccurate, is no longer necessary for our business purposes, or if you object to the processing of your personal data, you also have the right to request that we stop processing your data while we investigate and/or review your claim.
+- To have your personal data deleted or restricted in certain circumstances. For example, if your personal data was used on the basis of your consent and there is no other legal basis for the use, you may request that your personal data be deleted if you withdraw your consent. A withdrawal of your consent does not affect the lawfulness of the processing we carried out prior to your withdrawal, nor will it affect the processing of your personal data that is based on lawful grounds for processing other than consent.
+
+If we ask you to provide us with personal data in order to meet a legal requirement or to conclude a contract, we will inform you of this and tell you whether the provision of your personal data is required and, if not, what the consequences are of not sharing your personal data with us.
+
+Likewise, if we collect and use your personal data on the basis of our legitimate interests or those of a third party and these interests are not already described above, we will inform you what these legitimate interests are.
+
+We endeavor to take appropriate protective measures in order to safeguard the privacy and security of your personal data and to use it only in a manner that is consistent with your relationship with us and with the practices described in this Privacy Policy.
+
+To withdraw consent or to exercise these rights, please contact us by e-mail at [compliance@indicate-data.io](mailto:compliance@indicate-data.io).
+
+If you are not satisfied with our response or believe that we are processing your personal data unlawfully, you have the right to lodge a complaint with the supervisory authority (also known as the data protection authority) or with another competent state authority in your EEA member state. You also have the right to lodge a GDPR complaint with the competent supervisory authority. A list of supervisory authorities can be found [here](https://edpb.europa.eu/about-edpb/board/members_de).
+
+## Security
+
+The personal data we collect is stored securely within our database on our own servers or on databases hosted by cloud providers in secured environments. We use standard, industry-customary, commercially reasonable security practices such as encryption, firewalls and SSL (Secure Socket Layers - 256 bit) to protect your information. A further description of the security measures we have implemented can be found in our Security Policy.
+
+However, we cannot guarantee that the security of information you transmit to Indicate Data is assured, and you do so at your own risk. Once we have received your transmission of information, Indicate Data endeavors to make commercially reasonable efforts to ensure the security of our systems. Please note, however, that this is not a guarantee that such information cannot be accessed, disclosed, altered or destroyed through a breach of any of our physical, technical or administrative safeguards. Please do not share your account password with any other person. We cannot be held responsible for a data protection breach or any other incident where a password is used by unauthorized persons.
+
+We retain your personal data in active files or systems for as long as is necessary to fulfill the purposes for which it was collected, to provide the requested services or products, or as may be required by law.
+
+## Privacy Protection for Children
+
+Protecting the privacy of children is particularly important. Indicate Data and its products and services are intended for adults aged 18 and over. Since our content and services are not directed at children, children under the age of 16 may not register on our website or take part in public posting areas on our website. If you are under 16 years of age, please do not send us any information about yourself, including your name, your address, telephone number or e-mail address. No one under the age of 16 may provide personal data to or through Indicate Data. If we determine that we have collected personal data from a child under the age of 16 without parental consent, Indicate Data will delete this information as quickly as possible, but no later than within 30 days.
+
+## Confidentiality of User Content and Messages
+
+Your user content remains private within your network. Indicate Data does not monitor the user content you post on the website. We do not have administrative tools for viewing our users' messages, and access to the database is granted to our engineers only on a case-by-case basis in order to resolve specific technical problems or as required by law. The rules for posting user content are set out in our Terms of Service.
+
+## My Choices and Rights
+
+Unless otherwise described in this Privacy Policy or in the Terms of Service, where applicable, we use personal data only for the purposes described above or as otherwise disclosed at the time we request such information from you. You must "opt in" and give us permission to use your personal data for other purposes. You can change your preference at any time and unsubscribe from certain marketing communications from us by clicking the "Unsubscribe" link that is contained in all such communications, or by contacting us by e-mail at [compliance@indicate-data.io](mailto:compliance@indicate-data.io).
+
+## Can I Update or Correct My Information?
+
+You can request to view and correct the information about you that Indicate Data has stored. Customers have the right to request the restriction of certain uses and disclosures of personal information as follows. You can contact us in order to (1) update or correct your personal information, (2) change your preferences with regard to communications and other information you receive from us, or (3) delete the personal information stored about you in our systems (subject to the following paragraph) by terminating your account. Such updates, corrections, changes and deletions have no effect on other information that we store, or on information that we provided to third parties in accordance with this Privacy Policy prior to such update, correction, change or deletion.
+
+You can update or correct your account information and e-mail preferences at any time by logging in to your account. In order to protect your privacy and security, we may take reasonable steps (such as requesting a unique password) to verify your identity before granting you access to your profile settings or making corrections. You are responsible at all times for keeping your unique password and your account information confidential.
+
+It is not technologically possible to remove every single record of the information you have provided to us from our system. The need to back up our systems in order to protect information from unintentional loss means that a copy of your information may exist in a non-erasable form which will be difficult or impossible for us to locate. Promptly after receipt of your request, all personal data stored in databases that we actively use, and in other readily searchable media, will be updated, corrected, changed or deleted as soon as and to the extent that this is reasonably and technically practicable.
+
+You can of course also refrain from submitting your personal data through Indicate Data, in which case Indicate Data may not be able to provide certain services to you.
+
+## Compromise of Personal Data
+
+In the event that personal data is compromised as a result of a security breach, Indicate Data will notify the affected persons whose personal data was compromised without undue delay, in accordance with the notification procedures set out in this Privacy Policy or as otherwise required by law.
+
+Please note that if you voluntarily disclose personal data in public areas, on public bulletin boards or within the website, this information could be collected and disseminated by third parties and this could result in, among other things, unsolicited requests, messages and offers from third parties. Please understand that all information disclosed in these areas becomes public information and that this conduct by third parties is beyond the control of Indicate Data.
+
+Please also note that if you voluntarily disclose personal data in your account, all users who are authorized to access such areas (users in your account) will have access to this personal data, and this information could be collected and disseminated by those users and could result in, among other things, unsolicited requests, messages and offers from such users. Indicate Data advises you to exercise caution when deciding to disclose personal data in the web application or on the website.
+
+## Links to Other Websites
+
+The website or web applications may also contain links to third-party websites that are owned or controlled by third parties. We are not responsible for the privacy practices or the content of such third-party websites. Before accessing a website, it is recommended that you review the applicable privacy and other policies.
+
+## Changes to the Privacy Policy
+
+If we change this Privacy Policy, we will publish these changes on our website and inform users in accordance with our notifications regarding this Privacy Policy, in order to keep you up to date on updates and changes concerning the information we collect, how we use it and the circumstances in which we may disclose it. Changes to this Privacy Policy are effective from the date stated above.
+
+However, we will not make any changes that result in materially additional uses or disclosures of your personal data without notifying you of such changes by e-mail at least 14 days before those changes take effect.
+
+If you do not agree with changes to this Privacy Policy that are not material, you must contact us immediately and, until the matter is resolved, cease using the Indicate Data website and the services we provide. Your continued use of our services and of the Indicate Data website and web application after the publication of non-material changes to this Privacy Policy constitutes your acceptance of those changes.
+
+## Questions About This Privacy Policy
+
+If you have questions or comments about this Privacy Policy or believe that we are not acting in accordance with the terms of this Privacy Policy or with applicable data protection laws, please contact our data protection officer in one of the following ways:
+
+By post or courier: Indicate Data GmbH Industriestr 27 D-77656 Offenburg Germany By e-mail: [compliance@indicate-data.io](mailto:compliance@indicate-data.io)
+
+## Notifications Regarding This Privacy Policy
+
+If we need to notify our users about this Privacy Policy, we may do so using the contact details that are linked to your account or were otherwise provided to us.`
+
+export const privacyPolicy = { de, en }
