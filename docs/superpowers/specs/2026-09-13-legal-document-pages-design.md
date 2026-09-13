@@ -1,7 +1,7 @@
 # Legal document pages, reusable sidebar layout and new About page
 
 Date: 2026-09-13
-Status: approved in chat, to be implemented
+Status: implemented on branch feat/legal-pages (2026-09-13)
 
 ## 1. Goal
 
@@ -22,7 +22,7 @@ Fields:
 - `title` text, required, admin title (not localised; internal name such as "Rechtliches").
 - `groups` array (max 8), each: `title` text localised required; `links` array (max 12) of `link({ appearances: false, localized: true })`.
 - `contact` group, optional: `enabled` checkbox; `title` text localised; `text` textarea localised; `email` email.
-- Access: read public, write authenticated. `afterChange` hook revalidates the `sidebars` tag; pages that embed a sidebar are rendered fresh per request (pages are not fetch-cached), so no further invalidation is needed.
+- Access: read public, write authenticated. `afterChange` and `afterDelete` hooks revalidate the dynamic page route `/[locale]/[slug]` (`revalidatePath(route, 'page')`), because a sidebar carries no back-reference to the pages that embed it and any page may use it.
 
 ### 3.2 Block `document` (label "Dokument mit Seitenleiste")
 
@@ -46,7 +46,7 @@ No new page fields. Slugs (not localised): `terms-of-service`, `privacy-policy`,
 
 - `src/blocks/Document/Component.tsx` (server): composes header band, meta row, translation notice, grid with sidebar, article, TOC, history.
 - `src/components/DocumentLayout/SidebarNav.tsx` (client): renders groups and links; marks the current page with `aria-current="page"` and an active rail marker by comparing the link href with `usePathname()` (locale-prefixed). Contact card at the bottom. On `< lg` it renders as a `<details>` disclosure titled "Weitere Dokumente / More documents" placed above the article.
-- `src/components/DocumentLayout/Toc.tsx` (client): "Auf dieser Seite / On this page"; list of h2 (and nested h3) anchors; scroll-spy via `IntersectionObserver` moves a marker with a 200 ms transform transition; under reduced motion the marker changes state without transition. On `< xl` it renders as a `<details>` above the article.
+- `src/components/DocumentLayout/Toc.tsx` (client): "Auf dieser Seite / On this page"; list of h2 (and nested h3) anchors; scroll-spy recomputes the active entry on scroll. The marker is a per-entry accent border on the left rail that changes colour on the active entry, not a single translated element, so there is nothing to animate out of sync; the colour transition is dropped under reduced motion. On `< xl` it renders as a `<details>` above the article.
 - `src/components/DocumentLayout/DocumentMeta.tsx` (server): `<dl>` row with "Stand", "Gültig ab", "Version", each as `<time dateTime>` formatted with `Intl.DateTimeFormat(locale, { dateStyle: 'long' })`, tabular numbers; plus a language tag: "Verbindliche Fassung" when the page locale equals the binding language.
 - `src/components/DocumentLayout/TranslationNotice.tsx` (server): shown when `bindingLanguage !== 'none'` and page locale differs; bordered note (no glow) with the dictionary text and a `LocaleLink` to the same slug in the binding locale.
 - Heading anchors: `RichText` gets an option `headingIds` that makes the heading converter emit `id` (slugified text, de-duplicated with a counter) and an anchor link revealed on hover ("#", `aria-label` "Link zu diesem Abschnitt").
@@ -71,11 +71,12 @@ No new page fields. Slugs (not localised): `terms-of-service`, `privacy-policy`,
 - `src/endpoints/seed/legal.ts`: the six documents in DE and EN, as Lexical JSON built by a new seed helper `richText(md)` in `lexical.ts` that converts a tiny markdown subset (`##`, `###`, paragraphs, `-` lists, `1.` lists, `**bold**`, `[text](url)`, `---`, pipe tables) into Lexical nodes. Texts are copied verbatim from indicate-data.io (German from `/de/...`, English from `/en/...`), with typo fixes only. Dates per section 2; terms and imprint without dates until the founder supplies them.
 - Sidebar "Rechtliches": groups and links as on the live site; contact card with compliance@indicate-data.io.
 - `src/endpoints/seed/about.ts`: About page (section 6).
+- The German texts are the live site's verbatim originals and stay legally binding; the English texts are our own translations, since the live site publishes no English legal pages. Each document carries `bindingLanguage: 'de'`, so the English pages show the translation notice.
 - `seed/index.ts`: upsert the sidebar first (by title), then the legal pages (`upsertPage`), then About; footer `legalLinks` become internal references to the pages (Impressum, Datenschutz, AGB) and the footer "Unternehmen" column gets "Über uns". Header gets no new entry.
 
 ## 6. About page (`about`)
 
-Written new, marketing focus; never mentions team size or headcount, no invented numbers. Blocks in order:
+Written new, marketing focus; never mentions team size or headcount, no invented numbers. The hero is centred like the product pages, so About sits in the same visual family rather than reading as a one-off. Blocks in order:
 1. `hero` (align left, illustration `stage`): eyebrow "Über Indicate", heading about building agentic analytics for the hospitality industry, one-line lead, CTAs demo + contact.
 2. `pillars` "Was uns antreibt": 4 principles (data you can trust, answers in plain language, your data stays yours, built with hoteliers).
 3. `featureStory` stacked ×2: "Aus der Hotellerie für die Hotellerie" (why hotels, PMS depth, hotel groups and agencies) and "Entwickelt in Deutschland, betrieben nach DSGVO" (Offenburg, EU hosting, no guest data leaves unless released; wording kept to what the seed already promises).
