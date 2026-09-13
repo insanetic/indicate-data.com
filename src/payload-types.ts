@@ -118,11 +118,15 @@ export interface Config {
     'site-settings': SiteSetting;
     header: Header;
     footer: Footer;
+    consent: Consent;
+    'subneo-pricing': SubneoPricing;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    consent: ConsentSelect<false> | ConsentSelect<true>;
+    'subneo-pricing': SubneoPricingSelect<false> | SubneoPricingSelect<true>;
   };
   locale: 'de' | 'en';
   widgets: {
@@ -243,6 +247,7 @@ export interface Page {
     | StatsBlock
     | TestimonialsBlock
     | PricingTeaserBlock
+    | PricingBlock
     | FaqBlock
     | CtaSectionBlock
     | SpotlightBlock
@@ -1501,6 +1506,46 @@ export interface PricingTeaserBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingBlock".
+ */
+export interface PricingBlock {
+  header: {
+    eyebrow?: string | null;
+    heading: string;
+    lead?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  families?:
+    | {
+        code: string;
+        id?: string | null;
+      }[]
+    | null;
+  show?: {
+    cards?: boolean | null;
+    addons?: boolean | null;
+    comparison?: boolean | null;
+  };
+  addonsHeader?: {
+    heading?: string | null;
+    lead?: string | null;
+  };
+  comparisonHeader?: {
+    heading?: string | null;
+    lead?: string | null;
+  };
+  footnote?: string | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+    anchor?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pricing';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FaqBlock".
  */
 export interface FaqBlock {
@@ -2227,6 +2272,16 @@ export interface PayloadMcpApiKey {
      */
     update?: boolean | null;
   };
+  subneoPricing?: {
+    /**
+     * Allow clients to find subneo-pricing global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update subneo-pricing global.
+     */
+    update?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   enableAPIKey?: boolean | null;
@@ -2494,6 +2549,7 @@ export interface PagesSelect<T extends boolean = true> {
         stats?: T | StatsBlockSelect<T>;
         testimonials?: T | TestimonialsBlockSelect<T>;
         pricingTeaser?: T | PricingTeaserBlockSelect<T>;
+        pricing?: T | PricingBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
         ctaSection?: T | CtaSectionBlockSelect<T>;
         spotlight?: T | SpotlightBlockSelect<T>;
@@ -3154,6 +3210,55 @@ export interface PricingTeaserBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  settings?:
+    | T
+    | {
+        background?: T;
+        spacing?: T;
+        anchor?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingBlock_select".
+ */
+export interface PricingBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        lead?: T;
+        align?: T;
+      };
+  families?:
+    | T
+    | {
+        code?: T;
+        id?: T;
+      };
+  show?:
+    | T
+    | {
+        cards?: T;
+        addons?: T;
+        comparison?: T;
+      };
+  addonsHeader?:
+    | T
+    | {
+        heading?: T;
+        lead?: T;
+      };
+  comparisonHeader?:
+    | T
+    | {
+        heading?: T;
+        lead?: T;
+      };
+  footnote?: T;
   settings?:
     | T
     | {
@@ -3841,6 +3946,12 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         update?: T;
       };
+  subneoPricing?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   enableAPIKey?: T;
@@ -4233,6 +4344,126 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent".
+ */
+export interface Consent {
+  id: number;
+  enabled?: boolean | null;
+  /**
+   * Increase to ask every visitor again (e.g. after adding services).
+   */
+  revision: number;
+  privacyPage?: (number | null) | Page;
+  imprintPage?: (number | null) | Page;
+  banner?: {
+    title?: string | null;
+    text?: string | null;
+  };
+  settings?: {
+    title?: string | null;
+    text?: string | null;
+  };
+  categories?:
+    | {
+        key: 'necessary' | 'analytics' | 'marketing';
+        label?: string | null;
+        description?: string | null;
+        services?:
+          | {
+              name: string;
+              provider?: string | null;
+              purpose?: string | null;
+              cookies?: string | null;
+              privacyUrl?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subneo-pricing".
+ */
+export interface SubneoPricing {
+  id: number;
+  source: 'subneo' | 'fixture';
+  /**
+   * Empty: SUBNEO_API_URL or https://api.subneo.io/v1
+   */
+  baseUrl?: string | null;
+  apiVersion?: string | null;
+  /**
+   * How long fetched plans stay valid.
+   */
+  cacheSeconds?: number | null;
+  /**
+   * Leave empty to use the environment variable SUBNEO_API_KEY. Only logged-in users can read this value.
+   */
+  apiKey?: string | null;
+  families?:
+    | {
+        code: string;
+        role: 'app' | 'addon';
+        /**
+         * Empty: Subneo metadata “featured”.
+         */
+        featuredPlanCode?: string | null;
+        label?: string | null;
+        lead?: string | null;
+        unit?: string | null;
+        highlightFeatures?:
+          | {
+              featureCode: string;
+              id?: string | null;
+            }[]
+          | null;
+        showInComparison?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  planOverrides?:
+    | {
+        planCode: string;
+        name?: string | null;
+        tagline?: string | null;
+        badge?: string | null;
+        ctaLabel?: string | null;
+        ctaUrl?: string | null;
+        hidden?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  featureOverrides?:
+    | {
+        featureCode: string;
+        label?: string | null;
+        description?: string | null;
+        hidden?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  groupOverrides?:
+    | {
+        groupCode: string;
+        label?: string | null;
+        order?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * {plan} and {rate} are replaced with the codes.
+   */
+  defaultCtaUrl?: string | null;
+  contactUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -4443,6 +4674,112 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent_select".
+ */
+export interface ConsentSelect<T extends boolean = true> {
+  enabled?: T;
+  revision?: T;
+  privacyPage?: T;
+  imprintPage?: T;
+  banner?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  settings?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  categories?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        description?: T;
+        services?:
+          | T
+          | {
+              name?: T;
+              provider?: T;
+              purpose?: T;
+              cookies?: T;
+              privacyUrl?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subneo-pricing_select".
+ */
+export interface SubneoPricingSelect<T extends boolean = true> {
+  source?: T;
+  baseUrl?: T;
+  apiVersion?: T;
+  cacheSeconds?: T;
+  apiKey?: T;
+  families?:
+    | T
+    | {
+        code?: T;
+        role?: T;
+        featuredPlanCode?: T;
+        label?: T;
+        lead?: T;
+        unit?: T;
+        highlightFeatures?:
+          | T
+          | {
+              featureCode?: T;
+              id?: T;
+            };
+        showInComparison?: T;
+        id?: T;
+      };
+  planOverrides?:
+    | T
+    | {
+        planCode?: T;
+        name?: T;
+        tagline?: T;
+        badge?: T;
+        ctaLabel?: T;
+        ctaUrl?: T;
+        hidden?: T;
+        id?: T;
+      };
+  featureOverrides?:
+    | T
+    | {
+        featureCode?: T;
+        label?: T;
+        description?: T;
+        hidden?: T;
+        id?: T;
+      };
+  groupOverrides?:
+    | T
+    | {
+        groupCode?: T;
+        label?: T;
+        order?: T;
+        id?: T;
+      };
+  defaultCtaUrl?: T;
+  contactUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -10,6 +10,7 @@ import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Sidebars } from './collections/Sidebars'
 import { Users } from './collections/Users'
+import { Consent } from './consent/global'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { SiteSettings } from './globals/SiteSettings/config'
@@ -80,7 +81,7 @@ export default buildConfig({
     fallbackLanguage: 'de',
   },
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [SiteSettings, Header, Footer],
+  globals: [SiteSettings, Header, Footer, Consent],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,
