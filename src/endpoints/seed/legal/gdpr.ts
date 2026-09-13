@@ -7,6 +7,6 @@ const de = `Bei indicate nehmen wir den Datenschutz ernst und haben die notwendi
 
 ## Fragen?
 
-Kontaktieren Sie uns per E-Mail an [compliance@indicate-data.io](mailto:compliance@indicate-data.io), und wir beantworten gerne alle zusätzlichen Fragen, die Sie zu indicate und der DSGVO haben.[Website](http://www.allaboutcookies.org/).`
+Kontaktieren Sie uns per E-Mail an [compliance@indicate-data.io](mailto:compliance@indicate-data.io), und wir beantworten gerne alle zusätzlichen Fragen, die Sie zu indicate und der DSGVO haben.`
 
 export const gdpr = { de, en: de }

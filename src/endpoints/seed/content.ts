@@ -1,6 +1,8 @@
 import type { Locale } from '@/i18n/config'
 import type { Footer, Header, Page, SiteSetting } from '@/payload-types'
 
+import type { LegalSlug } from './legal'
+
 import { paragraphs } from './lexical'
 import { pageBlurbs, pageIcons, pageNames, type SubpageSlug } from './pages'
 
@@ -16,6 +18,8 @@ export type Refs = {
   aboutPageId: number
   /** Ids of the product and solution pages, keyed by slug (see ./pages). */
   pages: Record<SubpageSlug, number>
+  /** Ids of the legal pages, keyed by slug (see ./legal). */
+  legal: Record<LegalSlug, number>
   media: Record<string, number>
   links: { appUrl: string; demoUrl: string; helpUrl: string; docsUrl: string }
 }
@@ -180,9 +184,10 @@ export const footer = (t: T, refs: Refs): Partial<Footer> => ({
     },
   ],
   legalLinks: [
-    external('https://indicate-data.io/de/imprint', t('Impressum', 'Imprint')),
-    external('https://indicate-data.io/de/compliance/privacy-policy', t('Datenschutz', 'Privacy')),
-    external('https://indicate-data.io/de/compliance/terms-of-service', t('AGB', 'Terms')),
+    pageRef(refs.legal.imprint, t('Impressum', 'Imprint')),
+    pageRef(refs.legal['privacy-policy'], t('Datenschutz', 'Privacy')),
+    pageRef(refs.legal['terms-of-service'], t('AGB', 'Terms')),
+    pageRef(refs.legal['cookie-policy'], t('Cookies', 'Cookies')),
   ],
   showContact: true,
   showLanguageSwitch: true,
