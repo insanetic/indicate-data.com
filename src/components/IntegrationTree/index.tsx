@@ -95,10 +95,11 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
     </span>
   )
 
-  // White so the three brand colours of the mark stay visible; a yellow ring travels around it.
+  // White so the three brand colours of the mark stay visible. The outer span only paints the
+  // 2 px gap around the tile: a short yellow arc on a transparent ring, travelling around.
   const centre = (
-    <span className="loop-tree-centre relative inline-flex rounded-[1.05rem] p-[3px] shadow-float">
-      <span className="flex flex-col items-center justify-center gap-1 rounded-[0.875rem] bg-white px-5 py-4 text-[oklch(0.2_0.02_262)]">
+    <span className="loop-tree-centre relative inline-flex rounded-[calc(0.875rem+2px)] p-[2px] shadow-float">
+      <span className="flex flex-col items-center justify-center gap-1 rounded-[0.875rem] border border-[oklch(0.2_0.02_262/0.12)] bg-white px-5 py-4 text-[oklch(0.2_0.02_262)]">
         <BrandBars size={26} />
         <span className="font-display text-base font-medium">{t.centre}</span>
       </span>

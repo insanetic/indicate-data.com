@@ -715,10 +715,11 @@
 .loop .loop-tree-centre {
   background: conic-gradient(
     from var(--tree-angle),
-    var(--accent) 0deg,
-    var(--accent) 60deg,
-    var(--line-strong) 120deg,
-    var(--line-strong) 360deg
+    transparent 0deg,
+    var(--accent) 40deg,
+    var(--accent) 80deg,
+    transparent 110deg,
+    transparent 360deg
   );
   animation-name: loop-tree-centre;
   animation-duration: 3s;
@@ -736,7 +737,7 @@
     stroke-dasharray: none;
   }
   .loop .loop-tree-centre {
-    background: var(--accent);
+    background: transparent;
   }
   .loop .loop-type,
   .loop .loop-chat-q,

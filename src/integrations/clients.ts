@@ -7,7 +7,7 @@ export type McpClient = { slug: string; name: string; logo?: string; aliases?: s
 
 export const mcpClients: McpClient[] = [
   { slug: 'claude', name: 'Claude', logo: '/clients/claude.svg', aliases: ['claude desktop', 'claude ai'] },
-  { slug: 'chatgpt', name: 'ChatGPT', logo: '/clients/chatgpt.svg', aliases: ['openai'] },
+  { slug: 'chatgpt', name: 'ChatGPT', logo: '/clients/openai.svg', aliases: ['openai'] },
   { slug: 'claude-code', name: 'Claude Code', logo: '/clients/claude-code.svg' },
   { slug: 'langdock', name: 'Langdock', logo: '/clients/langdock.svg' },
   { slug: 'github-copilot', name: 'GitHub Copilot', logo: '/clients/github-copilot.svg', aliases: ['copilot'] },
