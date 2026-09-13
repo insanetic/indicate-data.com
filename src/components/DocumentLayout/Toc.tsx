@@ -15,22 +15,30 @@ export const Toc: React.FC<Props> = ({ headings, label }) => {
   useEffect(() => {
     const elements = headings.map((h) => document.getElementById(h.id)).filter((el): el is HTMLElement => Boolean(el))
     if (elements.length === 0) return
-    const visible = new Map<string, number>()
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top)
-          else visible.delete(entry.target.id)
-        }
-        if (visible.size > 0) {
-          const [top] = [...visible.entries()].sort((a, b) => a[1] - b[1])
-          if (top) setActive(top[0])
-        }
-      },
-      { rootMargin: '-96px 0px -70% 0px', threshold: 0 },
-    )
+
+    // Recomputed on demand rather than tracked from stale IntersectionObserver rects:
+    // the last heading whose top has scrolled past the sticky offset is active.
+    const pick = () => {
+      let current = elements[0]?.id ?? null
+      for (const el of elements) {
+        if (el.getBoundingClientRect().top <= 120) current = el.id
+        else break
+      }
+      setActive(current)
+    }
+
+    pick()
+
+    // The observer is only a trigger here — entries aren't used, `pick` recomputes from scratch.
+    const observer = new IntersectionObserver(() => pick(), { rootMargin: '-96px 0px -70% 0px', threshold: 0 })
     elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+
+    window.addEventListener('hashchange', pick)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('hashchange', pick)
+    }
   }, [headings])
 
   if (headings.length === 0) return null

@@ -12,14 +12,21 @@ type Props = {
   labels: { lastUpdated: string; effectiveFrom: string; version: string; bindingVersion: string }
 }
 
+// The company and its editors work in Germany, and both seeded dates (UTC midnight)
+// and admin-picked dates (local midnight) should read as the same calendar day
+// regardless of the server's own time zone, so both helpers pin to Europe/Berlin.
 export const formatDate = (iso: string, locale: Locale) =>
-  new Intl.DateTimeFormat(localeTags[locale], { dateStyle: 'long' }).format(new Date(iso))
+  new Intl.DateTimeFormat(localeTags[locale], { dateStyle: 'long', timeZone: 'Europe/Berlin' }).format(new Date(iso))
+
+/** `YYYY-MM-DD` in Europe/Berlin, for `<time dateTime>` — kept in sync with `formatDate`'s calendar day. */
+export const isoDate = (iso: string) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso))
 
 /** "Stand · Gültig ab · Version" plus a tag when this is the binding language. */
 export const DocumentMeta: React.FC<Props> = ({ locale, meta, binding, labels }) => {
   const items: { label: string; value: React.ReactNode }[] = []
-  if (meta?.lastUpdated) items.push({ label: labels.lastUpdated, value: <time dateTime={meta.lastUpdated.slice(0, 10)}>{formatDate(meta.lastUpdated, locale)}</time> })
-  if (meta?.effectiveFrom) items.push({ label: labels.effectiveFrom, value: <time dateTime={meta.effectiveFrom.slice(0, 10)}>{formatDate(meta.effectiveFrom, locale)}</time> })
+  if (meta?.lastUpdated) items.push({ label: labels.lastUpdated, value: <time dateTime={isoDate(meta.lastUpdated)}>{formatDate(meta.lastUpdated, locale)}</time> })
+  if (meta?.effectiveFrom) items.push({ label: labels.effectiveFrom, value: <time dateTime={isoDate(meta.effectiveFrom)}>{formatDate(meta.effectiveFrom, locale)}</time> })
   if (meta?.version) items.push({ label: labels.version, value: meta.version })
   const isBinding = binding === locale
 

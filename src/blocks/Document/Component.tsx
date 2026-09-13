@@ -5,7 +5,7 @@ import type { Locale } from '@/i18n/config'
 
 import RichText from '@/components/RichText'
 import { SectionHeading } from '@/components/SectionHeading'
-import { DocumentMeta, formatDate } from '@/components/DocumentLayout/DocumentMeta'
+import { DocumentMeta, formatDate, isoDate } from '@/components/DocumentLayout/DocumentMeta'
 import { PrintButton } from '@/components/DocumentLayout/PrintButton'
 import { SidebarNav } from '@/components/DocumentLayout/SidebarNav'
 import { Toc } from '@/components/DocumentLayout/Toc'
@@ -78,7 +78,7 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
                   <ol className="mt-4 flex flex-col gap-2 type-small text-ink-2">
                     {entries.map((h, i) => (
                       <li className="flex gap-4" key={h.id || i}>
-                        <time className="shrink-0 tabular-nums text-ink-3" dateTime={h.date.slice(0, 10)}>
+                        <time className="shrink-0 tabular-nums text-ink-3" dateTime={isoDate(h.date)}>
                           {formatDate(h.date, locale)}
                         </time>
                         <span>{h.note}</span>
