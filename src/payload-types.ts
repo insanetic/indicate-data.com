@@ -72,6 +72,7 @@ export interface Config {
     posts: Post;
     media: Media;
     categories: Category;
+    sidebars: Sidebar;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -95,6 +96,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    sidebars: SidebarsSelect<false> | SidebarsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -235,6 +237,7 @@ export interface Page {
     | AgentShowcaseBlock
     | StepsBlock
     | IntegrationsBlock
+    | IntegrationDirectoryBlock
     | PillarsBlock
     | CardGridBlock
     | StatsBlock
@@ -1092,7 +1095,7 @@ export interface IntegrationsBlock {
           /**
            * How the link is rendered.
            */
-          appearance?: ('link' | 'outline') | null;
+          appearance?: ('default' | 'outline' | 'link') | null;
         };
         id?: string | null;
       }[]
@@ -1105,6 +1108,45 @@ export interface IntegrationsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'integrations';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntegrationDirectoryBlock".
+ */
+export interface IntegrationDirectoryBlock {
+  header: {
+    eyebrow?: string | null;
+    heading: string;
+    lead?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  request: {
+    title?: string | null;
+    text?: string | null;
+    link: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      url?: string | null;
+      label: string;
+    };
+  };
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+    anchor?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'integrationDirectory';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1860,6 +1902,48 @@ export interface CallToActionBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sidebars".
+ */
+export interface Sidebar {
+  id: number;
+  title: string;
+  groups?:
+    | {
+        title: string;
+        links?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label: string;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  contact?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    text?: string | null;
+    email?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2170,6 +2254,10 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'sidebars';
+        value: number | Sidebar;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -2287,6 +2375,7 @@ export interface PagesSelect<T extends boolean = true> {
         agentShowcase?: T | AgentShowcaseBlockSelect<T>;
         steps?: T | StepsBlockSelect<T>;
         integrations?: T | IntegrationsBlockSelect<T>;
+        integrationDirectory?: T | IntegrationDirectoryBlockSelect<T>;
         pillars?: T | PillarsBlockSelect<T>;
         cardGrid?: T | CardGridBlockSelect<T>;
         stats?: T | StatsBlockSelect<T>;
@@ -2667,6 +2756,44 @@ export interface IntegrationsBlockSelect<T extends boolean = true> {
               appearance?: T;
             };
         id?: T;
+      };
+  settings?:
+    | T
+    | {
+        background?: T;
+        spacing?: T;
+        anchor?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntegrationDirectoryBlock_select".
+ */
+export interface IntegrationDirectoryBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        lead?: T;
+        align?: T;
+      };
+  request?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
       };
   settings?:
     | T
@@ -3216,6 +3343,43 @@ export interface CategoriesSelect<T extends boolean = true> {
         url?: T;
         label?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sidebars_select".
+ */
+export interface SidebarsSelect<T extends boolean = true> {
+  title?: T;
+  groups?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        text?: T;
+        email?: T;
       };
   updatedAt?: T;
   createdAt?: T;
