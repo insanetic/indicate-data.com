@@ -245,6 +245,7 @@ export interface Page {
     | PricingTeaserBlock
     | FaqBlock
     | CtaSectionBlock
+    | DocumentBlock
     | ContentBlock
     | MediaBlock
     | FormBlock
@@ -1569,6 +1570,101 @@ export interface CtaSectionBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DocumentBlock".
+ */
+export interface DocumentBlock {
+  header: {
+    eyebrow?: string | null;
+    heading: string;
+    lead?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  sidebar?: (number | null) | Sidebar;
+  meta?: {
+    lastUpdated?: string | null;
+    effectiveFrom?: string | null;
+    version?: string | null;
+  };
+  /**
+   * Other languages show a note that only this version is binding.
+   */
+  bindingLanguage?: ('none' | 'de' | 'en') | null;
+  showToc?: boolean | null;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  history?:
+    | {
+        date: string;
+        note: string;
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+    anchor?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'document';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sidebars".
+ */
+export interface Sidebar {
+  id: number;
+  title: string;
+  groups?:
+    | {
+        title: string;
+        links?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label: string;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  contact?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    text?: string | null;
+    email?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
@@ -1899,48 +1995,6 @@ export interface CallToActionBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'cta';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sidebars".
- */
-export interface Sidebar {
-  id: number;
-  title: string;
-  groups?:
-    | {
-        title: string;
-        links?:
-          | {
-              link: {
-                type?: ('reference' | 'custom') | null;
-                newTab?: boolean | null;
-                reference?:
-                  | ({
-                      relationTo: 'pages';
-                      value: number | Page;
-                    } | null)
-                  | ({
-                      relationTo: 'posts';
-                      value: number | Post;
-                    } | null);
-                url?: string | null;
-                label: string;
-              };
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  contact?: {
-    enabled?: boolean | null;
-    title?: string | null;
-    text?: string | null;
-    email?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2383,6 +2437,7 @@ export interface PagesSelect<T extends boolean = true> {
         pricingTeaser?: T | PricingTeaserBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
         ctaSection?: T | CtaSectionBlockSelect<T>;
+        document?: T | DocumentBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -3108,6 +3163,47 @@ export interface CtaSectionBlockSelect<T extends boolean = true> {
         id?: T;
       };
   note?: T;
+  settings?:
+    | T
+    | {
+        background?: T;
+        spacing?: T;
+        anchor?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DocumentBlock_select".
+ */
+export interface DocumentBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        lead?: T;
+        align?: T;
+      };
+  sidebar?: T;
+  meta?:
+    | T
+    | {
+        lastUpdated?: T;
+        effectiveFrom?: T;
+        version?: T;
+      };
+  bindingLanguage?: T;
+  showToc?: T;
+  body?: T;
+  history?:
+    | T
+    | {
+        date?: T;
+        note?: T;
+        id?: T;
+      };
   settings?:
     | T
     | {

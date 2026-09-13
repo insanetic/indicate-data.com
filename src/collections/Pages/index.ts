@@ -10,11 +10,13 @@ import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { AgentShowcase } from '../../blocks/AgentShowcase/config'
 import { CardGrid } from '../../blocks/CardGrid/config'
 import { CtaSection } from '../../blocks/CtaSection/config'
+import { Document } from '../../blocks/Document/config'
 import { Faq } from '../../blocks/Faq/config'
 import { FeatureStory } from '../../blocks/FeatureStory/config'
 import { FeatureTabs } from '../../blocks/FeatureTabs/config'
 import { Hero } from '../../blocks/Hero/config'
 import { Integrations } from '../../blocks/Integrations/config'
+import { IntegrationDirectory } from '../../blocks/IntegrationDirectory/config'
 import { LogoWall } from '../../blocks/LogoWall/config'
 import { Pillars } from '../../blocks/Pillars/config'
 import { PricingTeaser } from '../../blocks/PricingTeaser/config'
@@ -96,6 +98,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 AgentShowcase,
                 Steps,
                 Integrations,
+                IntegrationDirectory,
                 Pillars,
                 CardGrid,
                 Stats,
@@ -103,6 +106,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 PricingTeaser,
                 Faq,
                 CtaSection,
+                Document,
                 Content,
                 MediaBlock,
                 FormBlock,

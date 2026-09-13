@@ -6,6 +6,7 @@ import type { Locale } from '@/i18n/config'
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { DocumentBlock } from '@/blocks/Document/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { AgentShowcaseBlock } from '@/blocks/AgentShowcase/Component'
@@ -16,6 +17,7 @@ import { FeatureStoryBlock } from '@/blocks/FeatureStory/Component'
 import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { HeroBlock } from '@/blocks/Hero/Component'
 import { IntegrationsBlock } from '@/blocks/Integrations/Component'
+import { IntegrationDirectoryBlock } from '@/blocks/IntegrationDirectory/Component'
 import { LogoWallBlock } from '@/blocks/LogoWall/Component'
 import { PillarsBlock } from '@/blocks/Pillars/Component'
 import { PricingTeaserBlock } from '@/blocks/PricingTeaser/Component'
@@ -40,6 +42,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   agentShowcase: AgentShowcaseBlock,
   steps: StepsBlock,
   integrations: IntegrationsBlock,
+  integrationDirectory: IntegrationDirectoryBlock,
   pillars: PillarsBlock,
   cardGrid: CardGridBlock,
   stats: StatsBlock,
@@ -47,6 +50,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   pricingTeaser: PricingTeaserBlock,
   faq: FaqBlock,
   ctaSection: CtaSectionBlock,
+  document: DocumentBlock,
   archive: ArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
