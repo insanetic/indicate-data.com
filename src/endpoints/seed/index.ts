@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { locales, type Locale } from '@/i18n/config'
 
 import { aboutPage } from './about'
+import { consentGlobal } from './consent'
 import { contactForm as contactFormData } from './contact-form'
 import { contactPage, footer, header, homePage, pick, siteSettings, type Refs } from './content'
 import { legalPage, legalSidebar, legalSlugs, type LegalSlug } from './legal'
@@ -110,6 +111,9 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
   await upsertGlobal(payload, req, 'header', (locale) => header(pick(locale), refs))
   await upsertGlobal(payload, req, 'footer', (locale) => footer(pick(locale), refs))
 
+  payload.logger.info('— Consent')
+  await upsertGlobal(payload, req, 'consent', (locale) => consentGlobal(pick(locale), refs))
+
   payload.logger.info('— Pricing settings (Subneo)')
   await upsertGlobal(payload, req, 'subneo-pricing', (locale) => pricingSettings(pick(locale)))
 
@@ -190,7 +194,7 @@ async function upsertSidebar(
 async function upsertGlobal(
   payload: Payload,
   req: PayloadRequest,
-  slug: 'site-settings' | 'header' | 'footer' | 'subneo-pricing',
+  slug: 'site-settings' | 'header' | 'footer' | 'consent' | 'subneo-pricing',
   build: (locale: Locale) => AnyData,
 ) {
   const [primary, ...rest] = locales
