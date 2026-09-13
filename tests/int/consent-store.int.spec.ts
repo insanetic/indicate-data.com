@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { consentConfig } from '@/consent/config'
 import {
@@ -40,6 +40,17 @@ describe('consent record', () => {
     writeRecord(record)
     expect(document.cookie).toContain(`${consentConfig.cookieName}=`)
     expect(readRecord()).toEqual(record)
+  })
+
+  it('sets path, lifetime and SameSite attributes', () => {
+    const setter = vi.spyOn(document, 'cookie', 'set')
+    writeRecord(record)
+    const raw = setter.mock.calls[0][0]
+    expect(raw).toContain('Path=/')
+    expect(raw).toContain('Max-Age=31536000')
+    expect(raw).toContain('SameSite=Lax')
+    expect(raw).not.toContain('Secure')
+    setter.mockRestore()
   })
 
   it('needs a decision when missing, outdated, or expired', () => {

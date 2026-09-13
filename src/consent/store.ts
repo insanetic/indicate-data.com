@@ -41,7 +41,7 @@ const secure = () => (typeof location !== 'undefined' && location.protocol === '
 
 export function writeRecord(record: ConsentRecord): void {
   if (typeof document === 'undefined') return
-  const maxAge = consentConfig.maxAgeDays * 24 * 60 * 60
+  const maxAge = consentConfig.maxAgeDays * DAY / 1000
   document.cookie = `${consentConfig.cookieName}=${serializeRecord(record)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure()}`
 }
 
