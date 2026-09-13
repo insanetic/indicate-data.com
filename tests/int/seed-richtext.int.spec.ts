@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
+import { cookiePolicy } from '@/endpoints/seed/legal/cookie-policy'
+import { gdpr } from '@/endpoints/seed/legal/gdpr'
+import { imprint } from '@/endpoints/seed/legal/imprint'
+import { privacyPolicy } from '@/endpoints/seed/legal/privacy-policy'
+import { serviceDescription } from '@/endpoints/seed/legal/service-description'
+import { termsOfService } from '@/endpoints/seed/legal/terms-of-service'
 import { richText } from '@/endpoints/seed/lexical'
 
 describe('richText seed helper', () => {
@@ -50,4 +56,18 @@ Ein Absatz
     expect(table.children?.[0].children?.[0]).toMatchObject({ type: 'tablecell', headerState: 1 })
     expect(table.children?.[1].children?.[1]).toMatchObject({ type: 'tablecell', headerState: 0 })
   })
+})
+
+describe('legal documents', () => {
+  it.each(Object.entries({ privacyPolicy, termsOfService, gdpr, serviceDescription, cookiePolicy, imprint }))(
+    '%s converts in both languages with at least one heading',
+    (_name, doc) => {
+      for (const md of [doc.de, doc.en]) {
+        const out = richText(md)
+        expect(out.root.children.length).toBeGreaterThan(2)
+        expect(out.root.children.some((n) => n.type === 'heading')).toBe(true)
+        expect(md).not.toMatch(/deutschen Version Gültigkeit/)
+      }
+    },
+  )
 })
