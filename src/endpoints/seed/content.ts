@@ -765,7 +765,6 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         external(refs.links.demoUrl, t('Demo buchen', 'Book a demo'), 'default'),
         pageRef(refs.contactPageId, t('Kontakt aufnehmen', 'Get in touch'), 'outline'),
       ],
-      note: t('Unverbindlich, kein IT-Projekt.', 'No commitment, no IT project.'),
       settings: { background: 'accent', spacing: 'default' },
     },
   ],

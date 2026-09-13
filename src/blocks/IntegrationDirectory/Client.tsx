@@ -46,12 +46,6 @@ export const DirectoryClient: React.FC<Props> = ({ items, locale, request }) => 
     window.history.replaceState(window.history.state, '', url)
   }, [deferred, category])
 
-  const counts = useMemo(() => {
-    const c: Record<Filter, number> = { all: items.length, pms: 0, sales: 0, marketing: 0, web: 0, operations: 0, data: 0 }
-    for (const i of items) c[i.category] += 1
-    return c
-  }, [items])
-
   const results = useMemo(() => {
     const key = normalise(deferred)
     return items.filter((i) => {
@@ -82,7 +76,7 @@ export const DirectoryClient: React.FC<Props> = ({ items, locale, request }) => 
           <input
             aria-controls={statusId}
             autoComplete="off"
-            className="h-13 w-full rounded-pill border border-line-strong bg-surface-2 pl-12 pr-12 text-base text-ink placeholder:text-ink-3 transition-[border-color,box-shadow] duration-150 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/20 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+            className="h-12 w-full rounded-btn border border-line-strong bg-surface-2 pl-12 pr-12 text-base text-ink placeholder:text-ink-3 transition-[border-color,box-shadow] duration-150 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/20 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
             data-1p-ignore
             id={inputId}
             onChange={(e) => setQuery(e.target.value)}
@@ -94,7 +88,7 @@ export const DirectoryClient: React.FC<Props> = ({ items, locale, request }) => 
           {query && (
             <button
               aria-label={labels.clear}
-              className="pressable absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-ink-3 hover:bg-surface-3 hover:text-ink"
+              className="pressable absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-btn text-ink-3 hover:bg-surface-3 hover:text-ink"
               onClick={(e) => {
                 setQuery('')
                 ;(e.currentTarget.previousElementSibling as HTMLInputElement | null)?.focus()
@@ -113,7 +107,7 @@ export const DirectoryClient: React.FC<Props> = ({ items, locale, request }) => 
               <button
                 aria-pressed={active}
                 className={cn(
-                  'pressable inline-flex h-9 items-center gap-2 rounded-pill border px-3.5 type-small font-medium transition-colors duration-150',
+                  'pressable inline-flex h-9 items-center rounded-btn border px-3.5 type-small font-medium transition-colors duration-150',
                   active
                     ? 'border-accent bg-accent text-accent-ink'
                     : 'border-line bg-surface-2 text-ink-2 hover:border-line-strong hover:text-ink',
@@ -123,7 +117,6 @@ export const DirectoryClient: React.FC<Props> = ({ items, locale, request }) => 
                 type="button"
               >
                 {c === 'all' ? labels.all : labels.categories[c]}
-                <span className={cn('tnum type-caption', active ? 'text-accent-ink/70' : 'text-ink-3')}>{counts[c]}</span>
               </button>
             )
           })}

@@ -23,6 +23,8 @@ export const CtaSection: Block = {
       type: 'text',
       localized: true,
       label: { de: 'Kleine Zeile unter den Buttons', en: 'Small line below the buttons' },
+      // No longer rendered; kept so the column is not dropped by a dev schema push.
+      admin: { hidden: true },
     },
     sectionSettings({ defaultBackground: 'dark' }),
   ],

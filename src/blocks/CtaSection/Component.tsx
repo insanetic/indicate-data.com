@@ -5,7 +5,7 @@ import type { CtaSectionBlock as Props } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { SectionHeading } from '@/components/SectionHeading'
 
-export const CtaSectionBlock: React.FC<Props> = ({ header, links, note }) => {
+export const CtaSectionBlock: React.FC<Props> = ({ header, links }) => {
   const buttons = (links || []).filter((l) => l.link?.label)
 
   return (
@@ -24,7 +24,6 @@ export const CtaSectionBlock: React.FC<Props> = ({ header, links, note }) => {
             ))}
           </div>
         )}
-        {note && <p className="type-small text-ink-2">{note}</p>}
       </div>
     </div>
   )

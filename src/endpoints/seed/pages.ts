@@ -192,7 +192,6 @@ export const closing = (
       ? (secondary.external ? external : internal)(secondary.url, secondary.label, 'outline')
       : internal('/contact', t('Kontakt aufnehmen', 'Get in touch'), 'outline'),
   ],
-  note: t('Unverbindlich, kein IT-Projekt.', 'No commitment, no IT project.'),
   settings: { ...defaults, background: 'accent' },
 })
 
