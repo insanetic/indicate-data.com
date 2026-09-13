@@ -16,6 +16,8 @@ export const pick =
 export type Refs = {
   contactPageId: number
   aboutPageId: number
+  /** The pricing page (see ./pricing). */
+  pricingPageId: number
   /** Ids of the product and solution pages, keyed by slug (see ./pages). */
   pages: Record<SubpageSlug, number>
   /** Ids of the legal pages, keyed by slug (see ./legal). */
@@ -143,6 +145,7 @@ export const header = (t: T, refs: Refs): Partial<Header> => ({
         },
       ],
     },
+    { label: t('Preise', 'Pricing'), type: 'link', ...pageRef(refs.pricingPageId, t('Preise', 'Pricing')) },
     { label: t('Kontakt', 'Contact'), type: 'link', ...pageRef(refs.contactPageId, t('Kontakt', 'Contact')) },
   ],
   secondaryCta: { enabled: true, ...external(refs.links.appUrl, t('Anmelden', 'Sign in')) },
@@ -153,9 +156,12 @@ export const footer = (t: T, refs: Refs): Partial<Footer> => ({
   columns: [
     {
       title: t('Produkt', 'Product'),
-      links: (['agent', 'mcp', 'build-with-ai', 'dashboards', 'flying-kpis', 'integrations', 'kpi-studio', 'governance'] as const).map((slug) =>
-        subpage(refs, slug, pageNames(t)[slug]),
-      ),
+      links: [
+        ...(['agent', 'mcp', 'build-with-ai', 'dashboards', 'flying-kpis', 'integrations', 'kpi-studio', 'governance'] as const).map((slug) =>
+          subpage(refs, slug, pageNames(t)[slug]),
+        ),
+        pageRef(refs.pricingPageId, t('Preise', 'Pricing')),
+      ],
     },
     {
       title: t('Lösungen', 'Solutions'),

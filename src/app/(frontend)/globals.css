@@ -1013,3 +1013,58 @@ html[data-intro-seen] [data-intro='play'] .intro-visual {
     display: none;
   }
 }
+
+/* Pricing: the amount swaps in when the billing period or currency changes. */
+@keyframes price-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.price-swap {
+  display: inline-block;
+  animation: price-in 200ms var(--ease-out-quart) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .price-swap {
+    animation: none;
+  }
+}
+
+/* Yellow variant of the travelling border, for the featured plan. */
+.resi-ring.ring-accent::before {
+  background:
+    conic-gradient(
+      from var(--resi-angle),
+      transparent 0 58%,
+      color-mix(in oklch, var(--brand-yellow) 55%, transparent) 74%,
+      var(--brand-yellow) 88%,
+      var(--accent-hover) 97%,
+      transparent 100%
+    ),
+    linear-gradient(
+      100deg,
+      color-mix(in oklch, var(--brand-yellow) 50%, var(--line)),
+      color-mix(in oklch, var(--brand-yellow) 32%, var(--line))
+    );
+}
+@media (prefers-reduced-motion: reduce) {
+  .resi-ring.ring-accent::before {
+    background: var(--brand-yellow);
+  }
+}
+
+/* Segmented control: the ink thumb slides to the chosen option. */
+.segmented-thumb {
+  transition: transform 220ms var(--ease-out-quart);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .segmented-thumb {
+    transition: none;
+  }
+}

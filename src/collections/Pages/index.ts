@@ -21,6 +21,7 @@ import { IntegrationDirectory } from '../../blocks/IntegrationDirectory/config'
 import { LogoWall } from '../../blocks/LogoWall/config'
 import { Pillars } from '../../blocks/Pillars/config'
 import { PricingTeaser } from '../../blocks/PricingTeaser/config'
+import { Pricing } from '../../blocks/Pricing/config'
 import { Stats } from '../../blocks/Stats/config'
 import { Steps } from '../../blocks/Steps/config'
 import { Testimonials } from '../../blocks/Testimonials/config'
@@ -105,6 +106,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 Stats,
                 Testimonials,
                 PricingTeaser,
+                Pricing,
                 Faq,
                 CtaSection,
                 Spotlight,

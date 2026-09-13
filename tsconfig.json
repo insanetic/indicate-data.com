@@ -33,6 +33,12 @@
       ],
       "@/*": [
         "./src/*"
+      ],
+      "@subneo/sdk": [
+        "./packages/subneo-sdk/src/index.ts"
+      ],
+      "@subneo/payload-pricing": [
+        "./packages/payload-plugin-subneo-pricing/src/index.ts"
       ]
     }
   },

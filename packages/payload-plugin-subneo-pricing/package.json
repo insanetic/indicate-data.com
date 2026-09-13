@@ -1,0 +1,39 @@
+{
+  "name": "@subneo/payload-pricing",
+  "version": "0.1.0",
+  "description": "Payload CMS plugin that feeds a pricing page from Subneo: settings global, page block, cached loader and view model.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "@subneo/sdk": "^0.1.0",
+    "next": ">=15",
+    "payload": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    }
+  }
+}

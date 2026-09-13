@@ -22,6 +22,7 @@ import { IntegrationDirectoryBlock } from '@/blocks/IntegrationDirectory/Compone
 import { LogoWallBlock } from '@/blocks/LogoWall/Component'
 import { PillarsBlock } from '@/blocks/Pillars/Component'
 import { PricingTeaserBlock } from '@/blocks/PricingTeaser/Component'
+import { PricingBlock } from '@/blocks/Pricing/Component'
 import { StatsBlock } from '@/blocks/Stats/Component'
 import { StepsBlock } from '@/blocks/Steps/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
@@ -49,6 +50,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   stats: StatsBlock,
   testimonials: TestimonialsBlock,
   pricingTeaser: PricingTeaserBlock,
+  pricing: PricingBlock,
   faq: FaqBlock,
   ctaSection: CtaSectionBlock,
   spotlight: SpotlightBlock,

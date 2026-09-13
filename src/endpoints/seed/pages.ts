@@ -161,7 +161,7 @@ const related = (t: T, slugs: SubpageSlug[]): Block => {
   })
 }
 
-const faq = (t: T, items: { q: string; a: string }[]): Block => ({
+export const faq = (t: T, items: { q: string; a: string }[]): Block => ({
   blockType: 'faq',
   blockName: 'FAQ',
   header: {

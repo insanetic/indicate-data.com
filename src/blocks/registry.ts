@@ -17,6 +17,7 @@ export const blockSlugs = [
   'stats',
   'testimonials',
   'pricingTeaser',
+  'pricing',
   'faq',
   'ctaSection',
   'spotlight',

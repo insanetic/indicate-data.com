@@ -14,6 +14,8 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { unlocalizedCollections } from './unlocalizedCollections'
+import { subneoPricingPlugin } from '@subneo/payload-pricing'
+import { pricingFixtures } from '@/pricing/fixture'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Indicate Data` : 'Indicate Data'
@@ -33,7 +35,7 @@ export const plugins: Plugin[] = [
     collections: {
       pages: {
         description:
-          'Website pages composed of layout blocks (hero, logoWall, featureTabs, agentShowcase, steps, integrations, cardGrid, stats, testimonials, pricingTeaser, faq, ctaSection, content, media, archive, form). Localised: de (default) and en.',
+          'Website pages composed of layout blocks (hero, logoWall, featureTabs, agentShowcase, steps, integrations, cardGrid, stats, testimonials, pricingTeaser, pricing, faq, ctaSection, content, media, archive, form). Localised: de (default) and en.',
         enabled: { find: true, create: true, update: true, delete: false },
       },
       posts: {
@@ -60,6 +62,10 @@ export const plugins: Plugin[] = [
       },
       footer: {
         description: 'Footer link columns, legal links, bottom line.',
+        enabled: { find: true, update: true },
+      },
+      'subneo-pricing': {
+        description: 'Pricing page source: Subneo connection, plan families, per-language overrides, button templates.',
         enabled: { find: true, update: true },
       },
     },
@@ -130,6 +136,8 @@ export const plugins: Plugin[] = [
       },
     },
   }),
+  // Pricing page fed by Subneo: settings global, refresh endpoint; the block is registered on Pages.
+  subneoPricingPlugin({ fixtures: pricingFixtures }),
   // Must come last: strips `localized` that the plugins above add to these collections.
   // Posts, forms, search and categories are not localised yet (see spec "Assumptions").
   unlocalizedCollections(['posts', 'forms', 'form-submissions', 'search', 'categories']),

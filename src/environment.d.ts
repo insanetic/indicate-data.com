@@ -5,6 +5,11 @@ declare global {
       DATABASE_URL: string
       NEXT_PUBLIC_SERVER_URL: string
       VERCEL_PROJECT_PRODUCTION_URL: string
+      /** Subneo public API key (`sneo_…`); the CMS global can override it. */
+      SUBNEO_API_KEY?: string
+      SUBNEO_API_URL?: string
+      /** Bearer token accepted by POST /api/subneo-pricing/refresh. */
+      SUBNEO_REFRESH_SECRET?: string
     }
   }
 }

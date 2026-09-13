@@ -10,6 +10,7 @@ import { contactForm as contactFormData } from './contact-form'
 import { contactPage, footer, header, homePage, pick, siteSettings, type Refs } from './content'
 import { legalPage, legalSidebar, legalSlugs, type LegalSlug } from './legal'
 import { productSlugs, solutionSlugs, subpages, type SubpageSlug } from './pages'
+import { pricingPage, pricingSettings, pricingSlug } from './pricing'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -88,7 +89,7 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
 
   // Subpages link to each other by URL, so they only need media and the contact page.
   const pageIds = {} as Record<SubpageSlug, number>
-  const draft: Refs = { contactPageId: contactId, aboutPageId: 0, pages: pageIds, legal: legalIds, media, links: productLinks }
+  const draft: Refs = { contactPageId: contactId, aboutPageId: 0, pricingPageId: 0, pages: pageIds, legal: legalIds, media, links: productLinks }
   for (const slug of [...productSlugs, ...solutionSlugs]) {
     payload.logger.info(`— Page /${slug}`)
     pageIds[slug] = await upsertPage(payload, req, slug, (locale) => subpages(pick(locale), draft)[slug])
@@ -96,7 +97,10 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
 
   payload.logger.info('— Page /about')
   const aboutPageId = await upsertPage(payload, req, 'about', (locale) => aboutPage(pick(locale), draft))
-  const refs: Refs = { ...draft, pages: pageIds, aboutPageId }
+
+  payload.logger.info(`— Page /${pricingSlug}`)
+  const pricingPageId = await upsertPage(payload, req, pricingSlug, (locale) => pricingPage(pick(locale), draft))
+  const refs: Refs = { ...draft, pages: pageIds, aboutPageId, pricingPageId }
 
   payload.logger.info('— Home page')
   await upsertPage(payload, req, 'home', (locale) => homePage(pick(locale), refs))
@@ -105,6 +109,9 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
   await upsertGlobal(payload, req, 'site-settings', (locale) => siteSettings(pick(locale), refs))
   await upsertGlobal(payload, req, 'header', (locale) => header(pick(locale), refs))
   await upsertGlobal(payload, req, 'footer', (locale) => footer(pick(locale), refs))
+
+  payload.logger.info('— Pricing settings (Subneo)')
+  await upsertGlobal(payload, req, 'subneo-pricing', (locale) => pricingSettings(pick(locale)))
 
   payload.logger.info('Seeded database successfully!')
 }
@@ -183,7 +190,7 @@ async function upsertSidebar(
 async function upsertGlobal(
   payload: Payload,
   req: PayloadRequest,
-  slug: 'site-settings' | 'header' | 'footer',
+  slug: 'site-settings' | 'header' | 'footer' | 'subneo-pricing',
   build: (locale: Locale) => AnyData,
 ) {
   const [primary, ...rest] = locales
