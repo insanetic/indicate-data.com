@@ -66,7 +66,7 @@ export const DocumentBlock: React.FC<Props & { locale: Locale; slug?: string }> 
                 <TranslationNotice binding={bindingLanguage} locale={locale} slug={slug} />
               </div>
               <RichText
-                className="prose-document max-w-[70ch]"
+                className="prose-document mx-0 max-w-[70ch]"
                 copyLinkLabel={dict.copyLink}
                 data={body}
                 enableGutter={false}
