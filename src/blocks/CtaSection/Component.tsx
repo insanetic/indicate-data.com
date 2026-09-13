@@ -20,6 +20,7 @@ export const CtaSectionBlock: React.FC<Props> = ({ header, links }) => {
                 {...link}
                 appearance={link.appearance === 'outline' ? 'secondary' : link.appearance || 'primary'}
                 size="lg"
+                track={{ location: 'cta-section' }}
               />
             ))}
           </div>

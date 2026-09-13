@@ -34,6 +34,7 @@ export const HeroBlock: React.FC<HeroBlockProps & { locale?: Locale }> = ({ head
                 {...link}
                 appearance={link.appearance === 'outline' ? 'secondary' : link.appearance || 'primary'}
                 size="lg"
+                track={{ location: 'hero' }}
               />
             ))}
           </div>

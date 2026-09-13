@@ -215,7 +215,9 @@ export const MobileMenu: React.FC<{
         </nav>
 
         <div className="flex flex-col gap-3 border-t border-line p-5">
-          {primary?.label && <CMSLink {...primary} appearance="primary" className="w-full" />}
+          {primary?.label && (
+            <CMSLink {...primary} appearance="primary" className="w-full" track={{ location: 'mobile-menu' }} />
+          )}
           {secondary?.label && <CMSLink {...secondary} appearance="secondary" className="w-full" />}
         </div>
       </div>

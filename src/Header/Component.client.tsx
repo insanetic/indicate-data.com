@@ -82,7 +82,13 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, labels, settin
               />
             )}
             {primary?.label && (
-              <CMSLink {...primary} appearance="primary" className="hidden sm:inline-flex" size="sm" />
+              <CMSLink
+                {...primary}
+                appearance="primary"
+                className="hidden sm:inline-flex"
+                size="sm"
+                track={{ location: 'header' }}
+              />
             )}
             <MobileMenu
               items={data.items || []}

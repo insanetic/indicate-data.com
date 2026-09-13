@@ -10,6 +10,7 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
+import { track } from '@/consent/track'
 
 export type FormBlockType = {
   blockName?: string
@@ -104,6 +105,11 @@ export const FormBlock: React.FC<
           setIsLoading(false)
           setHasSubmitted(true)
 
+          track({
+            name: 'generate_lead',
+            params: { form_id: String(formID), form_name: formFromProps.title || String(formID) },
+          })
+
           if (confirmationType === 'redirect' && redirect) {
             const { url } = redirect
 
@@ -122,7 +128,7 @@ export const FormBlock: React.FC<
 
       void submitForm()
     },
-    [router, formID, redirect, confirmationType],
+    [router, formID, redirect, confirmationType, formFromProps.title],
   )
 
   return (

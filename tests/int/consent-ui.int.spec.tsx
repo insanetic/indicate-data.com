@@ -11,6 +11,7 @@ import { TagManager } from '@/consent/components/TagManager'
 import { defaults, resolveConsent } from '@/consent/defaults'
 import { readRecord, writeRecord } from '@/consent/store'
 import { isTrackingEnabled } from '@/consent/track'
+import { CMSLink } from '@/components/Link'
 import type { Consent } from '@/payload-types'
 
 describe('resolveConsent', () => {
@@ -248,5 +249,19 @@ describe('TagManager', () => {
     )
     await screen.findByText('decided')
     expect(document.querySelector('script[data-gtm]')).toBeNull()
+  })
+})
+
+describe('CMSLink track prop', () => {
+  afterEach(cleanup)
+
+  it('renders data-track attributes', () => {
+    const { container } = render(
+      <CMSLink label="Demo buchen" track={{ location: 'hero' }} type="custom" url="/demo" />,
+    )
+    const a = container.querySelector('a')!
+    expect(a.getAttribute('data-track')).toBe('cta_click')
+    expect(a.getAttribute('data-track-location')).toBe('hero')
+    expect(a.getAttribute('data-track-label')).toBe('Demo buchen')
   })
 })

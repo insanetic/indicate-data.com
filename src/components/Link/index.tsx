@@ -17,6 +17,8 @@ type CMSLinkType = {
     value: Page | Post | string | number
   } | null
   size?: ButtonProps['size'] | null
+  /** Marks the link for click tracking (see src/consent/track.ts). */
+  track?: { location: string; label?: string } | null
   type?: 'custom' | 'reference' | null
   url?: string | null
 }
@@ -40,6 +42,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     label,
     newTab,
     size: sizeFromProps,
+    track,
   } = props
 
   const href = resolveLinkHref(props)
@@ -48,9 +51,12 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   const size = appearance === 'link' ? 'clear' : sizeFromProps
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
+  const trackProps = track
+    ? { 'data-track': 'cta_click', 'data-track-location': track.location, 'data-track-label': track.label || label || undefined }
+    : {}
 
   const anchor = (
-    <LocaleLink className={cn(className)} href={href} {...newTabProps}>
+    <LocaleLink className={cn(className)} href={href} {...newTabProps} {...trackProps}>
       {label && (appearance === 'primary' || appearance === 'default' ? label : withResi(label))}
       {children && children}
     </LocaleLink>

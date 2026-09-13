@@ -51,6 +51,7 @@ export const PricingTeaserBlock: React.FC<Props> = ({ header, plans, footnote, l
                     {...button}
                     appearance={plan.highlighted ? 'primary' : 'secondary'}
                     className="w-full"
+                    track={{ location: 'pricing-teaser' }}
                   />
                 </div>
               )}
