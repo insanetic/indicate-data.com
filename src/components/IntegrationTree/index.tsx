@@ -7,7 +7,8 @@ import type { Locale } from '@/i18n/config'
 import type { Media as MediaType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
-export type TreeSystem = { name: string; logo?: MediaType | number | null }
+/** A system on a tile: an uploaded logo from the CMS, or a static mark from the connector catalogue. */
+export type TreeSystem = { name: string; logo?: MediaType | number | null; logoSrc?: string | null }
 
 const copy = {
   de: {
@@ -61,9 +62,8 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
 }) => {
   const t = copy[locale === 'en' ? 'en' : 'de']
   // Systems with a logo fill the tiles first; the rest is listed under the diagram anyway.
-  const tiles = [...systems]
-    .sort((a, b) => Number(Boolean(b.logo && typeof b.logo === 'object')) - Number(Boolean(a.logo && typeof a.logo === 'object')))
-    .slice(0, slots.length)
+  const hasMark = (s: TreeSystem) => Boolean((s.logo && typeof s.logo === 'object') || s.logoSrc)
+  const tiles = [...systems].sort((a, b) => Number(hasMark(b)) - Number(hasMark(a))).slice(0, slots.length)
   const step = 6 / tiles.length
 
   const sourcePath = (i: number) => {
@@ -75,13 +75,19 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
   const tile = (sys: TreeSystem, className?: string, style?: React.CSSProperties) => (
     <span
       className={cn(
-        'flex size-14 items-center justify-center overflow-hidden rounded-[0.75rem] border bg-surface-2 border-line-strong',
+        'flex size-14 items-center justify-center overflow-hidden rounded-[0.75rem] border border-line-strong',
+        // Marks are drawn for light backgrounds; text tiles stay on the dark surface.
+        hasMark(sys) ? 'bg-white' : 'bg-surface-2',
         className,
       )}
       style={style}
       title={sys.name}
     >
-      {sys.logo && typeof sys.logo === 'object' ? (
+      {/* The catalogue mark wins over a CMS upload, so tiles and the directory show the same logo. */}
+      {sys.logoSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element -- static mark, sized by CSS
+        <img alt="" className="size-7 object-contain" height={28} src={sys.logoSrc} width={28} />
+      ) : sys.logo && typeof sys.logo === 'object' ? (
         <Media htmlElement={null} imgClassName="size-7 object-contain" resource={sys.logo} />
       ) : (
         <span className="font-display text-base font-medium text-ink-2">{initials(sys.name)}</span>
@@ -89,10 +95,13 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
     </span>
   )
 
+  // White so the three brand colours of the mark stay visible; a yellow ring travels around it.
   const centre = (
-    <span className="flex flex-col items-center justify-center gap-1 rounded-[0.875rem] bg-accent px-5 py-4 text-accent-ink shadow-float">
-      <BrandBars size={26} />
-      <span className="font-display text-base font-medium">{t.centre}</span>
+    <span className="loop-tree-centre relative inline-flex rounded-[1.05rem] p-[3px] shadow-float">
+      <span className="flex flex-col items-center justify-center gap-1 rounded-[0.875rem] bg-white px-5 py-4 text-[oklch(0.2_0.02_262)]">
+        <BrandBars size={26} />
+        <span className="font-display text-base font-medium">{t.centre}</span>
+      </span>
     </span>
   )
 

@@ -700,6 +700,30 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
+/* Centre tile: a yellow segment travels around the white tile on a conic gradient. */
+@property --tree-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes loop-tree-centre {
+  to {
+    --tree-angle: 360deg;
+  }
+}
+/* `.loop .x` outranks the shared clock rule, so the ring keeps its own 3 s period. */
+.loop .loop-tree-centre {
+  background: conic-gradient(
+    from var(--tree-angle),
+    var(--accent) 0deg,
+    var(--accent) 60deg,
+    var(--line-strong) 120deg,
+    var(--line-strong) 360deg
+  );
+  animation-name: loop-tree-centre;
+  animation-duration: 3s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .loop [class*='loop-'] {
     animation: none;
@@ -710,6 +734,9 @@
   }
   .loop .loop-tree-out {
     stroke-dasharray: none;
+  }
+  .loop .loop-tree-centre {
+    background: var(--accent);
   }
   .loop .loop-type,
   .loop .loop-chat-q,

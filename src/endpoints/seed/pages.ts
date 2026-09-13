@@ -441,7 +441,7 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
     t,
     'mcp',
     {
-      title: t('Indicate MCP: Hotelzahlen in Claude, ChatGPT und VS Code', 'Indicate MCP: hotel numbers in Claude, ChatGPT and VS Code'),
+      title: t('Indicate MCP: Hotelzahlen in Claude, ChatGPT und Langdock', 'Indicate MCP: hotel numbers in Claude, ChatGPT and Langdock'),
       description: t(
         'Der Indicate MCP-Server gibt Ihrem KI-Assistenten geprüfte Kennzahlen aus PMS, Vertrieb und Marketing, mit denselben Rechten wie in der App.',
         'The Indicate MCP server gives your AI assistant verified KPIs from PMS, distribution and marketing, with the same permissions as in the app.',
@@ -450,7 +450,7 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
     [
       hero(t, refs, {
         eyebrow: 'Indicate MCP',
-        heading: t('Ihre Hotelzahlen in Claude, ChatGPT und Ihrem Editor.', 'Your hotel numbers in Claude, ChatGPT and your editor.'),
+        heading: t('Ihre Hotelzahlen in Claude, ChatGPT und Langdock.', 'Your hotel numbers in Claude, ChatGPT and Langdock.'),
         lead: t(
           'Der MCP-Server gibt Ihrem Assistenten die Kennzahlen aus Indicate, mit denselben Rechten wie in der App.',
           'The MCP server gives your assistant the KPIs from Indicate, with the same permissions as in the app.',
@@ -475,8 +475,8 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
             icon: 'code',
             title: t('Einrichten', 'Set up'),
             text: t(
-              'Anleitungen für Claude Desktop, Claude Code und VS Code direkt in der App. Eine Zeile, fertig.',
-              'Guides for Claude Desktop, Claude Code and VS Code right in the app. One line, done.',
+              'Anleitungen für Claude Desktop, Claude Code und jeden MCP-fähigen Assistenten direkt in der App. Eine Zeile, fertig.',
+              'Guides for Claude Desktop, Claude Code and any MCP-capable assistant right in the app. One line, done.',
             ),
           },
           {
@@ -526,13 +526,15 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
         name: t('Clients', 'Clients'),
         eyebrow: t('Läuft in', 'Runs in'),
         heading: t('Der Assistent, den Ihr Team schon nutzt.', 'The assistant your team already uses.'),
-        layout: 'grid-4',
+        layout: 'grid-3',
         background: 'tinted',
         cards: [
-          { icon: 'message', title: 'Claude Desktop', text: t('Anleitung für macOS und Windows in der App.', 'Guide for macOS and Windows in the app.') },
-          { icon: 'code', title: 'Claude Code', text: t('Ein Befehl im Terminal, und der Server ist verbunden.', 'One terminal command and the server is connected.') },
-          { icon: 'code', title: 'VS Code', text: t('Für Datenteams, die mit Kennzahlen im Editor arbeiten.', 'For data teams working with KPIs in the editor.') },
-          { icon: 'sparkles', title: 'ChatGPT', text: t('Als App anmelden, mit Ihrem Indicate-Login. Ebenso Langdock und jeder MCP-fähige Assistent.', 'Sign in as an app with your Indicate login. Likewise Langdock and any MCP-capable assistant.') },
+          { icon: 'message', title: 'Claude', text: t('Claude Desktop auf macOS und Windows, mit Anleitung in der App. Anmeldung als App mit Ihrem Indicate-Login.', 'Claude Desktop on macOS and Windows, with a guide in the app. Sign in as an app with your Indicate login.') },
+          { icon: 'sparkles', title: 'ChatGPT', text: t('Als App anmelden, mit Ihrem Indicate-Login. Fragen im Chat, Antworten aus dem Kennzahlen-Katalog.', 'Sign in as an app with your Indicate login. Ask in the chat, answers from the KPI catalogue.') },
+          { icon: 'users', title: 'Langdock', text: t('Für Teams, die ihren KI-Arbeitsplatz in Europa betreiben: MCP-Server eintragen, fertig.', 'For teams running their AI workspace in Europe: add the MCP server, done.') },
+          { icon: 'code', title: 'Claude Code', text: t('Ein Befehl im Terminal, und der Server ist verbunden. Für Datenteams und Agenturen mit eigenen Skripten.', 'One terminal command and the server is connected. For data teams and agencies with their own scripts.') },
+          { icon: 'code', title: 'GitHub Copilot', text: t('Kennzahlen im Editor, neben dem Code Ihrer Website oder Ihres Datenteams.', 'KPIs in the editor, next to the code of your website or data team.') },
+          { icon: 'plug', title: t('Jeder MCP-fähige Assistent', 'Any MCP-capable assistant'), text: t('Der Standard ist offen. Was MCP spricht, verbindet sich mit einem Agent-Token oder als App.', 'The standard is open. Anything that speaks MCP connects with an agent token or as an app.') },
         ],
       }),
       {
@@ -585,7 +587,7 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
             text: t('App und MCP teilen sich das KI-Budget des Space.', 'App and MCP share the space’s AI budget.'),
           },
         ],
-        channels: [{ name: 'Claude' }, { name: 'ChatGPT' }, { name: 'Claude Code' }, { name: 'VS Code' }],
+        channels: [{ name: 'Claude' }, { name: 'ChatGPT' }, { name: 'Langdock' }, { name: 'Claude Code' }, { name: 'GitHub Copilot' }],
         links: [external(refs.links.docsUrl, t('Einrichtung lesen', 'Read the setup'), 'outline')],
         settings: { ...defaults },
       },
@@ -608,8 +610,8 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
         {
           q: t('Braucht mein Datenteam etwas anderes?', 'Does my data team need anything else?'),
           a: t(
-            'Nein. Dasselbe MCP läuft in VS Code und Claude Code. Dazu kommen API-Tokens, Export und KPI Studio für eigene Definitionen.',
-            'No. The same MCP runs in VS Code and Claude Code. Add API tokens, export and KPI Studio for your own definitions.',
+            'Nein. Dasselbe MCP läuft in Claude Code und GitHub Copilot. Dazu kommen API-Tokens, Export und KPI Studio für eigene Definitionen.',
+            'No. The same MCP runs in Claude Code and GitHub Copilot. Add API tokens, export and KPI Studio for your own definitions.',
           ),
         },
       ]),

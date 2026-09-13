@@ -7,7 +7,6 @@ import React, { useEffect, useId, useRef, useState } from 'react'
 import type { Header } from '@/payload-types'
 
 import { CMSLink, resolveLinkHref } from '@/components/Link'
-import { LanguageSwitch } from '@/components/LanguageSwitch'
 import { LocaleLink } from '@/components/LocaleLink'
 import { cn } from '@/utilities/ui'
 
@@ -216,7 +215,6 @@ export const MobileMenu: React.FC<{
         <div className="flex flex-col gap-3 border-t border-line p-5">
           {primary?.label && <CMSLink {...primary} appearance="primary" className="w-full" />}
           {secondary?.label && <CMSLink {...secondary} appearance="secondary" className="w-full" />}
-          <LanguageSwitch className="self-start" label={labels.language} />
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-builder/types'
 
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
@@ -39,7 +39,19 @@ export const FormBlock: React.FC<
     formState: { errors },
     handleSubmit,
     register,
+    setValue,
   } = formMethods
+
+  // Prefill from the link: /contact?message=… fills the field named "message" (only known fields).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    for (const field of formFromProps.fields || []) {
+      if (!('name' in field) || !field.name) continue
+      const value = params.get(field.name)
+      // The template types the form by field index; names are what `register` actually uses.
+      if (value) setValue(field.name as never, value as never)
+    }
+  }, [formFromProps.fields, setValue])
 
   const [isLoading, setIsLoading] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()

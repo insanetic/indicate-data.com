@@ -46,7 +46,7 @@ Solution page: `hero` → `logoWall` → `cardGrid` (what changes for this audie
 
 ## 6. Assumptions / open points
 
-- Langdock is kept only where the founder already wrote it (home page). New pages name Claude, ChatGPT, Claude Code and VS Code, which have setup guides in the app.
+- MCP clients named on the pages (founder's choice, 2026-09-13): Claude, ChatGPT, Langdock, Claude Code, GitHub Copilot, plus "any MCP-capable assistant". Official marks live in `public/clients` (sources in its README).
 - Sync cadence is described as "stündlich bis täglich" on the integrations page; the home page's "15 Minuten" is left untouched.
 - No alerting feature is promised; comparisons and guide lines carry the "plan vs actual" story.
 - Slugs are not localised (Payload `slugField`), so `/de/flying-kpis` and `/en/flying-kpis`.

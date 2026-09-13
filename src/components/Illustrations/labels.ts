@@ -94,7 +94,7 @@ export const labels = {
       },
       mcp: {
         title: 'Claude Desktop',
-        clients: ['Claude', 'ChatGPT', 'Claude Code', 'VS Code'],
+        clients: ['Claude', 'ChatGPT', 'Claude Code', 'Langdock', 'GitHub Copilot'],
         prompt: 'Wie lief die Sommerkampagne auf Meta gegen die Buchungen aus Mews?',
         tools: [
           ['list_kpis', 'kampagnen, buchungen'],
@@ -264,7 +264,7 @@ export const labels = {
       },
       mcp: {
         title: 'Claude Desktop',
-        clients: ['Claude', 'ChatGPT', 'Claude Code', 'VS Code'],
+        clients: ['Claude', 'ChatGPT', 'Claude Code', 'Langdock', 'GitHub Copilot'],
         prompt: 'How did the summer campaign on Meta do against the bookings in Mews?',
         tools: [
           ['list_kpis', 'campaigns, bookings'],

@@ -115,7 +115,7 @@ export async function Footer({ locale }: { locale: Locale }) {
                 ))}
               </ul>
             )}
-            {footer.showLanguageSwitch && <LanguageSwitch label={dict.language} variant="text" />}
+            {footer.showLanguageSwitch && <LanguageSwitch label={dict.language} variant="select" />}
           </div>
         </div>
       </div>

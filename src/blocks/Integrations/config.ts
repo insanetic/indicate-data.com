@@ -55,9 +55,9 @@ export const Integrations: Block = {
       ],
     },
     linkGroup({
-      appearances: ['link', 'outline'],
+      appearances: ['default', 'outline', 'link'],
       localized: true,
-      overrides: { maxRows: 1, label: { de: 'Link zu allen Integrationen (optional)', en: 'Link to all integrations (optional)' } },
+      overrides: { maxRows: 2, label: { de: 'Buttons unter der Grafik (max. 2)', en: 'Buttons below the diagram (max. 2)' } },
     }),
     sectionSettings({ defaultBackground: 'tinted' }),
   ],

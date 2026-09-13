@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 import type { Header, SiteSetting } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
-import { LanguageSwitch } from '@/components/LanguageSwitch'
 import { LocaleLink } from '@/components/LocaleLink'
 import { Logo } from '@/components/Logo/Logo'
 import { cn } from '@/utilities/ui'
@@ -74,7 +73,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, labels, settin
           <DesktopNav items={data.items || []} label={labels.mainNavigation} />
 
           <div className="flex items-center gap-2 md:gap-3">
-            <LanguageSwitch className="hidden md:inline-flex" label={labels.language} />
             {secondary?.label && (
               <CMSLink
                 {...secondary}

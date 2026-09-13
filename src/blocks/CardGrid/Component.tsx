@@ -5,6 +5,7 @@ import type { CardGridBlock as Props } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
 import { IconTile } from '@/components/Icon'
+import { findMcpClient } from '@/integrations/clients'
 import { SectionHeading } from '@/components/SectionHeading'
 import { cn } from '@/utilities/ui'
 
@@ -36,7 +37,19 @@ export const CardGridBlock: React.FC<Props> = ({ header, layout, cards }) => {
               key={card.id || i}
               style={{ '--i': i } as React.CSSProperties}
             >
-              {card.icon && <IconTile name={card.icon} tone={tones[i % tones.length]} />}
+              {(() => {
+                // A card named after an AI assistant shows the vendor's mark instead of an icon.
+                const client = findMcpClient(card.title)
+                if (client?.logo) {
+                  return (
+                    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-btn border border-line bg-white">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- static vendor mark */}
+                      <img alt="" className="size-5" height={20} src={client.logo} width={20} />
+                    </span>
+                  )
+                }
+                return card.icon ? <IconTile name={card.icon} tone={tones[i % tones.length]} /> : null
+              })()}
               <div className="flex flex-col gap-2">
                 <h3 className="type-h4 text-ink">{card.title}</h3>
                 {card.text && <p className="type-small text-ink-2 pretty">{card.text}</p>}

@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { BrandBars } from '@/components/BrandBars'
+import { ClientMark } from '@/components/ClientMark'
 import { Bars, Donut, Sparkline } from '@/components/Illustrations/primitives'
 import { useLocale } from '@/providers/Locale'
 import { cn } from '@/utilities/ui'
@@ -161,7 +162,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
                   onClick={() => setChannel(i)}
                   type="button"
                 >
-                  {name}
+                  <ClientMark name={name} size={12} />
                 </button>
               ))}
             </div>

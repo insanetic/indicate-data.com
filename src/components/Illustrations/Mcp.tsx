@@ -2,6 +2,7 @@ import { Check, Lock, ShieldCheck } from 'lucide-react'
 import React from 'react'
 
 import { BrandBars } from '@/components/BrandBars'
+import { ClientMark } from '@/components/ClientMark'
 import { cn } from '@/utilities/ui'
 
 import { Chip, Frame } from './primitives'
@@ -38,12 +39,12 @@ export const McpIllustration: React.FC<IllustrationProps> = ({ className, locale
             </span>
             <span className="hidden gap-1 sm:flex">
               {m.clients.map((name, i) => (
-                <span
+                <ClientMark
                   className={cn('rounded-pill px-2 py-0.5 text-[0.6875rem] font-medium leading-5', i === 0 ? 'bg-surface-3 text-ink' : 'text-ink-3')}
                   key={name}
-                >
-                  {name}
-                </span>
+                  name={name}
+                  size={11}
+                />
               ))}
             </span>
           </div>
