@@ -1,6 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { act, cleanup, render, screen } from '@testing-library/react'
+import React from 'react'
+import { afterEach, describe, expect, it } from 'vitest'
 
+import { ConsentProvider, useConsent } from '@/consent/components/ConsentProvider'
 import { defaults, resolveConsent } from '@/consent/defaults'
+import { writeRecord } from '@/consent/store'
+import { isTrackingEnabled } from '@/consent/track'
 import type { Consent } from '@/payload-types'
 
 describe('resolveConsent', () => {
@@ -39,5 +44,59 @@ describe('resolveConsent', () => {
 
   it('uses English for an unknown locale', () => {
     expect(resolveConsent(null, 'xx' as never).texts.acceptAll).toBe(defaults.en.acceptAll)
+  })
+})
+
+const clearConsentCookie = () => {
+  document.cookie = 'consent=; Max-Age=0; Path=/'
+}
+
+const Probe = () => {
+  const c = useConsent()
+  return (
+    <div>
+      <span data-testid="status">{c.status}</span>
+      <span data-testid="enabled">{String(c.enabled)}</span>
+      <button onClick={c.acceptAll}>accept</button>
+    </div>
+  )
+}
+
+describe('ConsentProvider', () => {
+  afterEach(cleanup)
+
+  it('is pending without a cookie and decided after acceptAll', async () => {
+    clearConsentCookie()
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+        <Probe />
+      </ConsentProvider>,
+    )
+    expect(await screen.findByText('pending')).toBeTruthy()
+    expect(isTrackingEnabled()).toBe(true)
+    await act(async () => screen.getByText('accept').click())
+    expect(screen.getByTestId('status').textContent).toBe('decided')
+    expect(document.cookie).toContain('consent=')
+  })
+
+  it('is decided when a current cookie exists', async () => {
+    writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+        <Probe />
+      </ConsentProvider>,
+    )
+    expect(await screen.findByText('decided')).toBeTruthy()
+  })
+
+  it('is disabled without a container id', async () => {
+    clearConsentCookie()
+    render(
+      <ConsentProvider settings={null}>
+        <Probe />
+      </ConsentProvider>,
+    )
+    expect(await screen.findByText('false')).toBeTruthy()
+    expect(isTrackingEnabled()).toBe(false)
   })
 })
