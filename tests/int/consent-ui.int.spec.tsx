@@ -2,9 +2,10 @@ import { act, cleanup, render, screen } from '@testing-library/react'
 import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { ConsentBanner } from '@/consent/components/ConsentBanner'
 import { ConsentProvider, useConsent } from '@/consent/components/ConsentProvider'
 import { defaults, resolveConsent } from '@/consent/defaults'
-import { writeRecord } from '@/consent/store'
+import { readRecord, writeRecord } from '@/consent/store'
 import { isTrackingEnabled } from '@/consent/track'
 import type { Consent } from '@/payload-types'
 
@@ -98,5 +99,45 @@ describe('ConsentProvider', () => {
     )
     expect(await screen.findByText('false')).toBeTruthy()
     expect(isTrackingEnabled()).toBe(false)
+  })
+})
+
+describe('ConsentBanner', () => {
+  afterEach(cleanup)
+
+  it('shows when pending, accept all grants both categories', async () => {
+    clearConsentCookie()
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+        <ConsentBanner />
+      </ConsentProvider>,
+    )
+    const region = await screen.findByRole('region', { name: defaults.de.bannerTitle })
+    expect(region).toBeTruthy()
+    await act(async () => screen.getByRole('button', { name: defaults.de.acceptAll }).click())
+    expect(readRecord()?.c).toEqual({ analytics: true, marketing: true })
+    expect(screen.queryByRole('region')).toBeNull()
+  })
+
+  it('reject writes both categories as false', async () => {
+    clearConsentCookie()
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+        <ConsentBanner />
+      </ConsentProvider>,
+    )
+    await screen.findByRole('region')
+    await act(async () => screen.getByRole('button', { name: defaults.de.rejectAll }).click())
+    expect(readRecord()?.c).toEqual({ analytics: false, marketing: false })
+  })
+
+  it('renders nothing when disabled', () => {
+    clearConsentCookie()
+    render(
+      <ConsentProvider settings={null}>
+        <ConsentBanner />
+      </ConsentProvider>,
+    )
+    expect(screen.queryByRole('region')).toBeNull()
   })
 })
