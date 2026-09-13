@@ -21,6 +21,7 @@ describe('document dictionary', () => {
     for (const locale of ['de', 'en'] as const) {
       const d = getDictionary(locale)
       expect(d.translationNotice).toContain('{language}')
+      expect(Object.keys(d.languageNames).sort()).toEqual(['de', 'en'])
       expect(d.onThisPage).toBeTruthy()
       expect(d.previousVersions).toBeTruthy()
     }
@@ -34,7 +35,9 @@ describe('TranslationNotice component', () => {
     )
     expect(html).toContain('href="/de/privacy-policy"')
     expect(html).toContain('hrefLang="de-DE"')
-    expect(html).toContain('Deutsch')
+    // The sentence names the language in English; the link label keeps the endonym.
+    expect(html).toContain('Only the German version is legally binding.')
+    expect(html).toContain('Read the binding version (Deutsch)')
     expect(html).not.toContain('{language}')
     expect(html).toContain('role="note"')
   })

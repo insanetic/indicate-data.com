@@ -69,6 +69,11 @@ Ein Absatz
   })
 })
 
+/** Every text node of a converted document, in order. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const texts = (node: any): string[] =>
+  typeof node.text === 'string' ? [node.text] : (node.children || []).flatMap(texts)
+
 describe('legal documents', () => {
   it.each(Object.entries({ privacyPolicy, termsOfService, gdpr, serviceDescription, cookiePolicy, imprint }))(
     '%s converts in both languages with at least one heading',
@@ -78,6 +83,17 @@ describe('legal documents', () => {
         expect(out.root.children.length).toBeGreaterThan(2)
         expect(out.root.children.some((n) => n.type === 'heading')).toBe(true)
         expect(md).not.toMatch(/deutschen Version Gültigkeit/)
+      }
+    },
+  )
+
+  // A heading that lost the blank line before it stays a paragraph and shows its `##` on the
+  // page, so no rendered text may still carry markdown markers.
+  it.each(Object.entries({ privacyPolicy, termsOfService, gdpr, serviceDescription, cookiePolicy, imprint }))(
+    '%s leaves no unconverted markdown markers in the text',
+    (_name, doc) => {
+      for (const md of [doc.de, doc.en]) {
+        for (const text of texts(richText(md).root)) expect(text.trimStart()).not.toMatch(/^#/)
       }
     },
   )
