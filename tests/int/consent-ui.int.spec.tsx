@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import { ConsentBanner } from '@/consent/components/ConsentBanner'
 import { ConsentProvider, useConsent } from '@/consent/components/ConsentProvider'
+import { ConsentSettings } from '@/consent/components/ConsentSettings'
 import { defaults, resolveConsent } from '@/consent/defaults'
 import { readRecord, writeRecord } from '@/consent/store'
 import { isTrackingEnabled } from '@/consent/track'
@@ -139,5 +140,73 @@ describe('ConsentBanner', () => {
       </ConsentProvider>,
     )
     expect(screen.queryByRole('region')).toBeNull()
+  })
+})
+
+// jsdom has no showModal; give <dialog> a minimal one so the component's open path runs.
+const ensureDialogSupport = () => {
+  const proto = HTMLDialogElement.prototype as HTMLDialogElement & { showModal?: () => void; close?: () => void }
+  if (typeof proto.showModal !== 'function') {
+    proto.showModal = function () {
+      this.setAttribute('open', '')
+    }
+    proto.close = function () {
+      this.removeAttribute('open')
+      this.dispatchEvent(new Event('close'))
+    }
+  }
+}
+
+const OpenSettings = () => {
+  const { openSettings } = useConsent()
+  return <button onClick={openSettings}>open</button>
+}
+
+describe('ConsentSettings', () => {
+  afterEach(cleanup)
+
+  it('locks necessary, toggles analytics and saves the selection', async () => {
+    ensureDialogSupport()
+    clearConsentCookie()
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+        <OpenSettings />
+        <ConsentSettings />
+      </ConsentProvider>,
+    )
+    await screen.findByText('open')
+    await act(async () => screen.getByText('open').click())
+    const dialog = screen.getByRole('dialog', { hidden: true })
+    expect(dialog.hasAttribute('open')).toBe(true)
+    const switches = screen.getAllByRole('switch', { hidden: true })
+    expect(switches).toHaveLength(3)
+    expect(switches[0].getAttribute('aria-checked')).toBe('true')
+    expect(switches[0].getAttribute('aria-disabled')).toBe('true')
+    await act(async () => switches[0].click())
+    expect(switches[0].getAttribute('aria-checked')).toBe('true')
+    await act(async () => switches[1].click())
+    expect(switches[1].getAttribute('aria-checked')).toBe('true')
+    await act(async () => screen.getByRole('button', { name: defaults.de.saveSelection, hidden: true }).click())
+    expect(readRecord()?.c).toEqual({ analytics: true, marketing: false })
+    expect(dialog.hasAttribute('open')).toBe(false)
+  })
+
+  it('lists services under their category', async () => {
+    ensureDialogSupport()
+    clearConsentCookie()
+    const settings = {
+      enabled: true,
+      revision: 1,
+      categories: [{ key: 'analytics', services: [{ name: 'Google Analytics 4', provider: 'Google Ireland Limited' }] }],
+    } as unknown as Consent
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={settings}>
+        <OpenSettings />
+        <ConsentSettings />
+      </ConsentProvider>,
+    )
+    await screen.findByText('open')
+    await act(async () => screen.getByText('open').click())
+    expect(screen.getByText('Google Analytics 4', { exact: false })).toBeTruthy()
   })
 })
