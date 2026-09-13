@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
+import { revalidateSidebar, revalidateSidebarDelete } from './hooks/revalidateSidebar'
 import { link } from '@/fields/link'
 
 /**
@@ -20,6 +21,10 @@ export const Sidebars: CollectionConfig<'sidebars'> = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'updatedAt'],
     group: { de: 'Website', en: 'Site' },
+  },
+  hooks: {
+    afterChange: [revalidateSidebar],
+    afterDelete: [revalidateSidebarDelete],
   },
   fields: [
     {
