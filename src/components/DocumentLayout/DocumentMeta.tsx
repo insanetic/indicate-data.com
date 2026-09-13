@@ -12,7 +12,7 @@ type Props = {
   labels: { lastUpdated: string; effectiveFrom: string; version: string; bindingVersion: string }
 }
 
-const formatDate = (iso: string, locale: Locale) =>
+export const formatDate = (iso: string, locale: Locale) =>
   new Intl.DateTimeFormat(localeTags[locale], { dateStyle: 'long' }).format(new Date(iso))
 
 /** "Stand · Gültig ab · Version" plus a tag when this is the binding language. */

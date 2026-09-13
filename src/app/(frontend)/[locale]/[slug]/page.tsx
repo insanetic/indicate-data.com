@@ -67,7 +67,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       {draft && <LivePreviewListener />}
 
       <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} locale={locale} />
+      <RenderBlocks blocks={layout} locale={locale} slug={decodedSlug} />
     </article>
   )
 }

@@ -70,7 +70,8 @@ type Settings = {
 export const RenderBlocks: React.FC<{
   blocks: Block[]
   locale: Locale
-}> = ({ blocks, locale }) => {
+  slug?: string
+}> = ({ blocks, locale, slug }) => {
   if (!Array.isArray(blocks) || blocks.length === 0) return null
 
   return (
@@ -97,7 +98,7 @@ export const RenderBlocks: React.FC<{
             key={block.id || index}
             spacing={settings?.spacing}
           >
-            <Block {...block} locale={locale} />
+            <Block {...block} locale={locale} slug={slug} />
           </Section>
         )
       })}
