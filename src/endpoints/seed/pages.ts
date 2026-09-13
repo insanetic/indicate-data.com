@@ -65,9 +65,9 @@ export const pageIcons: Record<SubpageSlug, IconKey> = {
   agencies: 'briefcase',
 }
 
-const defaults = { background: 'default' as const, spacing: 'default' as const }
+export const defaults = { background: 'default' as const, spacing: 'default' as const }
 
-const hero = (
+export const hero = (
   t: T,
   refs: Refs,
   o: { eyebrow: string; heading: string; lead: string; illustration: Illustration; secondary?: { url: string; label: string; external?: boolean }; demoLabel?: string },
@@ -94,7 +94,7 @@ const steps = (t: T, heading: string, lead: string, items: { icon: IconKey; titl
   settings: { ...defaults, background: 'tinted' },
 })
 
-const story = (
+export const story = (
   o: {
     name: string
     eyebrow: string
@@ -117,7 +117,7 @@ const story = (
   settings: { ...defaults, background: o.background || 'default' },
 })
 
-const cards = (
+export const cards = (
   o: {
     name: string
     eyebrow?: string
@@ -174,7 +174,7 @@ const faq = (t: T, items: { q: string; a: string }[]): Block => ({
   settings: { ...defaults },
 })
 
-const closing = (t: T, refs: Refs, heading: string, lead: string, demoLabel?: string): Block => ({
+export const closing = (t: T, refs: Refs, heading: string, lead: string, demoLabel?: string): Block => ({
   blockType: 'ctaSection',
   blockName: t('Abschluss', 'Closing'),
   header: { heading, lead, align: 'center' },
@@ -186,7 +186,7 @@ const closing = (t: T, refs: Refs, heading: string, lead: string, demoLabel?: st
   settings: { ...defaults, background: 'accent' },
 })
 
-const logos = (t: T): Block => ({
+export const logos = (t: T): Block => ({
   blockType: 'logoWall',
   blockName: 'Logos',
   header: { heading: t('Im Einsatz bei Hotels, Hotelgruppen und Partnern', 'In use at hotels, hotel groups and partners') },
@@ -202,7 +202,7 @@ const logos = (t: T): Block => ({
   settings: { ...defaults, spacing: 'compact' },
 })
 
-const testimonials = (t: T): Block => ({
+export const testimonials = (t: T): Block => ({
   blockType: 'testimonials',
   blockName: t('Kundenstimmen', 'Testimonials'),
   header: {
@@ -1004,7 +1004,7 @@ const integrationsPage = (t: T, refs: Refs): Partial<PageData> =>
           'More than 30 connections to PMS, distribution, marketing and operations. History from day one, rhythm of your choice.',
         ),
         illustration: 'sync',
-        secondary: { url: refs.links.helpUrl, label: t('Alle Anbindungen im Hilfe-Center', 'All connections in the help centre'), external: true },
+        secondary: { url: '#directory', label: t('Alle Anbindungen ansehen', 'See all connections') },
       }),
       steps(
         t,
@@ -1081,8 +1081,30 @@ const integrationsPage = (t: T, refs: Refs): Partial<PageData> =>
             items: [{ name: 'gastromatic' }, { name: 'Passcreator' }, { name: 'CSV Import' }, { name: 'Schulferien' }, { name: 'Feiertage' }],
           },
         ],
-        links: [external(refs.links.helpUrl, t('Alle Integrationen im Hilfe-Center', 'All integrations in the help centre'), 'link')],
+        links: [],
         settings: { ...defaults },
+      },
+      {
+        blockType: 'integrationDirectory',
+        blockName: t('Verzeichnis', 'Directory'),
+        header: {
+          eyebrow: t('Alle Anbindungen', 'All connections'),
+          heading: t('Finden Sie Ihr System.', 'Find your system.'),
+          lead: t(
+            'PMS, Vertrieb, Marketing, Web und Betrieb. Suchen Sie nach Name oder Kategorie.',
+            'PMS, sales, marketing, web and operations. Search by name or category.',
+          ),
+          align: 'left',
+        },
+        request: {
+          title: t('Ihr System fehlt?', 'Missing your system?'),
+          text: t(
+            'Sagen Sie uns, welches. Für gängige Hotel- und Marketing-Systeme bauen wir Anbindungen laufend dazu; bis dahin hilft der CSV-Import.',
+            'Tell us which one. We keep adding connections for the common hotel and marketing systems; until then the CSV import helps.',
+          ),
+          ...internal('/contact', t('Integration anfragen', 'Request an integration')),
+        },
+        settings: { ...defaults, background: 'tinted', anchor: 'directory' },
       },
       cards({
         name: t('Je Verbindung', 'Per connection'),

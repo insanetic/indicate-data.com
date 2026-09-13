@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 
 import { locales, type Locale } from '@/i18n/config'
 
+import { aboutPage } from './about'
 import { contactForm as contactFormData } from './contact-form'
 import { contactPage, footer, header, homePage, pick, siteSettings, type Refs } from './content'
 import { productSlugs, solutionSlugs, subpages, type SubpageSlug } from './pages'
@@ -75,13 +76,15 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
 
   // Subpages link to each other by URL, so they only need media and the contact page.
   const pageIds = {} as Record<SubpageSlug, number>
-  const draft: Refs = { contactPageId: contactId, pages: pageIds, media, links: productLinks }
+  const draft: Refs = { contactPageId: contactId, aboutPageId: 0, pages: pageIds, media, links: productLinks }
   for (const slug of [...productSlugs, ...solutionSlugs]) {
     payload.logger.info(`— Page /${slug}`)
     pageIds[slug] = await upsertPage(payload, req, slug, (locale) => subpages(pick(locale), draft)[slug])
   }
 
-  const refs: Refs = { ...draft, pages: pageIds }
+  payload.logger.info('— Page /about')
+  const aboutPageId = await upsertPage(payload, req, 'about', (locale) => aboutPage(pick(locale), draft))
+  const refs: Refs = { ...draft, pages: pageIds, aboutPageId }
 
   payload.logger.info('— Home page')
   await upsertPage(payload, req, 'home', (locale) => homePage(pick(locale), refs))

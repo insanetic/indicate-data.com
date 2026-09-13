@@ -13,6 +13,7 @@ export const pick =
 
 export type Refs = {
   contactPageId: number
+  aboutPageId: number
   /** Ids of the product and solution pages, keyed by slug (see ./pages). */
   pages: Record<SubpageSlug, number>
   media: Record<string, number>
@@ -170,6 +171,7 @@ export const footer = (t: T, refs: Refs): Partial<Footer> => ({
     {
       title: t('Unternehmen', 'Company'),
       links: [
+        pageRef(refs.aboutPageId, t('Über uns', 'About us')),
         pageRef(refs.contactPageId, t('Kontakt', 'Contact')),
         external(refs.links.demoUrl, t('Demo buchen', 'Book a demo')),
         external('https://indicate-data.io/de/jobs', t('Karriere', 'Careers')),
@@ -484,7 +486,7 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ],
         },
       ],
-      links: [subpage(refs, 'integrations', t('Alle Integrationen', 'All integrations'), 'link')],
+      links: [subpage(refs, 'integrations', t('Alle Integrationen ansehen', 'See all integrations'), 'default')],
       settings: { background: 'default', spacing: 'default', anchor: 'integrations' },
     },
     {
