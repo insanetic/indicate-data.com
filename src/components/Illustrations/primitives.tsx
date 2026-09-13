@@ -14,7 +14,7 @@ export const Frame: React.FC<{
 }> = ({ label, className, children }) => (
   <div
     aria-label={label}
-    className={cn('relative select-none pointer-events-none', className)}
+    className={cn('relative select-none pointer-events-none text-left', className)}
     role="img"
   >
     {children}

@@ -459,6 +459,247 @@
   animation-name: loop-tree-out;
 }
 
+/* --- Chat (8 s): a question is typed, the agent thinks, the answer and its source appear --- */
+
+.loop-chat {
+  --loop: 8s;
+}
+
+/* Question bubble: typed at the start, stays, fades before the reset. */
+@keyframes loop-chat-q {
+  0%,
+  2% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+  }
+  16%,
+  90% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  94%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+.loop-chat-q {
+  animation-name: loop-chat-q;
+  animation-timing-function: steps(32, end);
+}
+
+/* Thinking indicator between question and answer. */
+@keyframes loop-chat-think {
+  0%,
+  16% {
+    opacity: 0;
+  }
+  18%,
+  30% {
+    opacity: 1;
+  }
+  32%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-chat-think {
+  animation-name: loop-chat-think;
+}
+
+/* Answer, evidence and follow-ups pop in one after another (`--delay`) and leave before the reset. */
+@keyframes loop-chat-in {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  34%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
+  92%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-chat-in {
+  animation-name: loop-chat-in;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* A row (tool call, log line) that starts pending and ticks off: the check fades in. */
+@keyframes loop-chat-tick {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  26%,
+  88% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-chat-tick {
+  animation-name: loop-chat-tick;
+}
+
+/* --- Studio (10 s): a definition is typed, the preview updates, the version is released --- */
+
+.loop-studio {
+  --loop: 10s;
+}
+
+/* Code block reveals line by line (clip from the bottom), then holds. */
+@keyframes loop-studio-code {
+  0%,
+  2% {
+    clip-path: inset(0 0 100% 0);
+  }
+  36%,
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.loop-studio-code {
+  animation-name: loop-studio-code;
+  animation-timing-function: steps(9, end);
+}
+
+/* Preview value: the old value fades, the new one settles in. */
+@keyframes loop-studio-old {
+  0%,
+  38% {
+    opacity: 1;
+  }
+  42%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-studio-old {
+  animation-name: loop-studio-old;
+}
+@keyframes loop-studio-new {
+  0%,
+  40% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  46%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-studio-new {
+  animation-name: loop-studio-new;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* The new version row appears in the history, then its "released" chip. */
+@keyframes loop-studio-row {
+  0%,
+  56% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  60%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-studio-row {
+  animation-name: loop-studio-row;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes loop-studio-chip {
+  0%,
+  70% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  74%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-studio-chip {
+  animation-name: loop-studio-chip;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Sync (8 s): connections refresh one after another; the history bar fills --- */
+
+.loop-sync {
+  --loop: 8s;
+}
+
+/* Status chip: "syncing" pulse then "healthy". `--delay` staggers rows. */
+@keyframes loop-sync-row {
+  0%,
+  4% {
+    background-color: var(--brand-yellow-soft);
+  }
+  16%,
+  100% {
+    background-color: transparent;
+  }
+}
+.loop-sync-row {
+  animation-name: loop-sync-row;
+}
+@keyframes loop-sync-busy {
+  0%,
+  4% {
+    opacity: 1;
+  }
+  16%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-sync-busy {
+  animation-name: loop-sync-busy;
+}
+@keyframes loop-sync-ok {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  16%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-sync-ok {
+  animation-name: loop-sync-ok;
+}
+
+/* History bar fills from the first day to today. */
+@keyframes loop-sync-bar {
+  0%,
+  6% {
+    transform: scaleX(0.04);
+  }
+  60%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+.loop-sync-bar {
+  transform-origin: left;
+  animation-name: loop-sync-bar;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .loop [class*='loop-'] {
     animation: none;
@@ -470,11 +711,19 @@
   .loop .loop-tree-out {
     stroke-dasharray: none;
   }
-  .loop .loop-type {
+  .loop .loop-type,
+  .loop .loop-chat-q,
+  .loop .loop-studio-code {
     clip-path: none;
   }
-  .loop .loop-think {
+  .loop .loop-think,
+  .loop .loop-chat-think,
+  .loop .loop-sync-busy,
+  .loop .loop-studio-old {
     display: none;
+  }
+  .loop .loop-sync-bar {
+    transform: none;
   }
   /* Slots: show only the first panel and highlight its row. */
   .loop .loop-slot-4:not([data-first]),

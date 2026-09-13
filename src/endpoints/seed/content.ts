@@ -2,6 +2,7 @@ import type { Locale } from '@/i18n/config'
 import type { Footer, Header, Page, SiteSetting } from '@/payload-types'
 
 import { paragraphs } from './lexical'
+import { pageBlurbs, pageIcons, pageNames, type SubpageSlug } from './pages'
 
 /** Picks the text for the locale being seeded. */
 export type T = (de: string, en: string) => string
@@ -12,6 +13,8 @@ export const pick =
 
 export type Refs = {
   contactPageId: number
+  /** Ids of the product and solution pages, keyed by slug (see ./pages). */
+  pages: Record<SubpageSlug, number>
   media: Record<string, number>
   links: { appUrl: string; demoUrl: string; helpUrl: string; docsUrl: string }
 }
@@ -34,6 +37,15 @@ const pageRef = <A extends Appearance>(id: number, label: string, appearance?: A
     label,
     ...(appearance ? { appearance } : {}),
   },
+})
+/** Link to one of the product or solution pages by slug. */
+const subpage = <A extends Appearance>(refs: Refs, slug: SubpageSlug, label: string, appearance?: A) =>
+  pageRef(refs.pages[slug], label, appearance)
+/** Menu entry for a subpage: page link, one-line description and icon. */
+const menuEntry = (t: T, refs: Refs, slug: SubpageSlug) => ({
+  ...subpage(refs, slug, pageNames(t)[slug]),
+  description: pageBlurbs(t)[slug],
+  icon: pageIcons[slug],
 })
 
 export const siteSettings = (t: T, refs: Refs): Partial<SiteSetting> => ({
@@ -60,66 +72,51 @@ export const header = (t: T, refs: Refs): Partial<Header> => ({
       'Der Indicate Agent arbeitet jetzt auch in ChatGPT und Claude.',
       'The Indicate agent now also works inside ChatGPT and Claude.',
     ),
-    ...anchor('agent', t('Mehr erfahren', 'Learn more')),
+    ...subpage(refs, 'mcp', t('Mehr erfahren', 'Learn more')),
   },
   items: [
     {
       label: t('Produkt', 'Product'),
       type: 'menu',
+      featured: {
+        enabled: true,
+        title: t('Sehen Sie Indicate mit Ihren Zahlen.', 'See Indicate with your numbers.'),
+        text: t('30 Minuten, echte Daten aus einem Haus wie Ihrem.', '30 minutes, real data from a property like yours.'),
+        ...external(refs.links.demoUrl, t('Demo buchen', 'Book a demo')),
+      },
       columns: [
         {
-          title: t('Plattform', 'Platform'),
-          links: [
-            {
-              ...anchor('build', t('Dashboards & Reporting', 'Dashboards & reporting')),
-              description: t('Per Beschreibung gebaut, fertig für jedes Haus', 'Built from a description, ready for every property'),
-              icon: 'chart',
-            },
-            {
-              ...anchor('agent', t('KI-Agent & MCP', 'AI agent & MCP')),
-              description: t('In der App, in Claude, ChatGPT oder Langdock', 'In the app, in Claude, ChatGPT or Langdock'),
-              icon: 'sparkles',
-            },
-            {
-              ...anchor('flying-kpis', 'Flying KPIs'),
-              description: t('Reports nach Zeitplan an jeden', 'Reports on a schedule, to anyone'),
-              icon: 'calendar',
-            },
-            {
-              ...anchor('integrations', t('Integrationen & Sync', 'Integrations & sync')),
-              description: t('Über 30 Anbindungen, automatisch aktuell', 'More than 30 connections, always current'),
-              icon: 'plug',
-            },
-          ],
+          title: 'Agentic Analytics',
+          links: [menuEntry(t, refs, 'agent'), menuEntry(t, refs, 'mcp'), menuEntry(t, refs, 'build-with-ai')],
         },
         {
-          title: t('Für Fortgeschrittene', 'Going deeper'),
-          links: [
-            {
-              ...external(refs.links.docsUrl, t('KPI Studio & Semantic Layer', 'KPI Studio & semantic layer')),
-              description: t('Eigene Kennzahlen als JSON definieren', 'Define your own KPIs as JSON'),
-              icon: 'code',
-            },
-            {
-              ...external(refs.links.helpUrl, t('Hilfe-Center', 'Help centre')),
-              description: t('Anleitungen und Antworten', 'Guides and answers'),
-              icon: 'search',
-            },
-          ],
+          title: t('Datenbasis', 'Trusted data'),
+          links: [menuEntry(t, refs, 'integrations'), menuEntry(t, refs, 'kpi-studio'), menuEntry(t, refs, 'governance')],
+        },
+        {
+          title: 'Reporting',
+          links: [menuEntry(t, refs, 'dashboards'), menuEntry(t, refs, 'flying-kpis')],
         },
       ],
     },
     {
       label: t('Lösungen', 'Solutions'),
       type: 'menu',
+      featured: {
+        enabled: true,
+        title: t('Nicht sicher, was passt?', 'Not sure what fits?'),
+        text: t('Schreiben Sie uns, was Sie erreichen wollen. Wir antworten innerhalb eines Werktags.', 'Tell us what you want to achieve. We reply within one working day.'),
+        ...pageRef(refs.contactPageId, t('Kontakt aufnehmen', 'Get in touch')),
+      },
       columns: [
         {
           title: t('Für wen', 'Who it is for'),
+          links: [menuEntry(t, refs, 'hotels'), menuEntry(t, refs, 'hotel-groups'), menuEntry(t, refs, 'agencies')],
+        },
+        {
+          title: t('Partner', 'Partners'),
           links: [
-            { ...anchor('hotels', t('Hotels', 'Hotels')), icon: 'building', description: t('Kanäle, Kampagnen und Plan im Blick', 'Channels, campaigns and plan in view') },
-            { ...anchor('hotels', t('Hotelgruppen', 'Hotel groups')), icon: 'buildings', description: t('Ein Space pro Haus, ein Blick für alle', 'One space per property, one view for all') },
-            { ...anchor('agencies', t('Agenturen & Berater', 'Agencies & consultants')), icon: 'briefcase', description: t('Kampagnen-ROI je Kunde, Reports automatisch', 'Campaign ROI per client, reports on autopilot') },
-            { ...external(refs.links.docsUrl, t('Software-Anbieter', 'Software providers')), icon: 'code', description: t('Analytics für Ihre Kunden', 'Analytics for your customers') },
+            { ...external(refs.links.docsUrl, t('Software-Anbieter', 'Software providers')), icon: 'code', description: t('Analytics für Ihre Kunden, per API und MCP', 'Analytics for your customers, via API and MCP') },
           ],
         },
       ],
@@ -148,19 +145,16 @@ export const footer = (t: T, refs: Refs): Partial<Footer> => ({
   columns: [
     {
       title: t('Produkt', 'Product'),
-      links: [
-        anchor('build', t('Dashboards & Reporting', 'Dashboards & reporting')),
-        anchor('agent', t('KI-Agent & MCP', 'AI agent & MCP')),
-        anchor('flying-kpis', 'Flying KPIs'),
-        anchor('integrations', t('Integrationen & Sync', 'Integrations & sync')),
-      ],
+      links: (['agent', 'mcp', 'build-with-ai', 'dashboards', 'flying-kpis', 'integrations', 'kpi-studio', 'governance'] as const).map((slug) =>
+        subpage(refs, slug, pageNames(t)[slug]),
+      ),
     },
     {
       title: t('Lösungen', 'Solutions'),
       links: [
-        anchor('hotels', t('Hotels', 'Hotels')),
-        anchor('hotels', t('Hotelgruppen', 'Hotel groups')),
-        anchor('agencies', t('Agenturen & Berater', 'Agencies & consultants')),
+        subpage(refs, 'hotels', t('Hotels', 'Hotels')),
+        subpage(refs, 'hotel-groups', t('Hotelgruppen', 'Hotel groups')),
+        subpage(refs, 'agencies', t('Agenturen & Berater', 'Agencies & consultants')),
         external(refs.links.docsUrl, t('Software-Anbieter', 'Software providers')),
       ],
     },
@@ -224,7 +218,7 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         anchor('build', t('So funktioniert es', 'See how it works'), 'outline'),
       ],
       trust: { text: null, logos: [] },
-      visual: { type: 'illustration', illustration: 'dashboard' },
+      visual: { type: 'illustration', illustration: 'stage' },
       settings: { background: 'default', spacing: 'default' },
     },
     {
@@ -295,7 +289,7 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ),
         },
       ],
-      links: [external(refs.links.helpUrl, t('Mehr zu Dashboards im Hilfe-Center', 'More about dashboards in the help centre'), 'link')],
+      links: [subpage(refs, 'build-with-ai', t('Mehr zum Bauen mit KI', 'More about building with AI'), 'link')],
       settings: { background: 'default', spacing: 'default', anchor: 'build' },
     },
     {
@@ -383,7 +377,10 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         },
       ],
       channels: [{ name: 'Indicate App' }, { name: 'Claude' }, { name: 'ChatGPT' }, { name: 'Langdock' }],
-      links: [external(refs.links.demoUrl, t('Agent live erleben', 'See the agent live'), 'default')],
+      links: [
+        external(refs.links.demoUrl, t('Agent live erleben', 'See the agent live'), 'default'),
+        subpage(refs, 'mcp', t('Mehr zu MCP', 'More about MCP'), 'outline'),
+      ],
       settings: { background: 'tinted', spacing: 'default', anchor: 'agent' },
     },
     {
@@ -426,7 +423,7 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ),
         },
       ],
-      links: [],
+      links: [subpage(refs, 'flying-kpis', t('Mehr zu Flying KPIs', 'More about Flying KPIs'), 'link')],
       settings: { background: 'default', spacing: 'default', anchor: 'flying-kpis' },
     },
     {
@@ -487,7 +484,7 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ],
         },
       ],
-      links: [external(refs.links.helpUrl, t('Alle Integrationen im Hilfe-Center', 'All integrations in the help centre'), 'link')],
+      links: [subpage(refs, 'integrations', t('Alle Integrationen', 'All integrations'), 'link')],
       settings: { background: 'default', spacing: 'default', anchor: 'integrations' },
     },
     {
@@ -538,7 +535,10 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ),
         },
       ],
-      links: [external(refs.links.demoUrl, t('Demo für Ihr Haus', 'Demo for your property'), 'default')],
+      links: [
+        external(refs.links.demoUrl, t('Demo für Ihr Haus', 'Demo for your property'), 'default'),
+        subpage(refs, 'hotels', t('Mehr für Hotels', 'More for hotels'), 'link'),
+      ],
       settings: { background: 'default', spacing: 'default', anchor: 'hotels' },
     },
     {
@@ -589,7 +589,10 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
           ),
         },
       ],
-      links: [external(refs.links.demoUrl, t('Demo für Agenturen', 'Demo for agencies'), 'default')],
+      links: [
+        external(refs.links.demoUrl, t('Demo für Agenturen', 'Demo for agencies'), 'default'),
+        subpage(refs, 'agencies', t('Mehr für Agenturen', 'More for agencies'), 'link'),
+      ],
       settings: { background: 'tinted', spacing: 'default', anchor: 'agencies' },
     },
     {
@@ -631,11 +634,11 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
         },
       ],
       tiles: [
-        { value: '30', suffix: '+', label: t('Anbindungen an Hotel- und Marketing-Systeme', 'connections to hotel and marketing systems'), links: [anchor('integrations', t('Alle ansehen', 'See all'), 'link')] },
+        { value: '30', suffix: '+', label: t('Anbindungen an Hotel- und Marketing-Systeme', 'connections to hotel and marketing systems'), links: [subpage(refs, 'integrations', t('Alle ansehen', 'See all'), 'link')] },
         { value: '13', label: t('Monate Historie ab dem ersten Tag', 'months of history from day one') },
         { value: '40', suffix: ' %', label: t('geringere Betriebskosten durch Automatisierung', 'lower operating costs through automation') },
-        { label: t('Für Hotelgruppen', 'For hotel groups'), links: [anchor('hotels', t('Mehr erfahren', 'Learn more'), 'link')] },
-        { label: t('Für Agenturen', 'For agencies'), links: [anchor('agencies', t('Mehr erfahren', 'Learn more'), 'link')] },
+        { label: t('Für Hotelgruppen', 'For hotel groups'), links: [subpage(refs, 'hotel-groups', t('Mehr erfahren', 'Learn more'), 'link')] },
+        { label: t('Für Agenturen', 'For agencies'), links: [subpage(refs, 'agencies', t('Mehr erfahren', 'Learn more'), 'link')] },
       ],
       settings: { background: 'default', spacing: 'default', anchor: 'why' },
     },

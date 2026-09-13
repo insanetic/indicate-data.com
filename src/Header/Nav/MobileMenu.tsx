@@ -169,6 +169,19 @@ export const MobileMenu: React.FC<{
                     )}
                   >
                     <div className="overflow-hidden">
+                      {item.featured?.enabled && item.featured.title && item.featured.link && resolveLinkHref(item.featured.link) && (
+                        <div className="px-3 pb-2 pt-1">
+                          <LocaleLink
+                            className="flex flex-col gap-0.5 rounded-card-inner border border-line bg-surface-2 px-3 py-3"
+                            href={resolveLinkHref(item.featured.link) as string}
+                          >
+                            <span className="type-small font-medium text-ink">{item.featured.title}</span>
+                            {item.featured.link?.label && (
+                              <span className="link-arrow type-caption font-medium">{item.featured.link.label}</span>
+                            )}
+                          </LocaleLink>
+                        </div>
+                      )}
                       {(item.columns || []).map((col, ci) => (
                         <div className="px-3 pb-2" key={col.id || ci}>
                           {col.title && (

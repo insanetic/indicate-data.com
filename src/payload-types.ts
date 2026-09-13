@@ -539,6 +539,7 @@ export interface HeroBlock {
     type?: ('illustration' | 'image') | null;
     illustration?:
       | (
+          | 'stage'
           | 'dashboard'
           | 'agent'
           | 'comparison'
@@ -550,6 +551,12 @@ export interface HeroBlock {
           | 'flyingKpis'
           | 'portfolio'
           | 'campaigns'
+          | 'agentChat'
+          | 'mcp'
+          | 'kpiStudio'
+          | 'templates'
+          | 'governance'
+          | 'sync'
         )
       | null;
     image?: (number | null) | Media;
@@ -683,6 +690,7 @@ export interface FeatureTabsBlock {
           type?: ('illustration' | 'image') | null;
           illustration?:
             | (
+                | 'stage'
                 | 'dashboard'
                 | 'agent'
                 | 'comparison'
@@ -694,6 +702,12 @@ export interface FeatureTabsBlock {
                 | 'flyingKpis'
                 | 'portfolio'
                 | 'campaigns'
+                | 'agentChat'
+                | 'mcp'
+                | 'kpiStudio'
+                | 'templates'
+                | 'governance'
+                | 'sync'
               )
             | null;
           image?: (number | null) | Media;
@@ -750,6 +764,7 @@ export interface FeatureStoryBlock {
     type?: ('illustration' | 'image') | null;
     illustration?:
       | (
+          | 'stage'
           | 'dashboard'
           | 'agent'
           | 'comparison'
@@ -761,6 +776,12 @@ export interface FeatureStoryBlock {
           | 'flyingKpis'
           | 'portfolio'
           | 'campaigns'
+          | 'agentChat'
+          | 'mcp'
+          | 'kpiStudio'
+          | 'templates'
+          | 'governance'
+          | 'sync'
         )
       | null;
     image?: (number | null) | Media;
@@ -1017,6 +1038,7 @@ export interface IntegrationsBlock {
     type?: ('illustration' | 'image') | null;
     illustration?:
       | (
+          | 'stage'
           | 'dashboard'
           | 'agent'
           | 'comparison'
@@ -1028,6 +1050,12 @@ export interface IntegrationsBlock {
           | 'flyingKpis'
           | 'portfolio'
           | 'campaigns'
+          | 'agentChat'
+          | 'mcp'
+          | 'kpiStudio'
+          | 'templates'
+          | 'governance'
+          | 'sync'
         )
       | null;
     image?: (number | null) | Media;
@@ -3626,6 +3654,26 @@ export interface Header {
               } | null);
           url?: string | null;
         };
+        featured?: {
+          enabled?: boolean | null;
+          title?: string | null;
+          text?: string | null;
+          link?: {
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: number | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: number | Post;
+                } | null);
+            url?: string | null;
+            label: string;
+          };
+        };
         columns?:
           | {
               title?: string | null;
@@ -3893,6 +3941,22 @@ export interface HeaderSelect<T extends boolean = true> {
               newTab?: T;
               reference?: T;
               url?: T;
+            };
+        featured?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              text?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
             };
         columns?:
           | T

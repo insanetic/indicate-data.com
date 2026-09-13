@@ -89,6 +89,34 @@ export const Header: GlobalConfig = {
           },
         }),
         {
+          name: 'featured',
+          type: 'group',
+          label: { de: 'Hervorgehobene Karte (rechts im Menü)', en: 'Featured card (right side of the menu)' },
+          admin: { condition: (_, siblingData) => siblingData?.type === 'menu' },
+          fields: [
+            { name: 'enabled', type: 'checkbox', defaultValue: false, label: { de: 'Anzeigen', en: 'Show' } },
+            {
+              name: 'title',
+              type: 'text',
+              localized: true,
+              label: { de: 'Titel', en: 'Title' },
+              admin: { condition: (_, siblingData) => Boolean(siblingData?.enabled) },
+            },
+            {
+              name: 'text',
+              type: 'textarea',
+              localized: true,
+              label: { de: 'Text (1–2 Sätze)', en: 'Text (1–2 sentences)' },
+              admin: { condition: (_, siblingData) => Boolean(siblingData?.enabled) },
+            },
+            link({
+              appearances: false,
+              localized: true,
+              overrides: { admin: { condition: (_, siblingData) => Boolean(siblingData?.enabled) } },
+            }),
+          ],
+        },
+        {
           name: 'columns',
           type: 'array',
           label: { de: 'Menüspalten', en: 'Menu columns' },

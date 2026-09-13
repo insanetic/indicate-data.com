@@ -5,6 +5,12 @@ import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
 
 import { AgentIllustration } from './Agent'
+import { AgentChatIllustration } from './AgentChat'
+import { GovernanceIllustration } from './Governance'
+import { KpiStudioIllustration } from './KpiStudio'
+import { McpIllustration } from './Mcp'
+import { SyncIllustration } from './Sync'
+import { TemplatesIllustration } from './Templates'
 import { AlertsIllustration } from './Alerts'
 import { BuilderIllustration } from './Builder'
 import { CampaignsIllustration } from './Campaigns'
@@ -15,6 +21,7 @@ import { IntegrationsIllustration } from './Integrations'
 import { PortfolioIllustration } from './Portfolio'
 import { SourcesIllustration } from './Sources'
 import { TeamIllustration } from './Team'
+import { HeroStage } from '@/blocks/Hero/Stage'
 import type { IllustrationKey } from './registry'
 
 import type { Locale } from '@/i18n/config'
@@ -22,6 +29,7 @@ import type { Locale } from '@/i18n/config'
 export type IllustrationProps = { className?: string; locale?: Locale | null }
 
 export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>> = {
+  stage: HeroStage,
   dashboard: DashboardIllustration,
   agent: AgentIllustration,
   comparison: ComparisonIllustration,
@@ -33,6 +41,12 @@ export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>>
   flyingKpis: FlyingKpisIllustration,
   portfolio: PortfolioIllustration,
   campaigns: CampaignsIllustration,
+  agentChat: AgentChatIllustration,
+  mcp: McpIllustration,
+  kpiStudio: KpiStudioIllustration,
+  templates: TemplatesIllustration,
+  governance: GovernanceIllustration,
+  sync: SyncIllustration,
 }
 
 export type VisualData = {

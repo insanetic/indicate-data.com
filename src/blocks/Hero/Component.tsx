@@ -1,18 +1,21 @@
 import React from 'react'
 
 import type { HeroBlock as HeroBlockProps } from '@/payload-types'
+import type { Locale } from '@/i18n/config'
 
 import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import { SectionHeading } from '@/components/SectionHeading'
+import { Visual } from '@/components/Illustrations'
 import { HeroIntro } from './Intro'
-import { HeroStage } from './Stage'
 
-/** Centred, typography-first hero with the animated product stage underneath. */
-export const HeroBlock: React.FC<HeroBlockProps> = ({ header, links, trust, visual }) => {
+/**
+ * Centred, typography-first hero with a wide product scene underneath: the layered stage on
+ * the home page, the feature's own looping scene on a feature page, or an uploaded image.
+ */
+export const HeroBlock: React.FC<HeroBlockProps & { locale?: Locale }> = ({ header, links, trust, visual, locale }) => {
   const buttons = (links || []).filter((l) => l.link?.label)
   const logos = (trust?.logos || []).filter((l) => l.name)
-  const image = visual?.type === 'image' && visual.image && typeof visual.image === 'object' ? visual.image : null
 
   return (
     <HeroIntro>
@@ -51,11 +54,7 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({ header, links, trust, visu
         )}
 
         <div className="intro-visual mt-14 w-full max-w-[68rem] md:mt-20">
-          {image ? (
-            <Media htmlElement={null} imgClassName="w-full rounded-[1rem] border border-line" resource={image} />
-          ) : (
-            <HeroStage />
-          )}
+          <Visual className="w-full" fallback="stage" locale={locale} visual={visual} />
         </div>
       </div>
     </HeroIntro>

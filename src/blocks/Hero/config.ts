@@ -53,7 +53,7 @@ export const Hero: Block = {
         },
       ],
     },
-    visual({ defaultIllustration: 'dashboard' }),
+    visual({ defaultIllustration: 'stage' }),
     sectionSettings(),
   ],
 }

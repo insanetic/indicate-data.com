@@ -7,6 +7,7 @@ import { locales, type Locale } from '@/i18n/config'
 
 import { contactForm as contactFormData } from './contact-form'
 import { contactPage, footer, header, homePage, pick, siteSettings, type Refs } from './content'
+import { productSlugs, solutionSlugs, subpages, type SubpageSlug } from './pages'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -32,8 +33,8 @@ const assets: { key: string; file: string; alt: string; mime: string }[] = [
 const context = { disableRevalidate: true }
 
 /**
- * Installs the Indicate Data site: media, site settings, header, footer, home and contact
- * page, in German and English. Idempotent: existing documents are updated by slug/filename,
+ * Installs the Indicate Data site: media, site settings, header, footer, home, contact and the
+ * product and solution pages, in German and English. Idempotent: existing documents are updated by slug/filename,
  * nothing is deleted. Blog posts and categories are left untouched.
  */
 export const seed = async ({ payload, req }: { payload: Payload; req: PayloadRequest }): Promise<void> => {
@@ -72,7 +73,15 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
   payload.logger.info('— Contact page')
   const contactId = await upsertPage(payload, req, 'contact', (locale) => contactPage(pick(locale), form.id))
 
-  const refs: Refs = { contactPageId: contactId, media, links: productLinks }
+  // Subpages link to each other by URL, so they only need media and the contact page.
+  const pageIds = {} as Record<SubpageSlug, number>
+  const draft: Refs = { contactPageId: contactId, pages: pageIds, media, links: productLinks }
+  for (const slug of [...productSlugs, ...solutionSlugs]) {
+    payload.logger.info(`— Page /${slug}`)
+    pageIds[slug] = await upsertPage(payload, req, slug, (locale) => subpages(pick(locale), draft)[slug])
+  }
+
+  const refs: Refs = { ...draft, pages: pageIds }
 
   payload.logger.info('— Home page')
   await upsertPage(payload, req, 'home', (locale) => homePage(pick(locale), refs))

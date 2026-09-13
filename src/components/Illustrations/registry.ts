@@ -3,6 +3,7 @@
  * `index.tsx` maps each key to a code-built illustration.
  */
 export const illustrationOptions = [
+  { value: 'stage', label: { de: 'Produktbühne: Dashboard, Agent, Report (Hero)', en: 'Product stage: dashboard, agent, report (hero)' } },
   { value: 'dashboard', label: { de: 'Dashboard mit Kennzahlen', en: 'Dashboard with KPIs' } },
   { value: 'agent', label: { de: 'KI-Agent im Gespräch', en: 'AI agent conversation' } },
   { value: 'comparison', label: { de: 'Vergleich Plan vs. Ist', en: 'Plan vs. actual comparison' } },
@@ -14,6 +15,12 @@ export const illustrationOptions = [
   { value: 'flyingKpis', label: { de: 'Flying KPIs: Report wird versendet (Loop)', en: 'Flying KPIs: report being sent (loop)' } },
   { value: 'portfolio', label: { de: 'Hotelgruppe: Häuser im Vergleich (Loop)', en: 'Hotel group: properties compared (loop)' } },
   { value: 'campaigns', label: { de: 'Agentur: Kampagnen-ROI je Kunde (Loop)', en: 'Agency: campaign ROI per client (loop)' } },
+  { value: 'agentChat', label: { de: 'Agent: Chat mit Quelle und Kontext (Loop)', en: 'Agent: chat with source and context (loop)' } },
+  { value: 'mcp', label: { de: 'MCP: Claude ruft Indicate-Kennzahlen ab (Loop)', en: 'MCP: Claude calling Indicate KPIs (loop)' } },
+  { value: 'kpiStudio', label: { de: 'KPI Studio: Definition, Vorschau, Version (Loop)', en: 'KPI Studio: definition, preview, version (loop)' } },
+  { value: 'templates', label: { de: 'Vorlagen: Template anwenden (Loop)', en: 'Templates: applying a template (loop)' } },
+  { value: 'governance', label: { de: 'Governance: Spaces, Rollen, Audit-Log (Loop)', en: 'Governance: spaces, roles, audit log (loop)' } },
+  { value: 'sync', label: { de: 'Sync: Verbindungen und Historie (Loop)', en: 'Sync: connections and history (loop)' } },
 ] as const
 
 export type IllustrationKey = (typeof illustrationOptions)[number]['value']
