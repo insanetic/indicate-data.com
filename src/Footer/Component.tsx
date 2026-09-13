@@ -3,6 +3,7 @@ import React from 'react'
 import type { Locale } from '@/i18n/config'
 
 import { CMSLink } from '@/components/Link'
+import { ConsentTrigger } from '@/consent/components/ConsentTrigger'
 import { LanguageSwitch } from '@/components/LanguageSwitch'
 import { LocaleLink } from '@/components/LocaleLink'
 import { Logo } from '@/components/Logo/Logo'
@@ -99,6 +100,7 @@ export async function Footer({ locale }: { locale: Locale }) {
                 ))}
               </ul>
             )}
+            <ConsentTrigger className="type-caption text-ink-3 transition-colors duration-150 hover:text-ink" />
             {(settings.social?.length || 0) > 0 && (
               <ul className="flex flex-wrap gap-x-5 gap-y-2">
                 {settings.social!.map((s, i) => (

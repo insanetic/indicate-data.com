@@ -10,12 +10,17 @@ import Script from 'next/script'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
+import { ConsentBanner } from '@/consent/components/ConsentBanner'
+import { ConsentDefaults } from '@/consent/components/ConsentDefaults'
+import { ConsentSettings } from '@/consent/components/ConsentSettings'
+import { TagManager } from '@/consent/components/TagManager'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { isLocale, localeTags, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { RevealObserver } from '@/components/Reveal/Observer'
 import { Providers } from '@/providers'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
 
@@ -44,6 +49,10 @@ export default async function RootLayout({ children, params }: Args) {
   const { isEnabled } = await draftMode()
   const dict = getDictionary(locale)
 
+  const consentSettings = await getCachedGlobal('consent', 1, locale)()
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID
+  const trackingEnabled = Boolean(gtmId && consentSettings?.enabled !== false && !isEnabled)
+
   return (
     <html
       className={cn(outfit.variable, GeistSans.variable, GeistMono.variable)}
@@ -61,9 +70,10 @@ export default async function RootLayout({ children, params }: Args) {
         <Script id="intro-gate" strategy="beforeInteractive">
           {`document.documentElement.setAttribute('data-js','');try{if(sessionStorage.getItem('indicate:intro'))document.documentElement.setAttribute('data-intro-seen','')}catch(e){}`}
         </Script>
+        <ConsentDefaults enabled={trackingEnabled} />
       </head>
       <body>
-        <Providers locale={locale}>
+        <Providers consent={{ settings: consentSettings, gtmId, disabled: isEnabled }} locale={locale}>
           <AdminBar
             adminBarProps={{
               preview: isEnabled,
@@ -72,11 +82,14 @@ export default async function RootLayout({ children, params }: Args) {
           <a className="skip-link" href="#content">
             {dict.skipToContent}
           </a>
+          <ConsentBanner />
           <Header locale={locale} />
           <main id="content" className="flex-1">
             {children}
           </main>
           <Footer locale={locale} />
+          <ConsentSettings />
+          <TagManager />
           <RevealObserver />
         </Providers>
       </body>

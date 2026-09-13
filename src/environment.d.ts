@@ -4,6 +4,7 @@ declare global {
       PAYLOAD_SECRET: string
       DATABASE_URL: string
       NEXT_PUBLIC_SERVER_URL: string
+      NEXT_PUBLIC_GTM_ID?: string
       VERCEL_PROJECT_PRODUCTION_URL: string
       /** Subneo public API key (`sneo_…`); the CMS global can override it. */
       SUBNEO_API_KEY?: string

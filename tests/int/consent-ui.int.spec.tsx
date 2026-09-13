@@ -1,10 +1,13 @@
 import { act, cleanup, render, screen } from '@testing-library/react'
 import React from 'react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+vi.mock('next/navigation', () => ({ usePathname: () => '/de' }))
 
 import { ConsentBanner } from '@/consent/components/ConsentBanner'
 import { ConsentProvider, useConsent } from '@/consent/components/ConsentProvider'
 import { ConsentSettings } from '@/consent/components/ConsentSettings'
+import { TagManager } from '@/consent/components/TagManager'
 import { defaults, resolveConsent } from '@/consent/defaults'
 import { readRecord, writeRecord } from '@/consent/store'
 import { isTrackingEnabled } from '@/consent/track'
@@ -208,5 +211,42 @@ describe('ConsentSettings', () => {
     await screen.findByText('open')
     await act(async () => screen.getByText('open').click())
     expect(screen.getByText('Google Analytics 4', { exact: false })).toBeTruthy()
+  })
+})
+
+describe('TagManager', () => {
+  afterEach(cleanup)
+
+  beforeEach(() => {
+    ;(window as unknown as { dataLayer: unknown[] }).dataLayer = []
+    document.querySelectorAll('script[data-gtm]').forEach((s) => s.remove())
+  })
+
+  it('loads GTM and pushes a page view once analytics is granted', async () => {
+    clearConsentCookie()
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+        <Probe />
+        <TagManager />
+      </ConsentProvider>,
+    )
+    await screen.findByText('pending')
+    expect(document.querySelector('script[data-gtm]')).toBeNull()
+    await act(async () => screen.getByText('accept').click())
+    expect(document.querySelector('script[data-gtm]')?.getAttribute('data-gtm')).toBe('GTM-TEST')
+    const dl = (window as unknown as { dataLayer: Record<string, unknown>[] }).dataLayer
+    expect(dl.some((e) => e.event === 'page_view' && e.page_path === '/de')).toBe(true)
+  })
+
+  it('never loads GTM after reject', async () => {
+    writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
+    render(
+      <ConsentProvider gtmId="GTM-TEST" settings={null}>
+        <Probe />
+        <TagManager />
+      </ConsentProvider>,
+    )
+    await screen.findByText('decided')
+    expect(document.querySelector('script[data-gtm]')).toBeNull()
   })
 })
