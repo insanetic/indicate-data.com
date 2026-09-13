@@ -94,8 +94,9 @@ export const Kpi: React.FC<{
   delta?: string
   positive?: boolean
   className?: string
-}> = ({ label, value, delta, positive = true, className }) => (
-  <div className={cn('flex flex-col gap-1', className)}>
+  style?: React.CSSProperties
+}> = ({ label, value, delta, positive = true, className, style }) => (
+  <div className={cn('flex flex-col gap-1', className)} style={style}>
     <span className="text-[0.75rem] leading-4 text-ink-3">{label}</span>
     <span className="font-display text-[1.5rem] leading-none font-medium tnum tracking-tight">
       {value}
@@ -196,7 +197,7 @@ export const Sparkline: React.FC<{
   )
 }
 
-function toPath(points: number[], w: number, h: number) {
+export function toPath(points: number[], w: number, h: number) {
   const n = points.length
   const xs = points.map((_, i) => (i / (n - 1)) * w)
   const ys = points.map((p) => h - (p / 100) * (h - 6) - 3)

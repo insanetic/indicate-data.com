@@ -1019,3 +1019,192 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* --- Dashboard (9 s): sources refresh, KPIs update, the line wipes in, Resi answers --- */
+
+/* Status: "refreshing" at the start of the clock, "all sources up to date" for the rest. */
+@keyframes loop-dash-busy {
+  0%,
+  12% {
+    opacity: 1;
+  }
+  14%,
+  97% {
+    opacity: 0;
+  }
+  99%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-dash-busy {
+  animation-name: loop-dash-busy;
+}
+@keyframes loop-dash-ok {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  14%,
+  96% {
+    opacity: 1;
+  }
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-dash-ok {
+  animation-name: loop-dash-ok;
+}
+
+/* KPI values swap once the refresh lands: out upwards, back in from below. `--delay` staggers. */
+@keyframes loop-dash-kpi {
+  0%,
+  10% {
+    opacity: 1;
+    transform: none;
+  }
+  12% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  12.01% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  16%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-dash-kpi {
+  animation-name: loop-dash-kpi;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* This year's line and area wipe in left to right, hold, and fade before the reset. */
+@keyframes loop-dash-wipe {
+  0%,
+  16% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+  }
+  40%,
+  92% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  96%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+.loop-dash-wipe {
+  animation-name: loop-dash-wipe;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* The question card rises in, the question types, Resi thinks, then answers. */
+@keyframes loop-dash-card {
+  0%,
+  42% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  45%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-dash-card {
+  animation-name: loop-dash-card;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes loop-dash-q {
+  0%,
+  45% {
+    clip-path: inset(0 100% 0 0);
+  }
+  55%,
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.loop-dash-q {
+  animation-name: loop-dash-q;
+  animation-timing-function: steps(30, end);
+}
+@keyframes loop-dash-think {
+  0%,
+  55% {
+    opacity: 0;
+  }
+  57%,
+  63% {
+    opacity: 1;
+  }
+  65%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-dash-think {
+  animation-name: loop-dash-think;
+}
+@keyframes loop-dash-a {
+  0%,
+  64% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  67%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-dash-a {
+  animation-name: loop-dash-a;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* The chart point the answer talks about is marked as the answer lands. */
+@keyframes loop-dash-mark {
+  0%,
+  66% {
+    opacity: 0;
+    scale: 0.8;
+  }
+  70%,
+  92% {
+    opacity: 1;
+    scale: 1;
+  }
+  96%,
+  100% {
+    opacity: 0;
+    scale: 1;
+  }
+}
+.loop-dash-mark {
+  transform-origin: right center;
+  animation-name: loop-dash-mark;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Finished frame: sources up to date, the answer and its mark shown. */
+  .loop .loop-dash-busy,
+  .loop .loop-dash-think {
+    opacity: 0;
+  }
+}
