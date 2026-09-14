@@ -82,7 +82,7 @@ describe('gtm integration', () => {
     expect(active.category).toBe('analytics')
     expect(active.bootstrap).toBe(consentModeBootstrap())
     expect(['_ga', '_ga_ABC', '_gid', '_gat_UA', '_gac_1', '_gcl_au'].every((n) => active.cookies.some((p) => p.test(n)))).toBe(true)
-    expect(active.cookies.some((p) => p.test('keep'))).toBe(false)
+    expect(['keep', '_gatekeeper'].some((n) => active.cookies.some((p) => p.test(n)))).toBe(false)
   })
 
   it('loads the script once and updates consent mode', () => {
@@ -125,7 +125,7 @@ describe('track', () => {
       '<a href="/demo" data-track data-track-location="hero"><span>Demo buchen</span></a>' +
       '<button data-track="outbound_click" data-track-label="Docs">Docs</button>'
     const preventNavigation = (e: MouseEvent) => e.preventDefault()
-    document.addEventListener('click', preventNavigation)
+    document.addEventListener('click', preventNavigation, { capture: true })
     const stopBubbling = (e: Event) => e.stopPropagation()
     document.querySelector('span')!.addEventListener('click', stopBubbling)
     const stop = installClickTracking()
@@ -136,7 +136,7 @@ describe('track', () => {
       expect(dl().at(-1)).toEqual({ event: 'outbound_click', label: 'Docs' })
     } finally {
       stop()
-      document.removeEventListener('click', preventNavigation)
+      document.removeEventListener('click', preventNavigation, { capture: true })
       document.body.innerHTML = ''
     }
   })

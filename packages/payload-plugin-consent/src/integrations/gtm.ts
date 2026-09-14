@@ -33,7 +33,7 @@ export function gtm({ containerId, category = 'analytics' }: GtmOptions): Consen
     key: 'gtm',
     category,
     enabled: id.length > 0,
-    cookies: [/^_ga($|_)/, /^_gid$/, /^_gat/, /^_gac_/, /^_gcl_/],
+    cookies: [/^_ga($|_)/, /^_gid$/, /^_gat($|_)/, /^_gac_/, /^_gcl_/],
     bootstrap: consentModeBootstrap(),
     load: () => loadGtm(id),
     update: ({ signals }) => gtag('consent', 'update', signals),
