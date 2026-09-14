@@ -21,14 +21,17 @@ export function track(event: TrackEvent): void {
 }
 
 /**
- * One delegated capture-phase listener: any element with `data-track` (event name, default
- * cta_click) pushes its label (`data-track-label` or text), location (`data-track-location`) and href.
+ * One delegated capture-phase listener: any element with `data-track` (event name) pushes its label
+ * (`data-track-label` or text), location (`data-track-location`) and href. `data-track` alone,
+ * `data-track=""` or the JSX boolean form (which React renders as `data-track="true"`) all mean
+ * cta_click.
  */
 export function installClickTracking(): () => void {
   const onClick = (e: MouseEvent) => {
     const target = (e.target as Element | null)?.closest<HTMLElement>('[data-track]')
     if (!target) return
-    const name = target.dataset.track || 'cta_click'
+    const raw = target.dataset.track
+    const name = raw && raw !== 'true' ? raw : 'cta_click'
     const href = target instanceof HTMLAnchorElement ? target.getAttribute('href') || undefined : undefined
     track({
       name,

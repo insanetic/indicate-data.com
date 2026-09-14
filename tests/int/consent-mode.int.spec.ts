@@ -123,7 +123,8 @@ describe('track', () => {
   it('tracks clicks on elements marked with data-track, even when propagation is stopped', () => {
     document.body.innerHTML =
       '<a href="/demo" data-track data-track-location="hero"><span>Demo buchen</span></a>' +
-      '<button data-track="outbound_click" data-track-label="Docs">Docs</button>'
+      '<button data-track="outbound_click" data-track-label="Docs">Docs</button>' +
+      '<a href="/x" data-track="true">Bool</a>'
     const preventNavigation = (e: MouseEvent) => e.preventDefault()
     document.addEventListener('click', preventNavigation, { capture: true })
     const stopBubbling = (e: Event) => e.stopPropagation()
@@ -134,6 +135,9 @@ describe('track', () => {
       expect(dl().at(-1)).toEqual({ event: 'cta_click', label: 'Demo buchen', location: 'hero', href: '/demo' })
       document.querySelector('button')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
       expect(dl().at(-1)).toEqual({ event: 'outbound_click', label: 'Docs' })
+      // React renders the JSX boolean form `<a data-track>` as data-track="true".
+      document.querySelector('a[data-track="true"]')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+      expect(dl().at(-1)).toEqual({ event: 'cta_click', label: 'Bool', href: '/x' })
     } finally {
       stop()
       document.removeEventListener('click', preventNavigation, { capture: true })
