@@ -6,6 +6,7 @@ vi.mock('next/navigation', () => ({ usePathname: () => '/de' }))
 
 import {
   createIntegration,
+  defaults,
   defineConsent,
   readRecord,
   resolveConsent,
@@ -14,7 +15,7 @@ import {
   type ConsentIntegration,
   type ResolvedSetup,
 } from '@subneo/payload-consent'
-import { ConsentProvider, useConsent } from '@subneo/payload-consent/react'
+import { ConsentBanner, ConsentProvider, ConsentSettings, useConsent } from '@subneo/payload-consent/react'
 
 /* ------------------------------------------------------------------ */
 /* Shared fixtures                                                       */
@@ -175,5 +176,145 @@ describe('ConsentProvider', () => {
       await new Promise((r) => setTimeout(r, 0))
     })
     expect(screen.getByTestId('dialog').textContent).toBe('true')
+  })
+})
+
+/* ------------------------------------------------------------------ */
+/* Banner                                                                */
+/* ------------------------------------------------------------------ */
+
+describe('ConsentBanner', () => {
+  beforeEach(() => {
+    clearCookies()
+    // The provider describe leaves the settings hash set; it would keep the dialog open here.
+    window.location.hash = ''
+  })
+  afterEach(cleanup)
+
+  it('shows when pending with purposes and withdrawal named, accept all grants both categories', async () => {
+    renderWith(<ConsentBanner />)
+    const region = await screen.findByRole('region', { name: defaults.de.bannerTitle })
+    expect(region.getAttribute('aria-describedby')).toBeTruthy()
+    expect(region.textContent).toContain('Statistik und Marketing')
+    expect(region.textContent).toContain('widerrufen')
+    expect(region.querySelector('h1, h2, h3')).toBeNull()
+    await act(async () => screen.getByRole('button', { name: defaults.de.acceptAll }).click())
+    expect(readRecord(makeSetup())?.c).toEqual({ analytics: true, marketing: true })
+    expect(screen.queryByRole('region')).toBeNull()
+  })
+
+  it('reject writes both categories as false', async () => {
+    renderWith(<ConsentBanner />)
+    await screen.findByRole('region')
+    await act(async () => screen.getByRole('button', { name: defaults.de.rejectAll }).click())
+    expect(readRecord(makeSetup())?.c).toEqual({ analytics: false, marketing: false })
+  })
+
+  it('renders nothing when disabled or while the dialog is open', async () => {
+    renderWith(<ConsentBanner />, { disabled: true })
+    expect(screen.queryByRole('region')).toBeNull()
+    cleanup()
+    window.location.hash = '#cookie-settings'
+    renderWith(<><Probe /><ConsentBanner /></>)
+    await screen.findByText('pending')
+    expect(screen.queryByRole('region')).toBeNull()
+    window.location.hash = ''
+  })
+})
+
+/* ------------------------------------------------------------------ */
+/* Settings dialog                                                       */
+/* ------------------------------------------------------------------ */
+
+// jsdom has no showModal; give <dialog> a minimal one so the component's open path runs.
+const ensureDialogSupport = () => {
+  const proto = HTMLDialogElement.prototype as HTMLDialogElement & { showModal?: () => void; close?: () => void }
+  if (typeof proto.showModal !== 'function') {
+    proto.showModal = function () {
+      this.setAttribute('open', '')
+    }
+    proto.close = function () {
+      this.removeAttribute('open')
+      this.dispatchEvent(new Event('close'))
+    }
+  }
+}
+
+describe('ConsentSettings', () => {
+  beforeEach(() => {
+    ensureDialogSupport()
+    clearCookies()
+    window.location.hash = ''
+  })
+  afterEach(cleanup)
+
+  it('locks necessary, toggles analytics and saves the selection', async () => {
+    renderWith(<><Probe /><ConsentSettings /></>)
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('open').click())
+    const dialog = screen.getByRole('dialog', { hidden: true })
+    expect(dialog.hasAttribute('open')).toBe(true)
+    expect(dialog.getAttribute('aria-describedby')).toBeTruthy()
+    const switches = screen.getAllByRole('switch', { hidden: true })
+    expect(switches).toHaveLength(3)
+    expect(switches[0].getAttribute('aria-checked')).toBe('true')
+    expect(switches[0].getAttribute('aria-disabled')).toBe('true')
+    await act(async () => switches[0].click())
+    expect(switches[0].getAttribute('aria-checked')).toBe('true')
+    await act(async () => switches[1].click())
+    expect(switches[1].getAttribute('aria-checked')).toBe('true')
+    expect(switches[1].getAttribute('data-state')).toBe('checked')
+    await act(async () => screen.getByRole('button', { name: defaults.de.saveSelection, hidden: true }).click())
+    expect(readRecord(makeSetup())?.c).toEqual({ analytics: true, marketing: false })
+    expect(dialog.hasAttribute('open')).toBe(false)
+  })
+
+  it('starts all off while pending even when an old record exists, and from the record when decided', async () => {
+    const setup = makeSetup()
+    writeRecord(setup, { id: 'old-record-00000000', v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: true } })
+    renderWith(<><Probe /><ConsentSettings /></>, { setup, global: { revision: 2 } })
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('open').click())
+    let switches = screen.getAllByRole('switch', { hidden: true })
+    expect(switches[1].getAttribute('aria-checked')).toBe('false')
+    expect(switches[2].getAttribute('aria-checked')).toBe('false')
+    await act(async () => screen.getByText('accept').click())
+    await act(async () => screen.getByText('open').click())
+    switches = screen.getAllByRole('switch', { hidden: true })
+    expect(switches[1].getAttribute('aria-checked')).toBe('true')
+    expect(switches[2].getAttribute('aria-checked')).toBe('true')
+  })
+
+  it('has a close button and closes on backdrop click without deciding', async () => {
+    renderWith(<><Probe /><ConsentSettings /></>)
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('open').click())
+    const dialog = screen.getByRole('dialog', { hidden: true })
+    await act(async () => screen.getByRole('button', { name: defaults.de.close, hidden: true }).click())
+    expect(dialog.hasAttribute('open')).toBe(false)
+    expect(screen.getByTestId('status').textContent).toBe('pending')
+    await act(async () => screen.getByText('open').click())
+    await act(async () => dialog.dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect(dialog.hasAttribute('open')).toBe(false)
+    expect(readRecord(makeSetup())).toBeNull()
+  })
+
+  it('lists services with provider, cookies and privacy link under their category', async () => {
+    const global: ConsentGlobalDoc = {
+      categories: [
+        {
+          key: 'analytics',
+          services: [{ name: 'Google Analytics 4', provider: 'Google Ireland Limited', cookies: '_ga · 2 Jahre', privacyUrl: 'https://policies.google.com/privacy' }],
+        },
+      ],
+    }
+    renderWith(<><Probe /><ConsentSettings /></>, { global })
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('open').click())
+    expect(screen.getByText('Google Analytics 4', { exact: false })).toBeTruthy()
+    expect(screen.getByText('Google Ireland Limited', { exact: false })).toBeTruthy()
+    expect(screen.getByText('_ga · 2 Jahre', { exact: false })).toBeTruthy()
+    const link = screen.getByRole('link', { name: defaults.de.privacyLink, hidden: true })
+    expect(link.getAttribute('rel')).toContain('noopener')
   })
 })
