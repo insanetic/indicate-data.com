@@ -101,6 +101,7 @@ describe('createLogEndpoint', () => {
   const request = (body: unknown, length = 200) =>
     ({
       json: async () => body,
+      text: async () => JSON.stringify(body),
       headers: new Headers({ 'content-length': String(length) }),
       payload: { create: vi.fn(async () => ({})), logger: { error: vi.fn() } },
     }) as never
@@ -119,6 +120,10 @@ describe('createLogEndpoint', () => {
   it('rejects oversized and malformed bodies', async () => {
     expect((await endpoint.handler(request({}, 5000))).status).toBe(413)
     expect((await endpoint.handler(request({ nope: true }))).status).toBe(400)
+  })
+
+  it('measures the body it reads, not the declared length', async () => {
+    expect((await endpoint.handler(request({ id: 'a'.repeat(2000) }, 10))).status).toBe(413)
   })
 })
 

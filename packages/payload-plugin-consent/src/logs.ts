@@ -63,11 +63,14 @@ export const createLogEndpoint = (setup: ResolvedSetup, { logsSlug, logPath }: R
   path: logPath,
   method: 'post',
   handler: async (req) => {
-    const length = Number(req.headers.get('content-length') || 0)
-    if (length > MAX_BODY) return new Response(null, { status: 413 })
+    // The header is only a fast path: a public endpoint must measure the body it actually reads.
+    const declared = Number(req.headers.get('content-length') || 0)
+    if (declared > MAX_BODY) return new Response(null, { status: 413 })
+    const raw = (await req.text?.()) ?? ''
+    if (raw.length > MAX_BODY) return new Response(null, { status: 413 })
     let body: unknown = null
     try {
-      body = await req.json?.()
+      body = JSON.parse(raw)
     } catch {
       return new Response(null, { status: 400 })
     }
