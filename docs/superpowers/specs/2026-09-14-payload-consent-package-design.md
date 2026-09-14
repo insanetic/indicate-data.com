@@ -1,7 +1,7 @@
 # Design: `@subneo/payload-consent`, a reusable consent package for Payload sites
 
 Date: 2026-09-14
-Status: approved in conversation, spec for review
+Status: approved 2026-09-14; plan in `docs/superpowers/plans/2026-09-14-payload-consent-package.md`
 Supersedes: `docs/superpowers/specs/2026-09-13-consent-and-tracking-design.md` (the module this package replaces)
 Review that led here: cookie banner review of 2026-09-14 (compliance, semantics, extensibility)
 
@@ -132,12 +132,13 @@ defaults filled in plus derived helpers (`optionalKeys`, `integrationsFor(catego
 ### 4.1 GTM integration (`integrations/gtm.ts`)
 
 ```ts
-gtm({ containerId: string | undefined, category?: 'analytics' }): ConsentIntegration | null
+gtm({ containerId: string | undefined, category?: 'analytics' }): ConsentIntegration
 ```
 
-Returns `null` when `containerId` is empty, so a site can write
-`integrations: [gtm({ containerId: process.env.NEXT_PUBLIC_GTM_ID })].filter(isIntegration)` and
-staging without an id gets no tracker. Fields:
+Returns the integration with `enabled: false` when `containerId` is empty. It stays registered (so
+the service row's `integration` select still accepts `gtm` on a staging database without an id)
+but never bootstraps or loads; `defineConsent` exposes `activeIntegrations` for the runtime.
+Fields:
 
 - `cookies`: `/^_ga($|_)/, /^_gid$/, /^_gat/, /^_gac_/, /^_gcl_/`.
 - `bootstrap`: the current snippet with `personalization_storage: 'denied'`, `ads_data_redaction`
@@ -214,7 +215,7 @@ The seed's service row "Cookie-Einwilligung" mentions the server record in its p
 ### 8.1 Site wiring
 
 ```
-src/consent/setup.ts          defineConsent({ categories, integrations: [gtm(...)].filter(isIntegration), logging: true })
+src/consent/setup.ts          defineConsent({ categories, integrations: [gtm({ containerId })], logging: true })
 src/consent/ConsentRoot.tsx   'use client'; imports setup and the site's Button; renders
                               <ConsentProvider setup={setup} settings={...} locale={...} disabled={...}
                                 components={{ Button }} classNames={consentClassNames}>
@@ -232,8 +233,8 @@ why the client wrapper imports it. `ConsentDefaults` is a server component that 
 `bootstrap` strings of all integrations into one `beforeInteractive` script, only when
 `enabled`.
 
-`disabled` is computed by the site: draft mode, or no integrations and no gated content. This site:
-`draftMode || setup.integrations.length === 0`. `ConsentRoot` also passes
+`disabled` is computed by the site: draft mode, or no active integrations and no gated content.
+This site: `draftMode || setup.activeIntegrations.length === 0`. `ConsentRoot` also passes
 `logEndpoint="/api/consent/log"` when `setup.logging` is true.
 
 ### 8.2 Provider state
