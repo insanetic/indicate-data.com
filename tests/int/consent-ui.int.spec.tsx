@@ -15,7 +15,7 @@ import {
   type ConsentIntegration,
   type ResolvedSetup,
 } from '@subneo/payload-consent'
-import { ConsentBanner, ConsentProvider, ConsentSettings, useConsent } from '@subneo/payload-consent/react'
+import { ConsentBanner, ConsentGate, ConsentProvider, ConsentSettings, ConsentTrigger, FloatingTrigger, useConsent } from '@subneo/payload-consent/react'
 
 /* ------------------------------------------------------------------ */
 /* Shared fixtures                                                       */
@@ -316,5 +316,108 @@ describe('ConsentSettings', () => {
     expect(screen.getByText('_ga · 2 Jahre', { exact: false })).toBeTruthy()
     const link = screen.getByRole('link', { name: defaults.de.privacyLink, hidden: true })
     expect(link.getAttribute('rel')).toContain('noopener')
+  })
+})
+
+/* ------------------------------------------------------------------ */
+/* Triggers                                                              */
+/* ------------------------------------------------------------------ */
+
+describe('ConsentTrigger', () => {
+  beforeEach(clearCookies)
+  afterEach(cleanup)
+
+  it('renders a button with the settings label that opens the dialog', async () => {
+    renderWith(<><Probe /><ConsentTrigger className="footer-link" /></>)
+    await screen.findByText('pending')
+    const button = screen.getByRole('button', { name: defaults.de.cookieSettings })
+    expect(button.className).toContain('footer-link')
+    await act(async () => button.click())
+    expect(screen.getByTestId('dialog').textContent).toBe('true')
+  })
+
+  it('asChild attaches the opener to its child and keeps the child handler', async () => {
+    const onClick = vi.fn()
+    renderWith(
+      <>
+        <Probe />
+        <ConsentTrigger asChild>
+          <a href="#x" onClick={onClick}>Meine Cookies</a>
+        </ConsentTrigger>
+      </>,
+    )
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('Meine Cookies').click())
+    expect(onClick).toHaveBeenCalledTimes(1)
+    expect(screen.getByTestId('dialog').textContent).toBe('true')
+  })
+
+  it('renders nothing when disabled', () => {
+    renderWith(<ConsentTrigger />, { disabled: true })
+    expect(screen.queryByRole('button')).toBeNull()
+  })
+})
+
+describe('FloatingTrigger', () => {
+  beforeEach(clearCookies)
+  afterEach(cleanup)
+
+  it('shows only after a decision in floating mode, at the configured corner', async () => {
+    renderWith(<><Probe /><FloatingTrigger /></>, { global: { trigger: { mode: 'floating', position: 'bottom-right' } } })
+    await screen.findByText('pending')
+    expect(screen.queryByRole('button', { name: defaults.de.cookieSettings })).toBeNull()
+    await act(async () => screen.getByText('reject').click())
+    const button = screen.getByRole('button', { name: defaults.de.cookieSettings })
+    expect(button.getAttribute('data-position')).toBe('bottom-right')
+    expect(button.style.position).toBe('fixed')
+    expect(button.style.zIndex).toBe('50')
+    // jsdom's CSS parser discards every `env()`/`max()` value, so the safe-area insets the component
+    // sets for the corner are not readable here; `data-position` above is the assertable part.
+    await act(async () => button.click())
+    expect(screen.getByTestId('dialog').textContent).toBe('true')
+    expect(screen.queryByRole('button', { name: defaults.de.cookieSettings })).toBeNull()
+  })
+
+  it('renders nothing in link mode', async () => {
+    renderWith(<><Probe /><FloatingTrigger /></>)
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('reject').click())
+    expect(screen.queryByRole('button', { name: defaults.de.cookieSettings })).toBeNull()
+  })
+})
+
+/* ------------------------------------------------------------------ */
+/* Gate                                                                  */
+/* ------------------------------------------------------------------ */
+
+describe('ConsentGate', () => {
+  beforeEach(clearCookies)
+  afterEach(cleanup)
+
+  it('blocks the embed until the category is granted and grants it from the placeholder', async () => {
+    renderWith(
+      <>
+        <Probe />
+        <ConsentGate category="marketing" service="YouTube">
+          <iframe title="video" />
+        </ConsentGate>
+      </>,
+    )
+    await screen.findByText('pending')
+    expect(screen.queryByTitle('video')).toBeNull()
+    const gate = screen.getByRole('group', { name: 'Marketing' })
+    expect(gate.textContent).toContain('YouTube')
+    expect(gate.textContent).toContain('„Marketing“')
+    await act(async () => screen.getByRole('button', { name: 'Laden und Marketing erlauben' }).click())
+    expect(screen.getByTitle('video')).toBeTruthy()
+    expect(readRecord(makeSetup())?.c).toEqual({ analytics: false, marketing: true })
+  })
+
+  it('renders children directly when the layer is disabled or the category is required', () => {
+    renderWith(<ConsentGate category="marketing" service="YouTube"><iframe title="video" /></ConsentGate>, { disabled: true })
+    expect(screen.getByTitle('video')).toBeTruthy()
+    cleanup()
+    renderWith(<ConsentGate category="necessary" service="Self"><iframe title="video" /></ConsentGate>)
+    expect(screen.getByTitle('video')).toBeTruthy()
   })
 })
