@@ -1,22 +1,35 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { anyGranted, applyConsent, bootstrapSnippet, isGtmLoaded, loadGtm, signalsFor } from '@/consent/consent-mode'
-import { installClickTracking, setTrackingEnabled, track } from '@/consent/track'
+import { consentModeBootstrap, defineConsent, gtag, installClickTracking, signalsFor, track } from '@subneo/payload-consent'
+import { gtm, isGtmLoaded, loadGtm } from '@subneo/payload-consent/integrations/gtm'
 
 type DL = Record<string, unknown>[]
-const dl = () => (window as unknown as { dataLayer: DL }).dataLayer
+const win = window as unknown as { dataLayer?: DL; gtag?: unknown }
+const dl = () => win.dataLayer as DL
 
-beforeEach(() => {
-  ;(window as unknown as { dataLayer: DL }).dataLayer = []
-  document.querySelectorAll('script[data-gtm]').forEach((s) => s.remove())
-  setTrackingEnabled(true)
+const setup = defineConsent({
+  categories: [
+    { key: 'necessary', required: true, texts: { en: { label: 'Necessary', description: '' } } },
+    { key: 'analytics', signals: ['analytics_storage'], texts: { en: { label: 'Statistics', description: '' } } },
+    {
+      key: 'marketing',
+      signals: ['ad_storage', 'ad_user_data', 'ad_personalization'],
+      texts: { en: { label: 'Marketing', description: '' } },
+    },
+  ],
+  integrations: [gtm({ containerId: 'GTM-TEST' })],
 })
 
-describe('bootstrapSnippet', () => {
-  it('sets every Consent Mode signal to denied before anything else runs', () => {
-    delete (window as { gtag?: unknown }).gtag
-    ;(window as unknown as { dataLayer: DL }).dataLayer = []
-    new Function(bootstrapSnippet)()
+beforeEach(() => {
+  win.dataLayer = []
+  document.querySelectorAll('script[data-gtm]').forEach((s) => s.remove())
+})
+
+describe('consentModeBootstrap', () => {
+  it('denies every signal except functionality and security storage', () => {
+    delete win.gtag
+    win.dataLayer = []
+    new Function(consentModeBootstrap())()
     const calls = dl().map((entry) => Array.from(entry as unknown as ArrayLike<unknown>))
     expect(calls[0]).toEqual([
       'consent',
@@ -26,72 +39,95 @@ describe('bootstrapSnippet', () => {
         ad_user_data: 'denied',
         ad_personalization: 'denied',
         analytics_storage: 'denied',
+        personalization_storage: 'denied',
         functionality_storage: 'granted',
-        personalization_storage: 'granted',
         security_storage: 'granted',
         wait_for_update: 0,
       },
     ])
     expect(calls[1]).toEqual(['set', 'ads_data_redaction', true])
-    expect(typeof window.gtag).toBe('function')
+    expect(consentModeBootstrap()).not.toContain('url_passthrough')
+    expect(typeof win.gtag).toBe('function')
   })
 })
 
 describe('signalsFor', () => {
-  it('maps categories to Consent Mode signals', () => {
-    expect(signalsFor({ analytics: true, marketing: false })).toEqual({
+  it('maps granted categories to their signals', () => {
+    expect(signalsFor(setup, { analytics: true, marketing: false })).toEqual({
       analytics_storage: 'granted',
       ad_storage: 'denied',
       ad_user_data: 'denied',
       ad_personalization: 'denied',
     })
-    expect(signalsFor({ analytics: false, marketing: true }).ad_storage).toBe('granted')
-    expect(anyGranted({ analytics: false, marketing: false })).toBe(false)
-    expect(anyGranted({ analytics: false, marketing: true })).toBe(true)
+    expect(signalsFor(setup, { analytics: false, marketing: true }).ad_storage).toBe('granted')
   })
 })
 
-describe('applyConsent', () => {
-  it('pushes a consent update through gtag', () => {
-    applyConsent({ analytics: true, marketing: false })
+describe('gtag fallback', () => {
+  it('pushes through window.gtag or creates it', () => {
+    delete win.gtag
+    gtag('consent', 'update', { analytics_storage: 'granted' })
     const last = dl().at(-1) as unknown as ArrayLike<unknown>
-    expect(Array.from(last)).toEqual(['consent', 'update', signalsFor({ analytics: true, marketing: false })])
+    expect(Array.from(last)).toEqual(['consent', 'update', { analytics_storage: 'granted' }])
   })
 })
 
-describe('loadGtm', () => {
-  it('appends the script once and marks the start', () => {
+describe('gtm integration', () => {
+  it('is disabled without a container id and enabled with one', () => {
+    expect(gtm({ containerId: undefined }).enabled).toBe(false)
+    expect(gtm({ containerId: '' }).enabled).toBe(false)
+    const active = gtm({ containerId: 'GTM-TEST' })
+    expect(active.enabled).toBe(true)
+    expect(active.key).toBe('gtm')
+    expect(active.category).toBe('analytics')
+    expect(active.bootstrap).toBe(consentModeBootstrap())
+    expect(['_ga', '_ga_ABC', '_gid', '_gat_UA', '_gac_1', '_gcl_au'].every((n) => active.cookies.some((p) => p.test(n)))).toBe(true)
+    expect(active.cookies.some((p) => p.test('keep'))).toBe(false)
+  })
+
+  it('loads the script once and updates consent mode', () => {
+    const integration = gtm({ containerId: 'GTM-TEST' })
+    const ctx = { choices: { analytics: true, marketing: false }, locale: 'de', signals: signalsFor(setup, { analytics: true, marketing: false }) }
     expect(isGtmLoaded()).toBe(false)
-    loadGtm('GTM-TEST')
-    loadGtm('GTM-TEST')
+    integration.load(ctx)
+    integration.load(ctx)
     const scripts = document.querySelectorAll('script[data-gtm]')
     expect(scripts).toHaveLength(1)
     expect(scripts[0].getAttribute('src')).toBe('https://www.googletagmanager.com/gtm.js?id=GTM-TEST')
     expect(dl().some((e) => e.event === 'gtm.js')).toBe(true)
     expect(isGtmLoaded()).toBe(true)
+    integration.update?.(ctx)
+    const last = dl().at(-1) as unknown as ArrayLike<unknown>
+    expect(Array.from(last)).toEqual(['consent', 'update', ctx.signals])
+  })
+
+  it('loadGtm is idempotent by marker attribute', () => {
+    loadGtm('GTM-A')
+    loadGtm('GTM-B')
+    expect(document.querySelectorAll('script[data-gtm]')).toHaveLength(1)
   })
 })
 
 describe('track', () => {
   it('pushes the event with its params', () => {
-    track({ name: 'cta_click', params: { label: 'Demo', location: 'hero' } })
+    track({ name: 'cta_click', params: { label: 'Demo', location: 'hero', href: undefined } })
     expect(dl().at(-1)).toEqual({ event: 'cta_click', label: 'Demo', location: 'hero' })
   })
 
-  it('is a no-op when tracking is disabled', () => {
-    setTrackingEnabled(false)
+  it('is a no-op without a dataLayer (no integration bootstrapped)', () => {
+    delete win.dataLayer
     track({ name: 'page_view', params: { page_path: '/', page_title: 'Home', page_locale: 'de' } })
-    expect(dl()).toHaveLength(0)
+    expect(win.dataLayer).toBeUndefined()
   })
 
-  it('tracks clicks on elements marked with data-track', () => {
+  it('tracks clicks on elements marked with data-track, even when propagation is stopped', () => {
     document.body.innerHTML =
       '<a href="/demo" data-track data-track-location="hero"><span>Demo buchen</span></a>' +
       '<button data-track="outbound_click" data-track-label="Docs">Docs</button>'
-    // jsdom has no navigation implementation: the real <a href> would otherwise log
-    // "Not implemented: navigation to another Document" when the click's default action runs.
     const preventNavigation = (e: MouseEvent) => e.preventDefault()
     document.addEventListener('click', preventNavigation)
+    const stopBubbling = (e: Event) => e.stopPropagation()
+    document.querySelector('span')!.addEventListener('click', stopBubbling)
     const stop = installClickTracking()
     try {
       document.querySelector('span')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
@@ -101,6 +137,7 @@ describe('track', () => {
     } finally {
       stop()
       document.removeEventListener('click', preventNavigation)
+      document.body.innerHTML = ''
     }
   })
 })
