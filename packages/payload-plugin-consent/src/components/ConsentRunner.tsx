@@ -41,11 +41,16 @@ export const ConsentRunner: React.FC = () => {
     }
   }, [enabled, setup, status, record, locale])
 
+  // React runs child effects before parent effects, so on mount this effect would fire before the
+  // provider has read the cookie and flipped the status, queueing the entry page view ahead of the
+  // consent update above — gtm.js replays the queue in order and would process it under the denied
+  // defaults. Waiting past 'loading' defers the first page view to the commit that also runs the
+  // update effect, which is declared first and therefore pushes first.
   useEffect(() => {
-    if (!enabled || !pathname || lastPath.current === pathname) return
+    if (!enabled || status === 'loading' || !pathname || lastPath.current === pathname) return
     lastPath.current = pathname
     track({ name: 'page_view', params: { page_path: pathname, page_title: document.title, page_locale: locale } })
-  }, [enabled, pathname, locale])
+  }, [enabled, status, pathname, locale])
 
   useEffect(() => {
     if (!enabled) return

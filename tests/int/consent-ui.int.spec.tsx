@@ -8,6 +8,7 @@ import {
   createIntegration,
   defaults,
   defineConsent,
+  gtag,
   readRecord,
   resolveConsent,
   signalsFor,
@@ -495,6 +496,21 @@ describe('ConsentRunner', () => {
     } finally {
       Object.defineProperty(window, 'location', { value: original, writable: true, configurable: true })
     }
+  })
+
+  it('pushes the consent update before the entry page view', async () => {
+    const integration = fakeIntegration({ update: (ctx) => gtag('consent', 'update', ctx.signals) })
+    const setup = makeSetup([integration])
+    writeRecord(setup, { id: 'granted-00000000001', v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false } })
+    renderWith(<><Probe /><ConsentRunner /></>, { setup })
+    await screen.findByText('decided')
+    // gtag pushes its `arguments` object, a page view a plain object.
+    const dl = (window as unknown as { dataLayer: unknown[] }).dataLayer
+    const update = dl.findIndex((entry) => Array.from(entry as ArrayLike<unknown>)[0] === 'consent')
+    const pageView = dl.findIndex((entry) => (entry as { event?: string }).event === 'page_view')
+    expect(update).toBeGreaterThanOrEqual(0)
+    expect(pageView).toBeGreaterThanOrEqual(0)
+    expect(update).toBeLessThan(pageView)
   })
 
   it('installs the capture-phase click listener while enabled', async () => {
