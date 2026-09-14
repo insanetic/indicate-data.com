@@ -1,6 +1,6 @@
 import type { Config } from 'payload'
 
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { defineConsent } from '@subneo/payload-consent'
 import { gtm } from '@subneo/payload-consent/integrations/gtm'
@@ -10,6 +10,7 @@ import {
   createLogEndpoint,
   missingServiceRows,
   parseLogBody,
+  resetLogThrottle,
   resolvePluginOptions,
   validateCategoryRows,
 } from '@subneo/payload-consent/server'
@@ -73,6 +74,25 @@ describe('createConsentGlobal', () => {
     await expect(hook({ data } as never)).resolves.toEqual(data)
   })
 
+  it('accepts only http(s) in a service privacy link', () => {
+    type AnyField = { name?: unknown; fields?: unknown[]; validate?: unknown }
+    const find = (fields: unknown[], name: string): AnyField | undefined => {
+      for (const field of fields as AnyField[]) {
+        if (field.name === name) return field
+        const hit = field.fields ? find(field.fields, name) : undefined
+        if (hit) return hit
+      }
+      return undefined
+    }
+    const field = find(createConsentGlobal(setup, options).fields, 'privacyUrl')
+    const validate = field?.validate as (value: unknown) => true | string
+    expect(typeof validate).toBe('function')
+    expect(validate('https://x')).toBe(true)
+    expect(validate('')).toBe(true)
+    expect(validate(undefined)).toBe(true)
+    expect(validate('javascript:alert(1)')).toMatch(/http/)
+  })
+
   it('beforeValidate validates the merged document on a partial update', async () => {
     const global = createConsentGlobal(setup, options)
     const hook = global.hooks!.beforeValidate![0]
@@ -107,13 +127,33 @@ describe('parseLogBody', () => {
 
 describe('createLogEndpoint', () => {
   const endpoint = createLogEndpoint(setup, options)
-  const request = (body: unknown, length = 200) =>
+  const request = (body: unknown, length = 200, headers: Record<string, string> = {}) =>
     ({
       json: async () => body,
       text: async () => JSON.stringify(body),
-      headers: new Headers({ 'content-length': String(length) }),
+      headers: new Headers({ 'content-length': String(length), ...headers }),
       payload: { create: vi.fn(async () => ({})), logger: { error: vi.fn() } },
     }) as never
+
+  /** A request whose body is only readable as a stream, in two chunks, and declares no length. */
+  const streamRequest = (raw: string) =>
+    ({
+      body: new ReadableStream<Uint8Array>({
+        start(controller) {
+          const bytes = new TextEncoder().encode(raw)
+          const half = Math.ceil(bytes.byteLength / 2)
+          controller.enqueue(bytes.slice(0, half))
+          controller.enqueue(bytes.slice(half))
+          controller.close()
+        },
+      }),
+      headers: new Headers(),
+      payload: { create: vi.fn(async () => ({})), logger: { error: vi.fn() } },
+    }) as never
+
+  const created = (req: never) => (req as unknown as { payload: { create: ReturnType<typeof vi.fn> } }).payload.create
+
+  beforeEach(resetLogThrottle)
 
   it('stores a row and answers 204', async () => {
     const req = request({ id: 'abc', v: 1, t: '2026-09-14T10:00:00.000Z', c: { analytics: true, marketing: false }, h: 'h', l: 'de' })
@@ -133,6 +173,39 @@ describe('createLogEndpoint', () => {
 
   it('measures the body it reads, not the declared length', async () => {
     expect((await endpoint.handler(request({ id: 'a'.repeat(2000) }, 10))).status).toBe(413)
+  })
+
+  it('counts bytes, not characters, in the text fallback', async () => {
+    // 600 euro signs are 600 UTF-16 units but 1800 bytes on the wire.
+    expect((await endpoint.handler(request({ id: '€'.repeat(600) }, 10))).status).toBe(413)
+  })
+
+  it('caps a streamed body that declares no length', async () => {
+    const res = await endpoint.handler(streamRequest('a'.repeat(2000)))
+    expect(res.status).toBe(413)
+  })
+
+  it('reads a streamed body within the cap', async () => {
+    const raw = JSON.stringify({ id: 'abc', v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false }, h: 'h', l: 'de' })
+    const req = streamRequest(raw)
+    expect((await endpoint.handler(req)).status).toBe(204)
+    expect(created(req)).toHaveBeenCalledTimes(1)
+  })
+
+  it('replaces a decidedAt from a wildly wrong client clock with the server time', async () => {
+    const lastYear = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+    const req = request({ id: 'abc', v: 1, t: lastYear, c: { analytics: true, marketing: false }, h: 'h', l: 'de' })
+    expect((await endpoint.handler(req)).status).toBe(204)
+    const { decidedAt } = created(req).mock.calls[0][0].data as { decidedAt: string }
+    expect(Math.abs(Date.now() - Date.parse(decidedAt))).toBeLessThan(60_000)
+  })
+
+  it('throttles one address after 20 requests a minute and leaves others alone', async () => {
+    const body = { id: 'abc', v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false }, h: 'h', l: 'de' }
+    const from = (address: string) => endpoint.handler(request(body, 200, { 'x-forwarded-for': `${address}, 10.0.0.1` }))
+    for (let i = 0; i < 20; i++) expect((await from('203.0.113.7')).status).toBe(204)
+    expect((await from('203.0.113.7')).status).toBe(429)
+    expect((await from('203.0.113.8')).status).toBe(204)
   })
 })
 

@@ -84,7 +84,7 @@ export const ConsentSettings: React.FC<{ className?: string }> = ({ className })
             </a>
           )}
           {lastChanged && (
-            <span>
+            <span className={cx('lastChanged')} data-consent="lastChanged">
               {texts.lastChanged} {lastChanged}
             </span>
           )}

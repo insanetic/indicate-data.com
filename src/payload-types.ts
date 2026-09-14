@@ -2177,6 +2177,8 @@ export interface Search {
   createdAt: string;
 }
 /**
+ * "Created at" is the authoritative server timestamp. "Decided at" comes from the visitor's own clock and is only kept when it is within 24 hours of the server time.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "consent-logs".
  */

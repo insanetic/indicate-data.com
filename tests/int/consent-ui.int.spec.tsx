@@ -17,7 +17,7 @@ import {
   type ConsentIntegration,
   type ResolvedSetup,
 } from '@subneo/payload-consent'
-import { ConsentBanner, ConsentGate, ConsentProvider, ConsentRunner, ConsentSettings, ConsentTrigger, FloatingTrigger, useConsent } from '@subneo/payload-consent/react'
+import { bootstrapSnippet, ConsentBanner, ConsentGate, ConsentProvider, ConsentRunner, ConsentSettings, ConsentTrigger, FloatingTrigger, useConsent } from '@subneo/payload-consent/react'
 
 import { CMSLink } from '@/components/Link'
 
@@ -212,6 +212,16 @@ describe('ConsentBanner', () => {
     await screen.findByRole('region')
     await act(async () => screen.getByRole('button', { name: defaults.de.rejectAll }).click())
     expect(readRecord(makeSetup())?.c).toEqual({ analytics: false, marketing: false })
+  })
+
+  it('gives accept and reject the same variant and classes', async () => {
+    renderWith(<ConsentBanner />)
+    await screen.findByRole('region')
+    const accept = screen.getByRole('button', { name: defaults.de.acceptAll })
+    const reject = screen.getByRole('button', { name: defaults.de.rejectAll })
+    expect(accept.getAttribute('data-variant')).toBe('secondary')
+    expect(reject.getAttribute('data-variant')).toBe('secondary')
+    expect(accept.className).toBe(reject.className)
   })
 
   it('renders nothing when disabled or while the dialog is open', async () => {
@@ -417,12 +427,52 @@ describe('ConsentGate', () => {
     expect(readRecord(makeSetup())?.c).toEqual({ analytics: false, marketing: true })
   })
 
+  it('does not re-grant the categories of an invalidated record', async () => {
+    const setup = makeSetup()
+    writeRecord(setup, { id: 'stale-record-000000', v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false } })
+    renderWith(
+      <>
+        <Probe />
+        <ConsentGate category="marketing" service="YouTube">
+          <iframe title="video" />
+        </ConsentGate>
+      </>,
+      { setup, global: { revision: 2 } },
+    )
+    await screen.findByText('pending')
+    await act(async () => screen.getByRole('button', { name: 'Laden und Marketing erlauben' }).click())
+    expect(readRecord(setup)?.c).toEqual({ analytics: false, marketing: true })
+  })
+
   it('renders children directly when the layer is disabled or the category is required', () => {
     renderWith(<ConsentGate category="marketing" service="YouTube"><iframe title="video" /></ConsentGate>, { disabled: true })
     expect(screen.getByTitle('video')).toBeTruthy()
     cleanup()
     renderWith(<ConsentGate category="necessary" service="Self"><iframe title="video" /></ConsentGate>)
     expect(screen.getByTitle('video')).toBeTruthy()
+  })
+})
+
+/* ------------------------------------------------------------------ */
+/* Head bootstrap                                                        */
+/* ------------------------------------------------------------------ */
+
+describe('bootstrapSnippet', () => {
+  it('emits an identical bootstrap only once', () => {
+    const setup = makeSetup([fakeIntegration(), fakeIntegration({ key: 'fake-two' })])
+    expect(bootstrapSnippet(setup)).toBe('window.dataLayer=window.dataLayer||[];')
+  })
+
+  it('leaves out the bootstrap of a disabled integration', () => {
+    const setup = makeSetup([
+      fakeIntegration({ bootstrap: 'window.active=1;' }),
+      fakeIntegration({ key: 'off', bootstrap: 'window.off=1;', enabled: false }),
+    ])
+    expect(bootstrapSnippet(setup)).toBe('window.active=1;')
+  })
+
+  it('is empty when no integration has a bootstrap', () => {
+    expect(bootstrapSnippet(makeSetup([fakeIntegration({ bootstrap: undefined })]))).toBe('')
   })
 })
 

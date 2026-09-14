@@ -9,10 +9,10 @@ import { DefaultButton, type ConsentButtonProps } from './DefaultButton'
 
 export type ConsentSlot =
   | 'banner' | 'bannerTitle' | 'bannerText' | 'bannerLinks' | 'bannerLink' | 'bannerActions' | 'bannerSettingsLink'
-  | 'dialog' | 'dialogContent' | 'dialogTitle' | 'dialogText' | 'dialogLinks' | 'dialogLink' | 'closeButton'
+  | 'dialog' | 'dialogContent' | 'dialogTitle' | 'dialogText' | 'dialogLinks' | 'dialogLink' | 'closeButton' | 'lastChanged'
   | 'categoryList' | 'categoryRow' | 'categoryHeader' | 'categoryLabel' | 'categoryBadge' | 'categoryDescription'
   | 'services' | 'servicesSummary' | 'serviceList' | 'service' | 'serviceName' | 'serviceProvider' | 'servicePurpose' | 'serviceMeta' | 'serviceLink'
-  | 'switch' | 'switchThumb' | 'dialogActions'
+  | 'switch' | 'switchThumb' | 'dialogActions' | 'button'
   | 'trigger' | 'floatingTrigger'
   | 'gate' | 'gateText' | 'gateActions'
 
@@ -136,7 +136,10 @@ export const ConsentProvider: React.FC<ConsentProviderProps> = ({
       locale,
       status,
       record,
-      choices: record?.c || allChoices(setup, false),
+      // Only a valid decision may seed the choices. While pending, an invalidated record is still
+      // held (for its id), and handing its categories out would let `save({ ...choices })` in the
+      // gate silently re-grant what the visitor has not been asked about again.
+      choices: status === 'decided' && record ? record.c : allChoices(setup, false),
       texts: settings.texts,
       revision: settings.revision,
       trigger: settings.trigger,

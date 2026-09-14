@@ -230,7 +230,14 @@ export const createConsentGlobal = (setup: ResolvedSetup, options: ResolvedPlugi
                     label: { de: 'Cookies und Laufzeit', en: 'Cookies and lifetime' },
                     admin: { width: '50%', placeholder: '_ga, _ga_* · 2 Jahre / 2 years' },
                   },
-                  { name: 'privacyUrl', type: 'text', label: { de: 'Datenschutz-Link', en: 'Privacy link' }, admin: { width: '50%' } },
+                  {
+                    name: 'privacyUrl',
+                    type: 'text',
+                    label: { de: 'Datenschutz-Link', en: 'Privacy link' },
+                    // The value becomes an href in the settings dialog: only http(s), never javascript:.
+                    validate: (value: unknown) => !value || /^https?:\/\//i.test(String(value)) || 'Use an http(s) URL',
+                    admin: { width: '50%', placeholder: 'https://…' },
+                  },
                 ],
               },
             ],

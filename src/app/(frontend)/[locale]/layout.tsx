@@ -50,7 +50,8 @@ export default async function RootLayout({ children, params }: Args) {
 
   const consentSettings = await getCachedGlobal('consent', 1, locale)()
   const consent = resolveConsent(consentSettings, locale, consentSetup)
-  // No trackers (staging without a container id) and nothing gated: no banner at all.
+  // This site gates no embeds, so an inactive tracker (staging without a container id) leaves
+  // nothing that would need a decision: no banner at all.
   const consentDisabled = isEnabled || consentSetup.activeIntegrations.length === 0
   const trackingEnabled = consent.enabled && !consentDisabled
 

@@ -2,7 +2,7 @@ export { ConsentProvider, useConsent, SETTINGS_HASH } from './components/Consent
 export type { ConsentClassNames, ConsentComponents, ConsentContextValue, ConsentProviderProps, ConsentSlot, ConsentStatus } from './components/ConsentProvider'
 export { DefaultButton } from './components/DefaultButton'
 export type { ConsentButtonProps } from './components/DefaultButton'
-export { ConsentDefaults } from './components/ConsentDefaults'
+export { bootstrapSnippet, ConsentDefaults } from './components/ConsentDefaults'
 export { track, installClickTracking } from './track'
 export type { TrackEvent } from './track'
 export { ConsentBanner } from './components/ConsentBanner'
