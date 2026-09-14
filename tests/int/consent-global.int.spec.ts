@@ -104,13 +104,15 @@ describe('createConsentGlobal', () => {
 })
 
 describe('parseLogBody', () => {
-  const body = { id: 'abc-123', v: 2, t: '2026-09-14T10:00:00.000Z', c: { analytics: true, marketing: false }, h: 'deadbeef', l: 'de' }
+  // A literal date would fall outside the clock-skew window once it is a day old.
+  const t = new Date(Date.now() - 60_000).toISOString()
+  const body = { id: 'abc-123', v: 2, t, c: { analytics: true, marketing: false }, h: 'deadbeef', l: 'de' }
   it('accepts a well-formed body', () => {
     expect(parseLogBody(setup, body)).toEqual({
       consentId: 'abc-123',
       revision: 2,
       choices: { analytics: true, marketing: false },
-      decidedAt: '2026-09-14T10:00:00.000Z',
+      decidedAt: t,
       textsHash: 'deadbeef',
       locale: 'de',
     })
@@ -156,13 +158,14 @@ describe('createLogEndpoint', () => {
   beforeEach(resetLogThrottle)
 
   it('stores a row and answers 204', async () => {
-    const req = request({ id: 'abc', v: 1, t: '2026-09-14T10:00:00.000Z', c: { analytics: true, marketing: false }, h: 'h', l: 'de' })
+    // A literal date would fall outside the clock-skew window once it is a day old.
+    const t = new Date(Date.now() - 60_000).toISOString()
+    const req = request({ id: 'abc', v: 1, t, c: { analytics: true, marketing: false }, h: 'h', l: 'de' })
     const res = await endpoint.handler(req)
     expect(res.status).toBe(204)
-    const create = (req as unknown as { payload: { create: ReturnType<typeof vi.fn> } }).payload.create
-    expect(create).toHaveBeenCalledWith({
+    expect(created(req)).toHaveBeenCalledWith({
       collection: 'consent-logs',
-      data: { consentId: 'abc', revision: 1, choices: { analytics: true, marketing: false }, decidedAt: '2026-09-14T10:00:00.000Z', textsHash: 'h', locale: 'de' },
+      data: { consentId: 'abc', revision: 1, choices: { analytics: true, marketing: false }, decidedAt: t, textsHash: 'h', locale: 'de' },
     })
   })
 
@@ -190,6 +193,12 @@ describe('createLogEndpoint', () => {
     const req = streamRequest(raw)
     expect((await endpoint.handler(req)).status).toBe(204)
     expect(created(req)).toHaveBeenCalledTimes(1)
+  })
+
+  it('answers 400 when the body stream was already consumed', async () => {
+    const req = streamRequest('{}')
+    ;(req as unknown as { body: ReadableStream<Uint8Array> }).body.getReader()
+    expect((await endpoint.handler(req)).status).toBe(400)
   })
 
   it('replaces a decidedAt from a wildly wrong client clock with the server time', async () => {

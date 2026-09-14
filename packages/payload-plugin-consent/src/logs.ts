@@ -80,16 +80,19 @@ const MAX_BODY = 1024
 const byteLength = (value: string): number =>
   typeof Buffer !== 'undefined' ? Buffer.byteLength(value, 'utf8') : new TextEncoder().encode(value).length
 
-type BodySource = { body?: unknown; text?: () => Promise<string> }
+type BodySource = { body?: unknown; bodyUsed?: boolean; text?: () => Promise<string> }
 
 /**
  * Reads at most `MAX_BODY` bytes. A stream is read chunk by chunk and abandoned the moment the
  * accumulated byte length passes the cap, so an endless body is never buffered; without a stream the
- * whole text is read and measured in bytes, not UTF-16 units. `null` means "too large".
+ * whole text is read and measured in bytes, not UTF-16 units. Returns the status to answer with
+ * instead of the text when the body is unreadable (400) or too large (413).
  */
-async function readCappedBody(req: BodySource): Promise<string | null> {
+async function readCappedBody(req: BodySource): Promise<{ raw: string } | { status: number }> {
   const stream = req.body as ReadableStream<Uint8Array> | null | undefined
   if (stream && typeof stream.getReader === 'function') {
+    // Something upstream already consumed the body; there is nothing left to validate.
+    if (stream.locked || req.bodyUsed) return { status: 400 }
     const reader = stream.getReader()
     const decoder = new TextDecoder()
     let size = 0
@@ -99,21 +102,24 @@ async function readCappedBody(req: BodySource): Promise<string | null> {
         const { done, value } = await reader.read()
         if (done) break
         size += value.byteLength
-        if (size > MAX_BODY) return null
+        if (size > MAX_BODY) return { status: 413 }
         raw += decoder.decode(value, { stream: true })
       }
-      return raw + decoder.decode()
+      return { raw: raw + decoder.decode() }
     } finally {
       reader.cancel().catch(() => {})
     }
   }
   const raw = (await req.text?.()) ?? ''
-  return byteLength(raw) > MAX_BODY ? null : raw
+  return byteLength(raw) > MAX_BODY ? { status: 413 } : { raw }
 }
 
 /** Requests per address per window. Generous for a human, useless as a way to fill the collection. */
 const THROTTLE_WINDOW_MS = 60_000
 const THROTTLE_MAX = 20
+
+/** Upper bound on tracked addresses, so a flood from many addresses cannot grow the map without end. */
+const THROTTLE_MAX_KEYS = 10_000
 
 /** Hashed address → timestamps in the current window. In-process only; a restart forgets it. */
 const throttle = new Map<string, number[]>()
@@ -143,6 +149,11 @@ function isThrottled(headers: Headers): boolean {
   const key = throttleKey(headers)
   const stamps = throttle.get(key) || []
   if (stamps.length >= THROTTLE_MAX) return true
+  if (!throttle.has(key) && throttle.size >= THROTTLE_MAX_KEYS) {
+    // Map iteration is insertion-ordered: the first key is the one seen longest ago.
+    const oldest = throttle.keys().next().value
+    if (oldest !== undefined) throttle.delete(oldest)
+  }
   throttle.set(key, [...stamps, now])
   return false
 }
@@ -156,11 +167,11 @@ export const createLogEndpoint = (setup: ResolvedSetup, { logsSlug, logPath }: R
     // The header is only a fast path: a public endpoint must measure the body it actually reads.
     const declared = Number(req.headers.get('content-length') || 0)
     if (declared > MAX_BODY) return new Response(null, { status: 413 })
-    const raw = await readCappedBody(req)
-    if (raw === null) return new Response(null, { status: 413 })
+    const read = await readCappedBody(req)
+    if ('status' in read) return new Response(null, { status: read.status })
     let body: unknown = null
     try {
-      body = JSON.parse(raw)
+      body = JSON.parse(read.raw)
     } catch {
       return new Response(null, { status: 400 })
     }
