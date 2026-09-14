@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test'
 
+import { presetConsent } from '../helpers/consent'
+
 const base = 'http://localhost:3000'
+
+test.beforeEach(async ({ context }) => {
+  await presetConsent(context)
+})
 
 test.describe('Pricing page', () => {
   test('renders plans from the configured source and switches billing period', async ({ page }) => {

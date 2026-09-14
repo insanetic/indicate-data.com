@@ -46,7 +46,7 @@ test.describe('Home page', () => {
 
   test('switches the language and keeps the page', async ({ page }) => {
     await page.goto(`${base}/de`)
-    await page.getByRole('link', { name: 'English' }).first().click()
+    await page.getByRole('combobox', { name: 'Sprache' }).selectOption('en')
     await expect(page).toHaveURL(/\/en$/)
     await expect(page.locator('html')).toHaveAttribute('lang', 'en')
     await expect(page.locator('h1').first()).toContainText('Agentic analytics')

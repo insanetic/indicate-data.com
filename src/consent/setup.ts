@@ -1,8 +1,6 @@
 import { defineConsent } from '@subneo/payload-consent'
 import { gtm } from '@subneo/payload-consent/integrations/gtm'
 
-export type SiteCategory = 'necessary' | 'analytics' | 'marketing'
-
 /**
  * This site's consent surface. Imported by payload.config.ts (global, log collection) and by
  * ConsentRoot (browser). The container id is a build-time public env value; empty on staging.
