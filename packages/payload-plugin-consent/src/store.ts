@@ -64,15 +64,19 @@ export function newRecordId(): string {
   return Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('')
 }
 
+/** Second-level labels that form a public suffix under a two-letter country code (`co.uk`, `com.au`). */
+const SECOND_LEVEL_SUFFIXES = new Set(['co', 'com', 'net', 'org', 'gov', 'edu', 'ac', 'ne', 'or'])
+
 /**
- * Registrable parent of a host: two labels, or three when the last two look like a short public
- * suffix (`co.uk`, `com.au`). Good enough for cookie deletion without a public suffix list.
+ * Registrable parent of a host: two labels, or three when the host sits under a known second-level
+ * public suffix — a two-letter country code preceded by one of `SECOND_LEVEL_SUFFIXES`
+ * (`example.co.uk`, `example.com.au`). Good enough for cookie deletion without a public suffix list.
  */
 export function registrableDomain(host: string): string {
   const labels = host.split('.')
   if (labels.length < 3) return host
   const [second, top] = labels.slice(-2)
-  const keep = second.length <= 3 && top.length <= 3 ? 3 : 2
+  const keep = top.length === 2 && SECOND_LEVEL_SUFFIXES.has(second) ? 3 : 2
   return labels.slice(-keep).join('.')
 }
 

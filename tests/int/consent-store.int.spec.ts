@@ -116,5 +116,7 @@ describe('registrableDomain', () => {
     expect(registrableDomain('localhost')).toBe('localhost')
     expect(registrableDomain('www.example.co.uk')).toBe('example.co.uk')
     expect(registrableDomain('shop.example.com.au')).toBe('example.com.au')
+    expect(registrableDomain('www.abc.io')).toBe('abc.io')
+    expect(registrableDomain('www.ne.jp')).toBe('www.ne.jp')
   })
 })
