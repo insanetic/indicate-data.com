@@ -39,6 +39,18 @@
       ],
       "@subneo/payload-pricing": [
         "./packages/payload-plugin-subneo-pricing/src/index.ts"
+      ],
+      "@subneo/payload-consent": [
+        "./packages/payload-plugin-consent/src/index.ts"
+      ],
+      "@subneo/payload-consent/react": [
+        "./packages/payload-plugin-consent/src/react.ts"
+      ],
+      "@subneo/payload-consent/admin": [
+        "./packages/payload-plugin-consent/src/admin.ts"
+      ],
+      "@subneo/payload-consent/integrations/*": [
+        "./packages/payload-plugin-consent/src/integrations/*.ts"
       ]
     }
   },

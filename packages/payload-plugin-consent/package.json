@@ -1,0 +1,59 @@
+{
+  "name": "@subneo/payload-consent",
+  "version": "0.1.0",
+  "description": "Cookie consent for Payload CMS + Next.js: CMS-edited texts, integration registry, Google Consent Mode, consent log, embed gate.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "./src/styles.css"
+  ],
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.ts",
+    "./admin": "./src/admin.ts",
+    "./integrations/*": "./src/integrations/*.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "next": ">=15",
+    "payload": "^3.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./react": {
+        "types": "./dist/react.d.ts",
+        "import": "./dist/react.js"
+      },
+      "./admin": {
+        "types": "./dist/admin.d.ts",
+        "import": "./dist/admin.js"
+      },
+      "./integrations/*": {
+        "types": "./dist/integrations/*.d.ts",
+        "import": "./dist/integrations/*.js"
+      },
+      "./styles.css": "./dist/styles.css"
+    }
+  }
+}
