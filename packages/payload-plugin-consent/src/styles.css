@@ -54,6 +54,11 @@
   font-size: 0.8125rem;
   color: var(--consent-muted);
 }
+[data-consent='bannerLink'],
+[data-consent='dialogLink'] {
+  color: inherit;
+  text-decoration: underline;
+}
 [data-consent='bannerActions'] {
   display: grid;
   grid-template-columns: 1fr 1fr;

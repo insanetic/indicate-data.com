@@ -70,8 +70,7 @@ Built for the strict reading of GDPR / ePrivacy / TDDDG (DSK, DSB, CNIL):
    nothing is gated.
 6. Footer: `<ConsentTrigger className="…" />` (or `asChild` around your own element).
 7. Styling: pass `classNames` per slot (see `ConsentSlot`) and your own button, or import
-   `@subneo/payload-consent/styles.css`. Every element carries `data-consent="<slot>"`, except the
-   `bannerLink` and `dialogLink` anchors, which take the class name only.
+   `@subneo/payload-consent/styles.css`. Every element carries `data-consent="<slot>"`.
 8. Seed or fill the global in the admin. Everything falls back to the code defaults when empty.
 9. Legal pages: privacy policy lists every service, names the consent log as necessary processing
    (proof of consent, Art. 7(1) GDPR) and explains withdrawal; the cookie policy lists the `consent`

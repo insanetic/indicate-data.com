@@ -74,12 +74,12 @@ export const ConsentSettings: React.FC<{ className?: string }> = ({ className })
         </p>
         <p className={cx('dialogLinks')} data-consent="dialogLinks">
           {privacyHref && (
-            <a className={cx('dialogLink')} href={privacyHref}>
+            <a className={cx('dialogLink')} data-consent="dialogLink" href={privacyHref}>
               {texts.privacy}
             </a>
           )}
           {imprintHref && (
-            <a className={cx('dialogLink')} href={imprintHref}>
+            <a className={cx('dialogLink')} data-consent="dialogLink" href={imprintHref}>
               {texts.imprint}
             </a>
           )}

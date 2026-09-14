@@ -25,12 +25,12 @@ export const ConsentBanner: React.FC<{ className?: string }> = ({ className }) =
       {(privacyHref || imprintHref) && (
         <p className={cx('bannerLinks')} data-consent="bannerLinks">
           {privacyHref && (
-            <a className={cx('bannerLink')} href={privacyHref}>
+            <a className={cx('bannerLink')} data-consent="bannerLink" href={privacyHref}>
               {texts.privacy}
             </a>
           )}
           {imprintHref && (
-            <a className={cx('bannerLink')} href={imprintHref}>
+            <a className={cx('bannerLink')} data-consent="bannerLink" href={imprintHref}>
               {texts.imprint}
             </a>
           )}
