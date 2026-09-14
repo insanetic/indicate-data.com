@@ -10,12 +10,13 @@ import {
   defineConsent,
   readRecord,
   resolveConsent,
+  signalsFor,
   writeRecord,
   type ConsentGlobalDoc,
   type ConsentIntegration,
   type ResolvedSetup,
 } from '@subneo/payload-consent'
-import { ConsentBanner, ConsentGate, ConsentProvider, ConsentSettings, ConsentTrigger, FloatingTrigger, useConsent } from '@subneo/payload-consent/react'
+import { ConsentBanner, ConsentGate, ConsentProvider, ConsentRunner, ConsentSettings, ConsentTrigger, FloatingTrigger, useConsent } from '@subneo/payload-consent/react'
 
 /* ------------------------------------------------------------------ */
 /* Shared fixtures                                                       */
@@ -419,5 +420,90 @@ describe('ConsentGate', () => {
     cleanup()
     renderWith(<ConsentGate category="necessary" service="Self"><iframe title="video" /></ConsentGate>)
     expect(screen.getByTitle('video')).toBeTruthy()
+  })
+})
+
+/* ------------------------------------------------------------------ */
+/* Runner                                                                */
+/* ------------------------------------------------------------------ */
+
+describe('ConsentRunner', () => {
+  beforeEach(() => {
+    clearCookies()
+    ;(window as unknown as { dataLayer: unknown[] }).dataLayer = []
+  })
+  afterEach(cleanup)
+
+  it('loads a granted integration once, updates on every decision and pushes a page view', async () => {
+    const integration = fakeIntegration()
+    const setup = makeSetup([integration])
+    renderWith(<><Probe /><ConsentRunner /></>, { setup })
+    await screen.findByText('pending')
+    expect(integration.load).not.toHaveBeenCalled()
+    await act(async () => screen.getByText('accept').click())
+    expect(integration.load).toHaveBeenCalledTimes(1)
+    expect(integration.update).toHaveBeenCalledTimes(1)
+    const ctx = (integration.update as ReturnType<typeof vi.fn>).mock.calls[0][0]
+    expect(ctx.locale).toBe('de')
+    expect(ctx.signals).toEqual(signalsFor(setup, { analytics: true, marketing: true }))
+    await act(async () => screen.getByText('accept').click())
+    expect(integration.load).toHaveBeenCalledTimes(1)
+    expect(integration.update).toHaveBeenCalledTimes(2)
+    const dl = (window as unknown as { dataLayer: Record<string, unknown>[] }).dataLayer
+    expect(dl.some((e) => e.event === 'page_view' && e.page_path === '/de' && e.page_locale === 'de')).toBe(true)
+  })
+
+  it('never loads after reject but still forwards the denied update', async () => {
+    const integration = fakeIntegration()
+    const setup = makeSetup([integration])
+    writeRecord(setup, { id: 'rejected-0000000000', v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
+    renderWith(<><Probe /><ConsentRunner /></>, { setup })
+    await screen.findByText('decided')
+    expect(integration.load).not.toHaveBeenCalled()
+    expect(integration.update).toHaveBeenCalledTimes(1)
+  })
+
+  it('skips disabled integrations', async () => {
+    const integration = fakeIntegration({ enabled: false })
+    renderWith(<><Probe /><ConsentRunner /></>, { setup: makeSetup([integration]) })
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('accept').click())
+    expect(integration.load).not.toHaveBeenCalled()
+    expect(integration.update).not.toHaveBeenCalled()
+  })
+
+  it('purges cookies and reloads on withdrawal', async () => {
+    const integration = fakeIntegration()
+    const setup = makeSetup([integration])
+    writeRecord(setup, { id: 'granted-00000000000', v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false } })
+    document.cookie = '_fake_id=1; Path=/'
+    const reload = vi.fn()
+    const original = window.location
+    Object.defineProperty(window, 'location', {
+      value: { ...window.location, reload, hostname: 'localhost', protocol: 'http:', hash: '', pathname: '/', search: '' },
+      writable: true,
+      configurable: true,
+    })
+    try {
+      renderWith(<><Probe /><ConsentRunner /></>, { setup })
+      await screen.findByText('decided')
+      expect(integration.load).toHaveBeenCalledTimes(1)
+      await act(async () => screen.getByText('reject').click())
+      expect(document.cookie).not.toContain('_fake_id=')
+      expect(reload).toHaveBeenCalledTimes(1)
+      expect(integration.update).toHaveBeenCalledTimes(2)
+    } finally {
+      Object.defineProperty(window, 'location', { value: original, writable: true, configurable: true })
+    }
+  })
+
+  it('installs the capture-phase click listener while enabled', async () => {
+    // Valueless JSX attributes render as "true", which would become the event name; an empty
+    // data-track is what real markup carries when it wants the default cta_click event.
+    renderWith(<><Probe /><ConsentRunner /><a data-track="" data-track-location="hero" href="#">CTA</a></>)
+    await screen.findByText('pending')
+    await act(async () => screen.getByText('CTA').click())
+    const dl = (window as unknown as { dataLayer: Record<string, unknown>[] }).dataLayer
+    expect(dl.some((e) => e.event === 'cta_click' && e.location === 'hero')).toBe(true)
   })
 })
