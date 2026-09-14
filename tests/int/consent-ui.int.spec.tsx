@@ -4,338 +4,176 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/de' }))
 
-import { ConsentBanner } from '@/consent/components/ConsentBanner'
-import { ConsentProvider, useConsent } from '@/consent/components/ConsentProvider'
-import { ConsentSettings } from '@/consent/components/ConsentSettings'
-import { TagManager } from '@/consent/components/TagManager'
-import { defaults, resolveConsent } from '@/consent/defaults'
-import { readRecord, writeRecord, type Choices } from '@/consent/store'
-import { isTrackingEnabled } from '@/consent/track'
-import { CMSLink } from '@/components/Link'
-import type { Consent } from '@/payload-types'
+import {
+  createIntegration,
+  defineConsent,
+  readRecord,
+  resolveConsent,
+  writeRecord,
+  type ConsentGlobalDoc,
+  type ConsentIntegration,
+  type ResolvedSetup,
+} from '@subneo/payload-consent'
+import { ConsentProvider, useConsent } from '@subneo/payload-consent/react'
 
-describe('resolveConsent', () => {
-  it('falls back to the code defaults when the global is empty', () => {
-    const resolved = resolveConsent(null, 'de')
-    expect(resolved.enabled).toBe(true)
-    expect(resolved.revision).toBe(1)
-    expect(resolved.texts.bannerTitle).toBe(defaults.de.bannerTitle)
-    expect(resolved.texts.categories.map((c) => c.key)).toEqual(['necessary', 'analytics', 'marketing'])
-    expect(resolved.privacyHref).toBeNull()
+/* ------------------------------------------------------------------ */
+/* Shared fixtures                                                       */
+/* ------------------------------------------------------------------ */
+
+export const categories = [
+  { key: 'necessary', required: true, texts: { de: { label: 'Notwendig', description: 'Nötig.' }, en: { label: 'Necessary', description: 'Needed.' } } },
+  { key: 'analytics', signals: ['analytics_storage' as const], texts: { de: { label: 'Statistik', description: 'Zählt.' }, en: { label: 'Statistics', description: 'Counts.' } } },
+  { key: 'marketing', texts: { de: { label: 'Marketing', description: 'Wirbt.' }, en: { label: 'Marketing', description: 'Ads.' } } },
+]
+
+export const fakeIntegration = (overrides: Partial<ConsentIntegration> = {}): ConsentIntegration =>
+  createIntegration({
+    key: 'fake',
+    category: 'analytics',
+    cookies: [/^_fake/],
+    bootstrap: 'window.dataLayer=window.dataLayer||[];',
+    load: vi.fn(),
+    update: vi.fn(),
+    service: { name: 'Fake' },
+    ...overrides,
   })
 
-  it('is disabled only when the global explicitly turns it off', () => {
-    expect(resolveConsent({ enabled: false } as unknown as Consent, 'de').enabled).toBe(false)
-    expect(resolveConsent({ enabled: true } as unknown as Consent, 'de').enabled).toBe(true)
-  })
+export const makeSetup = (integrations: ConsentIntegration[] = [fakeIntegration()]): ResolvedSetup =>
+  defineConsent({ categories, integrations, logging: true })
 
-  it('prefers CMS texts and services field by field', () => {
-    const global = {
-      enabled: true,
-      revision: 3,
-      privacyPage: { id: 1, slug: 'privacy-policy' },
-      banner: { title: 'Cookies?', text: null },
-      categories: [
-        {
-          key: 'analytics',
-          label: 'Statistik',
-          services: [{ id: 'svc-1', name: 'Google Analytics 4', provider: 'Google Ireland Limited', purpose: 'Reichweite' }],
-        },
-      ],
-    } as unknown as Consent
-    const resolved = resolveConsent(global, 'de')
-    expect(resolved.enabled).toBe(true)
-    expect(resolved.revision).toBe(3)
-    expect(resolved.texts.bannerTitle).toBe('Cookies?')
-    expect(resolved.texts.bannerText).toBe(defaults.de.bannerText)
-    expect(resolved.privacyHref).toBe('/de/privacy-policy')
-    const analytics = resolved.texts.categories.find((c) => c.key === 'analytics')!
-    expect(analytics.label).toBe('Statistik')
-    expect(analytics.description).toBe(defaults.de.categories.analytics.description)
-    expect(analytics.services[0].name).toBe('Google Analytics 4')
-    expect(analytics.services[0].id).toBe('svc-1')
-  })
-
-  it('uses English for an unknown locale', () => {
-    expect(resolveConsent(null, 'xx' as never).texts.acceptAll).toBe(defaults.en.acceptAll)
-  })
-})
-
-const clearConsentCookie = () => {
-  document.cookie = 'consent=; Max-Age=0; Path=/'
+export const clearCookies = () => {
+  for (const part of document.cookie.split(';')) {
+    const name = part.split('=')[0]?.trim()
+    if (name) document.cookie = `${name}=; Max-Age=0; Path=/`
+  }
 }
 
-const Probe = () => {
+type RenderOptions = {
+  setup?: ResolvedSetup
+  global?: ConsentGlobalDoc | null
+  locale?: string
+  disabled?: boolean
+  logEndpoint?: string | null
+}
+
+export const renderWith = (ui: React.ReactNode, { setup = makeSetup(), global = null, locale = 'de', disabled, logEndpoint }: RenderOptions = {}) =>
+  render(
+    <ConsentProvider disabled={disabled} locale={locale} logEndpoint={logEndpoint} settings={resolveConsent(global, locale, setup)} setup={setup}>
+      {ui}
+    </ConsentProvider>,
+  )
+
+export const Probe = () => {
   const c = useConsent()
   return (
     <div>
       <span data-testid="status">{c.status}</span>
       <span data-testid="enabled">{String(c.enabled)}</span>
+      <span data-testid="dialog">{String(c.dialogOpen)}</span>
       <button onClick={c.acceptAll}>accept</button>
+      <button onClick={c.rejectAll}>reject</button>
+      <button onClick={c.openSettings}>open</button>
+      <button onClick={c.closeSettings}>close</button>
     </div>
   )
 }
 
+/* ------------------------------------------------------------------ */
+/* Provider                                                              */
+/* ------------------------------------------------------------------ */
+
 describe('ConsentProvider', () => {
+  beforeEach(() => {
+    clearCookies()
+    window.location.hash = ''
+  })
   afterEach(cleanup)
 
-  it('is pending without a cookie and decided after acceptAll', async () => {
-    clearConsentCookie()
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-        <Probe />
-      </ConsentProvider>,
-    )
+  it('is pending without a cookie and decided after acceptAll, writing a record with an id', async () => {
+    renderWith(<Probe />)
     expect(await screen.findByText('pending')).toBeTruthy()
-    expect(isTrackingEnabled()).toBe(true)
     await act(async () => screen.getByText('accept').click())
     expect(screen.getByTestId('status').textContent).toBe('decided')
+    const record = readRecord(makeSetup())
+    expect(record?.c).toEqual({ analytics: true, marketing: true })
+    expect(record?.id).toMatch(/^[A-Za-z0-9-]{16,64}$/)
+  })
+
+  it('is decided when a current cookie exists and keeps its id on the next decision', async () => {
+    const setup = makeSetup()
+    writeRecord(setup, { id: 'keep-me-0000000000', v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
+    renderWith(<Probe />, { setup })
+    expect(await screen.findByText('decided')).toBeTruthy()
+    await act(async () => screen.getByText('accept').click())
+    expect(readRecord(setup)?.id).toBe('keep-me-0000000000')
+  })
+
+  it('is disabled by the prop or the global', async () => {
+    renderWith(<Probe />, { disabled: true })
+    expect((await screen.findByTestId('enabled')).textContent).toBe('false')
+    cleanup()
+    renderWith(<Probe />, { global: { enabled: false } })
+    expect((await screen.findByTestId('enabled')).textContent).toBe('false')
+  })
+
+  it('purges optional cookies and asks again after a revision bump', async () => {
+    const setup = makeSetup()
+    writeRecord(setup, { id: 'old-record-00000000', v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false } })
+    document.cookie = '_fake_id=1; Path=/'
+    renderWith(<Probe />, { setup, global: { revision: 2 } })
+    expect(await screen.findByText('pending')).toBeTruthy()
+    expect(document.cookie).not.toContain('_fake_id=')
     expect(document.cookie).toContain('consent=')
   })
 
-  it('is decided when a current cookie exists', async () => {
-    writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-        <Probe />
-      </ConsentProvider>,
-    )
-    expect(await screen.findByText('decided')).toBeTruthy()
-  })
-
-  it('is disabled without a container id', async () => {
-    clearConsentCookie()
-    render(
-      <ConsentProvider settings={resolveConsent(null, 'de')}>
-        <Probe />
-      </ConsentProvider>,
-    )
-    expect(await screen.findByText('false')).toBeTruthy()
-    expect(isTrackingEnabled()).toBe(false)
-  })
-})
-
-describe('ConsentBanner', () => {
-  afterEach(cleanup)
-
-  it('shows when pending, accept all grants both categories', async () => {
-    clearConsentCookie()
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-        <ConsentBanner />
-      </ConsentProvider>,
-    )
-    const region = await screen.findByRole('region', { name: defaults.de.bannerTitle })
-    expect(region).toBeTruthy()
-    await act(async () => screen.getByRole('button', { name: defaults.de.acceptAll }).click())
-    expect(readRecord()?.c).toEqual({ analytics: true, marketing: true })
-    expect(screen.queryByRole('region')).toBeNull()
-  })
-
-  it('reject writes both categories as false', async () => {
-    clearConsentCookie()
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-        <ConsentBanner />
-      </ConsentProvider>,
-    )
-    await screen.findByRole('region')
-    await act(async () => screen.getByRole('button', { name: defaults.de.rejectAll }).click())
-    expect(readRecord()?.c).toEqual({ analytics: false, marketing: false })
-  })
-
-  it('renders nothing when disabled', () => {
-    clearConsentCookie()
-    render(
-      <ConsentProvider settings={resolveConsent(null, 'de')}>
-        <ConsentBanner />
-      </ConsentProvider>,
-    )
-    expect(screen.queryByRole('region')).toBeNull()
-  })
-})
-
-// jsdom has no showModal; give <dialog> a minimal one so the component's open path runs.
-const ensureDialogSupport = () => {
-  const proto = HTMLDialogElement.prototype as HTMLDialogElement & { showModal?: () => void; close?: () => void }
-  if (typeof proto.showModal !== 'function') {
-    proto.showModal = function () {
-      this.setAttribute('open', '')
-    }
-    proto.close = function () {
-      this.removeAttribute('open')
-      this.dispatchEvent(new Event('close'))
-    }
-  }
-}
-
-const OpenSettings = () => {
-  const { openSettings } = useConsent()
-  return <button onClick={openSettings}>open</button>
-}
-
-describe('ConsentSettings', () => {
-  afterEach(cleanup)
-
-  it('locks necessary, toggles analytics and saves the selection', async () => {
-    ensureDialogSupport()
-    clearConsentCookie()
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-        <OpenSettings />
-        <ConsentSettings />
-      </ConsentProvider>,
-    )
-    await screen.findByText('open')
-    await act(async () => screen.getByText('open').click())
-    const dialog = screen.getByRole('dialog', { hidden: true })
-    expect(dialog.hasAttribute('open')).toBe(true)
-    const switches = screen.getAllByRole('switch', { hidden: true })
-    expect(switches).toHaveLength(3)
-    expect(switches[0].getAttribute('aria-checked')).toBe('true')
-    expect(switches[0].getAttribute('aria-disabled')).toBe('true')
-    await act(async () => switches[0].click())
-    expect(switches[0].getAttribute('aria-checked')).toBe('true')
-    await act(async () => switches[1].click())
-    expect(switches[1].getAttribute('aria-checked')).toBe('true')
-    await act(async () => screen.getByRole('button', { name: defaults.de.saveSelection, hidden: true }).click())
-    expect(readRecord()?.c).toEqual({ analytics: true, marketing: false })
-    expect(dialog.hasAttribute('open')).toBe(false)
-  })
-
-  it('lists services under their category', async () => {
-    ensureDialogSupport()
-    clearConsentCookie()
-    const global = {
-      enabled: true,
-      revision: 1,
-      categories: [{ key: 'analytics', services: [{ name: 'Google Analytics 4', provider: 'Google Ireland Limited' }] }],
-    } as unknown as Consent
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(global, 'de')}>
-        <OpenSettings />
-        <ConsentSettings />
-      </ConsentProvider>,
-    )
-    await screen.findByText('open')
-    await act(async () => screen.getByText('open').click())
-    expect(screen.getByText('Google Analytics 4', { exact: false })).toBeTruthy()
-  })
-})
-
-describe('TagManager', () => {
-  afterEach(cleanup)
-
-  beforeEach(() => {
-    ;(window as unknown as { dataLayer: unknown[] }).dataLayer = []
-    document.querySelectorAll('script[data-gtm]').forEach((s) => s.remove())
-  })
-
-  it('loads GTM and pushes a page view once analytics is granted', async () => {
-    clearConsentCookie()
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-        <Probe />
-        <TagManager />
-      </ConsentProvider>,
-    )
-    await screen.findByText('pending')
-    expect(document.querySelector('script[data-gtm]')).toBeNull()
-    await act(async () => screen.getByText('accept').click())
-    expect(document.querySelector('script[data-gtm]')?.getAttribute('data-gtm')).toBe('GTM-TEST')
-    const dl = (window as unknown as { dataLayer: Record<string, unknown>[] }).dataLayer
-    expect(dl.some((e) => e.event === 'page_view' && e.page_path === '/de')).toBe(true)
-  })
-
-  it('never loads GTM after reject', async () => {
-    writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: false, marketing: false } })
-    render(
-      <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-        <Probe />
-        <TagManager />
-      </ConsentProvider>,
-    )
-    await screen.findByText('decided')
-    expect(document.querySelector('script[data-gtm]')).toBeNull()
-  })
-
-  it('purges cookies, updates consent mode and reloads on withdrawal', async () => {
-    writeRecord({ v: 1, t: new Date().toISOString(), c: { analytics: true, marketing: false } })
-    document.cookie = '_ga=GA1.1.1; Path=/'
-
-    const original = window.location
-    const reload = vi.fn()
-    let reloadSpy: ReturnType<typeof vi.spyOn> | null = null
+  it('posts every decision to the log endpoint when configured', async () => {
+    const fetchMock = vi.fn(async () => new Response(null, { status: 204 }))
+    vi.stubGlobal('fetch', fetchMock)
     try {
-      Object.defineProperty(window, 'location', {
-        value: { ...window.location, reload, hostname: 'localhost', protocol: 'http:' },
-        writable: true,
-        configurable: true,
-      })
-    } catch {
-      // jsdom refuses to redefine window.location outright in some versions; fall back to
-      // spying on reload directly if that property happens to be configurable there.
-      reloadSpy = vi.spyOn(window.location, 'reload').mockImplementation(reload)
-    }
-
-    try {
-      const withdraw: Choices = { analytics: false, marketing: false }
-      const SaveProbe = () => {
-        const consent = useConsent()
-        return (
-          <div>
-            <span data-testid="status">{consent.status}</span>
-            <button onClick={() => consent.save(withdraw)}>withdraw</button>
-          </div>
-        )
-      }
-
-      render(
-        <ConsentProvider gtmId="GTM-TEST" settings={resolveConsent(null, 'de')}>
-          <SaveProbe />
-          <TagManager />
-        </ConsentProvider>,
-      )
-
-      // Return visit with an existing "analytics granted" record: GTM loads without a banner.
-      await screen.findByText('decided')
-      expect(document.querySelector('script[data-gtm]')?.getAttribute('data-gtm')).toBe('GTM-TEST')
-
-      ;(window as unknown as { dataLayer: unknown[] }).dataLayer = []
-      document.querySelectorAll('script[data-gtm]').forEach((s) => s.remove())
-
-      await act(async () => screen.getByText('withdraw').click())
-
-      const dl = (window as unknown as { dataLayer: unknown[] }).dataLayer
-      const updateCalls = dl
-        .map((entry) => Array.from(entry as unknown as ArrayLike<unknown>))
-        .filter((args) => args[0] === 'consent' && args[1] === 'update')
-      expect(updateCalls.length).toBeGreaterThan(0)
-      expect((updateCalls[updateCalls.length - 1][2] as Record<string, string>).analytics_storage).toBe('denied')
-
-      expect(document.cookie).not.toContain('_ga=')
-      expect(reload).toHaveBeenCalledTimes(1)
-      expect(document.querySelector('script[data-gtm]')).toBeNull()
+      renderWith(<Probe />, { logEndpoint: '/api/consent/log' })
+      await screen.findByText('pending')
+      await act(async () => screen.getByText('reject').click())
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
+      expect(url).toBe('/api/consent/log')
+      expect(init.method).toBe('POST')
+      expect(init.keepalive).toBe(true)
+      const body = JSON.parse(String(init.body))
+      expect(body.c).toEqual({ analytics: false, marketing: false })
+      expect(body.v).toBe(1)
+      expect(body.l).toBe('de')
+      expect(body.h).toMatch(/^[0-9a-f]{8}$/)
+      expect(body.id).toBe(readRecord(makeSetup())?.id)
     } finally {
-      if (reloadSpy) {
-        reloadSpy.mockRestore()
-      } else {
-        Object.defineProperty(window, 'location', { value: original, writable: true, configurable: true })
-      }
+      vi.unstubAllGlobals()
     }
   })
-})
 
-describe('CMSLink track prop', () => {
-  afterEach(cleanup)
+  it('does not call fetch without a log endpoint', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      renderWith(<Probe />)
+      await screen.findByText('pending')
+      await act(async () => screen.getByText('accept').click())
+      expect(fetchMock).not.toHaveBeenCalled()
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
 
-  it('renders data-track attributes', () => {
-    const { container } = render(
-      <CMSLink label="Demo buchen" track={{ location: 'hero' }} type="custom" url="/demo" />,
-    )
-    const a = container.querySelector('a')!
-    expect(a.getAttribute('data-track')).toBe('cta_click')
-    expect(a.getAttribute('data-track-location')).toBe('hero')
-    expect(a.getAttribute('data-track-label')).toBe('Demo buchen')
+  it('opens the dialog for #cookie-settings and clears the hash on close', async () => {
+    window.location.hash = '#cookie-settings'
+    renderWith(<Probe />)
+    expect(await screen.findByText('pending')).toBeTruthy()
+    expect(screen.getByTestId('dialog').textContent).toBe('true')
+    await act(async () => screen.getByText('close').click())
+    expect(screen.getByTestId('dialog').textContent).toBe('false')
+    expect(window.location.hash).toBe('')
+    await act(async () => {
+      window.location.hash = '#cookie-settings'
+      await new Promise((r) => setTimeout(r, 0))
+    })
+    expect(screen.getByTestId('dialog').textContent).toBe('true')
   })
 })
