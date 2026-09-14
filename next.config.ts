@@ -13,6 +13,9 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // The dev indicator defaults to bottom-left, where the consent banner and the floating
+  // cookie-settings button live; keep it out of their way (and out of the e2e click path).
+  devIndicators: { position: 'bottom-right' },
   // Temporarily required on Windows until Next.js fixes Turbopack Sass resolution.
   // See: https://github.com/vercel/next.js/issues/86431
   sassOptions: {
