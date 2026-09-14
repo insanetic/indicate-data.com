@@ -43,8 +43,10 @@ packages/payload-plugin-consent/
   LICENSE
   tsconfig.json
   src/
-    index.ts                server-safe: consentPlugin, defineConsent, resolveConsent, types,
-                            createIntegration, textsHash
+    index.ts                browser-safe: defineConsent, resolveConsent, types, createIntegration,
+                            textsHash, record store, track
+    server.ts               Payload side: consentPlugin, createConsentGlobal, log collection,
+                            log endpoint (re-exports the root entry too)
     react.ts                client: ConsentProvider, ConsentBanner, ConsentSettings, ConsentTrigger,
                             FloatingTrigger, ConsentGate, ConsentDefaults, ConsentRunner, useConsent,
                             useTrack
@@ -66,12 +68,17 @@ tsconfig paths in the site:
 
 ```
 "@subneo/payload-consent":                  ["./packages/payload-plugin-consent/src/index.ts"],
+"@subneo/payload-consent/server":           ["./packages/payload-plugin-consent/src/server.ts"],
 "@subneo/payload-consent/react":            ["./packages/payload-plugin-consent/src/react.ts"],
 "@subneo/payload-consent/admin":            ["./packages/payload-plugin-consent/src/admin.ts"],
 "@subneo/payload-consent/integrations/*":   ["./packages/payload-plugin-consent/src/integrations/*.ts"]
 ```
 
-`package.json` `exports` mirrors these four entry points. `publishConfig` points at `dist/` as in the
+Payload-side code — the plugin, the global, the log collection and the endpoint — is imported from
+`@subneo/payload-consent/server`, so that a browser setup file importing the root entry never pulls
+in `payload` or Node modules.
+
+`package.json` `exports` mirrors these five entry points. `publishConfig` points at `dist/` as in the
 pricing package.
 
 The package imports nothing from `@/`. It has no Tailwind classes of its own beyond a minimal

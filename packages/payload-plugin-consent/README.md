@@ -45,8 +45,14 @@ Built for the strict reading of GDPR / ePrivacy / TDDDG (DSK, DSB, CNIL):
 
    ```tsx
    'use client'
-   import { ConsentProvider, type ConsentButtonProps } from '@subneo/payload-consent/react'
+   import { ConsentProvider, type ConsentButtonProps, type ConsentClassNames } from '@subneo/payload-consent/react'
    import { consentSetup } from './setup'
+
+   const MyButton: React.FC<ConsentButtonProps> = ({ variant, type = 'button', ...props }) => (
+     <button data-variant={variant} type={type} {...props} />
+   )
+
+   const myClassNames: ConsentClassNames = { banner: 'fixed bottom-4 left-4 rounded-xl bg-card p-6' }
 
    export const ConsentRoot = ({ settings, locale, disabled, children }) => (
      <ConsentProvider setup={consentSetup} settings={settings} locale={locale} disabled={disabled}
@@ -59,15 +65,25 @@ Built for the strict reading of GDPR / ePrivacy / TDDDG (DSK, DSB, CNIL):
 
    `MyButton` only has to accept `ConsentButtonProps`: `variant` (`primary` or `secondary`),
    `onClick`, `children`, `className` and `type`. Without it the package renders its own button.
+   `myClassNames` carries one class string per `ConsentSlot`; every slot is optional.
 5. Root layout (server): fetch the global with `depth: 1`, then
    `const settings = resolveConsent(global, locale, consentSetup)` from the root entry. Resolve it
    on the server. The raw
    global carries the linked pages' full rich text, which must not reach the client.
-   In `<head>`: `<ConsentDefaults setup={consentSetup} enabled={settings.enabled && !draftMode} />`.
+   In `<head>`:
+
+   ```tsx
+   <ConsentDefaults
+     setup={consentSetup}
+     enabled={settings.enabled && !draftMode && consentSetup.activeIntegrations.length > 0}
+   />
+   ```
+
    In `<body>`: `<ConsentRoot …>` around the tree, `<ConsentBanner />` right after the skip link,
    `<ConsentSettings />`, `<FloatingTrigger />` and `<ConsentRunner />` before `</body>`.
-   Set `disabled` in draft mode / live preview and when `setup.activeIntegrations` is empty and
-   nothing is gated.
+   Set `disabled` in draft mode / live preview, and when `setup.activeIntegrations` is empty on a site
+   that gates no embeds — with no tracker and nothing gated there is nothing to ask about. A site with
+   `ConsentGate` embeds must keep the layer enabled even without an active integration.
 6. Footer: `<ConsentTrigger className="…" />` (or `asChild` around your own element).
 7. Styling: pass `classNames` per slot (see `ConsentSlot`) and your own button, or import
    `@subneo/payload-consent/styles.css`. Every element carries `data-consent="<slot>"`.
@@ -117,6 +133,21 @@ boolean form (React renders it as `data-track="true"`) all mean `cta_click`. `da
 `data-track-location` fill the parameters; without a label the element's own text is sent, and an
 anchor adds its `href`.
 
+Because the label falls back to the element's text content, set `data-track-label` explicitly on
+anything whose text could carry personal data — a visitor's name in a greeting, an email address in a
+link, a row label from user input — so that nothing personal ends up in an event parameter.
+
+### What happens before a decision
+
+`page_view` and click events are pushed to `window.dataLayer` from the first page load, before any
+decision. That queue is local: the dataLayer is a plain array in the page, no integration has loaded,
+and nothing leaves the browser. On reject nothing ever does — the queue is discarded with the page. On
+accept the integration loads and replays what the queue holds, so the entry page view is not lost.
+
+If your reading of "no processing before consent" does not allow that queue either, gate the runner's
+page-view and click effects on `status === 'decided'`; tracking then starts with the page after the
+decision and the entry page view is gone.
+
 ## Gating embeds
 
 ```tsx
@@ -140,8 +171,16 @@ link to the settings. A disabled layer (draft mode) renders the children.
 With `logging: true` the plugin adds the `consent-logs` collection (read for logged-in users, no
 create/update/delete through the API) and `POST /api/consent/log`. Each decision, including a
 withdrawal, stores: `consentId` (random id kept in the cookie), `revision`, `choices`, `decidedAt`,
-`textsHash` (hash of every text the visitor saw) and `locale`. No IP, no user agent, bodies over
-1 KB are rejected.
+`textsHash` (hash of every text the visitor saw) and `locale`. No IP, no user agent.
+
+`createdAt` is the authoritative timestamp: it comes from the server clock. `decidedAt` is the
+visitor's own clock and is only stored as sent when it is within 24 hours of the server time;
+further off, the server time is stored instead. Use `createdAt` for any proof that has to hold up.
+
+The endpoint is public, so it is guarded: bodies over 1 KB are rejected with 413 (a streamed body is
+abandoned as soon as it passes the cap, never buffered), and more than 20 requests a minute from one
+address answer 429. The rate limit counts a SHA-256 hash of the forwarded address in memory only —
+the address itself is never stored or logged, and a restart forgets the counters.
 
 ## GTM container setup
 
@@ -171,6 +210,9 @@ withdrawal, stores: `consentId` (random id kept in the cookie), `revision`, `cho
 | No integration loads after reject | `consent-ui` › ConsentRunner "never loads after reject" |
 | Withdrawal purges and reloads | `consent-ui` › ConsentRunner "purges cookies and reloads" |
 | Invalidated record purges cookies and asks again with all switches off | `consent-ui` › ConsentProvider / ConsentSettings |
+| A one-click grant in the gate never re-grants the categories of an invalidated record | `consent-ui` › ConsentGate "does not re-grant" |
+| Accept and reject are the same kind of button | `consent-ui` › ConsentBanner "same variant and classes" |
+| The log endpoint caps the body it reads, clamps `decidedAt` and rate-limits per address | `consent-global` › createLogEndpoint |
 | Every active integration has a service row | `consent-global` › missingServiceRows |
 | Log carries no IP or user agent | `consent-global` › createLogEndpoint (row shape) |
 
