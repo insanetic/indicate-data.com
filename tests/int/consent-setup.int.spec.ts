@@ -47,6 +47,10 @@ describe('defineConsent', () => {
     expect(() => defineConsent({ categories, integrations: [fake('x', 'necessary')] })).toThrow(/unknown or required category/)
   })
 
+  it('keeps Payload-side exports out of the root entry', async () => {
+    expect('consentPlugin' in (await import('@subneo/payload-consent'))).toBe(false)
+  })
+
   it('rejects duplicate integration keys', () => {
     expect(() => defineConsent({ categories, integrations: [fake('gtm', 'analytics'), fake('gtm', 'marketing')] })).toThrow(
       /duplicate integration/,

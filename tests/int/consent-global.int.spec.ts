@@ -2,17 +2,17 @@ import type { Config } from 'payload'
 
 import { describe, expect, it, vi } from 'vitest'
 
+import { defineConsent } from '@subneo/payload-consent'
+import { gtm } from '@subneo/payload-consent/integrations/gtm'
 import {
   consentPlugin,
   createConsentGlobal,
   createLogEndpoint,
-  defineConsent,
   missingServiceRows,
   parseLogBody,
   resolvePluginOptions,
   validateCategoryRows,
-} from '@subneo/payload-consent'
-import { gtm } from '@subneo/payload-consent/integrations/gtm'
+} from '@subneo/payload-consent/server'
 
 const setup = defineConsent({
   categories: [
@@ -71,6 +71,15 @@ describe('createConsentGlobal', () => {
     await expect(hook({ data: { categories: [] } } as never)).rejects.toThrow(/gtm/)
     const data = { categories: [{ key: 'analytics', services: [{ name: 'GA4', integration: 'gtm' }] }] }
     await expect(hook({ data } as never)).resolves.toEqual(data)
+  })
+
+  it('beforeValidate validates the merged document on a partial update', async () => {
+    const global = createConsentGlobal(setup, options)
+    const hook = global.hooks!.beforeValidate![0]
+    const originalDoc = { categories: [{ key: 'analytics', services: [{ name: 'GA4', integration: 'gtm' }] }] }
+    const data = { enabled: false }
+    await expect(hook({ data, originalDoc } as never)).resolves.toEqual(data)
+    await expect(hook({ data: { categories: [] }, originalDoc } as never)).rejects.toThrow(/gtm/)
   })
 })
 

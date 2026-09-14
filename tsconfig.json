@@ -43,6 +43,9 @@
       "@subneo/payload-consent": [
         "./packages/payload-plugin-consent/src/index.ts"
       ],
+      "@subneo/payload-consent/server": [
+        "./packages/payload-plugin-consent/src/server.ts"
+      ],
       "@subneo/payload-consent/react": [
         "./packages/payload-plugin-consent/src/react.ts"
       ],

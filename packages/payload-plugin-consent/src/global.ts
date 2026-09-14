@@ -56,8 +56,13 @@ export const createConsentGlobal = (setup: ResolvedSetup, options: ResolvedPlugi
     admin: { group: adminGroup },
     hooks: {
       beforeValidate: [
-        async ({ data, req }) => {
-          const missing = missingServiceRows(setup, data as ConsentGlobalDoc)
+        async ({ data, originalDoc, req }) => {
+          // A partial update carries only the changed fields: validate the merged document, but
+          // treat an explicit empty array as the removal it is.
+          const doc = data as ConsentGlobalDoc | undefined
+          const saved = originalDoc as ConsentGlobalDoc | undefined
+          const categories = doc?.categories === undefined ? saved?.categories : doc.categories
+          const missing = missingServiceRows(setup, { categories })
           if (missing.length > 0) {
             // The label carries the integration key: Payload builds the toast from the labels,
             // the per-field `message` only shows next to the array itself.
