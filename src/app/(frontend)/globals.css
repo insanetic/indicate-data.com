@@ -1067,6 +1067,10 @@ html[data-intro-seen] [data-intro='play'] .intro-visual {
   .segmented-thumb {
     transition: none;
   }
+  .consent-enter,
+  dialog.consent-dialog[open] {
+    animation: none;
+  }
 }
 
 /* Consent banner and dialog entrances. */
@@ -1098,10 +1102,4 @@ dialog.consent-dialog[open] {
 }
 dialog.consent-dialog::backdrop {
   background: oklch(0.145 0.005 260 / 0.4);
-}
-@media (prefers-reduced-motion: reduce) {
-  .consent-enter,
-  dialog.consent-dialog[open] {
-    animation: none;
-  }
 }

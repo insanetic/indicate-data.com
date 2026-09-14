@@ -78,6 +78,7 @@ export interface Config {
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
+    'consent-logs': ConsentLog;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -102,6 +103,7 @@ export interface Config {
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
+    'consent-logs': ConsentLogsSelect<false> | ConsentLogsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -118,15 +120,15 @@ export interface Config {
     'site-settings': SiteSetting;
     header: Header;
     footer: Footer;
-    consent: Consent;
     'subneo-pricing': SubneoPricing;
+    consent: Consent;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
-    consent: ConsentSelect<false> | ConsentSelect<true>;
     'subneo-pricing': SubneoPricingSelect<false> | SubneoPricingSelect<true>;
+    consent: ConsentSelect<false> | ConsentSelect<true>;
   };
   locale: 'de' | 'en';
   widgets: {
@@ -2175,6 +2177,29 @@ export interface Search {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent-logs".
+ */
+export interface ConsentLog {
+  id: number;
+  consentId: string;
+  revision: number;
+  choices:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  decidedAt: string;
+  textsHash?: string | null;
+  locale?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2444,6 +2469,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'search';
         value: number | Search;
+      } | null)
+    | ({
+        relationTo: 'consent-logs';
+        value: number | ConsentLog;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -3896,6 +3925,20 @@ export interface SearchSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent-logs_select".
+ */
+export interface ConsentLogsSelect<T extends boolean = true> {
+  consentId?: T;
+  revision?: T;
+  choices?: T;
+  decidedAt?: T;
+  textsHash?: T;
+  locale?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-mcp-api-keys_select".
  */
 export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
@@ -4344,48 +4387,6 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "consent".
- */
-export interface Consent {
-  id: number;
-  enabled?: boolean | null;
-  /**
-   * Increase to ask every visitor again (e.g. after adding services).
-   */
-  revision: number;
-  privacyPage?: (number | null) | Page;
-  imprintPage?: (number | null) | Page;
-  banner?: {
-    title?: string | null;
-    text?: string | null;
-  };
-  settings?: {
-    title?: string | null;
-    text?: string | null;
-  };
-  categories?:
-    | {
-        key: 'necessary' | 'analytics' | 'marketing';
-        label?: string | null;
-        description?: string | null;
-        services?:
-          | {
-              name: string;
-              provider?: string | null;
-              purpose?: string | null;
-              cookies?: string | null;
-              privacyUrl?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "subneo-pricing".
  */
 export interface SubneoPricing {
@@ -4459,6 +4460,59 @@ export interface SubneoPricing {
    */
   defaultCtaUrl?: string | null;
   contactUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent".
+ */
+export interface Consent {
+  id: number;
+  enabled?: boolean | null;
+  /**
+   * Increase to ask every visitor again (e.g. after adding services).
+   */
+  revision: number;
+  privacyPage?: (number | null) | Page;
+  imprintPage?: (number | null) | Page;
+  trigger?: {
+    mode?: ('link' | 'floating') | null;
+    position?: ('bottom-left' | 'bottom-right') | null;
+  };
+  banner?: {
+    title?: string | null;
+    /**
+     * {categories} is replaced by the category names.
+     */
+    text?: string | null;
+  };
+  settings?: {
+    title?: string | null;
+    text?: string | null;
+  };
+  categories?:
+    | {
+        key: 'necessary' | 'analytics' | 'marketing';
+        label?: string | null;
+        description?: string | null;
+        services?:
+          | {
+              name: string;
+              provider?: string | null;
+              /**
+               * Which code integration loads this service. Every active integration needs such a row in its category.
+               */
+              integration?: ('none' | 'gtm') | null;
+              purpose?: string | null;
+              cookies?: string | null;
+              privacyUrl?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4680,49 +4734,6 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "consent_select".
- */
-export interface ConsentSelect<T extends boolean = true> {
-  enabled?: T;
-  revision?: T;
-  privacyPage?: T;
-  imprintPage?: T;
-  banner?:
-    | T
-    | {
-        title?: T;
-        text?: T;
-      };
-  settings?:
-    | T
-    | {
-        title?: T;
-        text?: T;
-      };
-  categories?:
-    | T
-    | {
-        key?: T;
-        label?: T;
-        description?: T;
-        services?:
-          | T
-          | {
-              name?: T;
-              provider?: T;
-              purpose?: T;
-              cookies?: T;
-              privacyUrl?: T;
-              id?: T;
-            };
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "subneo-pricing_select".
  */
 export interface SubneoPricingSelect<T extends boolean = true> {
@@ -4780,6 +4791,56 @@ export interface SubneoPricingSelect<T extends boolean = true> {
       };
   defaultCtaUrl?: T;
   contactUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent_select".
+ */
+export interface ConsentSelect<T extends boolean = true> {
+  enabled?: T;
+  revision?: T;
+  privacyPage?: T;
+  imprintPage?: T;
+  trigger?:
+    | T
+    | {
+        mode?: T;
+        position?: T;
+      };
+  banner?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  settings?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  categories?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        description?: T;
+        services?:
+          | T
+          | {
+              name?: T;
+              provider?: T;
+              integration?: T;
+              purpose?: T;
+              cookies?: T;
+              privacyUrl?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -10,11 +10,9 @@ import Script from 'next/script'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
-import { ConsentBanner } from '@/consent/components/ConsentBanner'
-import { ConsentDefaults } from '@/consent/components/ConsentDefaults'
-import { ConsentSettings } from '@/consent/components/ConsentSettings'
-import { TagManager } from '@/consent/components/TagManager'
-import { resolveConsent } from '@/consent/defaults'
+import { resolveConsent } from '@subneo/payload-consent'
+import { ConsentBanner, ConsentDefaults, ConsentRunner, ConsentSettings, FloatingTrigger } from '@subneo/payload-consent/react'
+import { consentSetup } from '@/consent/setup'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { isLocale, localeTags, locales, type Locale } from '@/i18n/config'
@@ -51,9 +49,10 @@ export default async function RootLayout({ children, params }: Args) {
   const dict = getDictionary(locale)
 
   const consentSettings = await getCachedGlobal('consent', 1, locale)()
-  const consent = resolveConsent(consentSettings, locale)
-  const gtmId = process.env.NEXT_PUBLIC_GTM_ID
-  const trackingEnabled = Boolean(gtmId && consent.enabled && !isEnabled)
+  const consent = resolveConsent(consentSettings, locale, consentSetup)
+  // No trackers (staging without a container id) and nothing gated: no banner at all.
+  const consentDisabled = isEnabled || consentSetup.activeIntegrations.length === 0
+  const trackingEnabled = consent.enabled && !consentDisabled
 
   return (
     <html
@@ -72,10 +71,10 @@ export default async function RootLayout({ children, params }: Args) {
         <Script id="intro-gate" strategy="beforeInteractive">
           {`document.documentElement.setAttribute('data-js','');try{if(sessionStorage.getItem('indicate:intro'))document.documentElement.setAttribute('data-intro-seen','')}catch(e){}`}
         </Script>
-        <ConsentDefaults enabled={trackingEnabled} />
+        <ConsentDefaults enabled={trackingEnabled} setup={consentSetup} />
       </head>
       <body>
-        <Providers consent={{ settings: consent, gtmId, disabled: isEnabled }} locale={locale}>
+        <Providers consent={{ settings: consent, disabled: consentDisabled }} locale={locale}>
           <AdminBar
             adminBarProps={{
               preview: isEnabled,
@@ -91,7 +90,8 @@ export default async function RootLayout({ children, params }: Args) {
           </main>
           <Footer locale={locale} />
           <ConsentSettings />
-          <TagManager />
+          <FloatingTrigger />
+          <ConsentRunner />
           <RevealObserver />
         </Providers>
       </body>

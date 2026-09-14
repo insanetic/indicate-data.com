@@ -3,7 +3,7 @@ import React from 'react'
 import type { Locale } from '@/i18n/config'
 
 import { CMSLink } from '@/components/Link'
-import { ConsentTrigger } from '@/consent/components/ConsentTrigger'
+import { ConsentTrigger } from '@subneo/payload-consent/react'
 import { LanguageSwitch } from '@/components/LanguageSwitch'
 import { LocaleLink } from '@/components/LocaleLink'
 import { Logo } from '@/components/Logo/Logo'
@@ -87,20 +87,20 @@ export async function Footer({ locale }: { locale: Locale }) {
             © {year} {footer.bottomText || settings.siteName || 'Indicate Data'}
           </p>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            {legal.length > 0 && (
-              <ul className="flex flex-wrap gap-x-5 gap-y-2">
-                {legal.map((entry, i) => (
-                  <li key={entry.id || i}>
-                    <CMSLink
-                      {...entry.link}
-                      appearance="inline"
-                      className="type-caption text-ink-3 transition-colors duration-150 hover:text-ink"
-                    />
-                  </li>
-                ))}
-              </ul>
-            )}
-            <ConsentTrigger className="type-caption text-ink-3 transition-colors duration-150 hover:text-ink" />
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
+              {legal.map((entry, i) => (
+                <li key={entry.id || i}>
+                  <CMSLink
+                    {...entry.link}
+                    appearance="inline"
+                    className="type-caption text-ink-3 transition-colors duration-150 hover:text-ink"
+                  />
+                </li>
+              ))}
+              <li>
+                <ConsentTrigger />
+              </li>
+            </ul>
             {(settings.social?.length || 0) > 0 && (
               <ul className="flex flex-wrap gap-x-5 gap-y-2">
                 {settings.social!.map((s, i) => (

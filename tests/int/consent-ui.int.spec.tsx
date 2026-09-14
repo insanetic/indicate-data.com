@@ -19,6 +19,8 @@ import {
 } from '@subneo/payload-consent'
 import { ConsentBanner, ConsentGate, ConsentProvider, ConsentRunner, ConsentSettings, ConsentTrigger, FloatingTrigger, useConsent } from '@subneo/payload-consent/react'
 
+import { CMSLink } from '@/components/Link'
+
 /* ------------------------------------------------------------------ */
 /* Shared fixtures                                                       */
 /* ------------------------------------------------------------------ */
@@ -521,5 +523,17 @@ describe('ConsentRunner', () => {
     await act(async () => screen.getByText('CTA').click())
     const dl = (window as unknown as { dataLayer: Record<string, unknown>[] }).dataLayer
     expect(dl.some((e) => e.event === 'cta_click' && e.location === 'hero')).toBe(true)
+  })
+})
+
+describe('CMSLink track prop', () => {
+  afterEach(cleanup)
+
+  it('renders data-track attributes', () => {
+    const { container } = render(<CMSLink label="Demo buchen" track={{ location: 'hero' }} type="custom" url="/demo" />)
+    const a = container.querySelector('a')!
+    expect(a.getAttribute('data-track')).toBe('cta_click')
+    expect(a.getAttribute('data-track-location')).toBe('hero')
+    expect(a.getAttribute('data-track-label')).toBe('Demo buchen')
   })
 })

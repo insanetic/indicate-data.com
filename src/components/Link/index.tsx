@@ -17,7 +17,7 @@ type CMSLinkType = {
     value: Page | Post | string | number
   } | null
   size?: ButtonProps['size'] | null
-  /** Marks the link for click tracking (see src/consent/track.ts). */
+  /** Marks the link for click tracking (data-track contract of @subneo/payload-consent). */
   track?: { location: string; label?: string } | null
   type?: 'custom' | 'reference' | null
   url?: string | null

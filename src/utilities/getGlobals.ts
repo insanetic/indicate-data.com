@@ -25,7 +25,7 @@ async function getGlobal<T extends Global>(
 }
 
 /** Bump when the shape of a global changes, so stale cache entries are never read again. */
-const CACHE_VERSION = 'v3'
+const CACHE_VERSION = 'v4'
 
 /**
  * Returns a unstable_cache function mapped with the cache tag for the slug

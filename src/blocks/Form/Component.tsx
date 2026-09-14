@@ -10,7 +10,7 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
-import { track } from '@/consent/track'
+import { track } from '@subneo/payload-consent/react'
 
 export type FormBlockType = {
   blockName?: string
