@@ -22,6 +22,18 @@ It updates by slug and never deletes anything. After a host-side seed, save any 
 
 Production image: `docker compose --profile prod up --build app-prod`.
 
+## Sharing the database content
+
+`backups/` holds a `pg_dump` of the local Payload database plus the media uploads, so every developer can run the same content instead of re-seeding and re-editing.
+
+```bash
+scripts/db-restore.sh                 # restore the newest backup (replaces your local content), unpack media, restart app
+scripts/db-restore.sh 20260916-1322   # restore a specific one
+scripts/db-backup.sh                  # make a new backup after content changes, then commit backups/
+```
+
+The dump is custom format (`pg_restore`), made from the Docker Postgres 18 container, and contains the admin users of the machine it was taken on (log in with one of those or create a new user via `payload run`). The MCP access key stored in it is encrypted with `PAYLOAD_SECRET` from `.env`; if your secret differs, create a new one in the admin.
+
 ## Claude Code via MCP
 
 The official `@payloadcms/plugin-mcp` is wired in `src/plugins/index.ts` and serves `http://localhost:3000/api/mcp` (pages, posts, media, categories, header, footer).
