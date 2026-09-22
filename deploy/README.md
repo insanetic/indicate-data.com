@@ -139,6 +139,7 @@ These files were tested together locally and can be copied or templated by Ansib
 | `deploy/stack` | Wrapper: `docker compose` with `.env` + `release.env` (`IMAGE`, `TAG`) |
 | `deploy/backup.sh` | Dumps database + media volume into `backups/`, 14 days retention, cron line inside |
 | `deploy/restore.sh` | Replaces database + media from a backup, then recreates the app container |
+| `deploy/CONTENT.md` | Content between a local database and the real production: dumps, restores, what a rollout can damage |
 
 A release on the server boils down to: write `IMAGE` and `TAG` to `release.env`,
 `./stack pull app`, `./stack up -d --remove-orphans`, wait until the app container is healthy.
@@ -153,6 +154,11 @@ you pass as applied, so the dump must come from the same commit as the image:
 ```
 ./restore.sh 20260916-1322 20260921_153447_initial
 ```
+
+That is the reference stack, whose PostgreSQL is a container in the same compose project. The
+real production does not look like this: its database is in the shared cluster and there is no
+restore script on the host. Moving content there, taking a dump from it, and what a new image
+can and cannot damage are in [CONTENT.md](CONTENT.md).
 
 ## Schema changes
 
