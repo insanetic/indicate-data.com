@@ -1,0 +1,67 @@
+# Production stack: Caddy (HTTPS) -> app (Payload + Next.js) -> PostgreSQL 18.
+#
+# Reference stack for the Ansible deployment; see deploy/README.md. Tested locally as is.
+# Files next to it on the server:
+#   .env              what compose itself needs: domain, ACME mail, database password
+#                     (template: deploy/production.env.example)
+#   release.env       IMAGE and TAG of the release to run (the tag printed by `make ship`)
+#   config/app.env    the application's configuration and secrets, bind-mounted into the
+#                     container (template: deploy/app.env.example)
+
+name: indicate-site
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_DB: payload
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U payload -d payload']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # Not published: only the app reaches the database, over the compose network.
+
+  app:
+    image: ${IMAGE:?set IMAGE in release.env}:${TAG:?set TAG in release.env}
+    restart: unless-stopped
+    environment:
+      # Only what compose composes from its own .env; everything else comes from config/app.env.
+      DATABASE_URL: postgres://payload:${POSTGRES_PASSWORD}@postgres:5432/payload
+    volumes:
+      # Host-bound configuration, read by the entrypoint (SITE_URL, GTM_ID, secrets, ...).
+      - ./config:/app/config:ro
+      - media:/app/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # The image ships its own HEALTHCHECK (/next/health); Caddy waits for it.
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  media:
+  caddy_data:
+  caddy_config:

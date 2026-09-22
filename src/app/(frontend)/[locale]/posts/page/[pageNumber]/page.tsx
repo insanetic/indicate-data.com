@@ -10,6 +10,7 @@ import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 import { isLocale, locales } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { buildWithoutDatabase } from '@/utilities/buildWithoutDatabase'
 
 export const revalidate = 600
 
@@ -75,6 +76,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 export async function generateStaticParams() {
+  if (buildWithoutDatabase) return []
+
   const payload = await getPayload({ config: configPromise })
   const { totalDocs } = await payload.count({
     collection: 'posts',

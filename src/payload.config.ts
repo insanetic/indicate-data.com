@@ -14,6 +14,7 @@ import { Users } from './collections/Users'
 import { consentSetup } from './consent/setup'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { migrations } from './migrations'
 import { SiteSettings } from './globals/SiteSettings/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -68,6 +69,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    // The production image sets PAYLOAD_MIGRATE_ON_START=true: pending migrations from
+    // src/migrations run when the container starts, before the first request is served.
+    // Off everywhere else, because a database that was used with `pnpm dev` (schema push)
+    // makes the migration runner stop and ask for confirmation.
+    prodMigrations: process.env.PAYLOAD_MIGRATE_ON_START === 'true' ? migrations : undefined,
   }),
   collections: [Pages, Posts, Media, Categories, Sidebars, Users],
   // Content localisation: German is the primary language, English the second.

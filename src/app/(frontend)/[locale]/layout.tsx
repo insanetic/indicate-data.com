@@ -10,7 +10,7 @@ import Script from 'next/script'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
-import { resolveConsent } from '@subneo/payload-consent'
+import { resolveConsent, runtimeIntegrations } from '@subneo/payload-consent'
 import { ConsentBanner, ConsentDefaults, ConsentRunner, ConsentSettings, FloatingTrigger } from '@subneo/payload-consent/react'
 import { consentSetup } from '@/consent/setup'
 import { Footer } from '@/Footer/Component'
@@ -19,6 +19,7 @@ import { isLocale, localeTags, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { RevealObserver } from '@/components/Reveal/Observer'
 import { Providers } from '@/providers'
+import { buildWithoutDatabase } from '@/utilities/buildWithoutDatabase'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -32,6 +33,8 @@ const outfit = Outfit({
 })
 
 export async function generateStaticParams() {
+  if (buildWithoutDatabase) return []
+
   return locales.map((locale) => ({ locale }))
 }
 
@@ -52,7 +55,7 @@ export default async function RootLayout({ children, params }: Args) {
   const consent = resolveConsent(consentSettings, locale, consentSetup)
   // This site gates no embeds, so an inactive tracker (staging without a container id) leaves
   // nothing that would need a decision: no banner at all.
-  const consentDisabled = isEnabled || consentSetup.activeIntegrations.length === 0
+  const consentDisabled = isEnabled || runtimeIntegrations(consentSetup, consent).length === 0
   const trackingEnabled = consent.enabled && !consentDisabled
 
   return (
@@ -72,7 +75,7 @@ export default async function RootLayout({ children, params }: Args) {
         <Script id="intro-gate" strategy="beforeInteractive">
           {`document.documentElement.setAttribute('data-js','');try{if(sessionStorage.getItem('indicate:intro'))document.documentElement.setAttribute('data-intro-seen','')}catch(e){}`}
         </Script>
-        <ConsentDefaults enabled={trackingEnabled} setup={consentSetup} />
+        <ConsentDefaults enabled={trackingEnabled} settings={consent} setup={consentSetup} />
       </head>
       <body>
         <Providers consent={{ settings: consent, disabled: consentDisabled }} locale={locale}>

@@ -17,7 +17,19 @@ export type CategoryConfig = {
   texts: Record<string, CategoryTexts>
 }
 
-export type IntegrationContext = { choices: Choices; locale: string; signals: ConsentModeSignals }
+/** Runtime settings of one integration, resolved on the server and sent to the browser. */
+export type IntegrationRuntime = { enabled: boolean; options: Record<string, string> }
+
+/** Environment the server resolves integrations from: `process.env`, or a mounted config file. */
+export type RuntimeEnv = Readonly<Record<string, string | undefined>>
+
+export type IntegrationContext = {
+  choices: Choices
+  locale: string
+  signals: ConsentModeSignals
+  /** The integration's own runtime options (see `ConsentIntegration.resolve`). */
+  options: Record<string, string>
+}
 
 export type ConsentIntegration = {
   /** Stable identifier, also the value of the service row's `integration` select. */
@@ -26,6 +38,13 @@ export type ConsentIntegration = {
   category: string
   /** False keeps the integration registered (select options, docs) but never loads it. Default true. */
   enabled?: boolean
+  /**
+   * Reads the integration's runtime settings on the server, once per request, from the environment
+   * (ids, keys). Nothing here is compiled into the bundle, so a container can get its settings
+   * from a mounted file. The result reaches the browser as `ResolvedConsent.integrations` and
+   * `IntegrationContext.options`. Default: enabled, no options.
+   */
+  resolve?: (env: RuntimeEnv) => IntegrationRuntime
   /** Cookie name patterns removed when the category is withdrawn or the record is invalidated. */
   cookies: readonly RegExp[]
   /** Inline head script that runs before hydration when the layer is enabled (e.g. Consent Mode defaults). */
@@ -101,6 +120,24 @@ export function defineConsent(setup: ConsentSetup): ResolvedSetup {
       setup.integrations.filter((i) => i.category === category).flatMap((i) => i.cookies),
   }
 }
+
+/** Runtime settings of every statically active integration, keyed by integration key. */
+export function resolveIntegrations(setup: ResolvedSetup, env: RuntimeEnv): Record<string, IntegrationRuntime> {
+  return Object.fromEntries(
+    setup.activeIntegrations.map((i) => [i.key, i.resolve ? i.resolve(env) : { enabled: true, options: {} }]),
+  )
+}
+
+/** Integrations that are active and enabled at runtime, per the settings resolved on the server. */
+export function runtimeIntegrations(
+  setup: ResolvedSetup,
+  settings: { integrations: Record<string, IntegrationRuntime> },
+): readonly ConsentIntegration[] {
+  return setup.activeIntegrations.filter((i) => settings.integrations[i.key]?.enabled)
+}
+
+/** `process.env` on the server, an empty object anywhere else. */
+export const serverEnv = (): RuntimeEnv => (typeof process !== 'undefined' && process.env ? process.env : {})
 
 /** Typed identity helper for integration files. */
 export const createIntegration = <T extends ConsentIntegration>(integration: T): T => integration

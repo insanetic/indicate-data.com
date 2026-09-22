@@ -31,13 +31,15 @@ Built for the strict reading of GDPR / ePrivacy / TDDDG (DSK, DSB, CNIL):
        { key: 'analytics', signals: ['analytics_storage'], texts: { /* … */ } },
        { key: 'marketing', signals: ['ad_storage', 'ad_user_data', 'ad_personalization'], texts: { /* … */ } },
      ],
-     integrations: [gtm({ containerId: process.env.NEXT_PUBLIC_GTM_ID })],
+     integrations: [gtm()], // container id from GTM_ID at request time
      logging: true,
    })
    ```
 
    Keep tracker ids in environment variables, never in the CMS: a copied staging database must not
-   report into production. An integration without an id stays registered but disabled.
+   report into production. Ids are read on the server per request (`ConsentIntegration.resolve`),
+   never compiled into the bundle, so a container can take them from a mounted config file. An
+   integration without an id stays registered but disabled, and the banner is not shown.
 3. `payload.config.ts`: `plugins: [consentPlugin(consentSetup)]`, with `consentPlugin` imported from
    `@subneo/payload-consent/server`. Run `payload generate:types` and `payload generate:importmap`.
 4. A client wrapper, because the setup holds functions and cannot cross the server/client boundary

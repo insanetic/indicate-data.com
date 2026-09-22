@@ -36,6 +36,8 @@ export type ConsentContextValue = {
   trigger: TriggerSettings
   privacyHref: string | null
   imprintHref: string | null
+  /** Runtime settings per integration, resolved on the server (ids from the environment). */
+  integrations: ResolvedConsent['integrations']
   dialogOpen: boolean
   acceptAll: () => void
   rejectAll: () => void
@@ -145,6 +147,7 @@ export const ConsentProvider: React.FC<ConsentProviderProps> = ({
       trigger: settings.trigger,
       privacyHref: settings.privacyHref,
       imprintHref: settings.imprintHref,
+      integrations: settings.integrations,
       dialogOpen,
       acceptAll: () => decide(allChoices(setup, true)),
       rejectAll: () => decide(allChoices(setup, false)),

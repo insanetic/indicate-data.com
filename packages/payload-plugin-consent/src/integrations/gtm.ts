@@ -2,8 +2,14 @@ import { consentModeBootstrap, gtag } from '../consent-mode'
 import { createIntegration, type ConsentIntegration } from '../setup'
 
 export type GtmOptions = {
-  /** Container id such as `GTM-XXXXXXX`. Empty keeps the integration registered but disabled. */
+  /**
+   * Container id such as `GTM-XXXXXXX`. Omit it to read the id at runtime from the environment
+   * variable `envKey` (server side, per request). An empty string keeps the integration registered
+   * but disabled.
+   */
   containerId?: string | null
+  /** Environment variable holding the container id when `containerId` is omitted. Default `GTM_ID`. */
+  envKey?: string
   /** Category that loads the container. Default `analytics`. */
   category?: string
 }
@@ -27,15 +33,20 @@ export function loadGtm(id: string): void {
  * Google Tag Manager under basic Consent Mode: defaults denied in <head>, the container loads
  * only after its category is granted, every decision is forwarded as a consent update.
  */
-export function gtm({ containerId, category = 'analytics' }: GtmOptions): ConsentIntegration {
-  const id = containerId || ''
+export function gtm({ containerId, envKey = 'GTM_ID', category = 'analytics' }: GtmOptions = {}): ConsentIntegration {
+  const fromEnv = containerId === undefined
+  const fixedId = containerId || ''
   return createIntegration({
     key: 'gtm',
     category,
-    enabled: id.length > 0,
+    enabled: fromEnv || fixedId.length > 0,
+    resolve: (env) => {
+      const id = (fromEnv ? env[envKey] : fixedId) || ''
+      return { enabled: id.length > 0, options: { id } }
+    },
     cookies: [/^_ga($|_)/, /^_gid$/, /^_gat($|_)/, /^_gac_/, /^_gcl_/],
     bootstrap: consentModeBootstrap(),
-    load: () => loadGtm(id),
+    load: ({ options }) => loadGtm(options.id || fixedId),
     update: ({ signals }) => gtag('consent', 'update', signals),
     service: {
       name: 'Google Tag Manager',

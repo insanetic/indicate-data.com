@@ -45,15 +45,23 @@ services:
         condition: service_healthy
 
   # Production build (multi-stage Dockerfile, Next standalone output).
+  # Local smoke test of the image only; real deployments go through the Makefile (deploy/README.md).
   app-prod:
     profiles: ['prod']
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SERVER_URL: http://localhost:3000
     ports:
       - '3000:3000'
     env_file:
       - .env
     environment:
       DATABASE_URL: postgres://payload:payload@postgres:5432/payload
+      # The dev database gets its schema from `pnpm dev` (push), not from migrations.
+      PAYLOAD_MIGRATE_ON_START: 'false'
+    volumes:
+      - ./public/media:/app/media
     depends_on:
       postgres:
         condition: service_healthy

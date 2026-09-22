@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
 
 import { signalsFor } from '../consent-mode'
-import type { Choices, IntegrationContext } from '../setup'
+import { runtimeIntegrations, type Choices, type IntegrationContext } from '../setup'
 import { purgeCookies } from '../store'
 import { installClickTracking, track } from '../track'
 import { useConsent } from './ConsentProvider'
@@ -15,7 +15,7 @@ import { useConsent } from './ConsentProvider'
  * the data-track click listener. Reloading is the only reliable way to unload third-party scripts.
  */
 export const ConsentRunner: React.FC = () => {
-  const { setup, enabled, status, record, locale } = useConsent()
+  const { setup, integrations, enabled, status, record, locale } = useConsent()
   const pathname = usePathname()
   const previous = useRef<Choices | null>(null)
   const loaded = useRef<Set<string>>(new Set())
@@ -23,8 +23,14 @@ export const ConsentRunner: React.FC = () => {
 
   useEffect(() => {
     if (!enabled || status !== 'decided' || !record) return
-    const ctx: IntegrationContext = { choices: record.c, locale, signals: signalsFor(setup, record.c) }
-    for (const integration of setup.activeIntegrations) integration.update?.(ctx)
+    const active = runtimeIntegrations(setup, { integrations })
+    const contextFor = (key: string): IntegrationContext => ({
+      choices: record.c,
+      locale,
+      signals: signalsFor(setup, record.c),
+      options: integrations[key]?.options || {},
+    })
+    for (const integration of active) integration.update?.(contextFor(integration.key))
 
     const withdrawn = setup.optionalKeys.filter((key) => previous.current?.[key] && !record.c[key])
     previous.current = record.c
@@ -34,12 +40,12 @@ export const ConsentRunner: React.FC = () => {
       return
     }
 
-    for (const integration of setup.activeIntegrations) {
+    for (const integration of active) {
       if (!record.c[integration.category] || loaded.current.has(integration.key)) continue
-      integration.load(ctx)
+      integration.load(contextFor(integration.key))
       loaded.current.add(integration.key)
     }
-  }, [enabled, setup, status, record, locale])
+  }, [enabled, setup, integrations, status, record, locale])
 
   // React runs child effects before parent effects, so on mount this effect would fire before the
   // provider has read the cookie and flipped the status, queueing the entry page view ahead of the

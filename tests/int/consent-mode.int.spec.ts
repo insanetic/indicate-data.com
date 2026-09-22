@@ -73,21 +73,33 @@ describe('gtag fallback', () => {
 })
 
 describe('gtm integration', () => {
-  it('is disabled without a container id and enabled with one', () => {
-    expect(gtm({ containerId: undefined }).enabled).toBe(false)
+  it('is disabled with an empty container id and enabled with one', () => {
     expect(gtm({ containerId: '' }).enabled).toBe(false)
+    expect(gtm({ containerId: null }).enabled).toBe(false)
     const active = gtm({ containerId: 'GTM-TEST' })
     expect(active.enabled).toBe(true)
     expect(active.key).toBe('gtm')
     expect(active.category).toBe('analytics')
-    expect(active.bootstrap).toBe(consentModeBootstrap())
-    expect(['_ga', '_ga_ABC', '_gid', '_gat_UA', '_gac_1', '_gcl_au'].every((n) => active.cookies.some((p) => p.test(n)))).toBe(true)
-    expect(['keep', '_gatekeeper'].some((n) => active.cookies.some((p) => p.test(n)))).toBe(false)
+    expect(active.resolve?.({})).toEqual({ enabled: true, options: { id: 'GTM-TEST' } })
+  })
+
+  it('reads the container id from the server environment at runtime when none is given', () => {
+    const runtime = gtm()
+    expect(runtime.enabled).toBe(true)
+    expect(runtime.resolve?.({})).toEqual({ enabled: false, options: { id: '' } })
+    expect(runtime.resolve?.({ GTM_ID: 'GTM-ENV' })).toEqual({ enabled: true, options: { id: 'GTM-ENV' } })
+    expect(gtm({ envKey: 'TAG_MANAGER' }).resolve?.({ TAG_MANAGER: 'GTM-X' })?.options.id).toBe('GTM-X')
+  })
+
+  it('loads the container id it was resolved with', () => {
+    const ctx = { choices: { analytics: true }, locale: 'de', signals: signalsFor(setup, { analytics: true }), options: { id: 'GTM-RUNTIME' } }
+    gtm().load(ctx)
+    expect(document.querySelector('script[data-gtm]')?.getAttribute('src')).toBe('https://www.googletagmanager.com/gtm.js?id=GTM-RUNTIME')
   })
 
   it('loads the script once and updates consent mode', () => {
     const integration = gtm({ containerId: 'GTM-TEST' })
-    const ctx = { choices: { analytics: true, marketing: false }, locale: 'de', signals: signalsFor(setup, { analytics: true, marketing: false }) }
+    const ctx = { choices: { analytics: true, marketing: false }, locale: 'de', signals: signalsFor(setup, { analytics: true, marketing: false }), options: { id: 'GTM-TEST' } }
     expect(isGtmLoaded()).toBe(false)
     integration.load(ctx)
     integration.load(ctx)

@@ -39,6 +39,13 @@ describe('resolveConsent', () => {
     expect(resolved.textsHash).toMatch(/^[0-9a-f]{8}$/)
   })
 
+  it('carries the runtime settings of every active integration', () => {
+    expect(resolveConsent(null, 'de', setup).integrations).toEqual({ gtm: { enabled: true, options: { id: 'GTM-TEST' } } })
+    const runtime = defineConsent({ ...setup, integrations: [gtm()] })
+    expect(resolveConsent(null, 'de', runtime, {}).integrations.gtm).toEqual({ enabled: false, options: { id: '' } })
+    expect(resolveConsent(null, 'de', runtime, { GTM_ID: 'GTM-ENV' }).integrations.gtm).toEqual({ enabled: true, options: { id: 'GTM-ENV' } })
+  })
+
   it('is disabled only when the global explicitly turns it off', () => {
     expect(resolveConsent({ enabled: false }, 'de', setup).enabled).toBe(false)
     expect(resolveConsent({ enabled: true }, 'de', setup).enabled).toBe(true)

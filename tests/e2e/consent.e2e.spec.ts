@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 const base = 'http://localhost:3000'
-const skipWithoutGtm = () => test.skip(!process.env.NEXT_PUBLIC_GTM_ID, 'NEXT_PUBLIC_GTM_ID not set')
+const skipWithoutGtm = () => test.skip(!process.env.GTM_ID, 'GTM_ID not set')
 
 test.describe('Cookie consent', () => {
   test('first visit shows the banner and reject loads nothing', async ({ page }) => {

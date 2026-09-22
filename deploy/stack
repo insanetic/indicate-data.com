@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+# Runs on the server. Thin wrapper so every command uses the same compose file and env files:
+#   ./stack ps | ./stack logs -f app | ./stack restart caddy
+set -eu
+cd "$(dirname "$0")"
+[ -f .env ] || { echo "missing $(pwd)/.env (template: deploy/production.env.example)"; exit 1; }
+[ -f release.env ] || { echo "missing $(pwd)/release.env (IMAGE=... and TAG=...)"; exit 1; }
+exec docker compose --env-file .env --env-file release.env -f docker-compose.prod.yml "$@"

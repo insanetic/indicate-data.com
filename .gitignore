@@ -10,8 +10,6 @@ next-env.d.ts
 # Payload default media upload directory
 public/media/
 
-public/robots.txt
-public/sitemap*.xml
 
 
 # Playwright
@@ -23,3 +21,6 @@ node_modules/
 
 # Claude Code worktrees
 .claude/worktrees/
+
+# Personal deployment overrides (see deploy/config.mk)
+deploy/config.local.mk

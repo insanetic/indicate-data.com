@@ -3,7 +3,7 @@ import { ValidationError, type Field, type GlobalConfig } from 'payload'
 import type { ConsentGlobalDoc } from './defaults'
 import { createRevalidateHook } from './hooks/revalidate'
 import type { ResolvedPluginOptions } from './plugin'
-import type { ResolvedSetup } from './setup'
+import { resolveIntegrations, runtimeIntegrations, serverEnv, type ResolvedSetup, type RuntimeEnv } from './setup'
 
 type Row = { key?: string | null } | null | undefined
 
@@ -24,10 +24,18 @@ export const validateCategoryRows =
     return true
   }
 
-/** Active integrations that have no service row with their key inside their own category. */
-export function missingServiceRows(setup: ResolvedSetup, data: ConsentGlobalDoc | null | undefined): string[] {
+/**
+ * Integrations enabled at runtime that have no service row with their key inside their own
+ * category. `env` (default `process.env`) decides which integrations count, so a staging server
+ * without a container id is not asked to list one.
+ */
+export function missingServiceRows(
+  setup: ResolvedSetup,
+  data: ConsentGlobalDoc | null | undefined,
+  env?: RuntimeEnv,
+): string[] {
   const rows = data?.categories || []
-  return setup.activeIntegrations
+  return runtimeIntegrations(setup, { integrations: resolveIntegrations(setup, env ?? serverEnv()) })
     .filter((integration) => {
       const row = rows.find((r) => r?.key === integration.category)
       return !(row?.services || []).some((s) => s?.integration === integration.key)

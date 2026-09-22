@@ -20,7 +20,10 @@ NODE_ENV=production DATABASE_URL=postgres://payload:payload@localhost:5433/paylo
 
 It updates by slug and never deletes anything. After a host-side seed, save any document in the admin (or restart the app container) so the Next.js caches pick up the new content.
 
-Production image: `docker compose --profile prod up --build app-prod`.
+Production: `make ship` builds a site-agnostic image and pushes it to Docker Hub; the server supplies all configuration at runtime (mounted `config/*.env` or environment) and rollout is done with Ansible (guide and image contract in [deploy/README.md](deploy/README.md)). Schema changes need a migration: `make migration NAME=...`.
+
+Environment names: `SITE_URL` (public origin; the older `NEXT_PUBLIC_SERVER_URL` still works) and `GTM_ID` (Tag Manager container id) are read on the server at request time, never compiled in.
+Local smoke test of the image: `docker compose --profile prod up --build app-prod`.
 
 ## Sharing the database content
 

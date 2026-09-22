@@ -3,9 +3,12 @@ declare global {
     interface ProcessEnv {
       PAYLOAD_SECRET: string
       DATABASE_URL: string
-      NEXT_PUBLIC_SERVER_URL: string
-      NEXT_PUBLIC_GTM_ID?: string
-      VERCEL_PROJECT_PRODUCTION_URL: string
+      /** Public origin, e.g. https://indicate-data.com. Read at request time, never at build time. */
+      SITE_URL?: string
+      /** Older name for SITE_URL; still honoured. */
+      NEXT_PUBLIC_SERVER_URL?: string
+      /** Google Tag Manager container id; empty disables tracking and the consent banner. */
+      GTM_ID?: string
       /** Subneo public API key (`sneo_…`); the CMS global can override it. */
       SUBNEO_API_KEY?: string
       SUBNEO_API_URL?: string

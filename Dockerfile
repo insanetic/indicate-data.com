@@ -1,71 +1,86 @@
-# To use this Dockerfile, you have to set `output: 'standalone'` in your next.config.js file.
-# From https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
+# syntax=docker/dockerfile:1.7
+#
+# Production image for the Payload CMS + Next.js site (Next standalone output).
+# Built and pushed with `make ship`; see deploy/README.md.
+#
+# The build needs no database and no site configuration: BUILD_WITHOUT_DB=true defers every
+# Payload-backed page to its first request (src/utilities/buildWithoutDatabase.ts), and every
+# setting (site URL, tracker ids, secrets) is read at runtime from the environment, a mounted
+# /app/config/*.env file or /app/defaults.env (see deploy/docker-entrypoint.sh).
 
-FROM node:22.17.0-alpine AS base
+ARG NODE_VERSION=22.17.0
+ARG PNPM_VERSION=11.21.0
 
-# Install dependencies only when needed
+# Install and build run on the machine's own CPU ($BUILDPLATFORM) even when the image targets
+# another one: Turbopack crashes under QEMU emulation (Apple Silicon building linux/amd64).
+# The build output is plain JavaScript; the only native runtime dependency is sharp (below).
+FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-alpine AS base
+ARG PNPM_VERSION
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN apk add --no-cache libc6-compat \
+  && npm install -g pnpm@${PNPM_VERSION}
+WORKDIR /app
+
+# ---- dependencies ---------------------------------------------------------------------------
 FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+  pnpm install --frozen-lockfile
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
-
-
-# Rebuild the source code only when needed
+# ---- build ----------------------------------------------------------------------------------
 FROM base AS builder
-WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# No NEXT_PUBLIC_* variables: nothing site-specific is compiled into the bundles.
+ENV BUILD_WITHOUT_DB=true \
+  NODE_ENV=production
 
-RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+RUN pnpm run build
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# ---- sharp binaries for the target CPU --------------------------------------------------------
+# Runs on the target platform, so npm picks the matching @img/sharp-* packages. They are placed
+# in /app/node_modules/@img, where sharp finds them through normal module resolution.
+FROM node:${NODE_VERSION}-alpine AS sharp-target
+WORKDIR /opt/sharp
+COPY package.json /tmp/package.json
+RUN npm install --no-save --no-audit --no-fund "sharp@$(node -p "require('/tmp/package.json').dependencies.sharp")"
+
+# ---- runtime --------------------------------------------------------------------------------
+FROM node:${NODE_VERSION}-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ARG GIT_REVISION=unknown
+LABEL org.opencontainers.image.revision=${GIT_REVISION}
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+ENV NODE_ENV=production \
+  NEXT_TELEMETRY_DISABLED=1 \
+  PORT=3000 \
+  HOSTNAME=0.0.0.0 \
+  GIT_REVISION=${GIT_REVISION}
 
-# Remove this line if you do not have this folder
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs \
+  && mkdir -p .next /app/media /app/config \
+  && chown nextjs:nodejs .next /app/media
+
+# Runtime configuration: defaults in the image, overridable by /app/config/*.env or the environment.
+COPY deploy/docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY deploy/defaults.env /app/defaults.env
+
 COPY --from=builder /app/public ./public
-
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=sharp-target /opt/sharp/node_modules/@img ./node_modules/@img
 
 USER nextjs
-
 EXPOSE 3000
+VOLUME ["/app/media"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
-ENV PORT 3000
+# The first start also runs database migrations, hence the generous start period.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --start-interval=3s --retries=3 \
+  CMD wget -qO /dev/null http://127.0.0.1:3000/next/health || exit 1
 
 # server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD HOSTNAME="0.0.0.0" node server.js
+CMD ["node", "server.js"]

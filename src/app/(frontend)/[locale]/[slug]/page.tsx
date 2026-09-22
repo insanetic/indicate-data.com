@@ -13,8 +13,11 @@ import { isLocale, locales, type Locale } from '@/i18n/config'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { buildWithoutDatabase } from '@/utilities/buildWithoutDatabase'
 
 export async function generateStaticParams() {
+  if (buildWithoutDatabase) return []
+
   const payload = await getPayload({ config: configPromise })
   const pages = await payload.find({
     collection: 'pages',

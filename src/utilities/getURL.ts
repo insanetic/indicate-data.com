@@ -1,12 +1,12 @@
 import canUseDOM from './canUseDOM'
 
+/**
+ * Public origin of the site, read from the server environment at request time (`SITE_URL`), so a
+ * container gets it from its environment or a mounted config file, never from the build.
+ * `NEXT_PUBLIC_SERVER_URL` is accepted for older .env files.
+ */
 export const getServerSideURL = () => {
-  return (
-    process.env.NEXT_PUBLIC_SERVER_URL ||
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : 'http://localhost:3000')
-  )
+  return process.env.SITE_URL || process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 }
 
 export const getClientSideURL = () => {
@@ -18,9 +18,5 @@ export const getClientSideURL = () => {
     return `${protocol}//${domain}${port ? `:${port}` : ''}`
   }
 
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  }
-
-  return process.env.NEXT_PUBLIC_SERVER_URL || ''
+  return getServerSideURL()
 }

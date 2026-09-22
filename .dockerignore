@@ -1,0 +1,41 @@
+# Keep the build context small and keep secrets, local content and host binaries out of the image.
+.git
+.gitignore
+.claude
+.superpowers
+.vscode
+.mcp.json
+.DS_Store
+
+# Host dependencies carry macOS binaries (sharp); the image installs its own.
+node_modules
+.next
+.vercel
+tsconfig.tsbuildinfo
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+test.env
+deploy/*.env
+
+# Local content: uploads live in a volume in production, dumps never belong in an image.
+public/media
+backups
+
+# Tests, reports and docs are not needed to build
+tests
+test-results
+playwright-report
+blob-report
+docs
+README.md
+
+# Deployment tooling itself (the image only needs the entrypoint and defaults from deploy/)
+Dockerfile
+docker-compose*.yml
+Makefile
+deploy/*
+!deploy/docker-entrypoint.sh
+!deploy/defaults.env

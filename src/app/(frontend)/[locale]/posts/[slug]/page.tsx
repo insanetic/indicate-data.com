@@ -16,8 +16,11 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { isLocale, locales, type Locale } from '@/i18n/config'
 import { notFound } from 'next/navigation'
+import { buildWithoutDatabase } from '@/utilities/buildWithoutDatabase'
 
 export async function generateStaticParams() {
+  if (buildWithoutDatabase) return []
+
   const payload = await getPayload({ config: configPromise })
   const posts = await payload.find({
     collection: 'posts',

@@ -1,4 +1,4 @@
-import type { ResolvedSetup } from './setup'
+import { resolveIntegrations, serverEnv, type IntegrationRuntime, type ResolvedSetup, type RuntimeEnv } from './setup'
 
 export type Strings = {
   bannerTitle: string
@@ -117,6 +117,8 @@ export type ResolvedConsent = {
   /** FNV-1a over every visible text, stored with each log row. */
   textsHash: string
   texts: ConsentTexts
+  /** Runtime settings per active integration (ids from the server environment). */
+  integrations: Record<string, IntegrationRuntime>
 }
 
 type Nullable<T> = T | null | undefined
@@ -182,7 +184,17 @@ export function textsHash(texts: ConsentTexts): string {
 }
 
 /** Merges the CMS global into the code defaults, field by field, for one locale. */
-export function resolveConsent(global: ConsentGlobalDoc | null | undefined, locale: string, setup: ResolvedSetup): ResolvedConsent {
+/**
+ * Merges the CMS global with the site setup for one locale. Runs on the server: `env` (default
+ * `process.env`) supplies the integrations' runtime settings, which travel to the browser inside
+ * the result.
+ */
+export function resolveConsent(
+  global: ConsentGlobalDoc | null | undefined,
+  locale: string,
+  setup: ResolvedSetup,
+  env?: RuntimeEnv,
+): ResolvedConsent {
   const base = stringsFor(locale)
   const lang = baseLanguage(locale)
   const rows = global?.categories || []
@@ -226,5 +238,6 @@ export function resolveConsent(global: ConsentGlobalDoc | null | undefined, loca
     trigger: { mode, position },
     textsHash: textsHash(texts),
     texts,
+    integrations: resolveIntegrations(setup, env ?? serverEnv()),
   }
 }
