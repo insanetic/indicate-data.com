@@ -1,8 +1,7 @@
 'use client'
 
 import { Search, X } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
-import React, { useDeferredValue, useEffect, useId, useMemo, useState } from 'react'
+import React, { useDeferredValue, useEffect, useId, useMemo, useState, useSyncExternalStore } from 'react'
 
 import { LocaleLink } from '@/components/LocaleLink'
 import { Button } from '@/components/ui/button'
@@ -28,23 +27,37 @@ type Filter = IntegrationCategory | 'all'
  */
 export const DirectoryClient: React.FC<Props> = ({ items, locale, request }) => {
   const labels = directoryLabels[locale]
-  // The page renders on request, so the URL state is already in the server HTML (shareable links).
-  const params = useSearchParams()
-  const [query, setQuery] = useState(params.get('q') ?? '')
-  const [category, setCategory] = useState<Filter>(toFilter(params.get('category')))
+  /*
+   * The page is prerendered, so the query string cannot be read while rendering: `useSearchParams`
+   * bails the whole route out to client-side rendering, and the render then fails with
+   * BAILOUT_TO_CLIENT_SIDE_RENDERING. Reading the URL as an external store gives the server an
+   * empty query (the full grid is in the prerendered HTML) and applies a shared filtered link on
+   * the first client render. Once the visitor touches a control, their selection takes over.
+   */
+  const search = useSyncExternalStore(subscribeToUrl, () => window.location.search, () => '')
+  const fromUrl = useMemo(() => {
+    const params = new URLSearchParams(search)
+    return { query: params.get('q') ?? '', category: toFilter(params.get('category')) }
+  }, [search])
+  const [chosen, setChosen] = useState<{ query: string; category: Filter } | null>(null)
+  const { query, category } = chosen ?? fromUrl
+  // Updater form: the reset button sets both in one go, and the second call must see the first.
+  const setQuery = (next: string) => setChosen((current) => ({ ...(current ?? fromUrl), query: next }))
+  const setCategory = (next: Filter) => setChosen((current) => ({ ...(current ?? fromUrl), category: next }))
   const deferred = useDeferredValue(query)
   const inputId = useId()
   const statusId = useId()
 
-  // Mirror changes back into the URL without a navigation.
+  // Mirror the visitor's own choices back into the URL, so the view stays shareable.
   useEffect(() => {
+    if (!chosen) return
     const url = new URL(window.location.href)
     if (deferred) url.searchParams.set('q', deferred)
     else url.searchParams.delete('q')
     if (category !== 'all') url.searchParams.set('category', category)
     else url.searchParams.delete('category')
     window.history.replaceState(window.history.state, '', url)
-  }, [deferred, category])
+  }, [chosen, deferred, category])
 
   const results = useMemo(() => {
     const key = normalise(deferred)
@@ -201,6 +214,12 @@ export const DirectoryClient: React.FC<Props> = ({ items, locale, request }) => 
       )}
     </div>
   )
+}
+
+/** `replaceState` fires no event, so only a real history navigation changes the stored value. */
+const subscribeToUrl = (onChange: () => void) => {
+  window.addEventListener('popstate', onChange)
+  return () => window.removeEventListener('popstate', onChange)
 }
 
 const toFilter = (value: string | null): Filter =>

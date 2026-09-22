@@ -12,6 +12,11 @@ import { isLocale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { notFound } from 'next/navigation'
 
+// The result list is built from `?q=` on the server, so this route can never be prerendered.
+// Without this the locale params from the layout make Next try a static render, which fails with
+// DYNAMIC_SERVER_USAGE the moment `searchParams` is read.
+export const dynamic = 'force-dynamic'
+
 type Args = {
   params: Promise<{ locale: string }>
   searchParams: Promise<{
