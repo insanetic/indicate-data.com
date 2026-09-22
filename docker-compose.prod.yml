@@ -31,12 +31,20 @@ services:
     image: ${IMAGE:?set IMAGE in release.env}:${TAG:?set TAG in release.env}
     restart: unless-stopped
     environment:
-      # Only what compose composes from its own .env; everything else comes from config/app.env.
-      DATABASE_URL: postgres://payload:${POSTGRES_PASSWORD}@postgres:5432/payload
+      # Defaults to the PostgreSQL below. Point it at an external cluster by setting
+      # DATABASE_URL in .env - including the mTLS form, see deploy/README.md. Set on the
+      # container on purpose: the entrypoint lets the container environment win over
+      # config/app.env, so this stays the one place the database is chosen.
+      DATABASE_URL: ${DATABASE_URL:-postgres://payload:${POSTGRES_PASSWORD}@postgres:5432/payload}
     volumes:
       # Host-bound configuration, read by the entrypoint (SITE_URL, GTM_ID, secrets, ...).
       - ./config:/app/config:ro
       - media:/app/media
+      # Client certificate for an external PostgreSQL. Uncomment together with the
+      # group_add below; the key is not world-readable and the app runs as uid 1001.
+      # - /etc/pki/indicate-website/postgres:/app/tls/postgres:ro
+    # group_add:
+    #   - '<gid that owns the client key on the host>'
     depends_on:
       postgres:
         condition: service_healthy

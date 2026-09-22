@@ -42,6 +42,54 @@ file: `deploy/app.env.example`.
 Values are read per request on the server (site URL, Tag Manager id) and handed to the browser
 with the page, so changing the file and recreating the container is enough; no rebuild.
 
+## An external PostgreSQL with mTLS
+
+Production points the app at the shared PostgreSQL cluster rather than the one in
+this stack, and authenticates with a client certificate instead of a password.
+This needs no code and no rebuild: it is one connection string plus the three
+files it names.
+
+```
+DATABASE_URL=postgres://indicate_website@10.80.30.8:6432/indicate_website?sslmode=verify-full&sslrootcert=/app/tls/postgres/server-ca.pem&sslcert=/app/tls/postgres/client.cert.pem&sslkey=/app/tls/postgres/client.key.pem
+```
+
+The driver reads those three paths itself when the pool is built, so the whole
+of it is configuration. Four things decide whether it works:
+
+- **`sslmode=verify-full`** checks the server's certificate *and* that its name
+  matches the host in the URL. Connecting to an IP therefore needs that IP in the
+  server certificate's subject alternative names; a mismatch fails with
+  `Hostname/IP does not match certificate's altnames`. This is the mode to use -
+  `require` encrypts but authenticates nothing.
+- **No password.** With `clientcert=verify-full` and `cert` authentication, the
+  certificate is the credential, so the URL carries a user and no password.
+- **The certificate's common name must equal the database user.** The cluster
+  matches the CN against the role being requested, so a certificate issued for
+  the wrong name fails with `certificate authentication failed for user ...`.
+  Issuing the wrong certificate cannot accidentally grant access.
+- **The container must be able to read the key.** It runs as uid 1001. A key
+  written on the host as `root:<service group>` mode 0640 is unreadable to it
+  until that group is added to the container:
+
+  ```yaml
+  services:
+    app:
+      volumes:
+        - /etc/pki/indicate-website/postgres:/app/tls/postgres:ro
+      group_add:
+        - '3100'     # the gid that owns the key on the host
+  ```
+
+  Without it the app logs `cannot connect to Postgres. Details: EACCES:
+  permission denied, open '/app/tls/postgres/client.key.pem'` and never becomes
+  healthy. Mount the directory read-only; the app only ever reads it.
+
+Verified against a PostgreSQL 18 whose `pg_hba.conf` has no plaintext line at
+all and requires `cert clientcert=verify-full`: a plaintext connection and a TLS
+connection without a client certificate are both refused, the app connects,
+applies its migrations and serves, and the server reports the session as TLS 1.3
+with client DN `/CN=indicate_website`.
+
 ## Image contract
 
 | | |
@@ -56,7 +104,7 @@ Runtime environment:
 
 | Variable | Required | Notes |
 | --- | --- | --- |
-| `DATABASE_URL` | yes | `postgres://user:password@host:5432/db`. Keep the password URL-safe (hex). PostgreSQL 18 is what development uses. |
+| `DATABASE_URL` | yes | `postgres://user:password@host:5432/db`. Keep the password URL-safe (hex). PostgreSQL 18. For an external cluster with client certificates, see the section above. |
 | `PAYLOAD_SECRET` | yes | Signs sessions and encrypts stored keys. Never change it on a database with content. |
 | `SITE_URL` | yes | Public origin, e.g. `https://indicate-data.com`. Default in the image: `http://localhost:3000`. |
 | `PREVIEW_SECRET` | yes | Live preview links from the admin. |

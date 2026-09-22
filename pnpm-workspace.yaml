@@ -3,3 +3,6 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   workerd: true
+minimumReleaseAgeExclude:
+  - dotenv@18.0.2
+  - jsdom@30.1.1

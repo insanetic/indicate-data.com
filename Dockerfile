@@ -59,8 +59,11 @@ ENV NODE_ENV=production \
   HOSTNAME=0.0.0.0 \
   GIT_REVISION=${GIT_REVISION}
 
+# -G nodejs: without it BusyBox puts the user in `nogroup`, so the process runs
+# with a primary group that owns none of its own files - and a key mounted in as
+# root:<service group> then needs that group added to the container by hand.
 RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs \
+  && adduser --system --uid 1001 -G nodejs nextjs \
   && mkdir -p .next /app/media /app/config \
   && chown nextjs:nodejs .next /app/media
 
