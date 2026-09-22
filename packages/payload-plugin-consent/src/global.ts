@@ -3,7 +3,15 @@ import { ValidationError, type Field, type GlobalConfig } from 'payload'
 import type { ConsentGlobalDoc } from './defaults'
 import { createRevalidateHook } from './hooks/revalidate'
 import type { ResolvedPluginOptions } from './plugin'
-import { resolveIntegrations, runtimeIntegrations, serverEnv, type ResolvedSetup, type RuntimeEnv } from './setup'
+import {
+  integrationEnv,
+  resolveIntegrations,
+  runtimeIntegrations,
+  serverEnv,
+  settingsOf,
+  type ResolvedSetup,
+  type RuntimeEnv,
+} from './setup'
 
 type Row = { key?: string | null } | null | undefined
 
@@ -35,7 +43,8 @@ export function missingServiceRows(
   env?: RuntimeEnv,
 ): string[] {
   const rows = data?.categories || []
-  return runtimeIntegrations(setup, { integrations: resolveIntegrations(setup, env ?? serverEnv()) })
+  const runtime = integrationEnv(setup, data?.integrations, env ?? serverEnv())
+  return runtimeIntegrations(setup, { integrations: resolveIntegrations(setup, runtime) })
     .filter((integration) => {
       const row = rows.find((r) => r?.key === integration.category)
       return !(row?.services || []).some((s) => s?.integration === integration.key)
@@ -57,6 +66,45 @@ export const createConsentGlobal = (setup: ResolvedSetup, options: ResolvedPlugi
     ...setup.integrations.map((i) => ({ label: `${i.service.name} (${i.key})`, value: i.key })),
   ]
 
+  // Ids and keys an editor may change without a deploy. Each value overrides the environment
+  // variable of the same name; an integration that declares nothing does not appear here.
+  const configurable = settingsOf(setup)
+  const integrationFields: Field[] =
+    configurable.length === 0
+      ? []
+      : [
+          {
+            name: 'integrations',
+            type: 'group',
+            label: { de: 'Integrationen', en: 'Integrations' },
+            admin: {
+              description: {
+                de: 'Zugangsdaten der Dienste, die auf dieser Seite laufen. Leere Felder werden aus der Server-Umgebung gelesen.',
+                en: 'Ids of the services running on this site. Empty fields are read from the server environment.',
+              },
+            },
+            fields: configurable.map((integration) => ({
+              name: integration.key,
+              type: 'group',
+              label: integration.service.name,
+              fields: (integration.settings || []).map((setting) => ({
+                name: setting.name,
+                type: 'text',
+                label: setting.label,
+                validate: (value: unknown) => {
+                  const text = typeof value === 'string' ? value.trim() : ''
+                  if (!text || !setting.validate) return true
+                  return setting.validate(text)
+                },
+                admin: {
+                  placeholder: setting.placeholder,
+                  ...(setting.description ? { description: setting.description } : {}),
+                },
+              })) as Field[],
+            })) as Field[],
+          } as Field,
+        ]
+
   return {
     slug: globalSlug,
     label: { de: 'Cookies & Tracking', en: 'Cookies & tracking' },
@@ -70,7 +118,8 @@ export const createConsentGlobal = (setup: ResolvedSetup, options: ResolvedPlugi
           const doc = data as ConsentGlobalDoc | undefined
           const saved = originalDoc as ConsentGlobalDoc | undefined
           const categories = doc?.categories === undefined ? saved?.categories : doc.categories
-          const missing = missingServiceRows(setup, { categories })
+          const integrations = doc?.integrations === undefined ? saved?.integrations : doc.integrations
+          const missing = missingServiceRows(setup, { categories, integrations })
           if (missing.length > 0) {
             // The label carries the integration key: Payload builds the toast from the labels,
             // the per-field `message` only shows next to the array itself.
@@ -120,6 +169,7 @@ export const createConsentGlobal = (setup: ResolvedSetup, options: ResolvedPlugi
           },
         ],
       },
+      ...integrationFields,
       {
         type: 'row',
         fields: [

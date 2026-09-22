@@ -1,4 +1,11 @@
-import { resolveIntegrations, serverEnv, type IntegrationRuntime, type ResolvedSetup, type RuntimeEnv } from './setup'
+import {
+  integrationEnv,
+  resolveIntegrations,
+  serverEnv,
+  type IntegrationRuntime,
+  type ResolvedSetup,
+  type RuntimeEnv,
+} from './setup'
 
 export type Strings = {
   bannerTitle: string
@@ -117,7 +124,7 @@ export type ResolvedConsent = {
   /** FNV-1a over every visible text, stored with each log row. */
   textsHash: string
   texts: ConsentTexts
-  /** Runtime settings per active integration (ids from the server environment). */
+  /** Runtime settings per active integration (ids from the admin, else the server environment). */
   integrations: Record<string, IntegrationRuntime>
 }
 
@@ -130,6 +137,8 @@ export type ConsentGlobalDoc = {
   privacyPage?: unknown
   imprintPage?: unknown
   trigger?: Nullable<{ mode?: Nullable<string>; position?: Nullable<string> }>
+  /** Editor-set runtime values per integration key, e.g. `{ gtm: { id: 'GTM-XXXXXXX' } }`. */
+  integrations?: Nullable<Record<string, Nullable<Record<string, unknown>>>>
   banner?: Nullable<{ title?: Nullable<string>; text?: Nullable<string> }>
   settings?: Nullable<{ title?: Nullable<string>; text?: Nullable<string> }>
   categories?: Nullable<
@@ -185,9 +194,9 @@ export function textsHash(texts: ConsentTexts): string {
 
 /** Merges the CMS global into the code defaults, field by field, for one locale. */
 /**
- * Merges the CMS global with the site setup for one locale. Runs on the server: `env` (default
- * `process.env`) supplies the integrations' runtime settings, which travel to the browser inside
- * the result.
+ * Merges the CMS global with the site setup for one locale. Runs on the server: the integrations'
+ * runtime settings come from the global's own `integrations` group, falling back to `env` (default
+ * `process.env`), and travel to the browser inside the result.
  */
 export function resolveConsent(
   global: ConsentGlobalDoc | null | undefined,
@@ -238,6 +247,8 @@ export function resolveConsent(
     trigger: { mode, position },
     textsHash: textsHash(texts),
     texts,
-    integrations: resolveIntegrations(setup, env ?? serverEnv()),
+    // The admin values win over the container's environment, so an id can be changed without a
+    // deploy; a field left blank keeps the environment variable.
+    integrations: resolveIntegrations(setup, integrationEnv(setup, global?.integrations, env ?? serverEnv())),
   }
 }

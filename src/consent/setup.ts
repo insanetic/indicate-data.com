@@ -3,9 +3,9 @@ import { gtm } from '@subneo/payload-consent/integrations/gtm'
 
 /**
  * This site's consent surface. Imported by payload.config.ts (global, log collection) and by
- * ConsentRoot (browser). The Tag Manager container id is not part of this module: the server reads
- * `GTM_ID` per request and passes it to the browser with the resolved consent settings, so it can
- * come from the container's environment or a mounted config file. Empty: no tracker, no banner.
+ * ConsentRoot (browser). The Tag Manager container id is not part of this module: the editor sets
+ * it in the admin under Cookies & tracking → Integrations, and the server falls back to `GTM_ID`
+ * from the container's environment, reading both per request. Neither set: no tracker, no banner.
  */
 export const consentSetup = defineConsent({
   categories: [

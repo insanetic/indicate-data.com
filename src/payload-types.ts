@@ -4480,6 +4480,17 @@ export interface Consent {
    * Increase to ask every visitor again (e.g. after adding services).
    */
   revision: number;
+  /**
+   * Ids of the services running on this site. Empty fields are read from the server environment.
+   */
+  integrations?: {
+    gtm?: {
+      /**
+       * Leave empty to use GTM_ID from the server environment. With no id nothing is tracked and no banner appears.
+       */
+      containerId?: string | null;
+    };
+  };
   privacyPage?: (number | null) | Page;
   imprintPage?: (number | null) | Page;
   trigger?: {
@@ -4808,6 +4819,15 @@ export interface SubneoPricingSelect<T extends boolean = true> {
 export interface ConsentSelect<T extends boolean = true> {
   enabled?: T;
   revision?: T;
+  integrations?:
+    | T
+    | {
+        gtm?:
+          | T
+          | {
+              containerId?: T;
+            };
+      };
   privacyPage?: T;
   imprintPage?: T;
   trigger?:

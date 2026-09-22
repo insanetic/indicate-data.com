@@ -31,15 +31,21 @@ Built for the strict reading of GDPR / ePrivacy / TDDDG (DSK, DSB, CNIL):
        { key: 'analytics', signals: ['analytics_storage'], texts: { /* … */ } },
        { key: 'marketing', signals: ['ad_storage', 'ad_user_data', 'ad_personalization'], texts: { /* … */ } },
      ],
-     integrations: [gtm()], // container id from GTM_ID at request time
+     integrations: [gtm()], // container id from the admin, else GTM_ID, at request time
      logging: true,
    })
    ```
 
-   Keep tracker ids in environment variables, never in the CMS: a copied staging database must not
-   report into production. Ids are read on the server per request (`ConsentIntegration.resolve`),
-   never compiled into the bundle, so a container can take them from a mounted config file. An
-   integration without an id stays registered but disabled, and the banner is not shown.
+   Ids are read on the server per request (`ConsentIntegration.resolve`), never compiled into the
+   bundle, so they can come from the admin, from the container's environment or from a mounted
+   config file. An integration without an id stays registered but disabled, and the banner is not
+   shown.
+
+   An integration that declares `settings` gets a field per entry in the global (Cookies & tracking
+   → Integrations) and the editor can change the id without a deploy; the environment variable of
+   the same `envKey` remains the fallback for a blank field. The trade-off is that the id now
+   travels with the database: whoever restores a production dump onto a laptop or a staging server
+   inherits the live container, so clear the field there or set the id from the environment only.
 3. `payload.config.ts`: `plugins: [consentPlugin(consentSetup)]`, with `consentPlugin` imported from
    `@subneo/payload-consent/server`. Run `payload generate:types` and `payload generate:importmap`.
 4. A client wrapper, because the setup holds functions and cannot cross the server/client boundary
@@ -120,6 +126,10 @@ export const plausible = () =>
 - `update` runs on every decision (Consent Mode updates, for example).
 - `bootstrap` is an inline head script (Consent Mode defaults); identical strings are deduplicated.
 - `cookies` are purged on withdrawal and when a record is invalidated.
+- `settings` declares runtime values the editor may fill in the admin (an id, a container name).
+  Each one overrides the environment variable named in its `envKey` before `resolve` runs. Never
+  name a setting `id`: Payload's schema builder skips fields of that name and the value gets no
+  column.
 - Add a service row with the integration's key in its category in the CMS, or the global will not
   save. Raise `revision` so visitors are asked again.
 

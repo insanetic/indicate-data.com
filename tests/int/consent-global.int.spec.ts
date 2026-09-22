@@ -49,6 +49,13 @@ describe('missingServiceRows', () => {
     const staging = defineConsent({ ...setup, integrations: [gtm({ containerId: '' })] })
     expect(missingServiceRows(staging, { categories: [] })).toEqual([])
   })
+  it('counts an integration the editor switched on in the admin', () => {
+    const runtime = defineConsent({ ...setup, integrations: [gtm()] })
+    // No id anywhere: nothing runs, so nothing has to be declared.
+    expect(missingServiceRows(runtime, { categories: [] }, {})).toEqual([])
+    // An id entered in the admin makes the container run, and the service row becomes due.
+    expect(missingServiceRows(runtime, { categories: [], integrations: { gtm: { containerId: 'GTM-CMS' } } }, {})).toEqual(['gtm'])
+  })
 })
 
 describe('createConsentGlobal', () => {

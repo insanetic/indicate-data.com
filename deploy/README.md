@@ -109,7 +109,7 @@ Runtime environment:
 | `SITE_URL` | yes | Public origin, e.g. `https://indicate-data.com`. Default in the image: `http://localhost:3000`. |
 | `PREVIEW_SECRET` | yes | Live preview links from the admin. |
 | `CRON_SECRET` | yes | Bearer token for Payload's jobs endpoint. |
-| `GTM_ID` | no | Tag Manager container id. Empty: no tracker and no consent banner. |
+| `GTM_ID` | no | Fallback Tag Manager container id. Normally set in the admin under Cookies & tracking → Integrations, which wins over this. Neither: no tracker and no consent banner. |
 | `SUBNEO_API_KEY` | no | Can also be stored in the admin. |
 
 Image defaults you normally leave alone: `MEDIA_DIR=/app/media`, `PAYLOAD_MIGRATE_ON_START=true`,

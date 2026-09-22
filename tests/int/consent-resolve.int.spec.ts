@@ -46,6 +46,33 @@ describe('resolveConsent', () => {
     expect(resolveConsent(null, 'de', runtime, { GTM_ID: 'GTM-ENV' }).integrations.gtm).toEqual({ enabled: true, options: { id: 'GTM-ENV' } })
   })
 
+  it('takes an integration id from the admin, with the environment as the fallback', () => {
+    const runtime = defineConsent({ ...setup, integrations: [gtm()] })
+    const stored = (containerId: string | null): ConsentGlobalDoc => ({ integrations: { gtm: { containerId } } })
+
+    // The admin wins over the container's environment.
+    expect(resolveConsent(stored('GTM-CMS'), 'de', runtime, { GTM_ID: 'GTM-ENV' }).integrations.gtm).toEqual({
+      enabled: true,
+      options: { id: 'GTM-CMS' },
+    })
+    // ... and works on its own.
+    expect(resolveConsent(stored('GTM-CMS'), 'de', runtime, {}).integrations.gtm).toEqual({
+      enabled: true,
+      options: { id: 'GTM-CMS' },
+    })
+    // An empty or blank field is not an override: the environment still decides.
+    expect(resolveConsent(stored('   '), 'de', runtime, { GTM_ID: 'GTM-ENV' }).integrations.gtm).toEqual({
+      enabled: true,
+      options: { id: 'GTM-ENV' },
+    })
+    expect(resolveConsent(stored(null), 'de', runtime, {}).integrations.gtm).toEqual({ enabled: false, options: { id: '' } })
+    // A compiled-in id declares no admin field, so a stored value cannot override it.
+    expect(resolveConsent(stored('GTM-CMS'), 'de', setup, {}).integrations.gtm).toEqual({
+      enabled: true,
+      options: { id: 'GTM-TEST' },
+    })
+  })
+
   it('is disabled only when the global explicitly turns it off', () => {
     expect(resolveConsent({ enabled: false }, 'de', setup).enabled).toBe(false)
     expect(resolveConsent({ enabled: true }, 'de', setup).enabled).toBe(true)

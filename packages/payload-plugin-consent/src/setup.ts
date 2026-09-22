@@ -31,6 +31,27 @@ export type IntegrationContext = {
   options: Record<string, string>
 }
 
+/**
+ * One runtime value an editor can fill in the admin instead of setting it on the container.
+ * The plugin renders a text field per entry under the integration's key, and the value overrides
+ * the environment variable of the same `envKey` before `resolve()` runs.
+ */
+export type IntegrationSetting = {
+  /**
+   * Field name inside the integration's admin group, e.g. `containerId`. Never `id`: Payload's
+   * schema builder skips a field of that name at any depth, so it would get no database column.
+   */
+  name: string
+  /** Key this value takes in the `resolve()` environment, e.g. `GTM_ID`. */
+  envKey: string
+  /** Field label; a record is a per-admin-language label, as everywhere in Payload. */
+  label: string | Record<string, string>
+  description?: string | Record<string, string>
+  placeholder?: string
+  /** Rejects a malformed value in the admin. Never called with an empty value. */
+  validate?: (value: string) => true | string
+}
+
 export type ConsentIntegration = {
   /** Stable identifier, also the value of the service row's `integration` select. */
   key: string
@@ -45,6 +66,12 @@ export type ConsentIntegration = {
    * `IntegrationContext.options`. Default: enabled, no options.
    */
   resolve?: (env: RuntimeEnv) => IntegrationRuntime
+  /**
+   * Runtime values the editor may set in the admin (ids, container names). They are merged over
+   * the environment before `resolve()` is called, so the admin wins and the environment variable
+   * stays as the fallback for a container that is configured from the outside.
+   */
+  settings?: readonly IntegrationSetting[]
   /** Cookie name patterns removed when the category is withdrawn or the record is invalidated. */
   cookies: readonly RegExp[]
   /** Inline head script that runs before hydration when the layer is enabled (e.g. Consent Mode defaults). */
@@ -138,6 +165,31 @@ export function runtimeIntegrations(
 
 /** `process.env` on the server, an empty object anywhere else. */
 export const serverEnv = (): RuntimeEnv => (typeof process !== 'undefined' && process.env ? process.env : {})
+
+/** The integrations that put a value in the admin, with their fields. Empty: no admin group. */
+export const settingsOf = (setup: ResolvedSetup): readonly ConsentIntegration[] =>
+  setup.activeIntegrations.filter((i) => (i.settings || []).length > 0)
+
+/**
+ * The environment `resolve()` sees: the container's own, with every value the editor filled in the
+ * admin laid over it. A blank admin field changes nothing, so a site can be configured either way
+ * and moved from one to the other without a deploy.
+ */
+export function integrationEnv(
+  setup: ResolvedSetup,
+  stored: Record<string, Record<string, unknown> | null | undefined> | null | undefined,
+  base: RuntimeEnv,
+): RuntimeEnv {
+  if (!stored) return base
+  const env: Record<string, string | undefined> = { ...base }
+  for (const integration of settingsOf(setup)) {
+    for (const setting of integration.settings || []) {
+      const value = stored[integration.key]?.[setting.name]
+      if (typeof value === 'string' && value.trim()) env[setting.envKey] = value.trim()
+    }
+  }
+  return env
+}
 
 /** Typed identity helper for integration files. */
 export const createIntegration = <T extends ConsentIntegration>(integration: T): T => integration
