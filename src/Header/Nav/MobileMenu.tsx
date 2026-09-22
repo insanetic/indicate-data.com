@@ -3,12 +3,14 @@
 import { ChevronDown, Menu, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import type { Header } from '@/payload-types'
 
 import { CMSLink, resolveLinkHref } from '@/components/Link'
 import { LocaleLink } from '@/components/LocaleLink'
 import { cn } from '@/utilities/ui'
+import { useHydrated } from '@/utilities/useHydrated'
 
 import type { HeaderLabels } from '../Component.client'
 import { NavBadge, type NavItem } from './DesktopNav'
@@ -19,6 +21,12 @@ type LinkData = NonNullable<Header['primaryCta']>['link'] | null | undefined
 /**
  * Full-height drawer from the right for narrow screens. Focus is trapped while open,
  * the page behind is inert, Escape closes.
+ *
+ * The drawer is portalled into `<body>`: it must not render inside the sticky header, because the
+ * header bar switches to `backdrop-blur` once the page is scrolled and an element with a
+ * backdrop-filter becomes the containing block for its `position: fixed` descendants. Inside the
+ * header the drawer would collapse into the 4rem header box the moment the visitor has scrolled.
+ * The portal also lifts it out of the header's `z-40` stacking context.
  */
 export const MobileMenu: React.FC<{
   items: NavItem[]
@@ -33,6 +41,19 @@ export const MobileMenu: React.FC<{
   const triggerRef = useRef<HTMLButtonElement>(null)
   const pathname = usePathname() || '/'
   const id = useId()
+  // The portal target only exists in the browser; the closed drawer contributes nothing to the
+  // server HTML, so rendering it from the first client pass on costs no layout and no flash.
+  const hydrated = useHydrated()
+
+  // From `lg` up the drawer and its trigger are hidden: a drawer left open across that breakpoint
+  // could not be closed, and the page would stay inert and scroll-locked.
+  useEffect(() => {
+    const desktop = window.matchMedia('(width >= 64rem)')
+    const onChange = () => desktop.matches && setOpenState((s) => (s.open ? { ...s, open: false } : s))
+    onChange()
+    desktop.addEventListener('change', onChange)
+    return () => desktop.removeEventListener('change', onChange)
+  }, [])
   const open = openState.path === pathname && openState.open
   const setOpen = (next: boolean | ((v: boolean) => boolean)) =>
     setOpenState({ open: typeof next === 'function' ? next(open) : next, path: pathname })
@@ -43,7 +64,17 @@ export const MobileMenu: React.FC<{
     const footer = document.querySelector('footer')
     main?.setAttribute('inert', '')
     footer?.setAttribute('inert', '')
-    document.documentElement.style.overflow = 'hidden'
+
+    // Scroll lock. `overflow: hidden` on the document alone makes the page behind snap back to the
+    // top, because a scrollport that no longer overflows clamps its offset to zero. Holding the
+    // body at its current offset keeps the page where the visitor left it, here and on iOS.
+    const { scrollY } = window
+    const { body } = document
+    const restore = { position: body.style.position, top: body.style.top, left: body.style.left, right: body.style.right }
+    body.style.position = 'fixed'
+    body.style.top = `-${scrollY}px`
+    body.style.left = '0'
+    body.style.right = '0'
 
     const focusable = () =>
       Array.from(
@@ -77,24 +108,15 @@ export const MobileMenu: React.FC<{
       document.removeEventListener('keydown', onKey)
       main?.removeAttribute('inert')
       footer?.removeAttribute('inert')
-      document.documentElement.style.overflow = ''
+      Object.assign(body.style, restore)
+      // `behavior: 'instant'` because the site sets `scroll-behavior: smooth`: closing the menu
+      // would otherwise animate the page from the top back down to where the visitor was.
+      window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
     }
   }, [open, pathname])
 
-  return (
+  const surface = (
     <div className="lg:hidden">
-      <button
-        aria-controls={id}
-        aria-expanded={open}
-        aria-label={open ? labels.closeMenu : labels.openMenu}
-        className="pressable inline-flex size-11 items-center justify-center rounded-pill text-ink hover:bg-surface-2"
-        onClick={() => setOpen((v) => !v)}
-        ref={triggerRef}
-        type="button"
-      >
-        {open ? <X aria-hidden="true" className="size-5" /> : <Menu aria-hidden="true" className="size-5" />}
-      </button>
-
       <div
         aria-hidden={!open}
         className={cn(
@@ -131,7 +153,7 @@ export const MobileMenu: React.FC<{
           </button>
         </div>
 
-        <nav aria-label={labels.mainNavigation} className="flex-1 overflow-y-auto px-3 pb-6">
+        <nav aria-label={labels.mainNavigation} className="flex-1 overflow-y-auto overscroll-contain px-3 pb-6">
           <ul className="flex flex-col">
             {items.map((item, i) => {
               const isMenu = item.type === 'menu' && (item.columns?.length || 0) > 0
@@ -221,6 +243,24 @@ export const MobileMenu: React.FC<{
           {secondary?.label && <CMSLink {...secondary} appearance="secondary" className="w-full" />}
         </div>
       </div>
+    </div>
+  )
+
+  return (
+    <div className="lg:hidden">
+      <button
+        aria-controls={id}
+        aria-expanded={open}
+        aria-label={open ? labels.closeMenu : labels.openMenu}
+        className="pressable inline-flex size-11 items-center justify-center rounded-pill text-ink hover:bg-surface-2"
+        onClick={() => setOpen((v) => !v)}
+        ref={triggerRef}
+        type="button"
+      >
+        {open ? <X aria-hidden="true" className="size-5" /> : <Menu aria-hidden="true" className="size-5" />}
+      </button>
+
+      {hydrated && createPortal(surface, document.body)}
     </div>
   )
 }
