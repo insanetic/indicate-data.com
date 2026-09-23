@@ -21,7 +21,8 @@ export interface LoadPoolArgs {
 /**
  * Loads every testimonial that may be shown, in one query. The pool is small (hundreds at most),
  * so one list per locale is cheaper than a query per block. Linked docs are reduced to slug and
- * title so a case-study link does not drag a whole page layout along.
+ * title so a case-study link does not drag a whole page layout along. The internal note is left
+ * out: the pool is cached and rendered, and the note is never meant to leave the admin.
  */
 export const loadPool = async ({ payload, locale, draft = false, slug = 'testimonials', linkCollections = ['pages', 'posts'] }: LoadPoolArgs): Promise<Testimonial[]> => {
   const result = await payload.find({
@@ -32,6 +33,7 @@ export const loadPool = async ({ payload, locale, draft = false, slug = 'testimo
     pagination: false,
     overrideAccess: true,
     populate: Object.fromEntries(linkCollections.map((c) => [c, { slug: true, title: true }])) as never,
+    select: { internalNote: false } as never,
     ...(locale ? { locale: locale as 'all' } : {}),
     ...(draft ? {} : { where: { _status: { equals: 'published' } } }),
   })
@@ -56,10 +58,12 @@ export interface GetTestimonialsArgs extends LoadPoolArgs {
 export const getTestimonials = async (args: GetTestimonialsArgs): Promise<Selected[]> => {
   const { payload, block, layout, blockIndex, now = new Date(), draft = false, locale, cacheTag = DEFAULT_CACHE_TAG, blockSlug = 'testimonials' } = args
   const slug = args.slug || 'testimonials'
+  // Different link collections populate different fields, so they get their own cache entry.
+  const linkCollections = args.linkCollections ?? ['pages', 'posts']
   try {
     const pool = draft
-      ? await loadPool({ ...args, slug, draft: true })
-      : await unstable_cache(() => loadPool({ ...args, slug, draft: false }), ['testimonials-pool', slug, locale || ''], {
+      ? await loadPool({ ...args, slug, linkCollections, draft: true })
+      : await unstable_cache(() => loadPool({ ...args, slug, linkCollections, draft: false }), ['testimonials-pool', slug, locale || '', linkCollections.join(',')], {
           tags: [cacheTag],
           revalidate: POOL_REVALIDATE_SECONDS,
         })()

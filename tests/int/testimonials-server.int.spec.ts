@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 
+const cache = vi.hoisted(() => ({ keyParts: [] as string[][] }))
 vi.mock('next/cache', () => ({
-  unstable_cache: (fn: () => unknown) => fn,
+  unstable_cache: (fn: () => unknown, keyParts: string[]) => {
+    cache.keyParts.push(keyParts)
+    return fn
+  },
   revalidateTag: vi.fn(),
 }))
 
@@ -37,6 +41,13 @@ describe('loadPool', () => {
     await loadPool({ payload, linkCollections: ['pages', 'posts'] })
     expect(find.mock.calls[0][0].populate).toEqual({ pages: { slug: true, title: true }, posts: { slug: true, title: true } })
   })
+
+  it('never loads the internal note into the pool', async () => {
+    const { payload, find } = fakePayload()
+    await loadPool({ payload })
+    await loadPool({ payload, draft: true })
+    for (const [options] of find.mock.calls) expect(options.select).toEqual({ internalNote: false })
+  })
 })
 
 describe('getTestimonials', () => {
@@ -54,6 +65,17 @@ describe('getTestimonials', () => {
     ]
     const r = await getTestimonials({ payload, block: layout[1] as never, layout, blockIndex: 1 })
     expect(r.map((s) => s.testimonial.id).sort()).toEqual([2, 3])
+  })
+
+  it('keys the cached pool by slug, locale and link collections', async () => {
+    const { payload } = fakePayload()
+    cache.keyParts.length = 0
+    await getTestimonials({ payload, block: { mode: 'auto' }, locale: 'en', linkCollections: ['pages'] })
+    await getTestimonials({ payload, block: { mode: 'auto' }, locale: 'en', linkCollections: ['pages', 'posts'] })
+    expect(cache.keyParts).toEqual([
+      ['testimonials-pool', 'testimonials', 'en', 'pages'],
+      ['testimonials-pool', 'testimonials', 'en', 'pages,posts'],
+    ])
   })
 
   it('logs and returns [] when loading fails', async () => {

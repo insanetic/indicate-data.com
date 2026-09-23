@@ -20,7 +20,7 @@ export const UsagePanel: React.FC<{ apiSlug?: string; usageCollection?: string }
     if (!id) return
     fetch(`${config.serverURL}${config.routes.api}/${apiSlug}/${id}/usage`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : { usages: [] }))
-      .then((d) => setUsages(d.usages))
+      .then((d) => setUsages(d.usages ?? []))
       .catch(() => setUsages([]))
   }, [id, apiSlug, config.serverURL, config.routes.api])
 
