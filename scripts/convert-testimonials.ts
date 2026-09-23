@@ -14,7 +14,7 @@ const payload = await getPayload({ config })
 try {
   const result = await runInlineTestimonialConversion(payload)
   payload.logger.info(
-    `[testimonials] created ${result.created}, reused ${result.reused}, converted ${result.blocks} blocks, ${result.draftBlocks} draft blocks, ${result.needsReview.length} need review`,
+    `[testimonials] created ${result.created}, reused ${result.reused}, converted ${result.blocks} blocks, ${result.draftBlocks} draft blocks, kept ${result.emptyBlocks} published and ${result.emptyDraftBlocks} draft blocks without quotes empty, ${result.needsReview.length} need review`,
   )
   for (const r of result.needsReview) payload.logger.warn(`[testimonials] needs review: page ${r.pageId}, block ${r.blockId}: ${r.reason}`)
   process.exit(0)

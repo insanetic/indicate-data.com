@@ -187,18 +187,23 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_testimonials_id_idx" ON "payload_locked_documents_rels" USING btree ("testimonials_id");
   CREATE INDEX "payload_locked_documents_rels_testimonial_tags_id_idx" ON "payload_locked_documents_rels" USING btree ("testimonial_tags_id");`)
 
-  // Move the inline quotes of existing blocks into the new collection (idempotent). It gets the
-  // migration's own req, so every save runs in this migration's transaction. A database without
-  // inline quotes (a fresh install) skips it: the converter reads pages through the current
-  // config, which may already expect columns that later migrations add.
-  const inline = await db.execute(sql`SELECT 1 FROM "pages_blocks_testimonials_items" LIMIT 1`)
-  if (inline.rows.length === 0) {
-    payload.logger.info('[testimonials] no inline quotes to convert')
+  // Move the inline quotes of existing blocks into the new collection (idempotent) and turn blocks
+  // without quotes into empty manual blocks (the new column defaults would make them auto blocks).
+  // It gets the migration's own req, so every save runs in this migration's transaction. It runs
+  // when there are inline quotes or blocks from before this migration (no seed yet); a database
+  // with neither (a fresh install) skips it: the converter reads pages through the current config,
+  // which may already expect columns that later migrations add.
+  const legacy = await db.execute(sql`
+    SELECT 1 FROM "pages_blocks_testimonials_items"
+    UNION ALL SELECT 1 FROM "pages_blocks_testimonials" WHERE "seed" IS NULL
+    LIMIT 1`)
+  if (legacy.rows.length === 0) {
+    payload.logger.info('[testimonials] no inline quotes or legacy blocks to convert')
     return
   }
   const result = await convertInlineTestimonials({ payload, req })
   payload.logger.info(
-    `[testimonials] created ${result.created}, reused ${result.reused}, converted ${result.blocks} published and ${result.draftBlocks} draft blocks`,
+    `[testimonials] created ${result.created}, reused ${result.reused}, converted ${result.blocks} published and ${result.draftBlocks} draft blocks, kept ${result.emptyBlocks} published and ${result.emptyDraftBlocks} draft blocks without quotes empty`,
   )
   // Draft blocks with pending edits keep their inline quotes; an editor converts them by hand.
   for (const item of result.needsReview) {

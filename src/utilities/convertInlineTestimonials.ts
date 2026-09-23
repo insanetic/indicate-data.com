@@ -5,7 +5,15 @@ import { locales, type Locale } from '@/i18n/config'
 
 type Localised = Partial<Record<Locale, string | null>> | string | null | undefined
 type InlineItem = { name?: string | null; company?: string | null; quote?: Localised; role?: Localised; avatar?: unknown; logo?: unknown }
-type Block = { blockType?: string; id?: string | null; items?: InlineItem[] | null; testimonials?: unknown[] | null; seed?: string | null }
+type Block = {
+  blockType?: string
+  id?: string | null
+  items?: InlineItem[] | null
+  testimonials?: unknown[] | null
+  tags?: unknown[] | null
+  pinned?: unknown[] | null
+  seed?: string | null
+}
 type PageLike = { id: number; layout?: unknown[] | null }
 
 export type InlineEntry = {
@@ -43,23 +51,37 @@ const mediaId = (v: unknown) => (typeof v === 'number' ? v : v && typeof v === '
  * Rows saved before the switch have no seed; converted, new and reshuffled blocks always do, so a
  * converted block whose selection an editor later cleared is not converted again.
  */
-const legacyBlocks = (page: PageLike) =>
+const unconvertedBlocks = (page: PageLike) =>
   (page.layout || [])
     .map((raw) => raw as Block)
     .filter((b) => b.blockType === 'testimonials' && b.id && !b.seed && (b.testimonials || []).length === 0)
-    .map((b) => ({ id: b.id as string, items: (b.items || []).filter((i) => i.name && i.quote) }))
-    .filter((b) => b.items.length > 0)
+    .map((b) => ({ id: b.id as string, block: b, items: (b.items || []).filter((i) => i.name && i.quote) }))
+
+const legacyBlocks = (page: PageLike) => unconvertedBlocks(page).filter((b) => b.items.length > 0)
+
+/**
+ * Unconverted blocks with no usable inline quote and no tags or pins: before the switch they
+ * rendered nothing. The migration's column defaults make them auto blocks with three picks, so
+ * they become manual blocks with no testimonials instead. Nothing an editor wrote is lost.
+ */
+const emptyLegacyBlocks = (page: PageLike): Assignment[] =>
+  unconvertedBlocks(page)
+    .filter((b) => b.items.length === 0 && (b.block.tags || []).length === 0 && (b.block.pinned || []).length === 0)
+    .map((b) => ({ pageId: page.id, blockId: b.id, keys: [] }))
 
 /**
  * Pure part of the conversion for published pages: which people exist (deduped by name +
  * company) and which blocks point at them. Pages must be read with `locale: 'all'` so localised
  * fields arrive as `{ de, en }`. Blocks that already reference testimonials are skipped
  * (idempotent). Only published content creates testimonials; drafts go through `reviewDraftBlocks`.
+ * `emptyBlocks` lists the blocks that had nothing to show (see `emptyLegacyBlocks`).
  */
 export const collectInlineTestimonials = (pages: PageLike[]) => {
   const entries = new Map<string, InlineEntry>()
   const assignments: Assignment[] = []
+  const emptyBlocks: Assignment[] = []
   for (const page of pages) {
+    emptyBlocks.push(...emptyLegacyBlocks(page))
     for (const block of legacyBlocks(page)) {
       const keys: string[] = []
       for (const i of block.items) {
@@ -80,7 +102,7 @@ export const collectInlineTestimonials = (pages: PageLike[]) => {
       assignments.push({ pageId: page.id, blockId: block.id, keys })
     }
   }
-  return { entries: [...entries.values()], assignments }
+  return { entries: [...entries.values()], assignments, emptyBlocks }
 }
 
 const sameText = (a: Partial<Record<Locale, string>>, b: Partial<Record<Locale, string>>) =>
@@ -92,12 +114,15 @@ const sameText = (a: Partial<Record<Locale, string>>, b: Partial<Record<Locale, 
  * avatar and logo, the same quote and role in every locale (text compared after trimming), and, if the published block with the same id is being
  * converted, the same people in the same order. Anything else is an editor's pending edit: the
  * block stays as it is (the legacy fallback keeps rendering it in the draft) and is listed for
- * review. Draft-only people never create testimonials.
+ * review. Draft-only people never create testimonials. Empty draft blocks are listed in
+ * `emptyBlocks`, as in the published pass: there is nothing in them to lose.
  */
 export const reviewDraftBlocks = (drafts: PageLike[], held: Map<string, Held>, published: Assignment[]) => {
   const assignments: Assignment[] = []
   const needsReview: NeedsReview[] = []
+  const emptyBlocks: Assignment[] = []
   for (const page of drafts) {
+    emptyBlocks.push(...emptyLegacyBlocks(page))
     for (const block of legacyBlocks(page)) {
       const keys = block.items.map((i) => keyOf(i.name, i.company))
       const flag = (reason: string) => needsReview.push({ pageId: page.id, blockId: block.id, reason })
@@ -129,7 +154,7 @@ export const reviewDraftBlocks = (drafts: PageLike[], held: Map<string, Held>, p
       assignments.push({ pageId: page.id, blockId: block.id, keys })
     }
   }
-  return { assignments, needsReview }
+  return { assignments, needsReview, emptyBlocks }
 }
 
 /**
@@ -137,7 +162,8 @@ export const reviewDraftBlocks = (drafts: PageLike[], held: Map<string, Held>, p
  * testimonials in the original order and gets a seed (its id) when it has none. The inline
  * `items` stay, so the migration can be rolled back and the previous image still finds its quotes;
  * the seed is what stops them from acting as the legacy fallback again. A later schema cleanup
- * removes them. Other blocks pass through untouched.
+ * removes them. An assignment with no keys (an empty block) becomes a manual block showing nothing.
+ * Other blocks pass through untouched.
  */
 export const applyAssignments = (layout: unknown[], forPage: { blockId: string; keys: string[] }[], idByKey: Map<string, number>): unknown[] =>
   layout.map((raw) => {
@@ -153,7 +179,8 @@ const pageData = ({ id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...da
  * Moves inline quotes into the testimonials collection and switches those blocks to manual mode
  * pointing at them. Idempotent: existing testimonials are matched by name + company, converted
  * blocks are skipped. The inline rows are kept (see `applyAssignments`) until a later schema
- * cleanup.
+ * cleanup. Blocks that had nothing to show become manual blocks with no testimonials, so they
+ * keep showing nothing (counted in `emptyBlocks` / `emptyDraftBlocks`).
  *
  * Published and pending-draft states are handled separately. A plain update builds on the latest
  * version, so it would save the draft's `_status` (unpublishing the page) and merge the draft's
@@ -177,7 +204,7 @@ export const convertInlineTestimonials = async ({ payload, req, pageIds }: { pay
   const latest = await payload.find({ ...read, where, locale: 'all', pagination: false, draft: true })
   const published = mainRows.docs.filter((d) => d._status === 'published') as unknown as PageLike[]
   const drafts = latest.docs.filter((d) => d._status === 'draft') as unknown as PageLike[]
-  const { entries, assignments } = collectInlineTestimonials(published)
+  const { entries, assignments, emptyBlocks } = collectInlineTestimonials(published)
 
   const existing = await payload.find({ collection: 'testimonials', locale: 'all', depth: 0, pagination: false, overrideAccess: true, draft: true, req, context })
   const idByKey = new Map(existing.docs.map((d) => [keyOf(d.name, d.company), d.id]))
@@ -206,10 +233,13 @@ export const convertInlineTestimonials = async ({ payload, req, pageIds }: { pay
     created++
   }
   const review = reviewDraftBlocks(drafts, held, assignments)
+  // Empty blocks are rewritten like converted ones, with no testimonials.
+  const publishedWrites = [...assignments, ...emptyBlocks]
+  const draftWrites = [...review.assignments, ...review.emptyBlocks]
 
-  for (const pageId of [...new Set([...assignments, ...review.assignments].map((a) => a.pageId))]) {
-    const forPublished = assignments.filter((a) => a.pageId === pageId)
-    const forDraft = review.assignments.filter((a) => a.pageId === pageId)
+  for (const pageId of [...new Set([...publishedWrites, ...draftWrites].map((a) => a.pageId))]) {
+    const forPublished = publishedWrites.filter((a) => a.pageId === pageId)
+    const forDraft = draftWrites.filter((a) => a.pageId === pageId)
     // Read both states per locale before writing anything: the first write replaces the latest version.
     // `fallbackLocale: false` so an empty translation is not saved back as a copy of the default locale.
     // Sequential, not Promise.all: every call shares the one transaction connection.
@@ -239,7 +269,15 @@ export const convertInlineTestimonials = async ({ payload, req, pageIds }: { pay
     }
   }
 
-  return { created, reused: entries.length - created, blocks: assignments.length, draftBlocks: review.assignments.length, needsReview: review.needsReview }
+  return {
+    created,
+    reused: entries.length - created,
+    blocks: assignments.length,
+    draftBlocks: review.assignments.length,
+    emptyBlocks: emptyBlocks.length,
+    emptyDraftBlocks: review.emptyBlocks.length,
+    needsReview: review.needsReview,
+  }
 }
 
 /**

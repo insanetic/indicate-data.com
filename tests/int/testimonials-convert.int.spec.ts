@@ -37,6 +37,47 @@ describe('collectInlineTestimonials', () => {
   })
 })
 
+describe('empty legacy blocks', () => {
+  const empty = (id: string, extra: Record<string, unknown> = {}) => ({ blockType: 'testimonials', id, ...extra })
+  const pages = [
+    {
+      id: 1,
+      layout: [
+        empty('e1'),
+        empty('e2', { items: [{ id: 'x', name: 'No quote', quote: null }] }),
+        empty('e3', { items: [], testimonials: [] , tags: [], pinned: [] }),
+        empty('t', { tags: [4] }),
+        empty('p', { pinned: [4] }),
+        empty('r', { testimonials: [4] }),
+        empty('s', { seed: 'kept' }),
+        { blockType: 'testimonials', id: 'b1', items: [item('i1', 'Armin Biebl', 'Familotel AG', 'Q1', 'E1')] },
+      ],
+    },
+  ]
+
+  it('lists published blocks with no usable quotes, references, tags, pins or seed separately', () => {
+    const { assignments, emptyBlocks } = collectInlineTestimonials(pages)
+    expect(emptyBlocks).toEqual([
+      { pageId: 1, blockId: 'e1', keys: [] },
+      { pageId: 1, blockId: 'e2', keys: [] },
+      { pageId: 1, blockId: 'e3', keys: [] },
+    ])
+    expect(assignments.map((a) => a.blockId)).toEqual(['b1'])
+  })
+
+  it('lists draft blocks that meet the same conditions', () => {
+    const { emptyBlocks, assignments, needsReview } = reviewDraftBlocks(pages, new Map(), [])
+    expect(emptyBlocks.map((b) => b.blockId)).toEqual(['e1', 'e2', 'e3'])
+    expect(assignments).toEqual([])
+    expect(needsReview.map((n) => n.blockId)).toEqual(['b1'])
+  })
+
+  it('become manual blocks with no testimonials, seeded with their id', () => {
+    const layout = applyAssignments(pages[0].layout, [{ blockId: 'e1', keys: [] }], new Map()) as Record<string, unknown>[]
+    expect(layout[0]).toEqual({ blockType: 'testimonials', id: 'e1', mode: 'manual', testimonials: [], seed: 'e1' })
+  })
+})
+
 describe('reviewDraftBlocks', () => {
   const armin = keyOf('Armin Biebl', 'Familotel AG')
   const ilona = keyOf('Ilona', 'Familotel AG')
@@ -50,7 +91,7 @@ describe('reviewDraftBlocks', () => {
 
   it('converts a draft block whose people and texts match the collection', () => {
     const drafts = [{ id: 1, layout: [{ blockType: 'hero', id: 'h' }, block('b1', item('i1', ' Armin Biebl ', 'Familotel AG', 'Q1 ', 'E1'), item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2'))] }]
-    expect(reviewDraftBlocks(drafts, held, published)).toEqual({ assignments: [{ pageId: 1, blockId: 'b1', keys: [armin, ilona] }], needsReview: [] })
+    expect(reviewDraftBlocks(drafts, held, published)).toEqual({ assignments: [{ pageId: 1, blockId: 'b1', keys: [armin, ilona] }], needsReview: [], emptyBlocks: [] })
   })
 
   it('leaves a draft block with changed text untouched and lists it', () => {
@@ -95,7 +136,7 @@ describe('reviewDraftBlocks', () => {
 
   it('skips blocks that already reference testimonials, carry a seed or have no quotes', () => {
     const drafts = [{ id: 1, layout: [{ ...block('b1', item('i1', 'X', '', 'Q', 'E')), testimonials: [3] }, { ...block('b3', item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2')), seed: 'abc' }, block('b2')] }]
-    expect(reviewDraftBlocks(drafts, held, published)).toEqual({ assignments: [], needsReview: [] })
+    expect(reviewDraftBlocks(drafts, held, published)).toEqual({ assignments: [], needsReview: [], emptyBlocks: [{ pageId: 1, blockId: 'b2', keys: [] }] })
   })
 })
 

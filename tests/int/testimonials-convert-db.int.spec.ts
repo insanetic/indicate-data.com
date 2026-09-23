@@ -34,6 +34,7 @@ describeDb(`convertInlineTestimonials against the database${enabled ? '' : ' (sk
   let payload: Payload
   let pageId: number
   let outsideId: number
+  let emptyId: number
   let outsideBefore: Page
   let publishedBefore: Page
   let draftBefore: Page
@@ -83,17 +84,26 @@ describeDb(`convertInlineTestimonials against the database${enabled ? '' : ' (sk
     outsideId = outside.id
     outsideBefore = await read(false, outsideId)
 
+    // A block that never had quotes: it rendered nothing and must keep rendering nothing.
+    const empty = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      context,
+      data: { title: 'Fixture empty', slug: `${slug}-empty`, _status: 'published', layout: [{ blockType: 'testimonials', seed: null, items: [] }] } as any,
+    })
+    emptyId = empty.id
+
     publishedBefore = await read(false)
     draftBefore = await read(true)
     expect(publishedBefore._status).toBe('published')
     expect(draftBefore._status).toBe('draft')
 
-    result = await runInlineTestimonialConversion(payload, { pageIds: [pageId] })
+    result = await runInlineTestimonialConversion(payload, { pageIds: [pageId, emptyId] })
   }, 180_000)
 
   afterAll(async () => {
     if (!payload) return
-    for (const id of [pageId, outsideId]) if (id) await payload.delete({ collection: 'pages', id, context })
+    for (const id of [pageId, outsideId, emptyId]) if (id) await payload.delete({ collection: 'pages', id, context })
     await payload.delete({ collection: 'testimonials', where: { name: { in: [person, outsider] } }, context })
   }, 60_000)
 
@@ -126,10 +136,24 @@ describeDb(`convertInlineTestimonials against the database${enabled ? '' : ' (sk
   })
 
   it('changes nothing on a second run', async () => {
-    const again = await runInlineTestimonialConversion(payload, { pageIds: [pageId] })
-    expect({ created: again.created, reused: again.reused, blocks: again.blocks, draftBlocks: again.draftBlocks }).toEqual({ created: 0, reused: 0, blocks: 0, draftBlocks: 0 })
+    const again = await runInlineTestimonialConversion(payload, { pageIds: [pageId, emptyId] })
+    expect({ created: again.created, reused: again.reused, blocks: again.blocks, draftBlocks: again.draftBlocks, emptyBlocks: again.emptyBlocks }).toEqual({
+      created: 0,
+      reused: 0,
+      blocks: 0,
+      draftBlocks: 0,
+      emptyBlocks: 0,
+    })
     expect((await read(true)).title).toBe('Fixture draft WIP')
     expect((await read(false))._status).toBe('published')
+  })
+
+  it('turns a block without quotes into an empty manual block, still published', async () => {
+    const after = await read(false, emptyId)
+    expect(after._status).toBe('published')
+    const block = testimonialsBlock(after)
+    expect({ mode: block.mode, testimonials: block.testimonials, seed: block.seed }).toEqual({ mode: 'manual', testimonials: [], seed: block.id })
+    expect({ emptyBlocks: result.emptyBlocks, emptyDraftBlocks: result.emptyDraftBlocks }).toEqual({ emptyBlocks: 1, emptyDraftBlocks: 0 })
   })
 
   it('leaves a legacy page outside the scope untouched', async () => {
