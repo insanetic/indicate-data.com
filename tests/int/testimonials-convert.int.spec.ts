@@ -38,9 +38,10 @@ describe('collectInlineTestimonials', () => {
 describe('reviewDraftBlocks', () => {
   const armin = keyOf('Armin Biebl', 'Familotel AG')
   const ilona = keyOf('Ilona', 'Familotel AG')
+  const role = { de: 'Vorstand', en: 'Board member' }
   const held = new Map([
-    [armin, { quote: { de: 'Q1', en: 'E1' }, role: { de: 'Vorstand', en: 'Board member' } }],
-    [ilona, { quote: { de: 'Q2', en: 'E2' }, role: { de: 'Vorstand', en: 'Board member' } }],
+    [armin, { name: 'Armin Biebl', company: 'Familotel AG', avatar: null, logo: null, quote: { de: 'Q1', en: 'E1' }, role }],
+    [ilona, { name: 'Ilona', company: 'Familotel AG', avatar: null, logo: null, quote: { de: 'Q2', en: 'E2' }, role }],
   ])
   const block = (id: string, ...items: ReturnType<typeof item>[]) => ({ blockType: 'testimonials', id, items })
   const published = [{ pageId: 1, blockId: 'b1', keys: [armin, ilona] }]
@@ -55,6 +56,20 @@ describe('reviewDraftBlocks', () => {
     const { assignments, needsReview } = reviewDraftBlocks(drafts, held, published)
     expect(assignments).toEqual([])
     expect(needsReview).toEqual([{ pageId: 1, blockId: 'b1', reason: expect.stringContaining(armin) }])
+  })
+
+  it('leaves a draft block whose only change is an avatar untouched and lists it', () => {
+    const drafts = [{ id: 1, layout: [block('b1', { ...item('i1', 'Armin Biebl', 'Familotel AG', 'Q1', 'E1'), avatar: { id: 42 } as never }, item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2'))] }]
+    const { assignments, needsReview } = reviewDraftBlocks(drafts, held, published)
+    expect(assignments).toEqual([])
+    expect(needsReview).toEqual([{ pageId: 1, blockId: 'b1', reason: expect.stringContaining(armin) }])
+  })
+
+  it('leaves a draft block whose only change is the casing of a name untouched and lists it', () => {
+    const drafts = [{ id: 1, layout: [block('b1', item('i1', 'Armin BIEBL', 'Familotel AG', 'Q1', 'E1'), item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2'))] }]
+    const { assignments, needsReview } = reviewDraftBlocks(drafts, held, published)
+    expect(assignments).toEqual([])
+    expect(needsReview).toHaveLength(1)
   })
 
   it('leaves a draft block whose people differ from the published block untouched and lists it', () => {

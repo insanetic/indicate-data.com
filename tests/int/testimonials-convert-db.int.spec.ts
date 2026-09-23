@@ -6,26 +6,40 @@ import config from '@/payload.config'
 import type { Page } from '@/payload-types'
 import { runInlineTestimonialConversion } from '@/utilities/convertInlineTestimonials'
 
-// Runs against the database in DATABASE_URL (the clone, never the shared dev DB). Everything it
+// Writes to the database in DATABASE_URL, so it is opt-in: TESTIMONIALS_DB_TEST=1 and never the
+// shared dev DB (`payload`). The conversion is scoped to the fixture page; everything the test
 // creates carries a unique fixture name and is deleted in afterAll.
+const databaseName = (() => {
+  try {
+    return new URL(process.env.DATABASE_URL || '').pathname.slice(1)
+  } catch {
+    return ''
+  }
+})()
+const enabled = process.env.TESTIMONIALS_DB_TEST === '1' && databaseName !== '' && databaseName !== 'payload'
+const describeDb = enabled ? describe : describe.skip
+
 const run = `${Date.now()}`
 const person = `Task8 Fixture ${run}`
 const company = 'Task8 Fixture Co'
 const slug = `task8-db-fixture-${run}`
+const outsider = `${person} outside`
 const context = { disableRevalidate: true }
 
 type Loose = Record<string, any>
 const testimonialsBlock = (page: Page) => (page.layout || []).find((b) => b.blockType === 'testimonials') as Loose
 const withoutLayout = ({ layout: _l, updatedAt: _u, createdAt: _c, _status: _s, ...rest }: Page) => rest
 
-describe('convertInlineTestimonials against the database', () => {
+describeDb(`convertInlineTestimonials against the database${enabled ? '' : ' (skipped: needs TESTIMONIALS_DB_TEST=1 and a DATABASE_URL other than /payload)'}`, () => {
   let payload: Payload
   let pageId: number
+  let outsideId: number
+  let outsideBefore: Page
   let publishedBefore: Page
   let draftBefore: Page
   let result: Awaited<ReturnType<typeof runInlineTestimonialConversion>>
 
-  const read = (draft: boolean) => payload.findByID({ collection: 'pages', id: pageId, locale: 'all', draft, depth: 0, showHiddenFields: true, context }) as unknown as Promise<Page>
+  const read = (draft: boolean, id = pageId) => payload.findByID({ collection: 'pages', id, locale: 'all', draft, depth: 0, showHiddenFields: true, context }) as unknown as Promise<Page>
 
   beforeAll(async () => {
     payload = await getPayload({ config: await config })
@@ -58,25 +72,35 @@ describe('convertInlineTestimonials against the database', () => {
       data: { title: 'Fixture draft WIP', layout: (de.layout || []).map((b: Loose) => ({ ...b, items: b.items.map((i: Loose) => ({ ...i, quote: 'Draft quote DE' })) })) } as any,
     })
 
+    // A second legacy page outside the scope: the conversion must not touch it.
+    const outside = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      context,
+      data: { title: 'Fixture outside', slug: `${slug}-outside`, _status: 'published', layout: [{ blockType: 'testimonials', items: [{ name: outsider, company, quote: 'Outside quote', role: 'Rolle' }] }] } as any,
+    })
+    outsideId = outside.id
+    outsideBefore = await read(false, outsideId)
+
     publishedBefore = await read(false)
     draftBefore = await read(true)
     expect(publishedBefore._status).toBe('published')
     expect(draftBefore._status).toBe('draft')
 
-    result = await runInlineTestimonialConversion(payload)
+    result = await runInlineTestimonialConversion(payload, { pageIds: [pageId] })
   }, 180_000)
 
   afterAll(async () => {
     if (!payload) return
-    if (pageId) await payload.delete({ collection: 'pages', id: pageId, context })
-    await payload.delete({ collection: 'testimonials', where: { name: { equals: person } }, context })
+    for (const id of [pageId, outsideId]) if (id) await payload.delete({ collection: 'pages', id, context })
+    await payload.delete({ collection: 'testimonials', where: { name: { in: [person, outsider] } }, context })
   }, 60_000)
 
   it('creates the person from the published block', async () => {
     const created = await payload.find({ collection: 'testimonials', where: { name: { equals: person } }, locale: 'all', depth: 0, context })
     expect(created.docs).toHaveLength(1)
     expect(created.docs[0]).toMatchObject({ company, _status: 'published', quote: { de: 'Live quote DE', en: 'Live quote EN' }, role: { de: 'Rolle', en: 'Role' } })
-    expect(result.created).toBeGreaterThanOrEqual(1)
+    expect({ created: result.created, reused: result.reused, blocks: result.blocks, draftBlocks: result.draftBlocks }).toEqual({ created: 1, reused: 0, blocks: 1, draftBlocks: 0 })
   })
 
   it('keeps the page published and changes nothing but the converted block', async () => {
@@ -100,9 +124,15 @@ describe('convertInlineTestimonials against the database', () => {
   })
 
   it('changes nothing on a second run', async () => {
-    const again = await runInlineTestimonialConversion(payload)
+    const again = await runInlineTestimonialConversion(payload, { pageIds: [pageId] })
     expect({ created: again.created, reused: again.reused, blocks: again.blocks, draftBlocks: again.draftBlocks }).toEqual({ created: 0, reused: 0, blocks: 0, draftBlocks: 0 })
     expect((await read(true)).title).toBe('Fixture draft WIP')
     expect((await read(false))._status).toBe('published')
+  })
+
+  it('leaves a legacy page outside the scope untouched', async () => {
+    expect(await read(false, outsideId)).toEqual(outsideBefore)
+    const created = await payload.find({ collection: 'testimonials', where: { name: { equals: outsider } }, depth: 0, context })
+    expect(created.docs).toHaveLength(0)
   })
 })

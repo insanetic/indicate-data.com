@@ -1,4 +1,4 @@
-import { createLocalReq, type Payload, type PayloadRequest } from 'payload'
+import { createLocalReq, type Payload, type PayloadRequest, type Where } from 'payload'
 
 import type { Page } from '@/payload-types'
 import { locales, type Locale } from '@/i18n/config'
@@ -19,8 +19,15 @@ export type InlineEntry = {
 }
 export type Assignment = { pageId: number; blockId: string; keys: string[] }
 export type NeedsReview = { pageId: number; blockId: string; reason: string }
-/** What the collection holds (or is about to hold) for one person, per locale. */
-export type Held = { quote: Partial<Record<Locale, string>>; role: Partial<Record<Locale, string>> }
+/** What the collection holds (or is about to hold) for one person. */
+export type Held = {
+  name: string
+  company: string | null
+  avatar: number | null
+  logo: number | null
+  quote: Partial<Record<Locale, string>>
+  role: Partial<Record<Locale, string>>
+}
 
 export const keyOf = (name?: string | null, company?: string | null) => `${(name || '').trim().toLowerCase()}|${(company || '').trim().toLowerCase()}`
 
@@ -77,8 +84,8 @@ const sameText = (a: Partial<Record<Locale, string>>, b: Partial<Record<Locale, 
 
 /**
  * Pure check of pending drafts (read with `locale: 'all'`). A draft block is converted only when
- * converting loses nothing: every person is one the collection holds, with the same quote and
- * role in every locale (after trimming), and, if the published block with the same id is being
+ * converting loses nothing: every person is one the collection holds, with the same name, company,
+ * avatar and logo, the same quote and role in every locale (text compared after trimming), and, if the published block with the same id is being
  * converted, the same people in the same order. Anything else is an editor's pending edit: the
  * block stays as it is (the legacy fallback keeps rendering it in the draft) and is listed for
  * review. Draft-only people never create testimonials.
@@ -97,10 +104,17 @@ export const reviewDraftBlocks = (drafts: PageLike[], held: Map<string, Held>, p
       }
       const changed = block.items.find((i, n) => {
         const h = held.get(keys[n]) as Held
-        return !sameText(perLocale(i.quote), h.quote) || !sameText(perLocale(i.role), h.role)
+        return (
+          (i.name || '').trim() !== h.name.trim() ||
+          (i.company || '').trim() !== (h.company || '').trim() ||
+          mediaId(i.avatar) !== h.avatar ||
+          mediaId(i.logo) !== h.logo ||
+          !sameText(perLocale(i.quote), h.quote) ||
+          !sameText(perLocale(i.role), h.role)
+        )
       })
       if (changed) {
-        flag(`draft quote or role differs from the collection: ${keyOf(changed.name, changed.company)}`)
+        flag(`draft person differs from the collection (name, company, avatar, logo, quote or role): ${keyOf(changed.name, changed.company)}`)
         continue
       }
       const live = published.find((a) => a.pageId === page.id && a.blockId === block.id)
@@ -145,20 +159,29 @@ const pageData = ({ id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...da
  *
  * The per-locale saves are only safe together, so `req` must carry a transaction: a migration's
  * `req` does, scripts use `runInlineTestimonialConversion`. Every call passes that `req`.
+ *
+ * `pageIds` limits which pages are read and converted (tests pass their fixture so nothing else
+ * is touched); existing testimonials are always matched across the whole collection.
  */
-export const convertInlineTestimonials = async ({ payload, req }: { payload: Payload; req: PayloadRequest }) => {
+export const convertInlineTestimonials = async ({ payload, req, pageIds }: { payload: Payload; req: PayloadRequest; pageIds?: (number | string)[] }) => {
   const context = { disableRevalidate: true }
   const [primary, ...rest] = locales
   const read = { collection: 'pages', depth: 0, overrideAccess: true, showHiddenFields: true, req, context } as const
-  const mainRows = await payload.find({ ...read, locale: 'all', pagination: false, draft: false })
-  const latest = await payload.find({ ...read, locale: 'all', pagination: false, draft: true })
+  const where: Where | undefined = pageIds ? { id: { in: pageIds } } : undefined
+  const mainRows = await payload.find({ ...read, where, locale: 'all', pagination: false, draft: false })
+  const latest = await payload.find({ ...read, where, locale: 'all', pagination: false, draft: true })
   const published = mainRows.docs.filter((d) => d._status === 'published') as unknown as PageLike[]
   const drafts = latest.docs.filter((d) => d._status === 'draft') as unknown as PageLike[]
   const { entries, assignments } = collectInlineTestimonials(published)
 
   const existing = await payload.find({ collection: 'testimonials', locale: 'all', depth: 0, pagination: false, overrideAccess: true, draft: true, req, context })
   const idByKey = new Map(existing.docs.map((d) => [keyOf(d.name, d.company), d.id]))
-  const held = new Map<string, Held>(existing.docs.map((d) => [keyOf(d.name, d.company), { quote: perLocale(d.quote as Localised), role: perLocale(d.role as Localised) }]))
+  const held = new Map<string, Held>(
+    existing.docs.map((d) => [
+      keyOf(d.name, d.company),
+      { name: d.name, company: d.company || null, avatar: mediaId(d.avatar), logo: mediaId(d.logo), quote: perLocale(d.quote as Localised), role: perLocale(d.role as Localised) },
+    ]),
+  )
   let created = 0
   for (const e of entries) {
     if (idByKey.has(e.key)) continue
@@ -174,7 +197,7 @@ export const convertInlineTestimonials = async ({ payload, req }: { payload: Pay
       await payload.update({ collection: 'testimonials', id: doc.id, locale, data: { quote: e.quote[locale], role: e.role[locale], _status: 'published' }, req, context })
     }
     idByKey.set(e.key, doc.id)
-    held.set(e.key, { quote: e.quote, role: e.role })
+    held.set(e.key, { name: e.name, company: e.company, avatar: e.avatar, logo: e.logo, quote: e.quote, role: e.role })
     created++
   }
   const review = reviewDraftBlocks(drafts, held, assignments)
@@ -219,13 +242,13 @@ export const convertInlineTestimonials = async ({ payload, req }: { payload: Pay
  * the per-locale saves briefly leave draft values in the published row, so a failure halfway must
  * roll everything back instead of leaving them live.
  */
-export const runInlineTestimonialConversion = async (payload: Payload) => {
+export const runInlineTestimonialConversion = async (payload: Payload, { pageIds }: { pageIds?: (number | string)[] } = {}) => {
   const req = await createLocalReq({ context: { disableRevalidate: true } }, payload)
   const transactionID = await payload.db.beginTransaction()
   if (transactionID === null) throw new Error('[testimonials] the database adapter did not start a transaction')
   req.transactionID = transactionID
   try {
-    const result = await convertInlineTestimonials({ payload, req })
+    const result = await convertInlineTestimonials({ payload, req, pageIds })
     await payload.db.commitTransaction(transactionID)
     return result
   } catch (error) {
