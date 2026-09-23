@@ -1,62 +1,33 @@
-import type { Block } from 'payload'
+import type { Field } from 'payload'
+
+import { createTestimonialsBlock } from '@subneo/payload-testimonials'
 
 import { sectionHeader } from '@/fields/sectionHeader'
 import { sectionSettings } from '@/fields/sectionSettings'
 
-export const Testimonials: Block = {
-  slug: 'testimonials',
-  interfaceName: 'TestimonialsBlock',
-  labels: {
-    singular: { de: 'Kundenstimmen', en: 'Testimonials' },
-    plural: { de: 'Kundenstimmen-Abschnitte', en: 'Testimonial sections' },
-  },
+/**
+ * The quotes this block stored inline before testimonials became central. Kept (hidden) so the
+ * dev schema push stays additive; `scripts/convert-testimonials.ts` moves them into the
+ * collection. Drop in a later, separate change.
+ */
+const legacyInlineItems: Field = {
+  name: 'items',
+  type: 'array',
+  admin: { hidden: true },
   fields: [
-    sectionHeader({ optionalHeading: true }),
-    {
-      name: 'items',
-      type: 'array',
-      label: { de: 'Zitate', en: 'Quotes' },
-      labels: { singular: { de: 'Zitat', en: 'Quote' }, plural: { de: 'Zitate', en: 'Quotes' } },
-      minRows: 1,
-      maxRows: 6,
-      admin: { components: { RowLabel: '@/blocks/Testimonials/RowLabel#QuoteRowLabel' } },
-      fields: [
-        {
-          name: 'quote',
-          type: 'textarea',
-          required: true,
-          localized: true,
-          label: { de: 'Zitat', en: 'Quote' },
-        },
-        {
-          type: 'row',
-          fields: [
-            { name: 'name', type: 'text', required: true, label: { de: 'Name', en: 'Name' }, admin: { width: '34%' } },
-            { name: 'role', type: 'text', localized: true, label: { de: 'Rolle', en: 'Role' }, admin: { width: '33%' } },
-            { name: 'company', type: 'text', label: { de: 'Unternehmen', en: 'Company' }, admin: { width: '33%' } },
-          ],
-        },
-        {
-          type: 'row',
-          fields: [
-            {
-              name: 'avatar',
-              type: 'upload',
-              relationTo: 'media',
-              label: { de: 'Foto (optional)', en: 'Photo (optional)' },
-              admin: { width: '50%' },
-            },
-            {
-              name: 'logo',
-              type: 'upload',
-              relationTo: 'media',
-              label: { de: 'Firmenlogo (optional)', en: 'Company logo (optional)' },
-              admin: { width: '50%' },
-            },
-          ],
-        },
-      ],
-    },
-    sectionSettings(),
+    { name: 'quote', type: 'textarea', localized: true },
+    { name: 'name', type: 'text' },
+    { name: 'role', type: 'text', localized: true },
+    { name: 'company', type: 'text' },
+    { name: 'avatar', type: 'upload', relationTo: 'media' },
+    { name: 'logo', type: 'upload', relationTo: 'media' },
   ],
 }
+
+/** Central testimonials, wrapped in this site's section header and settings. */
+export const Testimonials = createTestimonialsBlock({
+  localized: true,
+  before: [sectionHeader({ optionalHeading: true })],
+  after: [sectionSettings()],
+  extraFields: [legacyInlineItems],
+})

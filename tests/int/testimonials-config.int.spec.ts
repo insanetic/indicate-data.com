@@ -1,7 +1,9 @@
 import type { Config, CollectionConfig, Field } from 'payload'
 import { describe, expect, it } from 'vitest'
 
-import { testimonialsPlugin } from '@subneo/payload-testimonials'
+import { createTestimonialsBlock, testimonialsPlugin } from '@subneo/payload-testimonials'
+
+import { Testimonials } from '@/blocks/Testimonials/config'
 
 const base = { collections: [], localization: { locales: ['de', 'en'], defaultLocale: 'de' } } as unknown as Config
 // Unnamed layout fields (rows) are flattened; named groups are not, so `link.doc` still needs the group's fields.
@@ -9,6 +11,8 @@ const flatten = (fields: Field[]): Field[] =>
   fields.flatMap((f) => (!('name' in f) && 'fields' in f ? flatten(f.fields as Field[]) : [f]))
 const byName = (fields: Field[], name: string) =>
   flatten(fields).find((f) => 'name' in f && f.name === name) as Field & Record<string, unknown>
+// Field names in order, with rows flattened (unnamed fields show their type).
+const flat = (fields: Field[]): string[] => flatten(fields).map((f) => ('name' in f ? f.name : f.type))
 const collection = (config: Config, slug: string) => (config.collections as CollectionConfig[]).find((c) => c.slug === slug)!
 
 describe('testimonialsPlugin', () => {
@@ -70,5 +74,42 @@ describe('testimonialsPlugin', () => {
   it('does nothing when disabled', async () => {
     const config = await testimonialsPlugin({ enabled: false })(base)
     expect(config.collections).toHaveLength(0)
+  })
+})
+
+describe('createTestimonialsBlock', () => {
+  const block = createTestimonialsBlock({ before: [{ name: 'header', type: 'text' }], after: [{ name: 'settings', type: 'text' }] })
+  const names = flat(block.fields)
+
+  it('orders before → own fields → after', () => {
+    expect(names[0]).toBe('header')
+    expect(names.at(-1)).toBe('settings')
+    expect(names).toEqual(expect.arrayContaining(['mode', 'testimonials', 'tags', 'tagMatch', 'count', 'pinned', 'exclude', 'seed', 'preview']))
+  })
+
+  it('defaults to auto mode and a random seed', () => {
+    expect(byName(block.fields, 'mode').defaultValue).toBe('auto')
+    const seed = byName(block.fields, 'seed').defaultValue as () => string
+    expect(typeof seed()).toBe('string')
+    expect(seed()).not.toBe(seed())
+  })
+
+  it('shows manual/auto fields conditionally', () => {
+    const cond = (name: string) => (byName(block.fields, name).admin as { condition: (d: unknown, s: unknown) => boolean }).condition
+    expect(cond('testimonials')({}, { mode: 'manual' })).toBe(true)
+    expect(cond('testimonials')({}, { mode: 'auto' })).toBe(false)
+    expect(cond('count')({}, { mode: 'auto' })).toBe(true)
+    expect(cond('tagMatch')({}, { mode: 'auto', tags: [1] })).toBe(false)
+    expect(cond('tagMatch')({}, { mode: 'auto', tags: [1, 2] })).toBe(true)
+  })
+})
+
+describe('site Testimonials block', () => {
+  it('keeps the slug and interface and the legacy inline items (hidden)', () => {
+    expect(Testimonials.slug).toBe('testimonials')
+    expect(Testimonials.interfaceName).toBe('TestimonialsBlock')
+    const items = byName(Testimonials.fields, 'items')
+    expect(items.type).toBe('array')
+    expect((items.admin as { hidden?: boolean }).hidden).toBe(true)
   })
 })

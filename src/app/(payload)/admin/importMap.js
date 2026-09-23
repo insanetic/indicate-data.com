@@ -19,7 +19,7 @@ import { PillarRowLabel as PillarRowLabel_528de31143c10bc75008b08b84b56e12 } fro
 import { TileRowLabel as TileRowLabel_528de31143c10bc75008b08b84b56e12 } from '@/blocks/Pillars/RowLabel'
 import { CardRowLabel as CardRowLabel_143cc043a8033f7dfc7c9c6b7df4425c } from '@/blocks/CardGrid/RowLabel'
 import { StatRowLabel as StatRowLabel_081da0575d0ec9247990b7ab673a618a } from '@/blocks/Stats/RowLabel'
-import { QuoteRowLabel as QuoteRowLabel_7d0512708dc3b45d4316940f413f8c38 } from '@/blocks/Testimonials/RowLabel'
+import { SelectionPreview as SelectionPreview_679657c9496ce0be48053153e88bcd49 } from '@subneo/payload-testimonials/admin'
 import { PlanRowLabel as PlanRowLabel_30b0d4f328750013d165dfd2e3c26cab } from '@/blocks/PricingTeaser/RowLabel'
 import { FaqRowLabel as FaqRowLabel_b8cff7fabe68f7eef136ff3ef1a2643c } from '@/blocks/Faq/RowLabel'
 import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -78,7 +78,7 @@ export const importMap = {
   "@/blocks/Pillars/RowLabel#TileRowLabel": TileRowLabel_528de31143c10bc75008b08b84b56e12,
   "@/blocks/CardGrid/RowLabel#CardRowLabel": CardRowLabel_143cc043a8033f7dfc7c9c6b7df4425c,
   "@/blocks/Stats/RowLabel#StatRowLabel": StatRowLabel_081da0575d0ec9247990b7ab673a618a,
-  "@/blocks/Testimonials/RowLabel#QuoteRowLabel": QuoteRowLabel_7d0512708dc3b45d4316940f413f8c38,
+  "@subneo/payload-testimonials/admin#SelectionPreview": SelectionPreview_679657c9496ce0be48053153e88bcd49,
   "@/blocks/PricingTeaser/RowLabel#PlanRowLabel": PlanRowLabel_30b0d4f328750013d165dfd2e3c26cab,
   "@/blocks/Faq/RowLabel#FaqRowLabel": FaqRowLabel_b8cff7fabe68f7eef136ff3ef1a2643c,
   "@payloadcms/richtext-lexical/client#TableFeatureClient": TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,

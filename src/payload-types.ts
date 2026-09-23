@@ -1403,10 +1403,18 @@ export interface TestimonialsBlock {
     lead?: string | null;
     align?: ('left' | 'center') | null;
   };
+  mode?: ('auto' | 'manual') | null;
+  testimonials?: (number | Testimonial)[] | null;
+  tags?: (number | TestimonialTag)[] | null;
+  tagMatch?: ('any' | 'all') | null;
+  count?: number | null;
+  pinned?: (number | Testimonial)[] | null;
+  exclude?: (number | Testimonial)[] | null;
+  seed?: string | null;
   items?:
     | {
-        quote: string;
-        name: string;
+        quote?: string | null;
+        name?: string | null;
         role?: string | null;
         company?: string | null;
         avatar?: (number | null) | Media;
@@ -1422,6 +1430,64 @@ export interface TestimonialsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'testimonials';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  title?: string | null;
+  quote: string;
+  name: string;
+  role?: string | null;
+  company?: string | null;
+  avatar?: (number | null) | Media;
+  logo?: (number | null) | Media;
+  /**
+   * Only used to select testimonials in sections; visitors never see tags.
+   */
+  tags?: (number | TestimonialTag)[] | null;
+  link?: {
+    type?: ('none' | 'internal' | 'external') | null;
+    doc?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+  };
+  /**
+   * After this day the quote is no longer shown.
+   */
+  approvedUntil?: string | null;
+  /**
+   * E.g. who approved it. Never shown.
+   */
+  internalNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonial-tags".
+ */
+export interface TestimonialTag {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2178,64 +2244,6 @@ export interface Search {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials".
- */
-export interface Testimonial {
-  id: number;
-  title?: string | null;
-  quote: string;
-  name: string;
-  role?: string | null;
-  company?: string | null;
-  avatar?: (number | null) | Media;
-  logo?: (number | null) | Media;
-  /**
-   * Only used to select testimonials in sections; visitors never see tags.
-   */
-  tags?: (number | TestimonialTag)[] | null;
-  link?: {
-    type?: ('none' | 'internal' | 'external') | null;
-    doc?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
-    url?: string | null;
-    label?: string | null;
-  };
-  /**
-   * After this day the quote is no longer shown.
-   */
-  approvedUntil?: string | null;
-  /**
-   * E.g. who approved it. Never shown.
-   */
-  internalNote?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonial-tags".
- */
-export interface TestimonialTag {
-  id: number;
-  title: string;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -3260,6 +3268,14 @@ export interface TestimonialsBlockSelect<T extends boolean = true> {
         lead?: T;
         align?: T;
       };
+  mode?: T;
+  testimonials?: T;
+  tags?: T;
+  tagMatch?: T;
+  count?: T;
+  pinned?: T;
+  exclude?: T;
+  seed?: T;
   items?:
     | T
     | {
