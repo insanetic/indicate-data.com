@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { applyAssignments, collectInlineTestimonials, keyOf } from '@/utilities/convertInlineTestimonials'
+import { applyAssignments, collectInlineTestimonials, keyOf, reviewDraftBlocks } from '@/utilities/convertInlineTestimonials'
 
 const item = (id: string, name: string, company: string, de: string, en: string) => ({
   id,
@@ -35,28 +35,50 @@ describe('collectInlineTestimonials', () => {
   })
 })
 
-describe('collectInlineTestimonials with published and draft layouts', () => {
+describe('reviewDraftBlocks', () => {
   const armin = keyOf('Armin Biebl', 'Familotel AG')
   const ilona = keyOf('Ilona', 'Familotel AG')
+  const held = new Map([
+    [armin, { quote: { de: 'Q1', en: 'E1' }, role: { de: 'Vorstand', en: 'Board member' } }],
+    [ilona, { quote: { de: 'Q2', en: 'E2' }, role: { de: 'Vorstand', en: 'Board member' } }],
+  ])
   const block = (id: string, ...items: ReturnType<typeof item>[]) => ({ blockType: 'testimonials', id, items })
-  const published = { id: 1, layout: [{ blockType: 'hero', id: 'h' }, block('b1', item('i1', 'Armin Biebl', 'Familotel AG', 'Q1', 'E1'))] }
-  const draft = {
-    id: 1,
-    layout: [{ blockType: 'hero', id: 'h' }, { blockType: 'featureStory', id: 'f' }, block('b1', item('i1', 'Armin Biebl', 'Familotel AG', 'Q1', 'E1')), block('b7', item('i7', 'Ilona', 'Familotel AG', 'Q2', 'E2'))],
-  }
+  const published = [{ pageId: 1, blockId: 'b1', keys: [armin, ilona] }]
 
-  it('assigns a block found in both the published and the draft layout once', () => {
-    const { assignments } = collectInlineTestimonials([published, draft])
-    expect(assignments.filter((a) => a.blockId === 'b1')).toEqual([{ pageId: 1, blockId: 'b1', keys: [armin] }])
+  it('converts a draft block whose people and texts match the collection', () => {
+    const drafts = [{ id: 1, layout: [{ blockType: 'hero', id: 'h' }, block('b1', item('i1', ' Armin Biebl ', 'Familotel AG', 'Q1 ', 'E1'), item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2'))] }]
+    expect(reviewDraftBlocks(drafts, held, published)).toEqual({ assignments: [{ pageId: 1, blockId: 'b1', keys: [armin, ilona] }], needsReview: [] })
   })
 
-  it('also converts a block that only exists in the draft', () => {
-    const { entries, assignments } = collectInlineTestimonials([published, draft])
-    expect(assignments).toEqual([
-      { pageId: 1, blockId: 'b1', keys: [armin] },
-      { pageId: 1, blockId: 'b7', keys: [ilona] },
-    ])
-    expect(entries.map((e) => e.key)).toEqual([armin, ilona])
+  it('leaves a draft block with changed text untouched and lists it', () => {
+    const drafts = [{ id: 1, layout: [block('b1', item('i1', 'Armin Biebl', 'Familotel AG', 'Q1', 'E1 edited'), item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2'))] }]
+    const { assignments, needsReview } = reviewDraftBlocks(drafts, held, published)
+    expect(assignments).toEqual([])
+    expect(needsReview).toEqual([{ pageId: 1, blockId: 'b1', reason: expect.stringContaining(armin) }])
+  })
+
+  it('leaves a draft block whose people differ from the published block untouched and lists it', () => {
+    const drafts = [{ id: 1, layout: [block('b1', item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2'), item('i1', 'Armin Biebl', 'Familotel AG', 'Q1', 'E1'))] }]
+    const { assignments, needsReview } = reviewDraftBlocks(drafts, held, published)
+    expect(assignments).toEqual([])
+    expect(needsReview).toHaveLength(1)
+  })
+
+  it('leaves a draft-only block with an unknown person untouched and lists it', () => {
+    const drafts = [{ id: 1, layout: [block('b7', item('i7', 'New Person', 'Hotel X', 'Q', 'E'))] }]
+    const { assignments, needsReview } = reviewDraftBlocks(drafts, held, published)
+    expect(assignments).toEqual([])
+    expect(needsReview).toEqual([{ pageId: 1, blockId: 'b7', reason: expect.stringContaining(keyOf('New Person', 'Hotel X')) }])
+  })
+
+  it('converts a draft-only block of known people with matching texts', () => {
+    const drafts = [{ id: 1, layout: [block('b7', item('i7', 'Ilona', 'Familotel AG', 'Q2', 'E2'))] }]
+    expect(reviewDraftBlocks(drafts, held, published).assignments).toEqual([{ pageId: 1, blockId: 'b7', keys: [ilona] }])
+  })
+
+  it('skips blocks that already reference testimonials or have no quotes', () => {
+    const drafts = [{ id: 1, layout: [{ ...block('b1', item('i1', 'X', '', 'Q', 'E')), testimonials: [3] }, block('b2')] }]
+    expect(reviewDraftBlocks(drafts, held, published)).toEqual({ assignments: [], needsReview: [] })
   })
 })
 
