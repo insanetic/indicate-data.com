@@ -2,6 +2,7 @@ import type { Access, CollectionConfig, CollectionSlug, Field } from 'payload'
 
 import { slugField } from 'payload'
 
+import { createPreviewEndpoint, createUsageEndpoint } from './endpoints'
 import { createRevalidateHook, setTitle } from './hooks'
 import { l } from './labels'
 import type { ResolvedOptions } from './types'
@@ -68,6 +69,7 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
       ...o.access,
     },
     versions: { drafts: true },
+    endpoints: [createUsageEndpoint(o), createPreviewEndpoint(o)],
     hooks: { beforeChange: [setTitle], afterChange: [revalidate], afterDelete: [revalidate] },
     fields: [
       { name: 'title', type: 'text', admin: { hidden: true } },
