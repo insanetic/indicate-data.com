@@ -8,11 +8,11 @@ import { withoutLocalization } from '@/utilities/withoutLocalization'
  * localisation is enabled.
  *
  * Why: these collections already hold content from the starter template. Localising a field
- * moves its column into a `_locales` table, and the dev-mode schema push then prompts for
- * confirmation, which is not possible in the Docker dev container (no TTY).
+ * moves its column into a `_locales` table, and the generated migration drops the old column
+ * with its content.
  *
- * Remove a slug from the list (and run `scripts/reset-content.ts` or a migration) when that
- * collection should become localised.
+ * Remove a slug from the list, together with a migration that copies the values over, when
+ * that collection should become localised.
  */
 export const unlocalizedCollections =
   (slugs: string[]): Plugin =>

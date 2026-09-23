@@ -69,10 +69,15 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
-    // The production image sets PAYLOAD_MIGRATE_ON_START=true: pending migrations from
-    // src/migrations run when the container starts, before the first request is served.
-    // Off everywhere else, because a database that was used with `pnpm dev` (schema push)
-    // makes the migration runner stop and ask for confirmation.
+    // The schema only ever changes through the files in src/migrations, in every environment.
+    // No schema push, so `pnpm dev`, tests and host scripts never alter tables on their own.
+    push: false,
+    // Production: the image sets PAYLOAD_MIGRATE_ON_START=true, and pending migrations run when
+    // the container starts, before the first request is served. Payload only runs these with
+    // NODE_ENV=production, so the flag keeps host scripts started with NODE_ENV=production from
+    // migrating whatever database they point at.
+    // Development: the dev container runs `pnpm payload migrate` before `pnpm dev`; while it is
+    // running, `make migrate` applies new files. See deploy/README.md, "Schema changes".
     prodMigrations: process.env.PAYLOAD_MIGRATE_ON_START === 'true' ? migrations : undefined,
   }),
   collections: [Pages, Posts, Media, Categories, Sidebars, Users],

@@ -1,6 +1,6 @@
 /**
  * Moves the inline quotes of all testimonials blocks into the central collection:
- *   NODE_ENV=production DATABASE_URL=postgres://payload:payload@localhost:5433/payload \
+ *   DATABASE_URL=postgres://payload:payload@localhost:5433/payload \
  *     ./node_modules/.bin/payload run scripts/convert-testimonials.ts
  * Safe to run again. Runs in one transaction: any error rolls everything back and exits non-zero.
  * Production runs the same step inside the testimonials migration.
