@@ -207,8 +207,9 @@ export const Header: GlobalConfig = {
 }
 
 /**
- * Legacy `navItems` from the starter template, hidden and unused. It was kept while development
- * used schema push, which would have had to delete a table. Remove it together with a migration.
+ * Legacy `navItems` from the starter template, hidden and unused. It stays in the config so the
+ * dev-mode schema push never has to delete a table (drizzle-kit would prompt in the Docker
+ * container). Remove it together with a migration.
  */
 Header.fields.push({
   name: 'navItems',

@@ -157,8 +157,8 @@ export const Pages: CollectionConfig<'pages'> = {
         },
       ],
     },
-    // Legacy, non-localised SEO group from the starter template. Kept (hidden) because
-    // removing it drops populated columns; remove together with a migration.
+    // Legacy, non-localised SEO group from the starter template. Kept (hidden) so the dev
+    // schema push never has to drop populated columns; remove together with a migration.
     {
       name: 'meta',
       type: 'group',

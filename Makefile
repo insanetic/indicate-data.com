@@ -12,10 +12,10 @@ GIT_DIRTY := $(shell git status --porcelain --untracked-files=no -- . ':!tsconfi
 TAG ?= $(GIT_SHA)$(if $(GIT_DIRTY),-dirty)
 
 .DEFAULT_GOAL := help
-.PHONY: help build push ship migration migrate migrate-status
+.PHONY: help build push ship migration
 
 help: ## Show this overview
-	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 	@echo
 	@echo "  Current tag: $(TAG)    Image: $(or $(IMAGE),<IMAGE not set>)    Platform: $(PLATFORM)"
 
@@ -38,18 +38,7 @@ push: need-IMAGE ## Push the current tag and :latest to Docker Hub
 
 ship: build push ## build + push
 
-migration: need-NAME ## After a schema change: write src/migrations/<stamp>_NAME.ts (diffs the config against the last snapshot)
-	@before=$$(ls src/migrations/*.ts | wc -l); \
-	DATABASE_URL=$(or $(DEV_DATABASE_URL),postgres://payload:payload@localhost:5433/payload) \
-		./node_modules/.bin/payload migrate:create $(NAME) --skip-empty || exit $$?; \
-	if [ "$$(ls src/migrations/*.ts | wc -l)" -gt "$$before" ]; then \
-		echo "Review the generated SQL, run 'make migrate', then commit src/migrations/."; \
-	else \
-		echo "No schema changes: the config matches the last migration snapshot. Nothing written."; \
-	fi
-
-migrate: ## Apply pending migrations in the running dev container
-	docker compose exec -T app sh -c "node scripts/check-migration-baseline.mjs && pnpm payload migrate"
-
-migrate-status: ## List migrations and whether the dev database has run them
-	docker compose exec -T app pnpm payload migrate:status
+migration: need-NAME ## After a schema change: create src/migrations/<stamp>_NAME.ts (needs the dev database)
+	NODE_ENV=production DATABASE_URL=$(or $(DEV_DATABASE_URL),postgres://payload:payload@localhost:5433/payload) \
+		./node_modules/.bin/payload migrate:create $(NAME)
+	@echo "Review the generated SQL, then commit src/migrations/."

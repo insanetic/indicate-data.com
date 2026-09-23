@@ -37,18 +37,6 @@ if [ -f "$MEDIA" ]; then
   echo "Media uploads restored to public/media"
 fi
 
-# A dump from before development switched to migrations still carries the schema push marker.
-# The app container's `payload migrate` would wait for an answer on it forever, so stop here.
-# Only an explicit count above zero is a marker; no payload_migrations table gives an empty result.
-MARKERS=$(docker exec "$CONTAINER" psql -U payload -d payload -tA -c \
-  "select count(*) from payload_migrations where batch = -1" 2>/dev/null || true)
-if [ -n "$MARKERS" ] && [ "$MARKERS" -gt 0 ] 2>/dev/null; then
-  echo "This dump comes from a dev database that still used schema push (marker row batch = -1)."
-  echo "Record its migrations as applied before starting the app: deploy/README.md, 'Switching an"
-  echo "existing dev database over'. Use the migration names from the commit the dump was taken at."
-  exit 1
-fi
-
 # Drop the app container's persisted Next.js data cache so it renders the restored content.
 APP=$(docker compose ps -q app 2>/dev/null || true)
 if [ -n "$APP" ]; then

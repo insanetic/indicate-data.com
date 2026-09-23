@@ -7,8 +7,8 @@ import { sectionSettings } from '@/fields/sectionSettings'
 
 /**
  * The quotes this block stored inline before testimonials became central. Kept (hidden) so the
- * schema change stays additive; the testimonials migration (or `scripts/convert-testimonials.ts`)
- * moves them into the collection. Drop in a later, separate migration.
+ * dev schema push stays additive; `scripts/convert-testimonials.ts` moves them into the
+ * collection. Drop in a later, separate change.
  */
 const legacyInlineItems: Field = {
   name: 'items',

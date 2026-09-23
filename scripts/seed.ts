@@ -1,6 +1,6 @@
 /**
  * Seeds the Indicate site from the host (outside Docker):
- *   DATABASE_URL=postgres://payload:payload@localhost:5433/payload \
+ *   NODE_ENV=production DATABASE_URL=postgres://payload:payload@localhost:5433/payload \
  *     ./node_modules/.bin/payload run scripts/seed.ts
  *
  * The admin "Seed" button and /next/seed run the same function inside the app.

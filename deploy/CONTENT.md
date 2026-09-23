@@ -89,14 +89,15 @@ backups/prod-<stamp>.dump` reads it back without touching a database.
 
 For the first fill, or any deliberate overwrite. **It replaces all production content.**
 
-The schema in the dump must match the image that will run against it. Both sides only change
-through migrations, so:
+The schema in the dump must match the image that will run against it. Development uses
+schema push, production only migrations, so:
 
 1. Commit the migration for whatever you changed (`make migration NAME=...`), `make ship`,
    and roll that tag out. `ssh envoy-discovery-01 'docker ps --format "{{.Image}}"'` shows
    what is live.
-2. Note the migration file names in `src/migrations/` at that commit, without `.ts`
-   (`ls src/migrations/*.ts`, minus `index.ts`). They go into step 4 below.
+2. Note the migration file names in `src/migrations/` at that commit, without `.ts`. They
+   go into step 4 below - at the time of writing, `20260921_153447_initial` and
+   `20260922_142530`.
 
 ```bash
 # 0. a fresh local dump, and the safety dump above
@@ -125,7 +126,7 @@ ssh envoy-discovery-01 "sudo docker run --rm -i $TLS $PG \
 delete from payload_migrations where batch = -1;
 insert into payload_migrations (name, batch, created_at, updated_at)
 select v.name, 1, now(), now()
-from (values ('<first migration>'), ('<second migration>') /* ...every name from step 2 */) v(name)
+from (values ('20260921_153447_initial'), ('20260922_142530')) v(name)
 where not exists (select 1 from payload_migrations m where m.name = v.name);
 SQL
 
@@ -134,11 +135,10 @@ ssh envoy-discovery-01 'sudo systemctl start website'
 ssh envoy-discovery-01 'curl -s localhost:3000/next/health'
 ```
 
-**Step 4 is needed for a dump from a dev database that still used schema push**, before
-development switched to migrations. Such a database carries a row in `payload_migrations` with
-`batch = -1`. The migration runner sees it, decides the schema was never migrated, and asks
-whether to go ahead. Without a terminal nobody can answer, so it waits there and the site never
-comes up. Deleting the marker is half
+**Step 4 is not optional and it is the only fiddly part.** A database whose schema was
+pushed by `pnpm dev` carries a row in `payload_migrations` with `batch = -1`. The migration
+runner sees it, decides the schema was never migrated, and stops - without a terminal it
+cannot ask, so the container exits and the site never comes up. Deleting the marker is half
 of it; the other half is telling the ledger which migrations the image should consider done.
 Name exactly the migrations that image contains. Name too few and it re-applies one against
 a schema that already has it; name one the image does not have and nothing happens, the row
