@@ -156,9 +156,11 @@ What it does:
 
 - Every inline quote becomes a published testimonial. People are matched by name and company, so
   a quote that appears on four pages becomes one testimonial, and a second run creates nothing.
-- Each block switches to manual mode and references those testimonials in the same order.
-- The inline rows are emptied once copied. The hidden `items` field itself stays in the schema
-  until a later change removes it.
+- Each block switches to manual mode, references those testimonials in the same order and gets
+  its id as `seed` if it had none.
+- The inline rows are kept, so the migration can be reversed: its `down` drops the testimonials
+  and the block references, and the pages render their inline quotes again, as does the previous
+  image. A later schema cleanup removes the rows and the hidden `items` field.
 - Published pages stay published and do not pick up pending draft edits.
 - A page with a pending draft keeps it. The draft is saved again on top of the new published
   version, as a draft. Its block is converted only when it holds the same people in the same
@@ -166,9 +168,13 @@ What it does:
 - Any other draft block keeps its inline quotes and is returned in `needsReview` with the page,
   the block and the reason. The migration writes each one to the deploy log as a warning; an
   editor then picks the testimonials by hand.
+- A database without inline quotes (a fresh install) skips the step.
 
-Until a block is converted, the site renders its inline quotes, so the deploy order never changes
-what a page shows. Once an editor configures the block, the configuration wins.
+The site renders a block's inline quotes only while the block is still unconverted: no
+references, tags or pinned picks, and no seed. Rows saved before the switch never got a seed,
+while converted blocks, new blocks and blocks reshuffled in the preview always have one. So the
+deploy order never changes what a page shows, and the kept inline rows cannot take over again
+once an editor has chosen something else.
 
 Outside a migration, run `scripts/convert-testimonials.ts`. It wraps the same step in a
 transaction of its own (`runInlineTestimonialConversion`).

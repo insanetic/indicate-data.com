@@ -18,6 +18,8 @@ describe('collectInlineTestimonials', () => {
     { id: 2, layout: [{ blockType: 'hero', id: 'h' }, { blockType: 'testimonials', id: 'b2', items: [item('i3', ' armin biebl ', 'Familotel AG', 'Q1', 'E1')] }] },
     { id: 3, layout: [{ blockType: 'testimonials', id: 'b3', items: [item('i4', 'X', '', 'Q', 'E')], testimonials: [5] }] },
     { id: 4, layout: null },
+    // Converted earlier, then the editor cleared the selection: the seed marks it as no longer legacy.
+    { id: 5, layout: [{ blockType: 'testimonials', id: 'b5', seed: 'b5', items: [item('i5', 'Y', '', 'Q', 'E')] }] },
   ]
 
   it('dedupes people by name + company and keeps both locales', () => {
@@ -91,8 +93,8 @@ describe('reviewDraftBlocks', () => {
     expect(reviewDraftBlocks(drafts, held, published).assignments).toEqual([{ pageId: 1, blockId: 'b7', keys: [ilona] }])
   })
 
-  it('skips blocks that already reference testimonials or have no quotes', () => {
-    const drafts = [{ id: 1, layout: [{ ...block('b1', item('i1', 'X', '', 'Q', 'E')), testimonials: [3] }, block('b2')] }]
+  it('skips blocks that already reference testimonials, carry a seed or have no quotes', () => {
+    const drafts = [{ id: 1, layout: [{ ...block('b1', item('i1', 'X', '', 'Q', 'E')), testimonials: [3] }, { ...block('b3', item('i2', 'Ilona', 'Familotel AG', 'Q2', 'E2')), seed: 'abc' }, block('b2')] }]
     expect(reviewDraftBlocks(drafts, held, published)).toEqual({ assignments: [], needsReview: [] })
   })
 })
@@ -108,9 +110,14 @@ describe('applyAssignments', () => {
   const converted = { blockType: 'testimonials', id: 'b1', mode: 'auto', items: [item('i1', 'Ilona', 'Familotel AG', 'Q', 'E'), item('i2', 'Armin Biebl', 'Familotel AG', 'Q', 'E')] }
   const untouched = { blockType: 'testimonials', id: 'b9', mode: 'auto', items: [item('i3', 'X', '', 'Q', 'E')] }
 
-  it('switches a converted block to manual, references ids in order and empties its inline items', () => {
+  it('switches a converted block to manual, references ids in order and seeds it with its id, keeping the inline items', () => {
     const [, block] = applyAssignments([hero, converted, untouched], [{ blockId: 'b1', keys: [ilona, armin] }], idByKey) as Record<string, unknown>[]
-    expect(block).toMatchObject({ blockType: 'testimonials', id: 'b1', mode: 'manual', testimonials: [12, 11], items: [] })
+    expect(block).toMatchObject({ blockType: 'testimonials', id: 'b1', mode: 'manual', testimonials: [12, 11], seed: 'b1', items: converted.items })
+  })
+
+  it('keeps a seed the block already has', () => {
+    const [block] = applyAssignments([{ ...converted, seed: 'kept' }], [{ blockId: 'b1', keys: [ilona, armin] }], idByKey) as Record<string, unknown>[]
+    expect(block.seed).toBe('kept')
   })
 
   it('passes blocks that are not converted and blocks of other types through unchanged', () => {
@@ -127,6 +134,6 @@ describe('applyAssignments', () => {
     expect(layout.map((b) => b.id)).toEqual(['f', 'b9', 'h', 'b1'])
     expect(layout[0]).toBe(feature)
     expect(layout[1]).toBe(untouched)
-    expect(layout[3]).toMatchObject({ mode: 'manual', testimonials: [12, 11], items: [] })
+    expect(layout[3]).toMatchObject({ mode: 'manual', testimonials: [12, 11], seed: 'b1', items: converted.items })
   })
 })

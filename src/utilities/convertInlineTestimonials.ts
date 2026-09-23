@@ -5,7 +5,7 @@ import { locales, type Locale } from '@/i18n/config'
 
 type Localised = Partial<Record<Locale, string | null>> | string | null | undefined
 type InlineItem = { name?: string | null; company?: string | null; quote?: Localised; role?: Localised; avatar?: unknown; logo?: unknown }
-type Block = { blockType?: string; id?: string | null; items?: InlineItem[] | null; testimonials?: unknown[] | null }
+type Block = { blockType?: string; id?: string | null; items?: InlineItem[] | null; testimonials?: unknown[] | null; seed?: string | null }
 type PageLike = { id: number; layout?: unknown[] | null }
 
 export type InlineEntry = {
@@ -38,11 +38,15 @@ const perLocale = (value: Localised): Partial<Record<Locale, string>> => {
 }
 const mediaId = (v: unknown) => (typeof v === 'number' ? v : v && typeof v === 'object' ? ((v as { id?: number }).id ?? null) : null)
 
-/** Testimonials blocks that still carry inline quotes and reference nothing yet. */
+/**
+ * Testimonials blocks that still carry inline quotes, reference nothing yet and have no seed.
+ * Rows saved before the switch have no seed; converted, new and reshuffled blocks always do, so a
+ * converted block whose selection an editor later cleared is not converted again.
+ */
 const legacyBlocks = (page: PageLike) =>
   (page.layout || [])
     .map((raw) => raw as Block)
-    .filter((b) => b.blockType === 'testimonials' && b.id && (b.testimonials || []).length === 0)
+    .filter((b) => b.blockType === 'testimonials' && b.id && !b.seed && (b.testimonials || []).length === 0)
     .map((b) => ({ id: b.id as string, items: (b.items || []).filter((i) => i.name && i.quote) }))
     .filter((b) => b.items.length > 0)
 
@@ -130,15 +134,16 @@ export const reviewDraftBlocks = (drafts: PageLike[], held: Map<string, Held>, p
 
 /**
  * Pure layout rewrite for one page: every assigned block switches to manual mode, references its
- * testimonials in the original order and has its inline `items` emptied. The quotes now live in
- * the collection, and hidden inline rows left behind could otherwise take over again as the
- * legacy fallback once an editor clears the selection. Other blocks pass through untouched.
+ * testimonials in the original order and gets a seed (its id) when it has none. The inline
+ * `items` stay, so the migration can be rolled back and the previous image still finds its quotes;
+ * the seed is what stops them from acting as the legacy fallback again. A later schema cleanup
+ * removes them. Other blocks pass through untouched.
  */
 export const applyAssignments = (layout: unknown[], forPage: { blockId: string; keys: string[] }[], idByKey: Map<string, number>): unknown[] =>
   layout.map((raw) => {
     const block = raw as Block
     const a = forPage.find((x) => x.blockId === block.id)
-    return a ? { ...block, mode: 'manual' as const, testimonials: a.keys.map((k) => idByKey.get(k) as number), items: [] } : raw
+    return a ? { ...block, mode: 'manual' as const, testimonials: a.keys.map((k) => idByKey.get(k) as number), seed: block.seed || block.id } : raw
   })
 
 /** Everything a page save needs back, minus the fields Payload manages itself. */
@@ -147,8 +152,8 @@ const pageData = ({ id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...da
 /**
  * Moves inline quotes into the testimonials collection and switches those blocks to manual mode
  * pointing at them. Idempotent: existing testimonials are matched by name + company, converted
- * blocks are skipped. The inline rows are emptied once copied; the hidden `items` column itself
- * stays until a later schema cleanup.
+ * blocks are skipped. The inline rows are kept (see `applyAssignments`) until a later schema
+ * cleanup.
  *
  * Published and pending-draft states are handled separately. A plain update builds on the latest
  * version, so it would save the draft's `_status` (unpublishing the page) and merge the draft's

@@ -44,12 +44,13 @@ describeDb(`convertInlineTestimonials against the database${enabled ? '' : ' (sk
   beforeAll(async () => {
     payload = await getPayload({ config: await config })
 
-    // Published page with a legacy block, in both locales.
+    // Published page with a legacy block, in both locales. `seed: null` like rows saved before
+    // the seed column existed (a create would otherwise fill in the default).
     const page = await payload.create({
       collection: 'pages',
       locale: 'de',
       context,
-      data: { title: 'Fixture live', slug, _status: 'published', layout: [{ blockType: 'testimonials', header: { heading: 'Live' }, items: [{ name: person, company, quote: 'Live quote DE', role: 'Rolle' }] }] } as any,
+      data: { title: 'Fixture live', slug, _status: 'published', layout: [{ blockType: 'testimonials', header: { heading: 'Live' }, seed: null, items: [{ name: person, company, quote: 'Live quote DE', role: 'Rolle' }] }] } as any,
     })
     pageId = page.id
     const en = await payload.findByID({ collection: 'pages', id: pageId, locale: 'en', depth: 0, showHiddenFields: true, context })
@@ -77,7 +78,7 @@ describeDb(`convertInlineTestimonials against the database${enabled ? '' : ' (sk
       collection: 'pages',
       locale: 'de',
       context,
-      data: { title: 'Fixture outside', slug: `${slug}-outside`, _status: 'published', layout: [{ blockType: 'testimonials', items: [{ name: outsider, company, quote: 'Outside quote', role: 'Rolle' }] }] } as any,
+      data: { title: 'Fixture outside', slug: `${slug}-outside`, _status: 'published', layout: [{ blockType: 'testimonials', seed: null, items: [{ name: outsider, company, quote: 'Outside quote', role: 'Rolle' }] }] } as any,
     })
     outsideId = outside.id
     outsideBefore = await read(false, outsideId)
@@ -108,9 +109,10 @@ describeDb(`convertInlineTestimonials against the database${enabled ? '' : ' (sk
     const [fixture] = (await payload.find({ collection: 'testimonials', where: { name: { equals: person } }, depth: 0, context })).docs
     expect(after._status).toBe('published')
     expect(withoutLayout(after)).toEqual(withoutLayout(publishedBefore))
-    const { mode, testimonials, items, ...block } = testimonialsBlock(after)
-    const { mode: _m, testimonials: _t, items: _i, ...blockBefore } = testimonialsBlock(publishedBefore)
-    expect({ mode, testimonials, items }).toEqual({ mode: 'manual', testimonials: [fixture.id], items: [] })
+    const { mode, testimonials, seed, ...block } = testimonialsBlock(after)
+    const { mode: _m, testimonials: _t, seed: _s, ...blockBefore } = testimonialsBlock(publishedBefore)
+    // The inline rows stay (the migration's down and the previous image still read them).
+    expect({ mode, testimonials, seed }).toEqual({ mode: 'manual', testimonials: [fixture.id], seed: blockBefore.id })
     expect(block).toEqual(blockBefore)
   })
 

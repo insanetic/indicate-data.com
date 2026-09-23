@@ -188,7 +188,14 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_testimonial_tags_id_idx" ON "payload_locked_documents_rels" USING btree ("testimonial_tags_id");`)
 
   // Move the inline quotes of existing blocks into the new collection (idempotent). It gets the
-  // migration's own req, so every save runs in this migration's transaction.
+  // migration's own req, so every save runs in this migration's transaction. A database without
+  // inline quotes (a fresh install) skips it: the converter reads pages through the current
+  // config, which may already expect columns that later migrations add.
+  const inline = await db.execute(sql`SELECT 1 FROM "pages_blocks_testimonials_items" LIMIT 1`)
+  if (inline.rows.length === 0) {
+    payload.logger.info('[testimonials] no inline quotes to convert')
+    return
+  }
   const result = await convertInlineTestimonials({ payload, req })
   payload.logger.info(
     `[testimonials] created ${result.created}, reused ${result.reused}, converted ${result.blocks} published and ${result.draftBlocks} draft blocks`,
@@ -199,9 +206,22 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   }
 }
 
+// Schema only, and it keeps content: the conversion leaves the blocks' inline quotes in place,
+// so after a down (or with the previous image) the pages render them again. What goes are the
+// testimonials and tags themselves and the block references to them.
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
-   ALTER TABLE "testimonials" DISABLE ROW LEVEL SECURITY;
+   ALTER TABLE "pages_rels" DROP CONSTRAINT "pages_rels_testimonials_fk";
+  ALTER TABLE "pages_rels" DROP CONSTRAINT "pages_rels_testimonial_tags_fk";
+  ALTER TABLE "_pages_v_rels" DROP CONSTRAINT "_pages_v_rels_testimonials_fk";
+  ALTER TABLE "_pages_v_rels" DROP CONSTRAINT "_pages_v_rels_testimonial_tags_fk";
+  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_testimonials_fk";
+  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_testimonial_tags_fk";
+  -- Relationship rows that pointed at testimonials or tags would be left with no target.
+  DELETE FROM "pages_rels" WHERE "testimonials_id" IS NOT NULL OR "testimonial_tags_id" IS NOT NULL;
+  DELETE FROM "_pages_v_rels" WHERE "testimonials_id" IS NOT NULL OR "testimonial_tags_id" IS NOT NULL;
+  DELETE FROM "payload_locked_documents_rels" WHERE "testimonials_id" IS NOT NULL OR "testimonial_tags_id" IS NOT NULL;
+  ALTER TABLE "testimonials" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "testimonials_locales" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "testimonials_rels" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_testimonials_v" DISABLE ROW LEVEL SECURITY;
@@ -217,18 +237,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "_testimonials_v_rels" CASCADE;
   DROP TABLE "testimonial_tags" CASCADE;
   DROP TABLE "testimonial_tags_locales" CASCADE;
-  ALTER TABLE "pages_rels" DROP CONSTRAINT "pages_rels_testimonials_fk";
-  
-  ALTER TABLE "pages_rels" DROP CONSTRAINT "pages_rels_testimonial_tags_fk";
-  
-  ALTER TABLE "_pages_v_rels" DROP CONSTRAINT "_pages_v_rels_testimonials_fk";
-  
-  ALTER TABLE "_pages_v_rels" DROP CONSTRAINT "_pages_v_rels_testimonial_tags_fk";
-  
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_testimonials_fk";
-  
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_testimonial_tags_fk";
-  
   DROP INDEX "pages_rels_testimonials_id_idx";
   DROP INDEX "pages_rels_testimonial_tags_id_idx";
   DROP INDEX "_pages_v_rels_testimonials_id_idx";

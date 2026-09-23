@@ -89,6 +89,9 @@ describe('legacySelection', () => {
   it('returns null once the block references testimonials', () => {
     expect(legacySelection({ mode: 'manual', testimonials: [1], items: [{ id: 'a', quote: 'q', name: 'N' }] } as never)).toBeNull()
   })
+  it('returns null once the block has a seed (converted, created or saved since the switch)', () => {
+    expect(legacySelection({ mode: 'auto', seed: 'b1', items: [{ id: 'a', quote: 'q', name: 'N' }] } as never)).toBeNull()
+  })
   it('returns null without inline items', () => {
     expect(legacySelection({ mode: 'auto', items: [] } as never)).toBeNull()
   })
