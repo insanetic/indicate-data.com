@@ -1,0 +1,33 @@
+{
+  "name": "@subneo/payload-testimonials",
+  "version": "0.1.0",
+  "description": "Central testimonials for Payload CMS: collection, cohort tags, a page block with manual or stable automatic selection, where-used panel.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server.ts",
+    "./admin": "./src/admin.ts"
+  },
+  "files": ["src", "README.md", "LICENSE"],
+  "scripts": { "build": "tsc -p tsconfig.json" },
+  "peerDependencies": {
+    "@payloadcms/ui": "^3.0.0",
+    "next": ">=15",
+    "payload": "^3.0.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": { "typescript": "^5.7.0" },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+      "./server": { "types": "./dist/server.d.ts", "import": "./dist/server.js" },
+      "./admin": { "types": "./dist/admin.d.ts", "import": "./dist/admin.js" }
+    }
+  }
+}

@@ -54,6 +54,15 @@
       ],
       "@subneo/payload-consent/integrations/*": [
         "./packages/payload-plugin-consent/src/integrations/*.ts"
+      ],
+      "@subneo/payload-testimonials": [
+        "./packages/payload-plugin-testimonials/src/index.ts"
+      ],
+      "@subneo/payload-testimonials/server": [
+        "./packages/payload-plugin-testimonials/src/server.ts"
+      ],
+      "@subneo/payload-testimonials/admin": [
+        "./packages/payload-plugin-testimonials/src/admin.ts"
       ]
     }
   },
