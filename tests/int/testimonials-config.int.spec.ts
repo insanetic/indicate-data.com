@@ -50,6 +50,23 @@ describe('testimonialsPlugin', () => {
     expect(data.title).toBe('Armin Biebl – Familotel AG')
   })
 
+  it('hides the internal note from anonymous readers', async () => {
+    const t = collection(await testimonialsPlugin()(base), 'testimonials')
+    const read = (byName(t.fields, 'internalNote').access as { read: (args: unknown) => boolean }).read
+    expect(read({ req: {} })).toBe(false)
+    expect(read({ req: { user: {} } })).toBe(true)
+  })
+
+  it('lets an access override replace only the key it names', async () => {
+    const create = () => false
+    const t = collection(await testimonialsPlugin({ access: { create } })(base), 'testimonials')
+    expect(t.access?.create).toBe(create)
+    const read = t.access!.read as (args: unknown) => unknown
+    expect(read({ req: {} })).toEqual({ _status: { equals: 'published' } })
+    expect(t.access?.update).toBeTypeOf('function')
+    expect(t.access?.delete).toBeTypeOf('function')
+  })
+
   it('does nothing when disabled', async () => {
     const config = await testimonialsPlugin({ enabled: false })(base)
     expect(config.collections).toHaveLength(0)

@@ -65,6 +65,7 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
       create: authenticated,
       update: authenticated,
       delete: authenticated,
+      ...o.access,
     },
     versions: { drafts: true },
     hooks: { beforeChange: [setTitle], afterChange: [revalidate], afterDelete: [revalidate] },
@@ -111,6 +112,8 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
         name: 'internalNote',
         type: 'textarea',
         label: l('Interne Notiz', 'Internal note'),
+        // Collection read is public for published docs; the note must never reach the REST/GraphQL API anonymously.
+        access: { read: ({ req }) => Boolean(req.user) },
         admin: { position: 'sidebar', description: l('Z. B. wer freigegeben hat. Wird nie angezeigt.', 'E.g. who approved it. Never shown.') },
       },
       ...(o.usage

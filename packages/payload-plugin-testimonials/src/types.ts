@@ -1,3 +1,5 @@
+import type { CollectionConfig } from 'payload'
+
 export type Id = number | string
 
 /** A relationship value: an id, or the populated document. */
@@ -91,6 +93,11 @@ export interface TestimonialsPluginOptions {
   usage?: false | { collection: string; field: string; blockSlug?: string }
   /** Import-map paths of the admin components. */
   componentPaths?: Partial<ComponentPaths>
+  /**
+   * Access overrides for the testimonials collection, merged key by key over the defaults
+   * (read: published for visitors, everything for logged-in users; create/update/delete: logged-in users).
+   */
+  access?: Partial<NonNullable<CollectionConfig['access']>>
 }
 
 export interface ResolvedOptions {
@@ -101,6 +108,7 @@ export interface ResolvedOptions {
   cacheTag: string
   usage: false | { collection: string; field: string; blockSlug: string }
   componentPaths: ComponentPaths
+  access: Partial<NonNullable<CollectionConfig['access']>>
   localized: boolean
 }
 
@@ -120,5 +128,6 @@ export const resolveOptions = (options: TestimonialsPluginOptions = {}, localize
     approvedUntilCell: '@subneo/payload-testimonials/admin#ApprovedUntilCell',
     ...(options.componentPaths || {}),
   },
+  access: options.access || {},
   localized,
 })
