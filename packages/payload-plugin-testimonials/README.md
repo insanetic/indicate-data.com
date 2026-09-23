@@ -1,20 +1,19 @@
 # @subneo/payload-testimonials
 
 Central testimonials for Payload CMS and Next.js (App Router). Each quote is written once, in a
-`testimonials` collection with drafts, tags and an approval date. Page sections then reference
-quotes instead of copying them: an editor picks them by hand, or lets the block choose by tag.
-The sidebar of every testimonial lists the pages that show it, so a quote whose approval runs out
-can be traced before it is removed.
+`testimonials` collection with drafts and tags. Page sections then reference quotes instead of
+copying them: an editor picks them by hand, or lets the block choose by tag. The sidebar of every
+testimonial lists the pages that show it, so you can see what a change touches before you make it.
 
 ## What it does
 
 - Adds two collections: `testimonials` (quote, name, role, company, photo, logo, link, tags,
-  approval date, internal note; drafts on) and `testimonial-tags`.
+  internal note; drafts on) and `testimonial-tags`.
 - Exports a page block that stores which testimonials a section shows, never the quotes
   themselves.
 - Resolves a block to testimonials at render time with one cached query per locale.
-- Admin: a live preview of the automatic pick with a reshuffle button, a "Shown on" panel on each
-  testimonial, and a list cell that turns red once the approval date has passed.
+- Admin: a live preview of the automatic pick with a reshuffle button, and a "Shown on" panel on
+  each testimonial.
 
 ## Install
 
@@ -67,10 +66,10 @@ never throws: a failed query is logged and the block renders nothing.
 
 ## Selection rules
 
-**Manual.** The hand-picked testimonials in the stored order. Unpublished, deleted and expired
-ones are skipped.
+**Manual.** The hand-picked testimonials in the stored order. Unpublished and deleted ones are
+skipped.
 
-**Automatic.** From every published, unexpired testimonial:
+**Automatic.** From every published testimonial:
 
 1. drop the ones in "Never show" (`exclude`);
 2. keep the ones with the chosen tags, matching any tag or all of them (`tagMatch`). No tags means
@@ -83,10 +82,6 @@ The hash makes the pick stable. The same seed gives the same testimonials on eve
 adding one testimonial changes at most one slot per page. The seed is a random string set when the
 block is created; the preview's reshuffle button draws a new one.
 
-`approvedUntil` is a permission date and counts the whole day in UTC. From the next day on the
-quote disappears everywhere, manual blocks included, and the public REST and GraphQL API stops
-returning it. An unparseable date is treated as not expired, so one bad row cannot blank a page.
-
 The same pure functions (`selectTestimonials`, and `selectForLayout` for a whole page) run on the
 site, in the admin preview and in the usage panel, so all three agree. The preview works on the
 unsaved form: it sends the page's blocks up to and including the one being edited, so it already
@@ -96,8 +91,8 @@ accounts for what the earlier blocks show before anything is saved.
 
 Outside draft mode the pool of testimonials is cached with `unstable_cache` under the tag
 `testimonials` (see `cacheTag`). Saving or deleting a testimonial or a tag calls
-`revalidateTag`, and pages pick up the change on the next request. The cache also expires after
-a day, which is how an `approvedUntil` date takes effect without anyone saving.
+`revalidateTag`, and pages pick up the change on the next request. Nothing else expires the
+cache.
 
 Seeds, scripts and migrations pass `context: { disableRevalidate: true }` to skip the
 revalidation. Outside a Next request `revalidateTag` throws; the hook catches that, so a CLI write
@@ -110,7 +105,6 @@ never fails on it.
   filter, and a button for a new seed.
 - **Shown on.** The testimonial sidebar lists the published pages whose blocks show it, and the
   ones that reference it but currently do not show it. Configure where it looks with `usage`.
-- **Approved until.** The list column turns red after the date.
 - **Internal note.** Readable only by logged-in users, never through the public API.
 
 The admin components are registered by import-map path. If your import map resolves the package
@@ -124,8 +118,8 @@ Endpoints, both for logged-in users only:
   a bare `{ block, locale }` previews the block on its own. An unknown locale falls back to the
   request's.
 
-Anonymous readers of the collection (REST, GraphQL) get published testimonials whose
-`approvedUntil` is empty or not yet over. Logged-in users see everything.
+Anonymous readers of the collection (REST, GraphQL) get published testimonials only. Logged-in
+users see everything.
 
 ## Options
 
@@ -140,7 +134,7 @@ Anonymous readers of the collection (REST, GraphQL) get published testimonials w
 | `adminGroup` | Kundenstimmen / Testimonials | Admin sidebar group. |
 | `cacheTag` | `'testimonials'` | Next cache tag of the loaded pool. |
 | `usage` | `{ collection: 'pages', field: 'layout', blockSlug: 'testimonials' }` | Where the "Shown on" panel looks for blocks. `false` hides the panel. |
-| `componentPaths` | `@subneo/payload-testimonials/admin#…` | Import-map paths of `usagePanel`, `selectionPreview` and `approvedUntilCell`. |
+| `componentPaths` | `@subneo/payload-testimonials/admin#…` | Import-map paths of `usagePanel` and `selectionPreview`. |
 | `access` | see below | Access for the testimonials collection, merged key by key over the defaults. |
 
 The default access: visitors read published testimonials, logged-in users read everything and may

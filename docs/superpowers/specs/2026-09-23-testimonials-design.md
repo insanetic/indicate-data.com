@@ -8,7 +8,7 @@ Status: approved in conversation, awaiting spec review
 Customer testimonials are maintained in one place. Pages no longer carry copies of quotes; a page's
 testimonials section either picks specific testimonials by hand or selects them automatically and
 deterministically from the central pool, optionally restricted to cohort tags (e.g. hotels vs
-agencies). Renaming, adding, expiring or deleting a testimonial updates every page that shows it.
+agencies). Renaming, adding, unpublishing or deleting a testimonial updates every page that shows it.
 
 The feature ships as a workspace package, `@subneo/payload-testimonials`, built like
 `@subneo/payload-consent` and `@subneo/payload-pricing`, so it can later be published as open source
@@ -20,11 +20,12 @@ with little more than a README.
 - Selection modes: **manual** and **automatic (stable)**. No per-visit randomness: pages are
   statically rendered and the same page always shows the same quotes until content changes or the
   editor reshuffles.
-- v1 extras: **where-used panel** (only if efficient and non-invasive), **release status + permission
-  expiry**, **customer link**, **MCP access**.
+- v1 extras: **where-used panel** (only if efficient and non-invasive), **release status**,
+  **customer link**, **MCP access**.
 - Also in v1 (approved with the design sections): per-page dedupe across testimonials blocks.
 - Not in v1: featured flag, short quote variant, layout
   variants, star ratings / review JSON-LD (Google ignores self-serving reviews).
+- 2026-09-23: approvedUntil removed on request; may return later.
 
 ## Current state
 
@@ -82,15 +83,13 @@ headless: it does not ship the visitor-facing React component. The site keeps it
 | `logo` | upload → media | optional |
 | `tags` | relationship → testimonial-tags, hasMany | optional |
 | `link` | group: `type` (none / internal / external), `doc` (relationship → configurable collections, default pages + posts), `url`, `label` (localised) | customer link / case study |
-| `approvedUntil` | date, optional, sidebar | permission to quote; after this date the testimonial is not shown |
 | `internalNote` | textarea, sidebar | e.g. who approved, where the quote came from; never rendered |
 | `title` | text, virtual (`Name – Company`) | `useAsTitle` |
 
 - Drafts and versions enabled (`versions: { drafts: true }`). Only published documents are shown on
   the site; draft mode on the site shows drafts.
 - Access: read = published only for anonymous users (as posts); write = authenticated.
-- List view columns: title, tags, `_status`, `approvedUntil`, `updatedAt`. Expired rows are recognisable
-  via the `approvedUntil` column (a cell component that renders the date red when past).
+- List view columns: title, tags, `_status`, `updatedAt`.
 
 ### Collection `testimonial-tags`
 
@@ -123,13 +122,12 @@ name `items` (hidden legacy field, see Migration) and renaming it would be a des
 
 ## Selection
 
-`selectTestimonials({ pool, block, seed, now, alreadyShown })` is pure and has no Payload dependency.
+`selectTestimonials({ pool, block, seed, alreadyShown })` is pure and has no Payload dependency.
 
-1. **Eligible** = published, not expired (`approvedUntil` empty or ≥ `now`, compared by day), not in
-   `exclude`, and matching the tag filter (`any`: shares ≥ 1 tag; `all`: has every tag; no tags on the
-   block: everything).
+1. **Eligible** = published, not in `exclude`, and matching the tag filter (`any`: shares ≥ 1 tag;
+   `all`: has every tag; no tags on the block: everything).
 2. **Manual mode**: the chosen `testimonials` in their order, minus ineligible ones (unpublished,
-   expired). Tags and limit are ignored.
+   deleted). Tags and limit are ignored.
 3. **Auto mode**: `pinned` (eligible ones, in order) first. Remaining slots up to `limit` are filled
    from the other eligible testimonials, ordered by **rendezvous hashing**:
    `score = fnv1a(seed + ':' + testimonialId)`, highest first, ties broken by id.
@@ -150,9 +148,8 @@ always agree.
 `getTestimonials({ payload, block, layout, blockIndex, locale, draft })`:
 
 - Reads the pool with one query: all testimonials (depth 1 for media and link doc, `locale`), cached
-  with `unstable_cache` under tag `testimonials` and `revalidate: 86400`. The daily revalidate makes
-  `approvedUntil` take effect without anyone saving. In draft mode the cache is bypassed and drafts
-  are included.
+  with `unstable_cache` under tag `testimonials`, with no time-based revalidate: only the hooks
+  below invalidate it. In draft mode the cache is bypassed and drafts are included.
 - Pool size assumption: hundreds at most, so loading the pool once per locale is cheaper and simpler
   than per-block queries. Selecting fields (`select`) keeps the payload small.
 - Returns resolved testimonials (quote, name, role, company, avatar, logo, link href/label).
@@ -219,7 +216,7 @@ Localisation is detected from `config.localization`, as in the consent plugin.
 
 - Loader failure: logged via `payload.logger.error` with a `[testimonials]` prefix; the block renders
   nothing rather than breaking the page.
-- Empty result (no match, all expired): the block renders nothing on the site; the admin preview
+- Empty result (no match): the block renders nothing on the site; the admin preview
   says why ("0 passend — Filter prüfen").
 - Deleted testimonial referenced in manual mode / pinned / exclude: relationship resolves to null and
   is skipped.
@@ -229,8 +226,8 @@ Localisation is detected from `config.localization`, as in the consent plugin.
 
 - **Unit (vitest, package)** for `selectTestimonials`: determinism; rendezvous stability (adding or
   removing one testimonial changes at most the affected slot on each page, verified over many seeds);
-  pinned order and limit; exclude; tag `any`/`all`/empty; expiry boundary by day; drafts ignored;
-  dedupe via `alreadyShown`; manual mode ignores tags/limit but drops unpublished/expired; missing seed
+  pinned order and limit; exclude; tag `any`/`all`/empty; drafts ignored;
+  dedupe via `alreadyShown`; manual mode ignores tags/limit but drops unpublished ones; missing seed
   falls back to block id.
 - **Integration (`tests/int`)**: create tags and testimonials, a page with two testimonials blocks;
   `getTestimonials` resolves the expected lists with no duplicates; usage endpoint lists the page with
