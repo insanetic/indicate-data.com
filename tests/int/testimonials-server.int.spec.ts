@@ -64,3 +64,18 @@ describe('getTestimonials', () => {
     expect(error).toHaveBeenCalled()
   })
 })
+
+import { legacySelection } from '@/blocks/Testimonials/legacy'
+
+describe('legacySelection', () => {
+  it('uses inline items when the block has no references yet', () => {
+    const r = legacySelection({ mode: 'auto', items: [{ id: 'a', quote: 'q', name: 'N', company: 'C' }] } as never)
+    expect(r?.map((s) => s.testimonial.name)).toEqual(['N'])
+  })
+  it('returns null once the block references testimonials', () => {
+    expect(legacySelection({ mode: 'manual', testimonials: [1], items: [{ id: 'a', quote: 'q', name: 'N' }] } as never)).toBeNull()
+  })
+  it('returns null without inline items', () => {
+    expect(legacySelection({ mode: 'auto', items: [] } as never)).toBeNull()
+  })
+})

@@ -102,7 +102,13 @@ export const RenderBlocks: React.FC<{
             key={block.id || index}
             spacing={settings?.spacing}
           >
-            <Block {...block} isFirst={index === 0} locale={locale} slug={slug} />
+            <Block
+              {...block}
+              {...(blockType === 'testimonials' ? { layout: blocks, blockIndex: index } : {})}
+              isFirst={index === 0}
+              locale={locale}
+              slug={slug}
+            />
           </Section>
         )
       })}
