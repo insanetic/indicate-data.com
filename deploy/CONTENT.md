@@ -89,8 +89,8 @@ backups/prod-<stamp>.dump` reads it back without touching a database.
 
 For the first fill, or any deliberate overwrite. **It replaces all production content.**
 
-The schema in the dump must match the image that will run against it. Development uses
-schema push, production only migrations, so:
+The schema in the dump must match the image that will run against it. Both sides only change
+through migrations, so:
 
 1. Commit the migration for whatever you changed (`make migration NAME=...`), `make ship`,
    and roll that tag out. `ssh envoy-discovery-01 'docker ps --format "{{.Image}}"'` shows
@@ -135,10 +135,11 @@ ssh envoy-discovery-01 'sudo systemctl start website'
 ssh envoy-discovery-01 'curl -s localhost:3000/next/health'
 ```
 
-**Step 4 is not optional and it is the only fiddly part.** A database whose schema was
-pushed by `pnpm dev` carries a row in `payload_migrations` with `batch = -1`. The migration
-runner sees it, decides the schema was never migrated, and stops - without a terminal it
-cannot ask, so the container exits and the site never comes up. Deleting the marker is half
+**Step 4 is needed for a dump from a dev database that still used schema push**, before
+development switched to migrations. Such a database carries a row in `payload_migrations` with
+`batch = -1`. The migration runner sees it, decides the schema was never migrated, and asks
+whether to go ahead. Without a terminal nobody can answer, so it waits there and the site never
+comes up. Deleting the marker is half
 of it; the other half is telling the ledger which migrations the image should consider done.
 Name exactly the migrations that image contains. Name too few and it re-applies one against
 a schema that already has it; name one the image does not have and nothing happens, the row

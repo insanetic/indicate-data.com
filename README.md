@@ -6,21 +6,23 @@ Payload CMS 3 website (official website template) on Next.js 16 and PostgreSQL 1
 
 ```bash
 docker compose up            # Postgres (host port 5433) + app in dev mode with hot reload
-# or: docker compose up -d postgres && pnpm dev   (faster on macOS)
+# or: docker compose up -d postgres && pnpm payload migrate && pnpm dev   (faster on macOS)
 ```
+
+The app container runs pending migrations from `src/migrations/` before it starts the dev server. Development and production share the same migration files; there is no schema push. A database that was used before this switch needs a one-time baseline first, see [Schema changes](deploy/README.md#schema-changes).
 
 Then open http://localhost:3000/admin, create the first user, and press **Seed your database** on the dashboard to install the Indicate Data site (home page and contact page in German and English, header, footer, site settings, integration logos). The site is at http://localhost:3000 and redirects to `/de` or `/en`.
 
 The seed can also run from the host while the Docker stack is up:
 
 ```bash
-NODE_ENV=production DATABASE_URL=postgres://payload:payload@localhost:5433/payload \
+DATABASE_URL=postgres://payload:payload@localhost:5433/payload \
   ./node_modules/.bin/payload run scripts/seed.ts
 ```
 
 It updates by slug and never deletes anything. After a host-side seed, save any document in the admin (or restart the app container) so the Next.js caches pick up the new content.
 
-Production: `make ship` builds a site-agnostic image and pushes it to Docker Hub; the server supplies all configuration at runtime (mounted `config/*.env` or environment) and rollout is done with Ansible (guide and image contract in [deploy/README.md](deploy/README.md)). Schema changes need a migration: `make migration NAME=...`.
+Production: `make ship` builds a site-agnostic image and pushes it to Docker Hub; the server supplies all configuration at runtime (mounted `config/*.env` or environment) and rollout is done with Ansible (guide and image contract in [deploy/README.md](deploy/README.md)). Schema changes need a migration: change the config, `make migration NAME=...`, `make migrate`, commit (details in [deploy/README.md](deploy/README.md#schema-changes)).
 
 Environment names: `SITE_URL` (public origin; the older `NEXT_PUBLIC_SERVER_URL` still works) and `GTM_ID` (Tag Manager container id) are read on the server at request time, never compiled in.
 Local smoke test of the image: `docker compose --profile prod up --build app-prod`.
@@ -34,6 +36,8 @@ scripts/db-restore.sh                 # restore the newest backup (replaces your
 scripts/db-restore.sh 20260916-1322   # restore a specific one
 scripts/db-backup.sh                  # make a new backup after content changes, then commit backups/
 ```
+
+Dumps taken before development switched to migrations still carry the schema push marker; `db-restore.sh` stops and points to the one-time baseline in [deploy/README.md](deploy/README.md#switching-an-existing-dev-database-over-once).
 
 The dump is custom format (`pg_restore`), made from the Docker Postgres 18 container, and contains the admin users of the machine it was taken on (log in with one of those or create a new user via `payload run`). The MCP access key stored in it is encrypted with `PAYLOAD_SECRET` from `.env`; if your secret differs, create a new one in the admin.
 
@@ -245,29 +249,11 @@ Note that often times when making big schema changes you can run the risk of los
 
 #### Local development
 
-Ideally we recommend running a local copy of your database so that schema updates are as fast as possible. By default the Postgres adapter has `push: true` for development environments. This will let you add, modify and remove fields and collections without needing to run any data migrations.
-
-If your database is pointed to production you will want to set `push: false` otherwise you will risk losing data or having your migrations out of sync.
+This project runs migrations in development too; `push: false` is set in `src/payload.config.ts`. The workflow (config change, `make migration NAME=...`, `make migrate`, commit), the one-time baseline for an older database and how to start from an empty one are in [deploy/README.md](deploy/README.md#schema-changes).
 
 #### Migrations
 
-[Migrations](https://payloadcms.com/docs/database/migrations) are essentially SQL code versions that keeps track of your schema. When deploy with Postgres you will need to make sure you create and then run your migrations.
-
-Locally create a migration
-
-```bash
-pnpm payload migrate:create
-```
-
-This creates the migration files you will need to push alongside with your new configuration.
-
-On the server after building and before running `pnpm start` you will want to run your migrations
-
-```bash
-pnpm payload migrate
-```
-
-This command will check for any migrations that have not yet been run and try to run them and it will keep a record of migrations that have been run in the database.
+[Migrations](https://payloadcms.com/docs/database/migrations) are SQL files in `src/migrations/` that record every schema change. `make migration NAME=...` creates one; `pnpm payload migrate` runs the ones a database has not seen yet and records them in `payload_migrations`. The dev container runs it on start, the production image too (`PAYLOAD_MIGRATE_ON_START=true`).
 
 ### Docker
 
@@ -381,5 +367,5 @@ Available sections: Hero (with the layered product stage), Feature story (headin
 - Design tokens (dark-first colours in oklch with the brand yellow as the single accent, type scale, motion curves, shadows) are in `src/app/(frontend)/globals.css`. Section backgrounds: default, slightly raised, deeper dark, yellow accent. Blocks render inside `<Section>`; shared field factories are in `src/fields/` (`sectionHeader`, `sectionSettings`, `visual`, `iconSelect`).
 - A new block = `src/blocks/<Name>/config.ts` + `Component.tsx`, registered in `src/collections/Pages/index.ts`, `src/blocks/RenderBlocks.tsx` and `src/blocks/registry.ts` (a test checks the three stay in sync).
 - Motion: one hero entrance per session, scroll-linked reveals via `animation-timeline: view()`, everything else answers user input. Every animation has a `prefers-reduced-motion` variant.
-- Schema changes in the Docker dev setup: the container has no TTY, so a schema push that would delete data or needs a "created or renamed?" answer blocks the server. Keep changes additive, or run `scripts/reset-content.ts` (clears pages and nav items) before a destructive change. The starter template's `meta` group on pages and `navItems` on header/footer are kept hidden for this reason; remove them with a migration once a TTY (or `pnpm payload migrate`) is available.
+- Schema changes go through migrations (`make migration NAME=...`, then `make migrate`). Read the generated SQL: a rename comes out as drop + add and loses the column's data. The starter template's `meta` group on pages and `navItems` on header/footer are still hidden; removing them now takes a migration like any other change.
 - Verify: `pnpm exec tsc --noEmit`, `pnpm lint`, `pnpm test:int`, `pnpm test:e2e` (needs the app on :3000).

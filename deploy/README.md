@@ -147,9 +147,11 @@ A configuration change needs no pull: edit `config/app.env`, then `./stack up -d
 (compose does not notice content changes inside a bind-mounted file).
 
 **First content.** Either create the first admin at `/admin`, or restore a local dump made with
-`scripts/db-backup.sh`. A dump from a development database carries a marker row that makes the
-migration runner refuse to start; `deploy/restore.sh` removes it and records the migration names
-you pass as applied, so the dump must come from the same commit as the image:
+`scripts/db-backup.sh`. A dump from a development database that still used schema push (before
+development switched to migrations) carries a marker row that makes the migration runner refuse
+to start; `deploy/restore.sh` removes it and records the migration names you pass as applied, so
+the dump must come from the same commit as the image. A dump from a migrated dev database needs no
+names: its `payload_migrations` table already lists what ran.
 
 ```
 ./restore.sh 20260916-1322 20260921_153447_initial
@@ -162,13 +164,71 @@ can and cannot damage are in [CONTENT.md](CONTENT.md).
 
 ## Schema changes
 
-Development keeps using schema push (`pnpm dev`). Production only changes through migrations:
+The schema only changes through the files in `src/migrations/`, in development as well as in
+production. Payload's schema push is off (`push: false` in `src/payload.config.ts`), so `pnpm dev`
+never alters a table. A field that exists in the config but not in the database shows up as a
+server error ("column ... does not exist") and an empty admin view until its migration has run.
 
-1. Change collections, globals or fields and test locally as usual.
-2. `make migration NAME=add_something` writes `src/migrations/<stamp>_add_something.ts`.
-   It diffs the config against the last migration snapshot; the dev database only has to be reachable.
+1. Change collections, globals or fields.
+2. `make migration NAME=add_something` writes `src/migrations/<stamp>_add_something.ts` and a
+   `.json` snapshot. It diffs the config against the newest snapshot in `src/migrations/` and
+   does not read the database. With nothing to diff it writes nothing and says so.
 3. Read the generated SQL. Renames show up as drop + add, which loses data: rewrite those by hand.
-4. Commit the migration with the change, then `make ship`.
+4. `make migrate` applies it to the dev database in the running container. `make migrate-status`
+   lists what has run.
+5. Commit the migration with the change, then `make ship`. Production applies it on start.
+
+The dev container also runs `pnpm payload migrate` every time it starts, before `pnpm dev`. A
+failing migration stops the container; `docker compose logs app` shows which one. Without the
+container, run `pnpm payload migrate` on the host before `pnpm dev`. Host scripts
+(`payload run scripts/...`, `generate:types`) no longer need `NODE_ENV=production`.
+
+To undo the last batch while working on a migration: `docker compose exec -T app pnpm payload
+migrate:down`. Delete or fix the file afterwards; `make migration` diffs against the newest
+snapshot, so a stale one produces wrong SQL.
+
+### Switching an existing dev database over (once)
+
+A database that was built by schema push has a marker row in `payload_migrations` with
+`batch = -1` and no record of the migration files. `payload migrate` then asks "It looks like
+you've run Payload in dev mode ... Would you like to proceed?". The container has no terminal to
+answer, so it waits there and the dev server never starts. Record the migrations as applied
+instead, with the stack's Postgres running:
+
+```
+docker compose exec -T postgres psql -U payload -d payload -v ON_ERROR_STOP=1 <<'SQL'
+begin;
+delete from payload_migrations where batch = -1;
+insert into payload_migrations (name, batch, created_at, updated_at)
+select v.name, 1, now(), now()
+from (values
+  ('20260921_153447_initial'),
+  ('20260922_142530'),
+  ('20260922_161951_consent_integration_settings'),
+  ('20260923_131001_testimonials')
+) v(name)
+where not exists (select 1 from payload_migrations m where m.name = v.name);
+commit;
+SQL
+```
+
+This is the same SQL `restore.sh` runs. List exactly the migrations whose schema the database
+already has: the four above for a database that was pushed at or after
+`20260923_131001_testimonials`. Check with `make migrate-status`; every row should say `Yes`.
+The same applies to a dump in `backups/` taken before the switch: restore it, then run the SQL
+with the migration names from the commit the dump was taken at.
+
+### Starting a dev database from scratch
+
+```
+docker compose exec -T app pnpm payload migrate:fresh --force-accept-warning
+docker compose exec -T app pnpm payload run scripts/seed.ts
+```
+
+`migrate:fresh` drops every table and runs all migrations from the first one. It deletes all
+content, including users; create the first admin at `/admin` afterwards. The seed installs the
+site pages. Then restart the app container (`docker compose restart app`) so the Next.js cache
+drops pages rendered from the old content.
 
 ## Not covered
 

@@ -4,7 +4,7 @@
 #   ./restore.sh <stamp> [migration-name ...]
 #
 # Expects backups/payload-<stamp>.dump and optionally backups/media-<stamp>.tar.gz.
-# A dump taken from a development database (schema pushed by `pnpm dev`) carries a marker row
+# A dump taken from a development database that still used schema push carries a marker row
 # that makes the migration runner stop. In that case the marker is removed and the given
 # migration names (file names in src/migrations/ without .ts, e.g. 20260921_153447_initial) are
 # recorded as applied; the dump must come from the same commit as the image.
