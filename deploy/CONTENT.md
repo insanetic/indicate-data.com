@@ -95,9 +95,8 @@ through migrations, so:
 1. Commit the migration for whatever you changed (`make migration NAME=...`), `make ship`,
    and roll that tag out. `ssh envoy-discovery-01 'docker ps --format "{{.Image}}"'` shows
    what is live.
-2. Note the migration file names in `src/migrations/` at that commit, without `.ts`. They
-   go into step 4 below - at the time of writing, `20260921_153447_initial` and
-   `20260922_142530`.
+2. Note the migration file names in `src/migrations/` at that commit, without `.ts`
+   (`ls src/migrations/*.ts`, minus `index.ts`). They go into step 4 below.
 
 ```bash
 # 0. a fresh local dump, and the safety dump above
@@ -126,7 +125,7 @@ ssh envoy-discovery-01 "sudo docker run --rm -i $TLS $PG \
 delete from payload_migrations where batch = -1;
 insert into payload_migrations (name, batch, created_at, updated_at)
 select v.name, 1, now(), now()
-from (values ('20260921_153447_initial'), ('20260922_142530')) v(name)
+from (values ('<first migration>'), ('<second migration>') /* ...every name from step 2 */) v(name)
 where not exists (select 1 from payload_migrations m where m.name = v.name);
 SQL
 

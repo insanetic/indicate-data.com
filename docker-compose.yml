@@ -1,7 +1,8 @@
 # Local stack for indicate-data.com.demo (Payload CMS 3 + Next.js 16 + PostgreSQL 18)
 #
 #   docker compose up                       # Postgres + app in dev mode (hot reload), http://localhost:3000
-#   docker compose up postgres              # only the database; then `pnpm payload migrate && pnpm dev` on the host
+#   docker compose up postgres              # only the database; then on the host:
+#                                           #   node scripts/check-migration-baseline.mjs && pnpm payload migrate && pnpm dev
 #   docker compose --profile prod up --build app-prod   # production image from the Dockerfile
 #
 # Postgres is published on host port 5433 because 5432 is taken by the indicate stack.

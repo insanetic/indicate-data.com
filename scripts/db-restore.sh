@@ -39,7 +39,10 @@ fi
 
 # A dump from before development switched to migrations still carries the schema push marker.
 # The app container's `payload migrate` would wait for an answer on it forever, so stop here.
-if [ "$(docker exec "$CONTAINER" psql -U payload -d payload -tA -c "select count(*) from payload_migrations where batch = -1")" != "0" ]; then
+# Only an explicit count above zero is a marker; no payload_migrations table gives an empty result.
+MARKERS=$(docker exec "$CONTAINER" psql -U payload -d payload -tA -c \
+  "select count(*) from payload_migrations where batch = -1" 2>/dev/null || true)
+if [ -n "$MARKERS" ] && [ "$MARKERS" -gt 0 ] 2>/dev/null; then
   echo "This dump comes from a dev database that still used schema push (marker row batch = -1)."
   echo "Record its migrations as applied before starting the app: deploy/README.md, 'Switching an"
   echo "existing dev database over'. Use the migration names from the commit the dump was taken at."

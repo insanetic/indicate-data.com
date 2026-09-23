@@ -6,7 +6,7 @@ Payload CMS 3 website (official website template) on Next.js 16 and PostgreSQL 1
 
 ```bash
 docker compose up            # Postgres (host port 5433) + app in dev mode with hot reload
-# or: docker compose up -d postgres && pnpm payload migrate && pnpm dev   (faster on macOS)
+# or: docker compose up -d postgres && node scripts/check-migration-baseline.mjs && pnpm payload migrate && pnpm dev   (faster on macOS)
 ```
 
 The app container runs pending migrations from `src/migrations/` before it starts the dev server. Development and production share the same migration files; there is no schema push. A database that was used before this switch needs a one-time baseline first, see [Schema changes](deploy/README.md#schema-changes).

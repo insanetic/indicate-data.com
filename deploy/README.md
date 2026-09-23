@@ -180,12 +180,21 @@ server error ("column ... does not exist") and an empty admin view until its mig
 
 The dev container also runs `pnpm payload migrate` every time it starts, before `pnpm dev`. A
 failing migration stops the container; `docker compose logs app` shows which one. Without the
-container, run `pnpm payload migrate` on the host before `pnpm dev`. Host scripts
+container, run `node scripts/check-migration-baseline.mjs && pnpm payload migrate` on the host
+before `pnpm dev`. Host scripts
 (`payload run scripts/...`, `generate:types`) no longer need `NODE_ENV=production`.
 
-To undo the last batch while working on a migration: `docker compose exec -T app pnpm payload
-migrate:down`. Delete or fix the file afterwards; `make migration` diffs against the newest
-snapshot, so a stale one produces wrong SQL.
+**Careful with `migrate:down`.** It rolls back the whole latest batch, not one file. After the
+baseline below, all existing migrations sit together in batch 1, including `initial`, so a
+`migrate:down` there runs every `down` and drops every table. Use it only right after
+`make migrate` applied your own new migration as a batch of its own, and check
+`make migrate-status` first: the latest batch number must belong only to your new file. Then
+`docker compose exec -T app pnpm payload migrate:down`.
+
+To get rid of a migration you have rolled back (or never applied), delete all three parts:
+the `.ts` file, its `.json` snapshot, and its entry in `src/migrations/index.ts`. A leftover
+snapshot matters because `make migration` diffs against the newest one and would produce
+wrong SQL.
 
 ### Switching an existing dev database over (once)
 
@@ -213,7 +222,7 @@ commit;
 SQL
 ```
 
-This is the same SQL `restore.sh` runs. List exactly the migrations whose schema the database
+This is equivalent to what `restore.sh` does. List exactly the migrations whose schema the database
 already has: the four above for a database that was pushed at or after
 `20260923_131001_testimonials`. Check with `make migrate-status`; every row should say `Yes`.
 The same applies to a dump in `backups/` taken before the switch: restore it, then run the SQL
@@ -221,15 +230,33 @@ with the migration names from the commit the dump was taken at.
 
 ### Starting a dev database from scratch
 
+`migrate:fresh` drops every table and runs all migrations from the first one. It deletes all
+content, including users; create the first admin at `/admin` afterwards. The seed installs the
+site pages.
+
+While the app container runs:
+
 ```
 docker compose exec -T app pnpm payload migrate:fresh --force-accept-warning
 docker compose exec -T app pnpm payload run scripts/seed.ts
+docker compose restart app     # drops pages rendered from the old content
 ```
 
-`migrate:fresh` drops every table and runs all migrations from the first one. It deletes all
-content, including users; create the first admin at `/admin` afterwards. The seed installs the
-site pages. Then restart the app container (`docker compose restart app`) so the Next.js cache
-drops pages rendered from the old content.
+Usually the app container is stopped at this point, because the baseline check or a migration
+failed. Run the same steps in a one-off container (Postgres must be up:
+`docker compose up -d postgres`):
+
+```
+docker compose run --rm --no-deps app sh -c "corepack enable pnpm && pnpm install --frozen-lockfile && pnpm payload migrate:fresh --force-accept-warning && pnpm payload run scripts/seed.ts"
+docker compose up app
+```
+
+Or from the host, against the published port:
+
+```
+DATABASE_URL=postgres://payload:payload@localhost:5433/payload pnpm payload migrate:fresh --force-accept-warning
+DATABASE_URL=postgres://payload:payload@localhost:5433/payload pnpm payload run scripts/seed.ts
+```
 
 ## Not covered
 
