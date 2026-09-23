@@ -1,5 +1,7 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
+import { convertInlineTestimonials } from '../utilities/convertInlineTestimonials'
+
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TYPE "public"."enum_pages_blocks_testimonials_mode" AS ENUM('auto', 'manual');
@@ -184,6 +186,17 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_rels_testimonial_tags_id_idx" ON "_pages_v_rels" USING btree ("testimonial_tags_id");
   CREATE INDEX "payload_locked_documents_rels_testimonials_id_idx" ON "payload_locked_documents_rels" USING btree ("testimonials_id");
   CREATE INDEX "payload_locked_documents_rels_testimonial_tags_id_idx" ON "payload_locked_documents_rels" USING btree ("testimonial_tags_id");`)
+
+  // Move the inline quotes of existing blocks into the new collection (idempotent). It gets the
+  // migration's own req, so every save runs in this migration's transaction.
+  const result = await convertInlineTestimonials({ payload, req })
+  payload.logger.info(
+    `[testimonials] created ${result.created}, reused ${result.reused}, converted ${result.blocks} published and ${result.draftBlocks} draft blocks`,
+  )
+  // Draft blocks with pending edits keep their inline quotes; an editor converts them by hand.
+  for (const item of result.needsReview) {
+    payload.logger.warn(`[testimonials] needs review: page ${item.pageId}, block ${item.blockId}: ${item.reason}`)
+  }
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
