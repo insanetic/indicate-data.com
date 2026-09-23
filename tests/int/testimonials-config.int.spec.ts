@@ -1,5 +1,5 @@
 import type { Config, CollectionConfig, Field } from 'payload'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { createTestimonialsBlock, testimonialsPlugin } from '@subneo/payload-testimonials'
 
@@ -61,12 +61,41 @@ describe('testimonialsPlugin', () => {
     expect(read({ req: { user: {} } })).toBe(true)
   })
 
+  describe('anonymous read', () => {
+    afterEach(() => vi.useRealTimers())
+
+    it('returns published testimonials whose approval has not ended (start of today, UTC)', async () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-09-23T22:30:00+02:00')) // 20:30 UTC on the 23rd
+      const t = collection(await testimonialsPlugin()(base), 'testimonials')
+      const read = t.access!.read as (args: unknown) => unknown
+      expect(read({ req: {} })).toEqual({
+        and: [
+          { _status: { equals: 'published' } },
+          {
+            or: [
+              { approvedUntil: { exists: false } },
+              { approvedUntil: { equals: null } },
+              { approvedUntil: { greater_than_equal: '2026-09-23T00:00:00.000Z' } },
+            ],
+          },
+        ],
+      })
+    })
+
+    it('gives a logged-in user everything', async () => {
+      const t = collection(await testimonialsPlugin()(base), 'testimonials')
+      const read = t.access!.read as (args: unknown) => unknown
+      expect(read({ req: { user: { id: 1 } } })).toBe(true)
+    })
+  })
+
   it('lets an access override replace only the key it names', async () => {
     const create = () => false
     const t = collection(await testimonialsPlugin({ access: { create } })(base), 'testimonials')
     expect(t.access?.create).toBe(create)
     const read = t.access!.read as (args: unknown) => unknown
-    expect(read({ req: {} })).toEqual({ _status: { equals: 'published' } })
+    expect(read({ req: {} })).toMatchObject({ and: [{ _status: { equals: 'published' } }, expect.anything()] })
     expect(t.access?.update).toBeTypeOf('function')
     expect(t.access?.delete).toBeTypeOf('function')
   })

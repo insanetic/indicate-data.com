@@ -1,4 +1,4 @@
-import type { Access, CollectionConfig, CollectionSlug, Field } from 'payload'
+import type { Access, CollectionConfig, CollectionSlug, Field, Where } from 'payload'
 
 import { slugField } from 'payload'
 
@@ -8,7 +8,32 @@ import { l } from './labels'
 import type { ResolvedOptions } from './types'
 
 const authenticated: Access = ({ req }) => Boolean(req.user)
-const publishedOrAuthenticated: Access = ({ req }) => (req.user ? true : { _status: { equals: 'published' } })
+const startOfTodayUTC = () => {
+  const now = new Date()
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString()
+}
+
+/**
+ * Visitors (REST/GraphQL) see published testimonials whose permission to quote has not ended:
+ * `approvedUntil` empty, or today or later (valid through that whole UTC day, as on the site).
+ * The site itself reads with `overrideAccess`; this closes the public API.
+ */
+const publishedAndApprovedOrAuthenticated: Access = ({ req }) => {
+  if (req.user) return true
+  const visible: Where = {
+    and: [
+      { _status: { equals: 'published' } },
+      {
+        or: [
+          { approvedUntil: { exists: false } },
+          { approvedUntil: { equals: null } },
+          { approvedUntil: { greater_than_equal: startOfTodayUTC() } },
+        ],
+      },
+    ],
+  }
+  return visible
+}
 
 const linkField = (o: ResolvedOptions): Field => {
   const types = [
@@ -62,7 +87,7 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
       listSearchableFields: ['name', 'company', 'quote'],
     },
     access: {
-      read: publishedOrAuthenticated,
+      read: publishedAndApprovedOrAuthenticated,
       create: authenticated,
       update: authenticated,
       delete: authenticated,
