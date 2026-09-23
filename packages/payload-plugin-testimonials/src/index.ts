@@ -1,3 +1,7 @@
 export * from './types'
 export { fnv1a, score } from './hash'
 export { countEligible, selectForLayout, selectTestimonials } from './select'
+export { createTagsCollection, createTestimonialsCollection } from './collections'
+export { createRevalidateHook } from './hooks'
+export { l } from './labels'
+export { testimonialsPlugin } from './plugin'

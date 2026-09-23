@@ -78,6 +78,8 @@ export interface Config {
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
+    testimonials: Testimonial;
+    'testimonial-tags': TestimonialTag;
     'consent-logs': ConsentLog;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
@@ -103,6 +105,8 @@ export interface Config {
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    'testimonial-tags': TestimonialTagsSelect<false> | TestimonialTagsSelect<true>;
     'consent-logs': ConsentLogsSelect<false> | ConsentLogsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -2178,6 +2182,64 @@ export interface Search {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  title?: string | null;
+  quote: string;
+  name: string;
+  role?: string | null;
+  company?: string | null;
+  avatar?: (number | null) | Media;
+  logo?: (number | null) | Media;
+  /**
+   * Only used to select testimonials in sections; visitors never see tags.
+   */
+  tags?: (number | TestimonialTag)[] | null;
+  link?: {
+    type?: ('none' | 'internal' | 'external') | null;
+    doc?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+  };
+  /**
+   * After this day the quote is no longer shown.
+   */
+  approvedUntil?: string | null;
+  /**
+   * E.g. who approved it. Never shown.
+   */
+  internalNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonial-tags".
+ */
+export interface TestimonialTag {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * "Created at" is the authoritative server timestamp. "Decided at" comes from the visitor's own clock and is only kept when it is within 24 hours of the server time.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2267,6 +2329,34 @@ export interface PayloadMcpApiKey {
     create?: boolean | null;
     /**
      * Allow clients to update categories.
+     */
+    update?: boolean | null;
+  };
+  testimonials?: {
+    /**
+     * Allow clients to find testimonials.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create testimonials.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update testimonials.
+     */
+    update?: boolean | null;
+  };
+  testimonialTags?: {
+    /**
+     * Allow clients to find testimonial-tags.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create testimonial-tags.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update testimonial-tags.
      */
     update?: boolean | null;
   };
@@ -2473,6 +2563,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'search';
         value: number | Search;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'testimonial-tags';
+        value: number | TestimonialTag;
       } | null)
     | ({
         relationTo: 'consent-logs';
@@ -3930,6 +4028,44 @@ export interface SearchSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  title?: T;
+  quote?: T;
+  name?: T;
+  role?: T;
+  company?: T;
+  avatar?: T;
+  logo?: T;
+  tags?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        doc?: T;
+        url?: T;
+        label?: T;
+      };
+  approvedUntil?: T;
+  internalNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonial-tags_select".
+ */
+export interface TestimonialTagsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "consent-logs_select".
  */
 export interface ConsentLogsSelect<T extends boolean = true> {
@@ -3970,6 +4106,20 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
       };
   categories?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+      };
+  testimonials?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+      };
+  testimonialTags?:
     | T
     | {
         find?: T;

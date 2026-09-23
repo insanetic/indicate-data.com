@@ -66,3 +66,59 @@ export const idOf = (value: unknown): string | null => {
 
 export const idsOf = (values: unknown[] | null | undefined): string[] =>
   (values || []).map(idOf).filter((id): id is string => id !== null)
+
+export const DEFAULT_CACHE_TAG = 'testimonials'
+
+export interface ComponentPaths {
+  usagePanel: string
+  selectionPreview: string
+  approvedUntilCell: string
+}
+
+export interface TestimonialsPluginOptions {
+  /** Set to `false` to leave the config untouched. */
+  enabled?: boolean
+  slugs?: { testimonials?: string; tags?: string }
+  /** Upload collection for photo and logo; default `media`. */
+  mediaSlug?: string
+  /** Collections a testimonial can link to (case study etc.); default pages + posts. `[]` = external links only. */
+  linkCollections?: string[]
+  /** Admin sidebar group; default Kundenstimmen / Testimonials. */
+  adminGroup?: string | Record<string, string>
+  /** Next cache tag of the loaded pool; default `testimonials`. */
+  cacheTag?: string
+  /** Where the usage panel looks for blocks; default pages.layout. `false` hides the panel. */
+  usage?: false | { collection: string; field: string; blockSlug?: string }
+  /** Import-map paths of the admin components. */
+  componentPaths?: Partial<ComponentPaths>
+}
+
+export interface ResolvedOptions {
+  slugs: { testimonials: string; tags: string }
+  mediaSlug: string
+  linkCollections: string[]
+  adminGroup: string | Record<string, string>
+  cacheTag: string
+  usage: false | { collection: string; field: string; blockSlug: string }
+  componentPaths: ComponentPaths
+  localized: boolean
+}
+
+export const resolveOptions = (options: TestimonialsPluginOptions = {}, localized = false): ResolvedOptions => ({
+  slugs: { testimonials: options.slugs?.testimonials || 'testimonials', tags: options.slugs?.tags || 'testimonial-tags' },
+  mediaSlug: options.mediaSlug || 'media',
+  linkCollections: options.linkCollections ?? ['pages', 'posts'],
+  adminGroup: options.adminGroup || { de: 'Kundenstimmen', en: 'Testimonials' },
+  cacheTag: options.cacheTag || DEFAULT_CACHE_TAG,
+  usage:
+    options.usage === false
+      ? false
+      : { collection: 'pages', field: 'layout', blockSlug: 'testimonials', ...(options.usage || {}) },
+  componentPaths: {
+    usagePanel: '@subneo/payload-testimonials/admin#UsagePanel',
+    selectionPreview: '@subneo/payload-testimonials/admin#SelectionPreview',
+    approvedUntilCell: '@subneo/payload-testimonials/admin#ApprovedUntilCell',
+    ...(options.componentPaths || {}),
+  },
+  localized,
+})

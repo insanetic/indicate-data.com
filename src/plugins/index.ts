@@ -15,6 +15,7 @@ import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { unlocalizedCollections } from './unlocalizedCollections'
 import { subneoPricingPlugin } from '@subneo/payload-pricing'
+import { testimonialsPlugin } from '@subneo/payload-testimonials'
 import { pricingFixtures } from '@/pricing/fixture'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
@@ -35,7 +36,7 @@ export const plugins: Plugin[] = [
     collections: {
       pages: {
         description:
-          'Website pages composed of layout blocks (hero, logoWall, featureTabs, agentShowcase, steps, integrations, cardGrid, stats, testimonials, pricingTeaser, pricing, faq, ctaSection, content, media, archive, form). Localised: de (default) and en.',
+          'Website pages composed of layout blocks (hero, logoWall, featureTabs, agentShowcase, steps, integrations, cardGrid, stats, testimonials (central, references the testimonials collection), pricingTeaser, pricing, faq, ctaSection, content, media, archive, form). Localised: de (default) and en.',
         enabled: { find: true, create: true, update: true, delete: false },
       },
       posts: {
@@ -48,6 +49,15 @@ export const plugins: Plugin[] = [
       },
       categories: {
         description: 'Post categories.',
+        enabled: { find: true, create: true, update: true, delete: false },
+      },
+      testimonials: {
+        description:
+          'Central customer testimonials (quote, person, company, cohort tags, optional link, approvedUntil). Pages reference them from the testimonials block. Localised: de and en for quote, role, link label.',
+        enabled: { find: true, create: true, update: true, delete: false },
+      },
+      'testimonial-tags': {
+        description: 'Cohort tags for testimonials (e.g. hotellerie, agenturen). Used by the testimonials block filter; never shown to visitors.',
         enabled: { find: true, create: true, update: true, delete: false },
       },
     },
@@ -138,6 +148,8 @@ export const plugins: Plugin[] = [
   }),
   // Pricing page fed by Subneo: settings global, refresh endpoint; the block is registered on Pages.
   subneoPricingPlugin({ fixtures: pricingFixtures }),
+  // Central testimonials and cohort tags; the testimonials block on Pages references them.
+  testimonialsPlugin(),
   // Must come last: strips `localized` that the plugins above add to these collections.
   // Posts, forms, search and categories are not localised yet (see spec "Assumptions").
   unlocalizedCollections(['posts', 'forms', 'form-submissions', 'search', 'categories']),
