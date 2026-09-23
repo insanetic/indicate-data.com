@@ -4,6 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { locales, type Locale } from '@/i18n/config'
+import { keyOf } from '@/utilities/convertInlineTestimonials'
 
 import { aboutPage } from './about'
 import { consentGlobal } from './consent'
@@ -12,6 +13,7 @@ import { contactPage, footer, header, homePage, pick, siteSettings, type Refs } 
 import { legalPage, legalSidebar, legalSlugs, type LegalSlug } from './legal'
 import { productSlugs, solutionSlugs, subpages, type SubpageSlug } from './pages'
 import { pricingPage, pricingSettings, pricingSlug } from './pricing'
+import { testimonialData, testimonialTagData, testimonialTagSlugs, type TestimonialTagSlug } from './testimonials'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -88,9 +90,36 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
   }
   await upsertSidebar(payload, req, 'Rechtliches', (locale) => legalSidebar(pick(locale), legalIds))
 
+  payload.logger.info('— Testimonials')
+  const testimonialTags = {} as Record<TestimonialTagSlug, number>
+  for (const slug of testimonialTagSlugs) {
+    const found = await payload.find({ collection: 'testimonial-tags', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
+    const [primary, ...rest] = locales
+    const doc = found.docs[0]
+      ? await payload.update({ collection: 'testimonial-tags', id: found.docs[0].id, data: { ...testimonialTagData(pick(primary))[slug], slug }, locale: primary, req, context })
+      : await payload.create({ collection: 'testimonial-tags', data: { ...testimonialTagData(pick(primary))[slug], slug }, locale: primary, req, context })
+    for (const locale of rest) await payload.update({ collection: 'testimonial-tags', id: doc.id, data: testimonialTagData(pick(locale))[slug], locale, req, context })
+    testimonialTags[slug] = doc.id
+  }
+  const existingTestimonials = await payload.find({ collection: 'testimonials', pagination: false, depth: 0, draft: true })
+  const [primaryLocale, ...otherLocales] = locales
+  const base = testimonialData(pick(primaryLocale))
+  for (let i = 0; i < base.length; i++) {
+    const entry = base[i]
+    const data = { ...entry, tags: entry.tags.map((s) => testimonialTags[s]), _status: 'published' as const }
+    const match = existingTestimonials.docs.find((d) => keyOf(d.name, d.company) === keyOf(entry.name, entry.company))
+    const doc = match
+      ? await payload.update({ collection: 'testimonials', id: match.id, data, locale: primaryLocale, req, context })
+      : await payload.create({ collection: 'testimonials', data, locale: primaryLocale, req, context })
+    for (const locale of otherLocales) {
+      const localised = testimonialData(pick(locale))[i]
+      await payload.update({ collection: 'testimonials', id: doc.id, data: { quote: localised.quote, role: localised.role, _status: 'published' }, locale, req, context })
+    }
+  }
+
   // Subpages link to each other by URL, so they only need media and the contact page.
   const pageIds = {} as Record<SubpageSlug, number>
-  const draft: Refs = { contactPageId: contactId, aboutPageId: 0, pricingPageId: 0, pages: pageIds, legal: legalIds, media, links: productLinks }
+  const draft: Refs = { contactPageId: contactId, aboutPageId: 0, pricingPageId: 0, pages: pageIds, legal: legalIds, media, links: productLinks, testimonialTags }
   for (const slug of [...productSlugs, ...solutionSlugs]) {
     payload.logger.info(`— Page /${slug}`)
     pageIds[slug] = await upsertPage(payload, req, slug, (locale) => subpages(pick(locale), draft)[slug])

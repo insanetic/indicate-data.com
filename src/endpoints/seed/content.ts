@@ -4,7 +4,8 @@ import type { Footer, Header, Page, SiteSetting } from '@/payload-types'
 import type { LegalSlug } from './legal'
 
 import { paragraphs } from './lexical'
-import { pageBlurbs, pageIcons, pageNames, type SubpageSlug } from './pages'
+import { pageBlurbs, pageIcons, pageNames, testimonials, type SubpageSlug } from './pages'
+import type { TestimonialTagSlug } from './testimonials'
 
 /** Picks the text for the locale being seeded. */
 export type T = (de: string, en: string) => string
@@ -24,6 +25,8 @@ export type Refs = {
   legal: Record<LegalSlug, number>
   media: Record<string, number>
   links: { appUrl: string; demoUrl: string; helpUrl: string; docsUrl: string }
+  /** Ids of the testimonial cohort tags (see ./testimonials). */
+  testimonialTags: Record<TestimonialTagSlug, number>
 }
 
 type Appearance = 'default' | 'outline' | 'ghost' | 'link'
@@ -674,40 +677,16 @@ export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
       ],
       settings: { background: 'default', spacing: 'default', anchor: 'why' },
     },
-    {
-      blockType: 'testimonials',
-      blockName: t('Kundenstimmen', 'Testimonials'),
+    testimonials(t, refs, {
+      seed: 'home',
       header: {
-        eyebrow: t('Kundenstimmen', 'Customers'),
         heading: t('Was Hotels und Partner über Indicate sagen', 'What hotels and partners say about Indicate'),
         lead: t(
           'Im Einsatz bei Familotel AG, Alpenhof, Feldberger Hof, Hochegger Klippitz und Hotel Seeklause.',
           'In use at Familotel AG, Alpenhof, Feldberger Hof, Hochegger Klippitz and Hotel Seeklause.',
         ),
-        align: 'left',
       },
-      items: [
-        {
-          quote: t(
-            'Seit ich mit Indicate arbeite, ist meine Arbeit deutlich einfacher geworden. Die Benutzerfreundlichkeit ist ein großer Vorteil.',
-            'Since I started using Indicate, my work has become significantly easier. The user-friendliness is a major advantage.',
-          ),
-          name: 'Armin Biebl',
-          role: t('Vorstand', 'Board member'),
-          company: 'Familotel AG',
-        },
-        {
-          quote: t(
-            'Indicate hat die Auswertung aller relevanten Kennzahlen drastisch vereinfacht und vereinheitlicht.',
-            'Indicate has drastically simplified and standardised how we evaluate all relevant KPIs.',
-          ),
-          name: 'Ilona Stöger-Wolfmeir',
-          role: t('Vorstand', 'Board member'),
-          company: 'Familotel AG',
-        },
-      ],
-      settings: { background: 'default', spacing: 'default' },
-    },
+    }),
     {
       blockType: 'faq',
       blockName: 'FAQ',

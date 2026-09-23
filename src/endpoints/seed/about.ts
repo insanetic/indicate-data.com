@@ -86,7 +86,7 @@ export const aboutPage = (t: T, refs: Refs): Partial<PageData> => ({
         { icon: 'users', title: t('Partner statt Anbieter', 'Partner, not vendor'), text: t('Wir arbeiten mit Agenturen und Softwarepartnern, damit Ihre Daten dort ankommen, wo Sie sie brauchen.', 'We work with agencies and software partners so your data arrives where you need it.') },
       ],
     }),
-    testimonials(t),
+    testimonials(t, refs, { seed: 'about' }),
     closing(
       t,
       refs,

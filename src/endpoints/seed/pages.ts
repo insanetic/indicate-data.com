@@ -2,6 +2,7 @@ import type { Page } from '@/payload-types'
 
 import { paragraphs } from './lexical'
 import type { Refs, T } from './content'
+import type { TestimonialTagSlug } from './testimonials'
 
 type PageData = Omit<Page, 'id' | 'createdAt' | 'updatedAt' | 'sizes'>
 type Block = PageData['layout'][number]
@@ -211,34 +212,23 @@ export const logos = (t: T): Block => ({
   settings: { ...defaults, spacing: 'compact' },
 })
 
-export const testimonials = (t: T): Block => ({
+export const testimonials = (
+  t: T,
+  refs: Refs,
+  opts: { seed: string; tag?: TestimonialTagSlug; count?: number; header?: Partial<NonNullable<Extract<Block, { blockType: 'testimonials' }>['header']>> },
+): Block => ({
   blockType: 'testimonials',
   blockName: t('Kundenstimmen', 'Testimonials'),
   header: {
     eyebrow: t('Kundenstimmen', 'Customers'),
     heading: t('Was Hotels über Indicate sagen', 'What hotels say about Indicate'),
     align: 'left',
+    ...opts.header,
   },
-  items: [
-    {
-      quote: t(
-        'Seit ich mit Indicate arbeite, ist meine Arbeit deutlich einfacher geworden. Die Benutzerfreundlichkeit ist ein großer Vorteil.',
-        'Since I started using Indicate, my work has become significantly easier. The user-friendliness is a major advantage.',
-      ),
-      name: 'Armin Biebl',
-      role: t('Vorstand', 'Board member'),
-      company: 'Familotel AG',
-    },
-    {
-      quote: t(
-        'Indicate hat die Auswertung aller relevanten Kennzahlen drastisch vereinfacht und vereinheitlicht.',
-        'Indicate has drastically simplified and standardised how we evaluate all relevant KPIs.',
-      ),
-      name: 'Ilona Stöger-Wolfmeir',
-      role: t('Vorstand', 'Board member'),
-      company: 'Familotel AG',
-    },
-  ],
+  mode: 'auto',
+  tags: opts.tag ? [refs.testimonialTags[opts.tag]] : [],
+  count: opts.count ?? 2,
+  seed: opts.seed,
   settings: { ...defaults },
 })
 
@@ -1600,7 +1590,7 @@ const hotelsPage = (t: T, refs: Refs): Partial<PageData> =>
         links: [internal('/agent', t('Mehr zum Agenten', 'More about the agent'), 'outline')],
         settings: { ...defaults, background: 'tinted' },
       },
-      testimonials(t),
+      testimonials(t, refs, { seed: 'hotels', tag: 'hotellerie' }),
       faq(t, [
         {
           q: t('Wie lange dauert es, bis ich erste Zahlen sehe?', 'How long until I see the first numbers?'),
@@ -1726,7 +1716,7 @@ const hotelGroupsPage = (t: T, refs: Refs): Partial<PageData> =>
         links: [internal('/agent', t('Mehr zum Agenten', 'More about the agent'), 'outline')],
         settings: { ...defaults, background: 'tinted' },
       },
-      testimonials(t),
+      testimonials(t, refs, { seed: 'hotel-groups', tag: 'hotellerie' }),
       faq(t, [
         {
           q: t('Wir haben verschiedene PMS in den Häusern. Geht das?', 'Our properties run different PMS. Does that work?'),

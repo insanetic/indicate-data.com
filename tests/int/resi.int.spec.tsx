@@ -29,7 +29,7 @@ describe('withResi', () => {
 describe('seeded copy', () => {
   it('never names Resi inside rich text, where the gradient cannot be applied', () => {
     for (const locale of ['de', 'en'] as const) {
-      const refs = { contactPageId: 0, aboutPageId: 0, pricingPageId: 0, pages: {} as never, legal: {} as never, media: {}, links: { appUrl: '', demoUrl: '', helpUrl: '', docsUrl: '' } }
+      const refs = { contactPageId: 0, aboutPageId: 0, pricingPageId: 0, pages: {} as never, legal: {} as never, media: {}, links: { appUrl: '', demoUrl: '', helpUrl: '', docsUrl: '' }, testimonialTags: { hotellerie: 0, agenturen: 0 } }
       for (const page of Object.values(subpages(pick(locale), refs))) {
         for (const block of page.layout || []) {
           if (block.blockType !== 'faq') continue
