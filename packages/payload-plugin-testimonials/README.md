@@ -57,9 +57,10 @@ const selected = await getTestimonials({ payload, block, layout, blockIndex, loc
 ```
 
 Pass the page `layout` and the block's `blockIndex` whenever you have them. The package then
-resolves every testimonials block on the page in order, and an automatic block skips what an
-earlier block already shows. Without them each block is resolved on its own and two sections can
-show the same quote.
+resolves every testimonials block on the page in order, and an automatic block's own picks skip
+what an earlier block already shows. Pinned testimonials are the exception: pinning means "always
+show", so a pinned quote appears even if an earlier block shows it too. Without `layout` and
+`blockIndex` each block is resolved on its own and two sections can show the same quote.
 
 `draft: true` (site draft mode, live preview) reads drafts and bypasses the cache. The function
 never throws: a failed query is logged and the block renders nothing.
@@ -83,10 +84,13 @@ adding one testimonial changes at most one slot per page. The seed is a random s
 block is created; the preview's reshuffle button draws a new one.
 
 `approvedUntil` is a permission date and counts the whole day in UTC. From the next day on the
-quote disappears everywhere, manual blocks included.
+quote disappears everywhere, manual blocks included, and the public REST and GraphQL API stops
+returning it. An unparseable date is treated as not expired, so one bad row cannot blank a page.
 
-The same pure function (`selectTestimonials`) runs on the site, in the admin preview and in the
-usage panel, so the three never disagree.
+The same pure functions (`selectTestimonials`, and `selectForLayout` for a whole page) run on the
+site, in the admin preview and in the usage panel, so all three agree. The preview works on the
+unsaved form: it sends the page's blocks up to and including the one being edited, so it already
+accounts for what the earlier blocks show before anything is saved.
 
 ## Caching
 
@@ -101,8 +105,9 @@ never fails on it.
 
 ## Admin
 
-- **Block preview.** In automatic mode the block shows which testimonials it would pick right now
-  from the unsaved form values, how many match the filter, and a button for a new seed.
+- **Block preview.** In automatic mode the block shows which testimonials it would show right
+  now, computed from the unsaved form values of the page up to this block, how many match its
+  filter, and a button for a new seed.
 - **Shown on.** The testimonial sidebar lists the published pages whose blocks show it, and the
   ones that reference it but currently do not show it. Configure where it looks with `usage`.
 - **Approved until.** The list column turns red after the date.
@@ -114,7 +119,13 @@ under another name, set `componentPaths`.
 Endpoints, both for logged-in users only:
 
 - `GET /api/testimonials/:id/usage` feeds the "Shown on" panel;
-- `POST /api/testimonials/preview` feeds the block preview.
+- `POST /api/testimonials/preview` feeds the block preview. The body is
+  `{ layout, blockIndex, locale }` (the page's blocks up to and including this one, and its index);
+  a bare `{ block, locale }` previews the block on its own. An unknown locale falls back to the
+  request's.
+
+Anonymous readers of the collection (REST, GraphQL) get published testimonials whose
+`approvedUntil` is empty or not yet over. Logged-in users see everything.
 
 ## Options
 
@@ -168,7 +179,12 @@ What it does:
 - Any other draft block keeps its inline quotes and is returned in `needsReview` with the page,
   the block and the reason. The migration writes each one to the deploy log as a warning; an
   editor then picks the testimonials by hand.
-- A database without inline quotes (a fresh install) skips the step.
+- A block with no inline quote and no tags or pins showed nothing before. The new columns would
+  make it an automatic block with three picks, so it becomes a manual block with no testimonials
+  and its id as seed, in the published page and in a pending draft alike. The result counts them
+  in `emptyBlocks` and `emptyDraftBlocks`.
+- A database with neither inline quotes nor blocks from before the migration (a fresh install)
+  skips the step.
 
 The site renders a block's inline quotes only while the block is still unconverted: no
 references, tags or pinned picks, and no seed. Rows saved before the switch never got a seed,
@@ -181,7 +197,7 @@ transaction of its own (`runInlineTestimonialConversion`).
 
 ## Tests
 
-The config, selection, server, usage and conversion specs (`tests/int/testimonials-*.int.spec.ts`)
+The config, selection, preview, server, usage and conversion specs (`tests/int/testimonials-*.int.spec.ts`)
 run with `pnpm test:int` and need no database.
 
 `tests/int/testimonials-convert-db.int.spec.ts` runs the conversion against a real database and
