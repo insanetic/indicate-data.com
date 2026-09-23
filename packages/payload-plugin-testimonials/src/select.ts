@@ -3,8 +3,17 @@ import { DEFAULT_COUNT, MAX_COUNT, idOf, idsOf, type Selected, type Testimonial,
 
 const day = (date: Date) => date.toISOString().slice(0, 10)
 
-/** `approvedUntil` is a permission date: valid through that whole (UTC) day. */
-const isExpired = (t: Testimonial, now: Date) => Boolean(t.approvedUntil) && day(new Date(t.approvedUntil as string)) < day(now)
+/**
+ * `approvedUntil` is a permission date: valid through that whole (UTC) day. An unparseable value
+ * counts as not ended, so one bad row cannot throw and blank every block on the site.
+ */
+export const approvalEnded = (approvedUntil: string | null | undefined, now: Date = new Date()): boolean => {
+  if (!approvedUntil) return false
+  const date = new Date(approvedUntil)
+  return !Number.isNaN(date.getTime()) && day(date) < day(now)
+}
+
+const isExpired = (t: Testimonial, now: Date) => approvalEnded(t.approvedUntil, now)
 
 const matchesTags = (t: Testimonial, block: TestimonialsBlockData) => {
   const wanted = idsOf(block.tags)
@@ -22,7 +31,7 @@ interface Args {
   pool: Testimonial[]
   block: TestimonialsBlockData
   now?: Date
-  /** Ids shown by earlier blocks on the same page; skipped in auto mode. */
+  /** Ids shown by earlier blocks on the same page; automatic picks skip them, pinned ones do not. */
   alreadyShown?: Set<string>
 }
 
@@ -38,6 +47,9 @@ export const countEligible = (args: Args): number => eligible(args).length
  * Picks the testimonials a block shows. Pure: the site, the admin preview and the usage
  * endpoint all call this, so they always agree. The pool must already hold only what may be
  * shown (published, or drafts in preview); deleted or unpublished ids are simply not found.
+ *
+ * Pinned means "always show": an eligible pinned testimonial appears even when an earlier block
+ * on the page already shows it. `alreadyShown` only keeps automatic picks from repeating.
  */
 export const selectTestimonials = (args: Args): Selected[] => {
   const { pool, block, now = new Date(), alreadyShown = new Set<string>() } = args
@@ -51,18 +63,18 @@ export const selectTestimonials = (args: Args): Selected[] => {
   }
 
   const count = clampCount(block.count)
-  const candidates = eligible({ pool, block, now }).filter((t) => !alreadyShown.has(String(t.id)))
-  const candidateIds = new Set(candidates.map((t) => String(t.id)))
+  const matching = eligible({ pool, block, now })
+  const matchingIds = new Set(matching.map((t) => String(t.id)))
 
   const pinned = idsOf(block.pinned)
-    .filter((id) => candidateIds.has(id))
+    .filter((id) => matchingIds.has(id))
     .slice(0, count)
     .map((id) => ({ testimonial: byId.get(id) as Testimonial, reason: 'pinned' as const }))
   const taken = new Set(pinned.map((p) => String(p.testimonial.id)))
 
   const seed = seedOf(block)
-  const rest = candidates
-    .filter((t) => !taken.has(String(t.id)))
+  const rest = matching
+    .filter((t) => !taken.has(String(t.id)) && !alreadyShown.has(String(t.id)))
     .map((t) => ({ t, s: score(seed, String(t.id)) }))
     .sort((a, b) => b.s - a.s || String(a.t.id).localeCompare(String(b.t.id)))
     .slice(0, count - pinned.length)
@@ -72,8 +84,9 @@ export const selectTestimonials = (args: Args): Selected[] => {
 }
 
 /**
- * Resolves every testimonials block of a page layout in order, so a later auto block does not
- * repeat what an earlier block already shows. Keys are layout indexes.
+ * Resolves every testimonials block of a page layout in order, so a later block's automatic
+ * picks do not repeat what an earlier block already shows (pinned ones still appear). Keys are
+ * layout indexes.
  */
 export const selectForLayout = ({
   layout,

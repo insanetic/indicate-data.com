@@ -1,6 +1,7 @@
 export * from './types'
 export { fnv1a, score } from './hash'
-export { countEligible, selectForLayout, selectTestimonials } from './select'
+export { approvalEnded, countEligible, selectForLayout, selectTestimonials } from './select'
+export { parsePreviewBody, previewSelection, type PreviewItem, type PreviewRequest } from './preview'
 export { createTagsCollection, createTestimonialsCollection } from './collections'
 export { createRevalidateHook } from './hooks'
 export { createTestimonialsBlock, newSeed, type TestimonialsBlockOptions } from './block'

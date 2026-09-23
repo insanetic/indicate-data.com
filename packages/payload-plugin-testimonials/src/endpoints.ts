@@ -2,9 +2,9 @@ import type { Endpoint, Payload, PayloadRequest } from 'payload'
 
 import { addDataAndFileToRequest } from 'payload'
 
-import { countEligible, selectTestimonials } from './select'
+import { parsePreviewBody, previewSelection } from './preview'
 import { loadPool } from './server'
-import type { ResolvedOptions, TestimonialsBlockData } from './types'
+import type { ResolvedOptions } from './types'
 import { findUsage } from './usage'
 
 const unauthorized = () => Response.json({ error: 'Unauthorized' }, { status: 401 })
@@ -44,26 +44,29 @@ export const createUsageEndpoint = (o: ResolvedOptions): Endpoint => ({
   },
 })
 
-/** POST /api/<testimonials>/preview — what a block would show with the given (unsaved) values. */
+/**
+ * POST /api/<testimonials>/preview — what a block would show with the given (unsaved) values.
+ * With `layout` (the page's blocks up to and including this one) and `blockIndex` it resolves the
+ * page as the site does; a bare `block` (older clients) is previewed on its own.
+ */
 export const createPreviewEndpoint = (o: ResolvedOptions): Endpoint => ({
   path: '/preview',
   method: 'post',
   handler: async (req) => {
     if (!req.user) return unauthorized()
     await addDataAndFileToRequest(req)
-    const body = (req.data || {}) as { block?: TestimonialsBlockData; locale?: string }
-    const block = body.block || {}
+    const { localization } = req.payload.config
+    const parsed = parsePreviewBody(req.data, {
+      localeCodes: localization ? localization.localeCodes : undefined,
+      fallbackLocale: localeOf(req),
+    })
+    if (!parsed.ok) return Response.json({ error: parsed.error }, { status: 400 })
     const pool = await loadPool({
       payload: req.payload,
       slug: o.slugs.testimonials,
-      locale: body.locale || localeOf(req),
+      locale: parsed.request.locale,
       linkCollections: o.linkCollections,
     })
-    const items = selectTestimonials({ pool, block }).map(({ testimonial, reason }) => ({
-      id: testimonial.id,
-      title: testimonial.title || testimonial.name || String(testimonial.id),
-      reason,
-    }))
-    return Response.json({ items, matching: countEligible({ pool, block }) })
+    return Response.json(previewSelection({ pool, request: parsed.request }))
   },
 })

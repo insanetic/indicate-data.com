@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { countEligible, fnv1a, score, selectForLayout, selectTestimonials, type Testimonial } from '@subneo/payload-testimonials'
+import { approvalEnded, countEligible, fnv1a, score, selectForLayout, selectTestimonials, type Testimonial } from '@subneo/payload-testimonials'
 
 const t = (id: number, extra: Partial<Testimonial> = {}): Testimonial => ({ id, name: `P${id}`, quote: `Q${id}`, ...extra })
 const pool = (n: number, extra: (i: number) => Partial<Testimonial> = () => ({})) =>
@@ -117,6 +117,33 @@ describe('selectTestimonials — auto', () => {
   })
 })
 
+describe('selectTestimonials — pinned and alreadyShown', () => {
+  it('shows a pinned testimonial even when an earlier block shows it; automatic picks still skip it', () => {
+    const r = selectTestimonials({ pool: pool(4), block: { seed: 'x', count: 3, pinned: [2] }, now, alreadyShown: new Set(['2', '3']) })
+    expect(r[0]).toMatchObject({ testimonial: { id: 2 }, reason: 'pinned' })
+    expect(ids(r).slice(1).sort()).toEqual(['1', '4'])
+  })
+})
+
+describe('approvalEnded', () => {
+  it('ends after the whole UTC day of the date; empty or unparseable dates never end', () => {
+    expect(approvalEnded('2026-09-23T23:59:00.000Z', now)).toBe(false)
+    expect(approvalEnded('2026-09-22T12:00:00.000Z', now)).toBe(true)
+    expect(approvalEnded(null, now)).toBe(false)
+    expect(approvalEnded('', now)).toBe(false)
+    expect(approvalEnded('not a date', now)).toBe(false)
+  })
+})
+
+describe('selectTestimonials — invalid approvedUntil', () => {
+  it('treats an unparseable date as not expired instead of throwing', () => {
+    const p = [t(1, { approvedUntil: 'not a date' }), t(2)]
+    expect(() => selectTestimonials({ pool: p, block: { seed: 'x', count: 3 }, now })).not.toThrow()
+    expect(ids(selectTestimonials({ pool: p, block: { seed: 'x', count: 3 }, now })).sort()).toEqual(['1', '2'])
+    expect(ids(selectTestimonials({ pool: p, block: { mode: 'manual', testimonials: [1] }, now }))).toEqual(['1'])
+  })
+})
+
 describe('selectTestimonials — manual', () => {
   it('keeps the chosen order, ignores tags/count/alreadyShown, drops missing and expired', () => {
     const p = [...pool(5), t(6, { approvedUntil: '2020-01-01T00:00:00.000Z' })]
@@ -149,5 +176,16 @@ describe('selectForLayout', () => {
     expect(map.has(0)).toBe(false)
     expect(ids(map.get(1)!)).toEqual(['1', '2'])
     expect(ids(map.get(2)!).sort()).toEqual(['3', '4'])
+  })
+
+  it('shows a pinned testimonial in a later auto block although an earlier manual block shows it', () => {
+    const layout = [
+      { blockType: 'testimonials', mode: 'manual', testimonials: [2] },
+      { blockType: 'testimonials', mode: 'auto', seed: 'x', count: 2, pinned: [2] },
+    ]
+    const later = selectForLayout({ layout, pool: pool(4), now }).get(1)!
+    expect(later[0]).toMatchObject({ testimonial: { id: 2 }, reason: 'pinned' })
+    expect(later).toHaveLength(2)
+    expect(later[1].reason).toBe('auto')
   })
 })
