@@ -44,16 +44,16 @@ export const parsePreviewBody = (body: unknown, { localeCodes, fallbackLocale }:
  * the page are resolved first, so the automatic picks skip what they show. `matching` counts what
  * the block's own filter matches, before that dedupe.
  */
-export const previewSelection = ({ pool, request, now = new Date() }: { pool: Testimonial[]; request: PreviewRequest; now?: Date }) => {
+export const previewSelection = ({ pool, request }: { pool: Testimonial[]; request: PreviewRequest }) => {
   const { block, layout, blockIndex } = request
   const selected =
     layout && typeof blockIndex === 'number'
-      ? selectForLayout({ layout, pool, blockSlug: block.blockType || 'testimonials', now }).get(blockIndex) || []
-      : selectTestimonials({ pool, block, now })
+      ? selectForLayout({ layout, pool, blockSlug: block.blockType || 'testimonials' }).get(blockIndex) || []
+      : selectTestimonials({ pool, block })
   const items: PreviewItem[] = selected.map(({ testimonial, reason }) => ({
     id: testimonial.id,
     title: testimonial.title || testimonial.name || String(testimonial.id),
     reason,
   }))
-  return { items, matching: countEligible({ pool, block, now }) }
+  return { items, matching: countEligible({ pool, block }) }
 }

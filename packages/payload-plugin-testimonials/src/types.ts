@@ -28,7 +28,6 @@ export interface Testimonial {
   logo?: unknown
   tags?: Rel<TestimonialTag>[] | null
   link?: TestimonialLink | null
-  approvedUntil?: string | null
   title?: string | null
   _status?: 'draft' | 'published' | null
 }
@@ -74,7 +73,6 @@ export const DEFAULT_CACHE_TAG = 'testimonials'
 export interface ComponentPaths {
   usagePanel: string
   selectionPreview: string
-  approvedUntilCell: string
 }
 
 export interface TestimonialsPluginOptions {
@@ -125,7 +123,6 @@ export const resolveOptions = (options: TestimonialsPluginOptions = {}, localize
   componentPaths: {
     usagePanel: '@subneo/payload-testimonials/admin#UsagePanel',
     selectionPreview: '@subneo/payload-testimonials/admin#SelectionPreview',
-    approvedUntilCell: '@subneo/payload-testimonials/admin#ApprovedUntilCell',
     ...(options.componentPaths || {}),
   },
   access: options.access || {},

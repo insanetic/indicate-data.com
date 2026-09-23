@@ -53,7 +53,7 @@ export const plugins: Plugin[] = [
       },
       testimonials: {
         description:
-          'Central customer testimonials (quote, person, company, cohort tags, optional link, approvedUntil). Pages reference them from the testimonials block. Localised: de and en for quote, role, link label.',
+          'Central customer testimonials (quote, person, company, cohort tags, optional link). Pages reference them from the testimonials block. Localised: de and en for quote, role, link label.',
         enabled: { find: true, create: true, update: true, delete: false },
       },
       'testimonial-tags': {

@@ -1463,10 +1463,6 @@ export interface Testimonial {
     label?: string | null;
   };
   /**
-   * After this day the quote is no longer shown.
-   */
-  approvedUntil?: string | null;
-  /**
    * E.g. who approved it. Never shown.
    */
   internalNote?: string | null;
@@ -4063,7 +4059,6 @@ export interface TestimonialsSelect<T extends boolean = true> {
         url?: T;
         label?: T;
       };
-  approvedUntil?: T;
   internalNote?: T;
   updatedAt?: T;
   createdAt?: T;

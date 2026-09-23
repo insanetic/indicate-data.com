@@ -7,8 +7,6 @@ import { DEFAULT_CACHE_TAG, type Selected, type Testimonial, type TestimonialsBl
 
 export { countEligible, selectForLayout, selectTestimonials } from './select'
 
-const POOL_REVALIDATE_SECONDS = 86400
-
 export interface LoadPoolArgs {
   payload: Payload
   locale?: string
@@ -45,18 +43,17 @@ export interface GetTestimonialsArgs extends LoadPoolArgs {
   /** The page layout and this block's index in it; enables dedupe across blocks. */
   layout?: unknown[] | null
   blockIndex?: number
-  now?: Date
   cacheTag?: string
   blockSlug?: string
 }
 
 /**
- * Testimonials for one block. Outside draft mode the pool is cached under the `testimonials`
- * tag (revalidated by the collection hooks) and at most a day, so an `approvedUntil` date takes
- * effect without a save. Never throws: a failure logs and renders nothing.
+ * Testimonials for one block. Outside draft mode the pool is cached under the `testimonials` tag,
+ * which the collection hooks revalidate when a testimonial or tag is saved or deleted. Never
+ * throws: a failure logs and renders nothing.
  */
 export const getTestimonials = async (args: GetTestimonialsArgs): Promise<Selected[]> => {
-  const { payload, block, layout, blockIndex, now = new Date(), draft = false, locale, cacheTag = DEFAULT_CACHE_TAG, blockSlug = 'testimonials' } = args
+  const { payload, block, layout, blockIndex, draft = false, locale, cacheTag = DEFAULT_CACHE_TAG, blockSlug = 'testimonials' } = args
   const slug = args.slug || 'testimonials'
   // Different link collections populate different fields, so they get their own cache entry.
   const linkCollections = args.linkCollections ?? ['pages', 'posts']
@@ -65,12 +62,11 @@ export const getTestimonials = async (args: GetTestimonialsArgs): Promise<Select
       ? await loadPool({ ...args, slug, linkCollections, draft: true })
       : await unstable_cache(() => loadPool({ ...args, slug, linkCollections, draft: false }), ['testimonials-pool', slug, locale || '', linkCollections.join(',')], {
           tags: [cacheTag],
-          revalidate: POOL_REVALIDATE_SECONDS,
         })()
     if (layout && typeof blockIndex === 'number') {
-      return selectForLayout({ layout, pool, blockSlug, now }).get(blockIndex) || []
+      return selectForLayout({ layout, pool, blockSlug }).get(blockIndex) || []
     }
-    return selectTestimonials({ pool, block, now })
+    return selectTestimonials({ pool, block })
   } catch (err) {
     payload.logger.error({ err }, '[testimonials] could not load testimonials')
     return []

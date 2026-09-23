@@ -8,31 +8,14 @@ import { l } from './labels'
 import type { ResolvedOptions } from './types'
 
 const authenticated: Access = ({ req }) => Boolean(req.user)
-const startOfTodayUTC = () => {
-  const now = new Date()
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString()
-}
-
 /**
- * Visitors (REST/GraphQL) see published testimonials whose permission to quote has not ended:
- * `approvedUntil` empty, or today or later (valid through that whole UTC day, as on the site).
- * The site itself reads with `overrideAccess`; this closes the public API.
+ * Visitors (REST/GraphQL) see published testimonials. The site itself reads with
+ * `overrideAccess`; this closes the public API.
  */
-const publishedAndApprovedOrAuthenticated: Access = ({ req }) => {
+const publishedOrAuthenticated: Access = ({ req }) => {
   if (req.user) return true
-  const visible: Where = {
-    and: [
-      { _status: { equals: 'published' } },
-      {
-        or: [
-          { approvedUntil: { exists: false } },
-          { approvedUntil: { equals: null } },
-          { approvedUntil: { greater_than_equal: startOfTodayUTC() } },
-        ],
-      },
-    ],
-  }
-  return visible
+  const published: Where = { _status: { equals: 'published' } }
+  return published
 }
 
 const linkField = (o: ResolvedOptions): Field => {
@@ -83,11 +66,11 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
     admin: {
       group: o.adminGroup,
       useAsTitle: 'title',
-      defaultColumns: ['title', 'tags', 'approvedUntil', '_status', 'updatedAt'],
+      defaultColumns: ['title', 'tags', '_status', 'updatedAt'],
       listSearchableFields: ['name', 'company', 'quote'],
     },
     access: {
-      read: publishedAndApprovedOrAuthenticated,
+      read: publishedOrAuthenticated,
       create: authenticated,
       update: authenticated,
       delete: authenticated,
@@ -124,17 +107,6 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
         admin: { description: l('Nur für die Auswahl in Abschnitten; Besucher sehen die Tags nicht.', 'Only used to select testimonials in sections; visitors never see tags.') },
       },
       linkField(o),
-      {
-        name: 'approvedUntil',
-        type: 'date',
-        label: l('Freigabe bis', 'Approved until'),
-        admin: {
-          position: 'sidebar',
-          date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' },
-          description: l('Nach diesem Tag wird das Zitat nicht mehr angezeigt.', 'After this day the quote is no longer shown.'),
-          components: { Cell: o.componentPaths.approvedUntilCell },
-        },
-      },
       {
         name: 'internalNote',
         type: 'textarea',

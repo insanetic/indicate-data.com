@@ -7,7 +7,7 @@ export interface Usage {
   blockIndex: number
   heading: string | null
   reason: Reason
-  /** False when the block references it but it is not rendered (expired, draft, deduped). */
+  /** False when the block references it but it is not rendered (draft, deduped). */
   shown: boolean
 }
 
@@ -23,20 +23,18 @@ export const findUsage = ({
   blockSlug,
   pool,
   testimonialId,
-  now = new Date(),
 }: {
   docs: Doc[]
   field: string
   blockSlug: string
   pool: Testimonial[]
   testimonialId: Id
-  now?: Date
 }): Usage[] => {
   const target = String(testimonialId)
   const usages: Usage[] = []
   for (const doc of docs) {
     const layout = (doc[field] as unknown[] | null | undefined) || []
-    const selected = selectForLayout({ layout, pool, blockSlug, now })
+    const selected = selectForLayout({ layout, pool, blockSlug })
     layout.forEach((raw, blockIndex) => {
       const block = raw as TestimonialsBlockData & { header?: { heading?: string | null } }
       if (block?.blockType !== blockSlug) return

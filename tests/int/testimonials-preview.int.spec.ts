@@ -4,7 +4,6 @@ import { parsePreviewBody, previewSelection, selectForLayout, type Testimonial }
 
 const t = (id: number, extra: Partial<Testimonial> = {}): Testimonial => ({ id, name: `P${id}`, title: `P${id}`, quote: `Q${id}`, ...extra })
 const pool = Array.from({ length: 6 }, (_, i) => t(i + 1, { tags: i % 2 ? [10] : [] }))
-const now = new Date('2026-09-23T10:00:00Z')
 const localeCodes = ['de', 'en']
 
 const layout = [
@@ -15,13 +14,13 @@ const layout = [
 
 describe('previewSelection', () => {
   it('matches what the site shows for a later block on a two-block page', () => {
-    const site = selectForLayout({ layout, pool, now }).get(2)!
+    const site = selectForLayout({ layout, pool }).get(2)!
     const parsed = parsePreviewBody({ layout, blockIndex: 2, block: layout[2], locale: 'de' }, { localeCodes })
     if (!parsed.ok) throw new Error(parsed.error)
-    const preview = previewSelection({ pool, request: parsed.request, now })
+    const preview = previewSelection({ pool, request: parsed.request })
     expect(preview.items.map((i) => [String(i.id), i.reason])).toEqual(site.map((s) => [String(s.testimonial.id), s.reason]))
     // On its own the block would pick 6; on the page the earlier block already shows it.
-    const alone = previewSelection({ pool, request: { block: layout[2] as never }, now })
+    const alone = previewSelection({ pool, request: { block: layout[2] as never } })
     expect(alone.items.map((i) => i.id)).toContain(6)
     expect(preview.items.map((i) => i.id)).not.toContain(6)
     expect(preview.items).toHaveLength(3)
@@ -29,12 +28,12 @@ describe('previewSelection', () => {
 
   it('counts matching testimonials for the block itself, ignoring earlier blocks', () => {
     const tagged = [layout[1], { ...layout[2], tags: [10] }]
-    const preview = previewSelection({ pool, request: { block: tagged[1] as never, layout: tagged, blockIndex: 1 }, now })
+    const preview = previewSelection({ pool, request: { block: tagged[1] as never, layout: tagged, blockIndex: 1 } })
     expect(preview.matching).toBe(3)
   })
 
   it('falls back to the block alone when no layout is sent', () => {
-    const preview = previewSelection({ pool, request: { block: { mode: 'manual', testimonials: [4, 2] } }, now })
+    const preview = previewSelection({ pool, request: { block: { mode: 'manual', testimonials: [4, 2] } } })
     expect(preview.items).toEqual([
       { id: 4, title: 'P4', reason: 'manual' },
       { id: 2, title: 'P2', reason: 'manual' },

@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 
-const cache = vi.hoisted(() => ({ keyParts: [] as string[][] }))
+const cache = vi.hoisted(() => ({ keyParts: [] as string[][], options: [] as Record<string, unknown>[] }))
 vi.mock('next/cache', () => ({
-  unstable_cache: (fn: () => unknown, keyParts: string[]) => {
+  unstable_cache: (fn: () => unknown, keyParts: string[], options: Record<string, unknown>) => {
     cache.keyParts.push(keyParts)
+    cache.options.push(options)
     return fn
   },
   revalidateTag: vi.fn(),
@@ -67,15 +68,18 @@ describe('getTestimonials', () => {
     expect(r.map((s) => s.testimonial.id).sort()).toEqual([2, 3])
   })
 
-  it('keys the cached pool by slug, locale and link collections', async () => {
+  it('keys the cached pool by slug, locale and link collections, invalidated by tag only', async () => {
     const { payload } = fakePayload()
     cache.keyParts.length = 0
+    cache.options.length = 0
     await getTestimonials({ payload, block: { mode: 'auto' }, locale: 'en', linkCollections: ['pages'] })
     await getTestimonials({ payload, block: { mode: 'auto' }, locale: 'en', linkCollections: ['pages', 'posts'] })
     expect(cache.keyParts).toEqual([
       ['testimonials-pool', 'testimonials', 'en', 'pages'],
       ['testimonials-pool', 'testimonials', 'en', 'pages,posts'],
     ])
+    expect(cache.options).toEqual([{ tags: ['testimonials'] }, { tags: ['testimonials'] }])
+    for (const options of cache.options) expect(options).not.toHaveProperty('revalidate')
   })
 
   it('logs and returns [] when loading fails', async () => {

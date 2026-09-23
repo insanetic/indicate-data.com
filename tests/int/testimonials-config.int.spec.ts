@@ -1,5 +1,5 @@
 import type { Config, CollectionConfig, Field } from 'payload'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { createTestimonialsBlock, testimonialsPlugin } from '@subneo/payload-testimonials'
 
@@ -62,25 +62,10 @@ describe('testimonialsPlugin', () => {
   })
 
   describe('anonymous read', () => {
-    afterEach(() => vi.useRealTimers())
-
-    it('returns published testimonials whose approval has not ended (start of today, UTC)', async () => {
-      vi.useFakeTimers()
-      vi.setSystemTime(new Date('2026-09-23T22:30:00+02:00')) // 20:30 UTC on the 23rd
+    it('is exactly the published filter', async () => {
       const t = collection(await testimonialsPlugin()(base), 'testimonials')
       const read = t.access!.read as (args: unknown) => unknown
-      expect(read({ req: {} })).toEqual({
-        and: [
-          { _status: { equals: 'published' } },
-          {
-            or: [
-              { approvedUntil: { exists: false } },
-              { approvedUntil: { equals: null } },
-              { approvedUntil: { greater_than_equal: '2026-09-23T00:00:00.000Z' } },
-            ],
-          },
-        ],
-      })
+      expect(read({ req: {} })).toEqual({ _status: { equals: 'published' } })
     })
 
     it('gives a logged-in user everything', async () => {
@@ -95,7 +80,7 @@ describe('testimonialsPlugin', () => {
     const t = collection(await testimonialsPlugin({ access: { create } })(base), 'testimonials')
     expect(t.access?.create).toBe(create)
     const read = t.access!.read as (args: unknown) => unknown
-    expect(read({ req: {} })).toMatchObject({ and: [{ _status: { equals: 'published' } }, expect.anything()] })
+    expect(read({ req: {} })).toEqual({ _status: { equals: 'published' } })
     expect(t.access?.update).toBeTypeOf('function')
     expect(t.access?.delete).toBeTypeOf('function')
   })
