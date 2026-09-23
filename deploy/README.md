@@ -191,9 +191,10 @@ snapshot, so a stale one produces wrong SQL.
 
 A database that was built by schema push has a marker row in `payload_migrations` with
 `batch = -1` and no record of the migration files. `payload migrate` then asks "It looks like
-you've run Payload in dev mode ... Would you like to proceed?". The container has no terminal to
-answer, so it waits there and the dev server never starts. Record the migrations as applied
-instead, with the stack's Postgres running:
+you've run Payload in dev mode ... Would you like to proceed?" and, without a terminal, waits
+forever. So the dev container and `make migrate` first run `scripts/check-migration-baseline.mjs`,
+which exits 1 on the marker and points here. The app container stops with that message in
+`docker compose logs app`. Record the migrations as applied, with the stack's Postgres running:
 
 ```
 docker compose exec -T postgres psql -U payload -d payload -v ON_ERROR_STOP=1 <<'SQL'

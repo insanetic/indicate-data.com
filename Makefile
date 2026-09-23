@@ -49,7 +49,7 @@ migration: need-NAME ## After a schema change: write src/migrations/<stamp>_NAME
 	fi
 
 migrate: ## Apply pending migrations in the running dev container
-	docker compose exec -T app pnpm payload migrate
+	docker compose exec -T app sh -c "node scripts/check-migration-baseline.mjs && pnpm payload migrate"
 
 migrate-status: ## List migrations and whether the dev database has run them
 	docker compose exec -T app pnpm payload migrate:status

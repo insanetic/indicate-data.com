@@ -26,11 +26,12 @@ services:
   # Dev mode: source is bind-mounted, node_modules lives in a container volume
   # (host node_modules carries macOS binaries and must not be shared).
   # Pending migrations from src/migrations run before the dev server starts; a failing
-  # migration stops the container. `make migrate` applies new ones while it runs.
+  # migration stops the container, and so does a database still built by schema push
+  # (check-migration-baseline.mjs). `make migrate` applies new ones while it runs.
   app:
     image: node:22-alpine
     working_dir: /app
-    command: sh -c "corepack enable pnpm && pnpm install --frozen-lockfile && pnpm payload migrate && pnpm dev"
+    command: sh -c "corepack enable pnpm && pnpm install --frozen-lockfile && node scripts/check-migration-baseline.mjs && pnpm payload migrate && pnpm dev"
     ports:
       - '3000:3000'
     env_file:
