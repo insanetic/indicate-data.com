@@ -69,8 +69,22 @@ import { legacySelection } from '@/blocks/Testimonials/legacy'
 
 describe('legacySelection', () => {
   it('uses inline items when the block has no references yet', () => {
-    const r = legacySelection({ mode: 'auto', items: [{ id: 'a', quote: 'q', name: 'N', company: 'C' }] } as never)
-    expect(r?.map((s) => s.testimonial.name)).toEqual(['N'])
+    const r = legacySelection({
+      mode: 'auto',
+      items: [
+        { id: 'a', quote: 'q', name: 'N', company: 'C' },
+        { quote: 'q2', name: 'M' },
+      ],
+    } as never)
+    expect(r?.map((s) => s.testimonial.name)).toEqual(['N', 'M'])
+    expect(r?.every((s) => s.reason === 'manual')).toBe(true)
+    expect(r?.map((s) => s.testimonial.id)).toEqual(['a', 'legacy-1'])
+  })
+  it('returns null once the editor picked tags', () => {
+    expect(legacySelection({ mode: 'auto', tags: [1], items: [{ id: 'a', quote: 'q', name: 'N' }] } as never)).toBeNull()
+  })
+  it('returns null once the editor pinned testimonials', () => {
+    expect(legacySelection({ mode: 'auto', pinned: [2], items: [{ id: 'a', quote: 'q', name: 'N' }] } as never)).toBeNull()
   })
   it('returns null once the block references testimonials', () => {
     expect(legacySelection({ mode: 'manual', testimonials: [1], items: [{ id: 'a', quote: 'q', name: 'N' }] } as never)).toBeNull()
