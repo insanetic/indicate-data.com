@@ -20,7 +20,7 @@ const linkField = (o: ResolvedOptions): Field => {
     type: 'group',
     label: l('Link (z. B. Fallstudie)', 'Link (e.g. case study)'),
     fields: [
-      { name: 'type', type: 'radio', defaultValue: 'none', options: types, admin: { layout: 'horizontal' } },
+      { name: 'type', type: 'radio', label: l('Linkart', 'Link type'), defaultValue: 'none', options: types, admin: { layout: 'horizontal' } },
       ...(o.linkCollections.length
         ? [
             {
@@ -121,7 +121,7 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
               label: l('Verwendet auf', 'Shown on'),
               admin: {
                 position: 'sidebar',
-                components: { Field: { path: o.componentPaths.usagePanel, clientProps: { apiSlug: o.slugs.testimonials } } },
+                components: { Field: { path: o.componentPaths.usagePanel, clientProps: { apiSlug: o.slugs.testimonials, usageCollection: o.usage.collection } } },
               },
             } as Field,
           ]

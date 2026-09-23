@@ -40,6 +40,8 @@ import { LinkRowLabel as LinkRowLabel_b75bca53623f88c4d5ce55f19a6de6a0 } from '@
 import { GroupRowLabel as GroupRowLabel_b75bca53623f88c4d5ce55f19a6de6a0 } from '@/collections/Sidebars/RowLabel'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
+import { ApprovedUntilCell as ApprovedUntilCell_679657c9496ce0be48053153e88bcd49 } from '@subneo/payload-testimonials/admin'
+import { UsagePanel as UsagePanel_679657c9496ce0be48053153e88bcd49 } from '@subneo/payload-testimonials/admin'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { SocialRowLabel as SocialRowLabel_5d467a428c51c17d973ea9adf213354c } from '@/globals/SiteSettings/SocialRowLabel'
 import { MenuLinkRowLabel as MenuLinkRowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
@@ -97,6 +99,8 @@ export const importMap = {
   "@/collections/Sidebars/RowLabel#GroupRowLabel": GroupRowLabel_b75bca53623f88c4d5ce55f19a6de6a0,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
+  "@subneo/payload-testimonials/admin#ApprovedUntilCell": ApprovedUntilCell_679657c9496ce0be48053153e88bcd49,
+  "@subneo/payload-testimonials/admin#UsagePanel": UsagePanel_679657c9496ce0be48053153e88bcd49,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/globals/SiteSettings/SocialRowLabel#SocialRowLabel": SocialRowLabel_5d467a428c51c17d973ea9adf213354c,
   "@/Header/RowLabel#MenuLinkRowLabel": MenuLinkRowLabel_ec255a65fa6fa8d1faeb09cf35284224,
