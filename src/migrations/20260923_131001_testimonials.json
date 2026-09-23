@@ -28236,12 +28236,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "approved_until": {
-          "name": "approved_until",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
         "internal_note": {
           "name": "internal_note",
           "type": "varchar",
@@ -28724,12 +28718,6 @@
         "version_link_url": {
           "name": "version_link_url",
           "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "version_approved_until": {
-          "name": "version_approved_until",
-          "type": "timestamp(3) with time zone",
           "primaryKey": false,
           "notNull": false
         },
@@ -37964,6 +37952,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "2e7d5cee-5552-4da5-88ad-8271417f542e",
+  "id": "341d4133-f4e4-4431-84b2-cc189ccd45a3",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
