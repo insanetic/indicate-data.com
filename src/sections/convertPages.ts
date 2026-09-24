@@ -55,8 +55,14 @@ export const convertSectionBlocks = async ({ payload, req, pageIds }: { payload:
         await payload.update({ collection: 'pages', id, locale, fallbackLocale: false, data: { ...convert(publishedDocs[i], publishedHeader), _status: 'published' }, req, context })
       }
       publishedPages++
+    } else if (publishedDocs[0]._status === 'draft') {
+      // Never published: a `draft: true` save only writes a version, so the main row would keep
+      // the legacy blocks. A plain save with `_status: 'draft'` rewrites it and stays a draft.
+      for (const [i, locale] of locales.entries()) {
+        await payload.update({ collection: 'pages', id, locale, fallbackLocale: false, data: { ...convert(publishedDocs[i], publishedHeader), _status: 'draft' }, req, context })
+      }
     }
-    // Publishing made the published doc the latest version, so a pending draft is saved again on top.
+    // Publishing (or the main-row save above) made that state the latest version, so a pending draft is saved again on top. the published doc the latest version, so a pending draft is saved again on top.
     if (draftDocs[0]._status === 'draft') {
       for (const [i, locale] of locales.entries()) {
         await payload.update({ collection: 'pages', id, locale, fallbackLocale: false, draft: true, data: { ...convert(draftDocs[i], draftHeader), _status: 'draft' }, req, context })

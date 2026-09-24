@@ -106,6 +106,51 @@ describeDb(`convertSectionBlocks against the database${enabled ? '' : ' (skipped
     expect(await runSectionConversion(payload, { pageIds: [pageId] })).toEqual({ publishedPages: 0, draftPages: 0 })
   })
 
+  describe('a page that was never published', () => {
+    let draftId: number
+    let converted: Awaited<ReturnType<typeof runSectionConversion>>
+    const readMain = (locale: 'de' | 'en') =>
+      payload.findByID({ collection: 'pages', id: draftId, locale, fallbackLocale: false, draft: false, depth: 0, showHiddenFields: true, context }) as unknown as Promise<Page>
+
+    beforeAll(async () => {
+      const created = await payload.create({
+        collection: 'pages',
+        locale: 'de',
+        context,
+        data: { title: `Sections draft ${run}`, slug: `${slug}-draft`, _status: 'draft', layout: [story('Entwurf DE', 'Einleitung DE')] } as never,
+      })
+      draftId = created.id
+      const block = (created as unknown as Loose).layout[0]
+      await payload.update({
+        collection: 'pages', id: draftId, locale: 'en', context,
+        data: { _status: 'draft', layout: [{ ...block, header: { ...block.header, heading: 'Draft EN', lead: 'Lead EN' } }] } as never,
+      })
+      converted = await runSectionConversion(payload, { pageIds: [draftId] })
+    })
+
+    afterAll(async () => {
+      if (payload && draftId) await payload.delete({ collection: 'pages', id: draftId, context })
+    })
+
+    it('converts the main row in both locales and stays a draft', async () => {
+      expect(converted).toEqual({ publishedPages: 0, draftPages: 1 })
+      const de = await readMain('de')
+      const en = await readMain('en')
+      expect(de._status).toBe('draft')
+      expect((de.layout as Loose[]).map((b) => b.blockType)).toEqual(['heading', 'media', 'items', 'actions'])
+      expect((en.layout as Loose[]).map((b) => b.blockType)).toEqual(['heading', 'media', 'items', 'actions'])
+      expect((de.layout as Loose[])[0].header).toMatchObject({ heading: 'Entwurf DE', lead: 'Einleitung DE' })
+      expect((en.layout as Loose[])[0].header).toMatchObject({ heading: 'Draft EN', lead: 'Lead EN' })
+      const latest = (await payload.findByID({ collection: 'pages', id: draftId, locale: 'de', draft: true, depth: 0, context })) as unknown as Page
+      expect(latest._status).toBe('draft')
+      expect((latest.layout as Loose[]).map((b) => b.blockType)).toEqual(['heading', 'media', 'items', 'actions'])
+    })
+
+    it('running it again changes nothing', async () => {
+      expect(await runSectionConversion(payload, { pageIds: [draftId] })).toEqual({ publishedPages: 0, draftPages: 0 })
+    })
+  })
+
   describe('a heading filled in one locale only', () => {
     let statsId: number
     let converted: Awaited<ReturnType<typeof runSectionConversion>>
