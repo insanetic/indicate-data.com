@@ -15,7 +15,7 @@ export const Split: Block = {
     plural: { de: 'Text neben Szene', en: 'Text beside scene' },
   },
   fields: [
-    sectionHeader({ withAlign: false }),
+    sectionHeader({ optionalHeading: true, withAlign: false }),
     {
       name: 'mediaSide',
       type: 'radio',

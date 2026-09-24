@@ -170,4 +170,10 @@ describe('SplitBlock', () => {
     expect(container.querySelector('ul')?.className).toContain('flex-col')
     expect(screen.getByText('Punkt eins')).toBeTruthy()
   })
+
+  it('renders without a heading (lead only)', () => {
+    const { container } = inLocale(<SplitBlock blockType="split" header={{ heading: null, lead: 'Nur Einleitung' }} visual={{ type: 'image', image: null }} />)
+    expect(container.querySelector('h1, h2')).toBeNull()
+    expect(screen.getByText('Nur Einleitung')).toBeTruthy()
+  })
 })

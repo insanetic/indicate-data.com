@@ -909,9 +909,9 @@ export interface IntegrationTreeBlock {
  */
 export interface SplitBlock {
   hidden?: boolean | null;
-  header: {
+  header?: {
     eyebrow?: string | null;
-    heading: string;
+    heading?: string | null;
     lead?: string | null;
   };
   mediaSide?: ('right' | 'left') | null;

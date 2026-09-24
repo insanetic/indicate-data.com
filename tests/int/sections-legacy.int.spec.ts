@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   convertWidgetSpacing,
+  headerTextIds,
   needsSectionConversion,
   splitLegacyBlock,
   splitLegacyLayout,
@@ -43,6 +44,11 @@ describe('splitLegacyBlock', () => {
     expect(types(out)).toEqual(['split'])
     expect(out[0]).toMatchObject({ id: 'fs-split', mediaSide: 'left', header: { eyebrow: 'Für Hotels', heading: 'Strategie auf Zahlen', lead: 'Welche Kanäle?' } })
     expect(out[0].header.align).toBeUndefined()
+  })
+
+  it('featureStory side by side without a heading in this locale → split with a null heading', () => {
+    const out = splitLegacyBlock({ blockType: 'featureStory', id: 'fs', header: { heading: null, lead: 'Nur Einleitung' }, layout: 'visual-right' }) as Loose[]
+    expect(out[0].header).toEqual({ eyebrow: null, heading: null, lead: 'Nur Einleitung' })
   })
 
   it('featureStory without points or links → heading and media only', () => {
@@ -143,5 +149,40 @@ describe('splitLegacyLayout', () => {
     expect(needsSectionConversion([{ blockType: 'hero', settings: { spacing: 'compact' } }])).toBe(true)
     expect(needsSectionConversion([{ blockType: 'hero', settings: { spacing: 'default' } }])).toBe(false)
     expect(needsSectionConversion(null)).toBe(false)
+  })
+})
+
+describe('locale-independent structure', () => {
+  // The layout is shared across locales, so every locale pass must produce the same parts.
+  const de = { blockType: 'stats' as const, id: 'st', header: { heading: 'Zahlen', lead: null }, items: [{ id: 'v', value: '40', label: 'weniger' }] }
+  const en = { ...de, header: { heading: null, lead: null } }
+
+  it('headerTextIds collects legacy blocks with a heading or lead in any locale', () => {
+    const faq = { blockType: 'faq', id: 'f', header: { heading: 'FAQ' } }
+    const leadOnly = { blockType: 'steps', id: 'sp', header: { heading: '', lead: 'Einleitung' }, steps: [] }
+    const empty = { blockType: 'pillars', id: 'pl', header: { heading: '', lead: null }, pillars: [] }
+    const noId = { blockType: 'ctaSection', header: { heading: 'Los' }, links: [] }
+    expect(headerTextIds([[faq, en, leadOnly, empty, noId], [faq, de]])).toEqual(new Set(['st', 'sp']))
+    expect(headerTextIds([])).toEqual(new Set())
+  })
+
+  it('a block with a heading in one locale keeps its heading part in the other', () => {
+    const withHeader = headerTextIds([[de], [en]])
+    const a = splitLegacyBlock(de, { withHeader }) as Loose[]
+    const b = splitLegacyBlock(en, { withHeader }) as Loose[]
+    expect(types(b)).toEqual(['heading', 'items'])
+    expect(b.map((x) => x.id)).toEqual(a.map((x) => x.id))
+    expect(b[0].header).toEqual({ eyebrow: null, heading: null, lead: null, align: 'center' })
+    expect(splitLegacyLayout([en], { withHeader }).map((x) => (x as Loose).id)).toEqual(['st-heading', 'st-items'])
+  })
+
+  it('the set also drops a heading part for a listed-out id', () => {
+    expect(types(splitLegacyBlock(de, { withHeader: new Set() }))).toEqual(['items'])
+  })
+
+  it('without the set, or without an id, each block decides by its own text', () => {
+    expect(types(splitLegacyBlock(en))).toEqual(['items'])
+    expect(types(splitLegacyBlock(de))).toEqual(['heading', 'items'])
+    expect(types(splitLegacyBlock({ ...de, id: undefined }, { withHeader: new Set() }))).toEqual(['heading', 'items'])
   })
 })

@@ -88,6 +88,13 @@ export type LegacyBlock =
 type ItemRow = NonNullable<ItemsBlock['items']>[number]
 type Part = [suffix: string, block: SectionBlock]
 
+/**
+ * `withHeader`: ids of the legacy blocks that get a heading part (see `headerTextIds`). The page
+ * layout is shared across locales, so the parts must not depend on one locale's text. Blocks
+ * without an id, or calls without the set (the seed), decide by their own heading or lead.
+ */
+export type SplitOptions = { withHeader?: ReadonlySet<string> }
+
 export const isLegacyBlock = (block: unknown): block is LegacyBlock =>
   (legacySectionSlugs as readonly string[]).includes((block as { blockType?: string } | null)?.blockType || '')
 
@@ -118,10 +125,28 @@ const finish = (old: LegacyBlock, parts: Part[]): SectionBlock[] =>
     } as SectionBlock
   })
 
-const headingPart = (header: Header | null | undefined, align: 'left' | 'center' | 'right', extra: Partial<HeadingBlock> = {}): Part[] =>
-  header?.heading || header?.lead
-    ? [['heading', { blockType: 'heading', header: { eyebrow: header.eyebrow ?? null, heading: header.heading ?? null, lead: header.lead ?? null, align }, size: 'h2', links: [], ...extra }]]
+const hasHeaderText = (header: Header | null | undefined): boolean => Boolean(header?.heading || header?.lead)
+
+/** Ids of legacy blocks whose heading or lead is filled in any of the given per-locale layouts. */
+export const headerTextIds = (layouts: readonly (readonly unknown[])[]): Set<string> =>
+  new Set(
+    layouts.flatMap((layout) =>
+      layout.filter((b): b is LegacyBlock => isLegacyBlock(b) && Boolean(b.id) && hasHeaderText(b.header)).map((b) => b.id as string),
+    ),
+  )
+
+const headingPart = (
+  old: LegacyBlock,
+  options: SplitOptions,
+  align: 'left' | 'center' | 'right',
+  extra: Partial<HeadingBlock> = {},
+): Part[] => {
+  const { header } = old
+  const show = options.withHeader && old.id ? options.withHeader.has(old.id) : hasHeaderText(header)
+  return show
+    ? [['heading', { blockType: 'heading', header: { eyebrow: header?.eyebrow ?? null, heading: header?.heading ?? null, lead: header?.lead ?? null, align }, size: 'h2', links: [], ...extra }]]
     : []
+}
 
 const itemsPart = (suffix: string, style: ItemsBlock['style'], items: ItemRow[], o: Partial<Pick<ItemsBlock, 'columns' | 'frame' | 'divider'>> = {}): Part[] =>
   items.length > 0 ? [[suffix, { blockType: 'items', style, columns: o.columns || 'auto', frame: o.frame || 'none', divider: o.divider || false, items }]] : []
@@ -130,7 +155,7 @@ const actionsPart = (links: LinkRow[] | null | undefined, align: ActionsBlock['a
   (links || []).length > 0 ? [['actions', { blockType: 'actions', links: links as LinkRow[], align }]] : []
 
 /** One old block → its section blocks, in page order. See the mapping table in the spec. */
-export const splitLegacyBlock = (old: LegacyBlock): SectionBlock[] => {
+export const splitLegacyBlock = (old: LegacyBlock, options: SplitOptions = {}): SectionBlock[] => {
   switch (old.blockType) {
     case 'featureStory': {
       const visual = old.visual || { type: 'illustration' as const, illustration: 'builder' as const }
@@ -140,7 +165,7 @@ export const splitLegacyBlock = (old: LegacyBlock): SectionBlock[] => {
             'split',
             {
               blockType: 'split',
-              header: { eyebrow: old.header.eyebrow ?? null, heading: old.header.heading || '', lead: old.header.lead ?? null },
+              header: { eyebrow: old.header.eyebrow ?? null, heading: old.header.heading ?? null, lead: old.header.lead ?? null },
               mediaSide: old.layout === 'visual-left' ? 'left' : 'right',
               visual,
               points: old.points || [],
@@ -150,18 +175,18 @@ export const splitLegacyBlock = (old: LegacyBlock): SectionBlock[] => {
         ])
       }
       return finish(old, [
-        ...headingPart(old.header, 'left'),
+        ...headingPart(old, options, 'left'),
         ['media', { blockType: 'media', visual, width: 'full' }],
         ...itemsPart('items', 'points', (old.points || []).map((p) => ({ id: p.id, icon: p.icon, title: p.title, text: p.text })), { divider: true }),
         ...actionsPart(old.links, 'left'),
       ])
     }
     case 'ctaSection':
-      return finish(old, headingPart(old.header, 'center', { size: 'display', links: old.links || [] }))
+      return finish(old, headingPart(old, options, 'center', { size: 'display', links: old.links || [] }))
     case 'pillars': {
       const pillars = old.pillars || []
       return finish(old, [
-        ...headingPart(old.header, 'center'),
+        ...headingPart(old, options, 'center'),
         ...itemsPart('cards', 'cards', pillars.map((p) => ({ id: p.id, icon: p.icon, title: p.title, text: p.text })), {
           frame: 'panel',
           columns: pillars.length === 4 ? '4' : '3',
@@ -176,7 +201,7 @@ export const splitLegacyBlock = (old: LegacyBlock): SectionBlock[] => {
     }
     case 'cardGrid':
       return finish(old, [
-        ...headingPart(old.header, old.header.align || 'left'),
+        ...headingPart(old, options, old.header.align || 'left'),
         ...itemsPart(
           'items',
           'cards',
@@ -194,12 +219,12 @@ export const splitLegacyBlock = (old: LegacyBlock): SectionBlock[] => {
       ])
     case 'steps':
       return finish(old, [
-        ...headingPart(old.header, 'center'),
+        ...headingPart(old, options, 'center'),
         ...itemsPart('items', 'steps', (old.steps || []).map((s) => ({ id: s.id, icon: s.icon, title: s.title, text: s.text }))),
       ])
     case 'stats':
       return finish(old, [
-        ...headingPart(old.header, 'center'),
+        ...headingPart(old, options, 'center'),
         ...itemsPart('items', 'stats', (old.items || []).map((s) => ({ id: s.id, value: s.value, suffix: s.suffix, title: s.label, text: s.note }))),
       ])
     case 'integrations': {
@@ -207,7 +232,7 @@ export const splitLegacyBlock = (old: LegacyBlock): SectionBlock[] => {
       // With an uploaded image the old block showed only the image; the tree keeps the groups, hidden.
       const tree: Part = ['tree', { blockType: 'integrationTree', groups: old.groups || [], hidden: customImage }]
       return finish(old, [
-        ...headingPart(old.header, 'center'),
+        ...headingPart(old, options, 'center'),
         tree,
         ...(customImage ? ([['media', { blockType: 'media', visual: old.visual as Visual, width: 'narrow' }]] as Part[]) : []),
         ...actionsPart(old.links, 'center'),
@@ -232,8 +257,8 @@ export const convertWidgetSpacing = <B>(block: B): B => {
 }
 
 /** A whole layout: legacy blocks replaced in place, widget spacing converted, the rest untouched. */
-export const splitLegacyLayout = (layout: readonly unknown[]): unknown[] =>
-  layout.flatMap((block) => (isLegacyBlock(block) ? splitLegacyBlock(block) : [convertWidgetSpacing(block)]))
+export const splitLegacyLayout = (layout: readonly unknown[], options: SplitOptions = {}): unknown[] =>
+  layout.flatMap((block) => (isLegacyBlock(block) ? splitLegacyBlock(block, options) : [convertWidgetSpacing(block)]))
 
 export const needsSectionConversion = (layout: readonly unknown[] | null | undefined): boolean =>
   (layout || []).some((block) => isLegacyBlock(block) || convertWidgetSpacing(block) !== block)
