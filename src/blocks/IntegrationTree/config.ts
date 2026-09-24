@@ -8,6 +8,10 @@ import { sectionSettings } from '@/fields/sectionSettings'
  */
 export const IntegrationTree: Block = {
   slug: 'integrationTree',
+  // The default table names run past Postgres' 63 characters on the version tables
+  // (`_pages_v_blocks_integration_tree_groups_items_logo_id_media_id_fk`). A string replaces the
+  // whole name; versions become `_pages_blocks_int_tree_v`. Only the Pages layout uses this block.
+  dbName: 'pages_blocks_int_tree',
   interfaceName: 'IntegrationTreeBlock',
   labels: {
     singular: { de: 'Integrations-Grafik', en: 'Integration tree' },

@@ -39,10 +39,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_pages_blocks_actions_settings_gap_top" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
   CREATE TYPE "public"."enum_pages_blocks_actions_settings_gap_bottom" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
   CREATE TYPE "public"."enum_pages_blocks_actions_settings_spacing" AS ENUM('default', 'compact', 'none');
-  CREATE TYPE "public"."enum_pages_blocks_integration_tree_settings_background" AS ENUM('default', 'tinted', 'dark', 'accent');
-  CREATE TYPE "public"."enum_pages_blocks_integration_tree_settings_gap_top" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
-  CREATE TYPE "public"."enum_pages_blocks_integration_tree_settings_gap_bottom" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
-  CREATE TYPE "public"."enum_pages_blocks_integration_tree_settings_spacing" AS ENUM('default', 'compact', 'none');
+  CREATE TYPE "public"."enum_pages_blocks_int_tree_settings_background" AS ENUM('default', 'tinted', 'dark', 'accent');
+  CREATE TYPE "public"."enum_pages_blocks_int_tree_settings_gap_top" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
+  CREATE TYPE "public"."enum_pages_blocks_int_tree_settings_gap_bottom" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
+  CREATE TYPE "public"."enum_pages_blocks_int_tree_settings_spacing" AS ENUM('default', 'compact', 'none');
   CREATE TYPE "public"."enum_pages_blocks_split_points_icon" AS ENUM('chart', 'sparkles', 'message', 'plug', 'database', 'layers', 'users', 'shield', 'lock', 'clock', 'calendar', 'target', 'trending', 'bell', 'globe', 'building', 'buildings', 'briefcase', 'code', 'check', 'euro', 'percent', 'bed', 'upload', 'palette', 'eye', 'zap', 'search');
   CREATE TYPE "public"."enum_pages_blocks_split_links_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_pages_blocks_split_links_link_appearance" AS ENUM('default', 'outline', 'link');
@@ -122,10 +122,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum__pages_v_blocks_actions_settings_gap_top" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
   CREATE TYPE "public"."enum__pages_v_blocks_actions_settings_gap_bottom" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
   CREATE TYPE "public"."enum__pages_v_blocks_actions_settings_spacing" AS ENUM('default', 'compact', 'none');
-  CREATE TYPE "public"."enum__pages_v_blocks_integration_tree_settings_background" AS ENUM('default', 'tinted', 'dark', 'accent');
-  CREATE TYPE "public"."enum__pages_v_blocks_integration_tree_settings_gap_top" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
-  CREATE TYPE "public"."enum__pages_v_blocks_integration_tree_settings_gap_bottom" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
-  CREATE TYPE "public"."enum__pages_v_blocks_integration_tree_settings_spacing" AS ENUM('default', 'compact', 'none');
+  CREATE TYPE "public"."enum__pages_blocks_int_tree_v_settings_background" AS ENUM('default', 'tinted', 'dark', 'accent');
+  CREATE TYPE "public"."enum__pages_blocks_int_tree_v_settings_gap_top" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
+  CREATE TYPE "public"."enum__pages_blocks_int_tree_v_settings_gap_bottom" AS ENUM('auto', 'none', 'tight', 'normal', 'large');
+  CREATE TYPE "public"."enum__pages_blocks_int_tree_v_settings_spacing" AS ENUM('default', 'compact', 'none');
   CREATE TYPE "public"."enum__pages_v_blocks_split_points_icon" AS ENUM('chart', 'sparkles', 'message', 'plug', 'database', 'layers', 'users', 'shield', 'lock', 'clock', 'calendar', 'target', 'trending', 'bell', 'globe', 'building', 'buildings', 'briefcase', 'code', 'check', 'euro', 'percent', 'bed', 'upload', 'palette', 'eye', 'zap', 'search');
   CREATE TYPE "public"."enum__pages_v_blocks_split_links_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum__pages_v_blocks_split_links_link_appearance" AS ENUM('default', 'outline', 'link');
@@ -362,7 +362,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"block_name" varchar
   );
   
-  CREATE TABLE "pages_blocks_integration_tree_groups_items" (
+  CREATE TABLE "pages_blocks_int_tree_groups_items" (
   	"_order" integer NOT NULL,
   	"_parent_id" varchar NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
@@ -370,30 +370,30 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"logo_id" integer
   );
   
-  CREATE TABLE "pages_blocks_integration_tree_groups" (
+  CREATE TABLE "pages_blocks_int_tree_groups" (
   	"_order" integer NOT NULL,
   	"_parent_id" varchar NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL
   );
   
-  CREATE TABLE "pages_blocks_integration_tree_groups_locales" (
+  CREATE TABLE "pages_blocks_int_tree_groups_locales" (
   	"title" varchar,
   	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
   	"_parent_id" varchar NOT NULL
   );
   
-  CREATE TABLE "pages_blocks_integration_tree" (
+  CREATE TABLE "pages_blocks_int_tree" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
   	"hidden" boolean DEFAULT false,
-  	"settings_background" "enum_pages_blocks_integration_tree_settings_background" DEFAULT 'default',
-  	"settings_gap_top" "enum_pages_blocks_integration_tree_settings_gap_top" DEFAULT 'auto',
-  	"settings_gap_bottom" "enum_pages_blocks_integration_tree_settings_gap_bottom" DEFAULT 'auto',
+  	"settings_background" "enum_pages_blocks_int_tree_settings_background" DEFAULT 'default',
+  	"settings_gap_top" "enum_pages_blocks_int_tree_settings_gap_top" DEFAULT 'auto',
+  	"settings_gap_bottom" "enum_pages_blocks_int_tree_settings_gap_bottom" DEFAULT 'auto',
   	"settings_anchor" varchar,
-  	"settings_spacing" "enum_pages_blocks_integration_tree_settings_spacing" DEFAULT 'default',
+  	"settings_spacing" "enum_pages_blocks_int_tree_settings_spacing" DEFAULT 'default',
   	"block_name" varchar
   );
   
@@ -623,7 +623,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"block_name" varchar
   );
   
-  CREATE TABLE "_pages_v_blocks_integration_tree_groups_items" (
+  CREATE TABLE "_pages_blocks_int_tree_v_groups_items" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
@@ -632,31 +632,31 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_uuid" varchar
   );
   
-  CREATE TABLE "_pages_v_blocks_integration_tree_groups" (
+  CREATE TABLE "_pages_blocks_int_tree_v_groups" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
   	"_uuid" varchar
   );
   
-  CREATE TABLE "_pages_v_blocks_integration_tree_groups_locales" (
+  CREATE TABLE "_pages_blocks_int_tree_v_groups_locales" (
   	"title" varchar,
   	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
   	"_parent_id" integer NOT NULL
   );
   
-  CREATE TABLE "_pages_v_blocks_integration_tree" (
+  CREATE TABLE "_pages_blocks_int_tree_v" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
   	"hidden" boolean DEFAULT false,
-  	"settings_background" "enum__pages_v_blocks_integration_tree_settings_background" DEFAULT 'default',
-  	"settings_gap_top" "enum__pages_v_blocks_integration_tree_settings_gap_top" DEFAULT 'auto',
-  	"settings_gap_bottom" "enum__pages_v_blocks_integration_tree_settings_gap_bottom" DEFAULT 'auto',
+  	"settings_background" "enum__pages_blocks_int_tree_v_settings_background" DEFAULT 'default',
+  	"settings_gap_top" "enum__pages_blocks_int_tree_v_settings_gap_top" DEFAULT 'auto',
+  	"settings_gap_bottom" "enum__pages_blocks_int_tree_v_settings_gap_bottom" DEFAULT 'auto',
   	"settings_anchor" varchar,
-  	"settings_spacing" "enum__pages_v_blocks_integration_tree_settings_spacing" DEFAULT 'default',
+  	"settings_spacing" "enum__pages_blocks_int_tree_v_settings_spacing" DEFAULT 'default',
   	"_uuid" varchar,
   	"block_name" varchar
   );
@@ -813,11 +813,11 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "pages_blocks_actions_links" ADD CONSTRAINT "pages_blocks_actions_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_actions"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_actions_links_locales" ADD CONSTRAINT "pages_blocks_actions_links_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_actions_links"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_actions" ADD CONSTRAINT "pages_blocks_actions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "pages_blocks_integration_tree_groups_items" ADD CONSTRAINT "pages_blocks_integration_tree_groups_items_logo_id_media_id_fk" FOREIGN KEY ("logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
-  ALTER TABLE "pages_blocks_integration_tree_groups_items" ADD CONSTRAINT "pages_blocks_integration_tree_groups_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_integration_tree_groups"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "pages_blocks_integration_tree_groups" ADD CONSTRAINT "pages_blocks_integration_tree_groups_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_integration_tree"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "pages_blocks_integration_tree_groups_locales" ADD CONSTRAINT "pages_blocks_integration_tree_groups_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_integration_tree_groups"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "pages_blocks_integration_tree" ADD CONSTRAINT "pages_blocks_integration_tree_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_int_tree_groups_items" ADD CONSTRAINT "pages_blocks_int_tree_groups_items_logo_id_media_id_fk" FOREIGN KEY ("logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_blocks_int_tree_groups_items" ADD CONSTRAINT "pages_blocks_int_tree_groups_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_int_tree_groups"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_int_tree_groups" ADD CONSTRAINT "pages_blocks_int_tree_groups_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_int_tree"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_int_tree_groups_locales" ADD CONSTRAINT "pages_blocks_int_tree_groups_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_int_tree_groups"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_int_tree" ADD CONSTRAINT "pages_blocks_int_tree_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_split_points" ADD CONSTRAINT "pages_blocks_split_points_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_split"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_split_points_locales" ADD CONSTRAINT "pages_blocks_split_points_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_split_points"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_split_links" ADD CONSTRAINT "pages_blocks_split_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_split"("id") ON DELETE cascade ON UPDATE no action;
@@ -841,11 +841,11 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "_pages_v_blocks_actions_links" ADD CONSTRAINT "_pages_v_blocks_actions_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_actions"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_actions_links_locales" ADD CONSTRAINT "_pages_v_blocks_actions_links_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_actions_links"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_actions" ADD CONSTRAINT "_pages_v_blocks_actions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_integration_tree_groups_items" ADD CONSTRAINT "_pages_v_blocks_integration_tree_groups_items_logo_id_media_id_fk" FOREIGN KEY ("logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_integration_tree_groups_items" ADD CONSTRAINT "_pages_v_blocks_integration_tree_groups_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_integration_tree_groups"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_integration_tree_groups" ADD CONSTRAINT "_pages_v_blocks_integration_tree_groups_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_integration_tree"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_integration_tree_groups_locales" ADD CONSTRAINT "_pages_v_blocks_integration_tree_groups_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_integration_tree_groups"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_integration_tree" ADD CONSTRAINT "_pages_v_blocks_integration_tree_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_blocks_int_tree_v_groups_items" ADD CONSTRAINT "_pages_blocks_int_tree_v_groups_items_logo_id_media_id_fk" FOREIGN KEY ("logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_blocks_int_tree_v_groups_items" ADD CONSTRAINT "_pages_blocks_int_tree_v_groups_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_blocks_int_tree_v_groups"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_blocks_int_tree_v_groups" ADD CONSTRAINT "_pages_blocks_int_tree_v_groups_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_blocks_int_tree_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_blocks_int_tree_v_groups_locales" ADD CONSTRAINT "_pages_blocks_int_tree_v_groups_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_blocks_int_tree_v_groups"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_blocks_int_tree_v" ADD CONSTRAINT "_pages_blocks_int_tree_v_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_split_points" ADD CONSTRAINT "_pages_v_blocks_split_points_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_split"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_split_points_locales" ADD CONSTRAINT "_pages_v_blocks_split_points_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_split_points"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_split_links" ADD CONSTRAINT "_pages_v_blocks_split_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_split"("id") ON DELETE cascade ON UPDATE no action;
@@ -882,15 +882,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "pages_blocks_actions_order_idx" ON "pages_blocks_actions" USING btree ("_order");
   CREATE INDEX "pages_blocks_actions_parent_id_idx" ON "pages_blocks_actions" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_actions_path_idx" ON "pages_blocks_actions" USING btree ("_path");
-  CREATE INDEX "pages_blocks_integration_tree_groups_items_order_idx" ON "pages_blocks_integration_tree_groups_items" USING btree ("_order");
-  CREATE INDEX "pages_blocks_integration_tree_groups_items_parent_id_idx" ON "pages_blocks_integration_tree_groups_items" USING btree ("_parent_id");
-  CREATE INDEX "pages_blocks_integration_tree_groups_items_logo_idx" ON "pages_blocks_integration_tree_groups_items" USING btree ("logo_id");
-  CREATE INDEX "pages_blocks_integration_tree_groups_order_idx" ON "pages_blocks_integration_tree_groups" USING btree ("_order");
-  CREATE INDEX "pages_blocks_integration_tree_groups_parent_id_idx" ON "pages_blocks_integration_tree_groups" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "pages_blocks_integration_tree_groups_locales_locale_parent_i" ON "pages_blocks_integration_tree_groups_locales" USING btree ("_locale","_parent_id");
-  CREATE INDEX "pages_blocks_integration_tree_order_idx" ON "pages_blocks_integration_tree" USING btree ("_order");
-  CREATE INDEX "pages_blocks_integration_tree_parent_id_idx" ON "pages_blocks_integration_tree" USING btree ("_parent_id");
-  CREATE INDEX "pages_blocks_integration_tree_path_idx" ON "pages_blocks_integration_tree" USING btree ("_path");
+  CREATE INDEX "pages_blocks_int_tree_groups_items_order_idx" ON "pages_blocks_int_tree_groups_items" USING btree ("_order");
+  CREATE INDEX "pages_blocks_int_tree_groups_items_parent_id_idx" ON "pages_blocks_int_tree_groups_items" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_int_tree_groups_items_logo_idx" ON "pages_blocks_int_tree_groups_items" USING btree ("logo_id");
+  CREATE INDEX "pages_blocks_int_tree_groups_order_idx" ON "pages_blocks_int_tree_groups" USING btree ("_order");
+  CREATE INDEX "pages_blocks_int_tree_groups_parent_id_idx" ON "pages_blocks_int_tree_groups" USING btree ("_parent_id");
+  CREATE UNIQUE INDEX "pages_blocks_int_tree_groups_locales_locale_parent_id_unique" ON "pages_blocks_int_tree_groups_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "pages_blocks_int_tree_order_idx" ON "pages_blocks_int_tree" USING btree ("_order");
+  CREATE INDEX "pages_blocks_int_tree_parent_id_idx" ON "pages_blocks_int_tree" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_int_tree_path_idx" ON "pages_blocks_int_tree" USING btree ("_path");
   CREATE INDEX "pages_blocks_split_points_order_idx" ON "pages_blocks_split_points" USING btree ("_order");
   CREATE INDEX "pages_blocks_split_points_parent_id_idx" ON "pages_blocks_split_points" USING btree ("_parent_id");
   CREATE UNIQUE INDEX "pages_blocks_split_points_locales_locale_parent_id_unique" ON "pages_blocks_split_points_locales" USING btree ("_locale","_parent_id");
@@ -931,15 +931,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_blocks_actions_order_idx" ON "_pages_v_blocks_actions" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_actions_parent_id_idx" ON "_pages_v_blocks_actions" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_blocks_actions_path_idx" ON "_pages_v_blocks_actions" USING btree ("_path");
-  CREATE INDEX "_pages_v_blocks_integration_tree_groups_items_order_idx" ON "_pages_v_blocks_integration_tree_groups_items" USING btree ("_order");
-  CREATE INDEX "_pages_v_blocks_integration_tree_groups_items_parent_id_idx" ON "_pages_v_blocks_integration_tree_groups_items" USING btree ("_parent_id");
-  CREATE INDEX "_pages_v_blocks_integration_tree_groups_items_logo_idx" ON "_pages_v_blocks_integration_tree_groups_items" USING btree ("logo_id");
-  CREATE INDEX "_pages_v_blocks_integration_tree_groups_order_idx" ON "_pages_v_blocks_integration_tree_groups" USING btree ("_order");
-  CREATE INDEX "_pages_v_blocks_integration_tree_groups_parent_id_idx" ON "_pages_v_blocks_integration_tree_groups" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "_pages_v_blocks_integration_tree_groups_locales_locale_paren" ON "_pages_v_blocks_integration_tree_groups_locales" USING btree ("_locale","_parent_id");
-  CREATE INDEX "_pages_v_blocks_integration_tree_order_idx" ON "_pages_v_blocks_integration_tree" USING btree ("_order");
-  CREATE INDEX "_pages_v_blocks_integration_tree_parent_id_idx" ON "_pages_v_blocks_integration_tree" USING btree ("_parent_id");
-  CREATE INDEX "_pages_v_blocks_integration_tree_path_idx" ON "_pages_v_blocks_integration_tree" USING btree ("_path");
+  CREATE INDEX "_pages_blocks_int_tree_v_groups_items_order_idx" ON "_pages_blocks_int_tree_v_groups_items" USING btree ("_order");
+  CREATE INDEX "_pages_blocks_int_tree_v_groups_items_parent_id_idx" ON "_pages_blocks_int_tree_v_groups_items" USING btree ("_parent_id");
+  CREATE INDEX "_pages_blocks_int_tree_v_groups_items_logo_idx" ON "_pages_blocks_int_tree_v_groups_items" USING btree ("logo_id");
+  CREATE INDEX "_pages_blocks_int_tree_v_groups_order_idx" ON "_pages_blocks_int_tree_v_groups" USING btree ("_order");
+  CREATE INDEX "_pages_blocks_int_tree_v_groups_parent_id_idx" ON "_pages_blocks_int_tree_v_groups" USING btree ("_parent_id");
+  CREATE UNIQUE INDEX "_pages_blocks_int_tree_v_groups_locales_locale_parent_id_uni" ON "_pages_blocks_int_tree_v_groups_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "_pages_blocks_int_tree_v_order_idx" ON "_pages_blocks_int_tree_v" USING btree ("_order");
+  CREATE INDEX "_pages_blocks_int_tree_v_parent_id_idx" ON "_pages_blocks_int_tree_v" USING btree ("_parent_id");
+  CREATE INDEX "_pages_blocks_int_tree_v_path_idx" ON "_pages_blocks_int_tree_v" USING btree ("_path");
   CREATE INDEX "_pages_v_blocks_split_points_order_idx" ON "_pages_v_blocks_split_points" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_split_points_parent_id_idx" ON "_pages_v_blocks_split_points" USING btree ("_parent_id");
   CREATE UNIQUE INDEX "_pages_v_blocks_split_points_locales_locale_parent_id_unique" ON "_pages_v_blocks_split_points_locales" USING btree ("_locale","_parent_id");
@@ -994,10 +994,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "pages_blocks_actions_links" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "pages_blocks_actions_links_locales" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "pages_blocks_actions" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "pages_blocks_integration_tree_groups_items" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "pages_blocks_integration_tree_groups" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "pages_blocks_integration_tree_groups_locales" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "pages_blocks_integration_tree" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_int_tree_groups_items" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_int_tree_groups" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_int_tree_groups_locales" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_int_tree" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "pages_blocks_split_points" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "pages_blocks_split_points_locales" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "pages_blocks_split_links" DISABLE ROW LEVEL SECURITY;
@@ -1019,10 +1019,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "_pages_v_blocks_actions_links" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_blocks_actions_links_locales" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_blocks_actions" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "_pages_v_blocks_integration_tree_groups_items" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "_pages_v_blocks_integration_tree_groups" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "_pages_v_blocks_integration_tree_groups_locales" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "_pages_v_blocks_integration_tree" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_blocks_int_tree_v_groups_items" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_blocks_int_tree_v_groups" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_blocks_int_tree_v_groups_locales" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_blocks_int_tree_v" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_blocks_split_points" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_blocks_split_points_locales" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_blocks_split_links" DISABLE ROW LEVEL SECURITY;
@@ -1044,10 +1044,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "pages_blocks_actions_links" CASCADE;
   DROP TABLE "pages_blocks_actions_links_locales" CASCADE;
   DROP TABLE "pages_blocks_actions" CASCADE;
-  DROP TABLE "pages_blocks_integration_tree_groups_items" CASCADE;
-  DROP TABLE "pages_blocks_integration_tree_groups" CASCADE;
-  DROP TABLE "pages_blocks_integration_tree_groups_locales" CASCADE;
-  DROP TABLE "pages_blocks_integration_tree" CASCADE;
+  DROP TABLE "pages_blocks_int_tree_groups_items" CASCADE;
+  DROP TABLE "pages_blocks_int_tree_groups" CASCADE;
+  DROP TABLE "pages_blocks_int_tree_groups_locales" CASCADE;
+  DROP TABLE "pages_blocks_int_tree" CASCADE;
   DROP TABLE "pages_blocks_split_points" CASCADE;
   DROP TABLE "pages_blocks_split_points_locales" CASCADE;
   DROP TABLE "pages_blocks_split_links" CASCADE;
@@ -1069,10 +1069,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "_pages_v_blocks_actions_links" CASCADE;
   DROP TABLE "_pages_v_blocks_actions_links_locales" CASCADE;
   DROP TABLE "_pages_v_blocks_actions" CASCADE;
-  DROP TABLE "_pages_v_blocks_integration_tree_groups_items" CASCADE;
-  DROP TABLE "_pages_v_blocks_integration_tree_groups" CASCADE;
-  DROP TABLE "_pages_v_blocks_integration_tree_groups_locales" CASCADE;
-  DROP TABLE "_pages_v_blocks_integration_tree" CASCADE;
+  DROP TABLE "_pages_blocks_int_tree_v_groups_items" CASCADE;
+  DROP TABLE "_pages_blocks_int_tree_v_groups" CASCADE;
+  DROP TABLE "_pages_blocks_int_tree_v_groups_locales" CASCADE;
+  DROP TABLE "_pages_blocks_int_tree_v" CASCADE;
   DROP TABLE "_pages_v_blocks_split_points" CASCADE;
   DROP TABLE "_pages_v_blocks_split_points_locales" CASCADE;
   DROP TABLE "_pages_v_blocks_split_links" CASCADE;
@@ -1392,10 +1392,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_pages_blocks_actions_settings_gap_top";
   DROP TYPE "public"."enum_pages_blocks_actions_settings_gap_bottom";
   DROP TYPE "public"."enum_pages_blocks_actions_settings_spacing";
-  DROP TYPE "public"."enum_pages_blocks_integration_tree_settings_background";
-  DROP TYPE "public"."enum_pages_blocks_integration_tree_settings_gap_top";
-  DROP TYPE "public"."enum_pages_blocks_integration_tree_settings_gap_bottom";
-  DROP TYPE "public"."enum_pages_blocks_integration_tree_settings_spacing";
+  DROP TYPE "public"."enum_pages_blocks_int_tree_settings_background";
+  DROP TYPE "public"."enum_pages_blocks_int_tree_settings_gap_top";
+  DROP TYPE "public"."enum_pages_blocks_int_tree_settings_gap_bottom";
+  DROP TYPE "public"."enum_pages_blocks_int_tree_settings_spacing";
   DROP TYPE "public"."enum_pages_blocks_split_points_icon";
   DROP TYPE "public"."enum_pages_blocks_split_links_link_type";
   DROP TYPE "public"."enum_pages_blocks_split_links_link_appearance";
@@ -1475,10 +1475,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum__pages_v_blocks_actions_settings_gap_top";
   DROP TYPE "public"."enum__pages_v_blocks_actions_settings_gap_bottom";
   DROP TYPE "public"."enum__pages_v_blocks_actions_settings_spacing";
-  DROP TYPE "public"."enum__pages_v_blocks_integration_tree_settings_background";
-  DROP TYPE "public"."enum__pages_v_blocks_integration_tree_settings_gap_top";
-  DROP TYPE "public"."enum__pages_v_blocks_integration_tree_settings_gap_bottom";
-  DROP TYPE "public"."enum__pages_v_blocks_integration_tree_settings_spacing";
+  DROP TYPE "public"."enum__pages_blocks_int_tree_v_settings_background";
+  DROP TYPE "public"."enum__pages_blocks_int_tree_v_settings_gap_top";
+  DROP TYPE "public"."enum__pages_blocks_int_tree_v_settings_gap_bottom";
+  DROP TYPE "public"."enum__pages_blocks_int_tree_v_settings_spacing";
   DROP TYPE "public"."enum__pages_v_blocks_split_points_icon";
   DROP TYPE "public"."enum__pages_v_blocks_split_links_link_type";
   DROP TYPE "public"."enum__pages_v_blocks_split_links_link_appearance";
