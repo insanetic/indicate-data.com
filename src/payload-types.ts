@@ -517,7 +517,7 @@ export interface HeroBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   links?:
     | {
@@ -585,8 +585,16 @@ export interface HeroBlock {
   };
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -602,7 +610,7 @@ export interface LogoWallBlock {
     eyebrow?: string | null;
     heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   display?: ('marquee' | 'grid') | null;
   logos?:
@@ -615,8 +623,16 @@ export interface LogoWallBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -628,11 +644,11 @@ export interface LogoWallBlock {
  */
 export interface FeatureTabsBlock {
   hidden?: boolean | null;
-  header: {
+  header?: {
     eyebrow?: string | null;
-    heading: string;
+    heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   tabs?:
     | {
@@ -769,8 +785,16 @@ export interface FeatureTabsBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -786,7 +810,7 @@ export interface FeatureStoryBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   layout?: ('stacked' | 'visual-right' | 'visual-left') | null;
   visual?: {
@@ -884,8 +908,16 @@ export interface FeatureStoryBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -897,11 +929,11 @@ export interface FeatureStoryBlock {
  */
 export interface AgentShowcaseBlock {
   hidden?: boolean | null;
-  header: {
+  header?: {
     eyebrow?: string | null;
-    heading: string;
+    heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   prompts?:
     | {
@@ -991,8 +1023,16 @@ export interface AgentShowcaseBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1008,7 +1048,7 @@ export interface StepsBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   steps?:
     | {
@@ -1051,8 +1091,16 @@ export interface StepsBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1068,7 +1116,7 @@ export interface IntegrationsBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   visual?: {
     type?: ('illustration' | 'image') | null;
@@ -1139,8 +1187,16 @@ export interface IntegrationsBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1152,11 +1208,11 @@ export interface IntegrationsBlock {
  */
 export interface IntegrationDirectoryBlock {
   hidden?: boolean | null;
-  header: {
+  header?: {
     eyebrow?: string | null;
-    heading: string;
+    heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   request: {
     title?: string | null;
@@ -1179,8 +1235,16 @@ export interface IntegrationDirectoryBlock {
   };
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1196,7 +1260,7 @@ export interface PillarsBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   pillars?:
     | {
@@ -1274,8 +1338,16 @@ export interface PillarsBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1291,7 +1363,7 @@ export interface CardGridBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   layout?: ('grid-3' | 'grid-4' | 'bento') | null;
   cards?:
@@ -1366,8 +1438,16 @@ export interface CardGridBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1383,7 +1463,7 @@ export interface StatsBlock {
     eyebrow?: string | null;
     heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   items?:
     | {
@@ -1396,8 +1476,16 @@ export interface StatsBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1413,7 +1501,7 @@ export interface TestimonialsBlock {
     eyebrow?: string | null;
     heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   mode?: ('auto' | 'manual') | null;
   testimonials?: (number | Testimonial)[] | null;
@@ -1436,8 +1524,16 @@ export interface TestimonialsBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1503,11 +1599,11 @@ export interface TestimonialTag {
  */
 export interface PricingTeaserBlock {
   hidden?: boolean | null;
-  header: {
+  header?: {
     eyebrow?: string | null;
-    heading: string;
+    heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   plans?:
     | {
@@ -1579,8 +1675,16 @@ export interface PricingTeaserBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1596,7 +1700,7 @@ export interface PricingBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   families?:
     | {
@@ -1620,8 +1724,16 @@ export interface PricingBlock {
   footnote?: string | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1633,11 +1745,11 @@ export interface PricingBlock {
  */
 export interface FaqBlock {
   hidden?: boolean | null;
-  header: {
+  header?: {
     eyebrow?: string | null;
-    heading: string;
+    heading?: string | null;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   items?:
     | {
@@ -1662,8 +1774,16 @@ export interface FaqBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1679,7 +1799,7 @@ export interface CtaSectionBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   links?:
     | {
@@ -1708,8 +1828,16 @@ export interface CtaSectionBlock {
   note?: string | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1751,8 +1879,16 @@ export interface SpotlightBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1768,7 +1904,7 @@ export interface DocumentBlock {
     eyebrow?: string | null;
     heading: string;
     lead?: string | null;
-    align?: ('left' | 'center') | null;
+    align?: ('left' | 'center' | 'right') | null;
   };
   sidebar?: (number | null) | Sidebar;
   meta?: {
@@ -1805,8 +1941,16 @@ export interface DocumentBlock {
     | null;
   settings?: {
     background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
-    spacing?: ('default' | 'compact' | 'none') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
     anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -2790,8 +2934,10 @@ export interface HeroBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -2823,8 +2969,10 @@ export interface LogoWallBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -2886,8 +3034,10 @@ export interface FeatureTabsBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -2941,8 +3091,10 @@ export interface FeatureStoryBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3005,8 +3157,10 @@ export interface AgentShowcaseBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3037,8 +3191,10 @@ export interface StepsBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3096,8 +3252,10 @@ export interface IntegrationsBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3135,8 +3293,10 @@ export interface IntegrationDirectoryBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3190,8 +3350,10 @@ export interface PillarsBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3245,8 +3407,10 @@ export interface CardGridBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3278,8 +3442,10 @@ export interface StatsBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3321,8 +3487,10 @@ export interface TestimonialsBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3392,8 +3560,10 @@ export interface PricingTeaserBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3442,8 +3612,10 @@ export interface PricingBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3473,8 +3645,10 @@ export interface FaqBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3513,8 +3687,10 @@ export interface CtaSectionBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3548,8 +3724,10 @@ export interface SpotlightBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;
@@ -3590,8 +3768,10 @@ export interface DocumentBlockSelect<T extends boolean = true> {
     | T
     | {
         background?: T;
-        spacing?: T;
+        gapTop?: T;
+        gapBottom?: T;
         anchor?: T;
+        spacing?: T;
       };
   id?: T;
   blockName?: T;

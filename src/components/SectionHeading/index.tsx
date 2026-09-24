@@ -8,7 +8,7 @@ type HeaderData = {
   eyebrow?: string | null
   heading?: string | null
   lead?: string | null
-  align?: 'left' | 'center' | null
+  align?: 'left' | 'center' | 'right' | null
 }
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
   size?: 'display-xl' | 'display' | 'h2' | 'h3'
   className?: string
   /** Forces alignment regardless of the CMS setting. */
-  align?: 'left' | 'center'
+  align?: 'left' | 'center' | 'right'
   leadClassName?: string
 }
 
@@ -43,7 +43,11 @@ export const SectionHeading: React.FC<Props> = ({
     <div
       className={cn(
         'flex flex-col gap-5',
-        alignment === 'center' ? 'items-center text-center' : 'items-start',
+        alignment === 'center'
+          ? 'items-center text-center'
+          : alignment === 'right'
+            ? 'items-start lg:items-end lg:text-right'
+            : 'items-start',
         className,
       )}
     >

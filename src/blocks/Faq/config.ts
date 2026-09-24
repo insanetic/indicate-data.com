@@ -16,7 +16,7 @@ export const Faq: Block = {
     plural: { de: 'FAQ-Abschnitte', en: 'FAQ sections' },
   },
   fields: [
-    sectionHeader(),
+    sectionHeader({ optionalHeading: true }),
     {
       name: 'items',
       type: 'array',

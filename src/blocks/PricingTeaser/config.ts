@@ -12,7 +12,7 @@ export const PricingTeaser: Block = {
     plural: { de: 'Preis-Abschnitte', en: 'Pricing sections' },
   },
   fields: [
-    sectionHeader(),
+    sectionHeader({ optionalHeading: true }),
     {
       name: 'plans',
       type: 'array',

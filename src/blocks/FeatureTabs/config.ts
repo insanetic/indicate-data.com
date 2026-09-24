@@ -14,7 +14,7 @@ export const FeatureTabs: Block = {
     plural: { de: 'Produkt-Tabs', en: 'Product tabs' },
   },
   fields: [
-    sectionHeader(),
+    sectionHeader({ optionalHeading: true }),
     {
       name: 'tabs',
       type: 'array',

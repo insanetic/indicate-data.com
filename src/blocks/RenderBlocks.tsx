@@ -28,6 +28,7 @@ import { StepsBlock } from '@/blocks/Steps/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { Section } from '@/components/Section'
 import { visibleBlocks } from '@/plugins/blockTools/visibleBlocks'
+import { resolveSpacing, type RhythmBlock } from '@/sections/rhythm'
 
 type Block = Page['layout'][number]
 type BlockType = Block['blockType']
@@ -68,7 +69,6 @@ const legacyBlocks: BlockType[] = ['archive', 'content', 'cta', 'formBlock', 'me
 
 type Settings = {
   background?: 'default' | 'tinted' | 'dark' | 'accent' | null
-  spacing?: 'default' | 'compact' | 'none' | null
   anchor?: string | null
 }
 
@@ -80,6 +80,7 @@ export const RenderBlocks: React.FC<{
   // Hidden blocks never render; everything below (isFirst, the testimonials layout) sees only visible ones.
   const blocks = visibleBlocks(allBlocks)
   if (blocks.length === 0) return null
+  const rhythm = resolveSpacing(blocks as unknown as RhythmBlock[])
 
   return (
     <Fragment>
@@ -101,9 +102,12 @@ export const RenderBlocks: React.FC<{
         return (
           <Section
             background={settings?.background}
+            bottom={rhythm[index].bottom}
+            groupEnd={rhythm[index].groupEnd}
+            groupStart={rhythm[index].groupStart}
             id={settings?.anchor}
             key={block.id || index}
-            spacing={settings?.spacing}
+            top={rhythm[index].top}
           >
             <Block
               {...block}

@@ -17,7 +17,7 @@ export const IntegrationDirectory: Block = {
     plural: { de: 'Integrations-Verzeichnisse', en: 'Integration directories' },
   },
   fields: [
-    sectionHeader(),
+    sectionHeader({ optionalHeading: true }),
     {
       name: 'request',
       type: 'group',

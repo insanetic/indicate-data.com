@@ -13,7 +13,7 @@ export const AgentShowcase: Block = {
     plural: { de: 'KI-Agent-Abschnitte', en: 'AI agent sections' },
   },
   fields: [
-    sectionHeader(),
+    sectionHeader({ optionalHeading: true }),
     {
       name: 'prompts',
       type: 'array',
