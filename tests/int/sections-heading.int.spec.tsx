@@ -101,6 +101,27 @@ describe('HeadingBlock', () => {
     expect(parts).toEqual(['title', 'side'])
   })
 
+  it('left without a lead: one column, actions under the heading', () => {
+    const { container } = inLocale(<HeadingBlock blockType="heading" header={{ ...header, lead: null }} links={[link('Demo', 'default')]} />)
+    expect(container.querySelector('[data-part="side"]')).toBeNull()
+    const title = container.querySelector('[data-part="title"]') as HTMLElement
+    expect(within(title).getByRole('link', { name: 'Demo' })).toBeTruthy()
+  })
+
+  it('right without a lead: actions right-aligned from lg only', () => {
+    inLocale(<HeadingBlock blockType="heading" header={{ ...header, lead: null, align: 'right' }} links={[link('Demo', 'default')]} />)
+    const row = screen.getByRole('link', { name: 'Demo' }).parentElement as HTMLElement
+    expect(row.className.split(' ')).toContain('lg:justify-end')
+    expect(row.className.split(' ')).not.toContain('justify-end')
+  })
+
+  it('left without a heading: eyebrow and lead stay, no side column', () => {
+    const { container } = inLocale(<HeadingBlock blockType="heading" header={{ ...header, heading: null }} />)
+    expect(screen.getByText('Für Hotels')).toBeTruthy()
+    expect(screen.getByText('Welche Kanäle bringen Umsatz?')).toBeTruthy()
+    expect(container.querySelector('[data-part="side"]')).toBeNull()
+  })
+
   it('center: one centred stack, actions centred', () => {
     const { container } = inLocale(<HeadingBlock blockType="heading" header={{ ...header, align: 'center' }} links={[link('Demo', 'default')]} />)
     expect(container.querySelector('[data-align="center"]')?.className).toContain('text-center')
