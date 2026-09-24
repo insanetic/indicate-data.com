@@ -20,6 +20,7 @@ import { Heading } from '../../blocks/Heading/config'
 import { Hero } from '../../blocks/Hero/config'
 import { Integrations } from '../../blocks/Integrations/config'
 import { IntegrationDirectory } from '../../blocks/IntegrationDirectory/config'
+import { Items } from '../../blocks/Items/config'
 import { LogoWall } from '../../blocks/LogoWall/config'
 import { MediaSection } from '../../blocks/MediaSection/config'
 import { Pillars } from '../../blocks/Pillars/config'
@@ -99,6 +100,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 Hero,
                 Heading,
                 MediaSection,
+                Items,
                 Actions,
                 LogoWall,
                 FeatureTabs,

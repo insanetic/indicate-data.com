@@ -7,6 +7,7 @@ export const blockSlugs = [
   'hero',
   'heading',
   'media',
+  'items',
   'actions',
   'logoWall',
   'featureTabs',

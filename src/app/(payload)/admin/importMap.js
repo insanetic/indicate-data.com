@@ -11,6 +11,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { LinkFeatureClient as LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BlockToolbar as BlockToolbar_3fb289523d127dac9bbcc19f5cd50e4a } from '@/plugins/blockTools/admin'
 import { BlockRowLabel as BlockRowLabel_3fb289523d127dac9bbcc19f5cd50e4a } from '@/plugins/blockTools/admin'
+import { ItemRowLabel as ItemRowLabel_39dc2a1f62ef3a08260e2ae417b938f6 } from '@/blocks/Items/RowLabel'
 import { TabRowLabel as TabRowLabel_8bb9acbce77ae8fabb72332d708cdf64 } from '@/blocks/FeatureTabs/RowLabel'
 import { PointRowLabel as PointRowLabel_749cd47cba41f5f03b01a4fcd7fbe144 } from '@/blocks/FeatureStory/RowLabel'
 import { PromptRowLabel as PromptRowLabel_167f586440646f82e4b9e9c0af2d2dff } from '@/blocks/AgentShowcase/RowLabel'
@@ -71,6 +72,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#LinkFeatureClient": LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/plugins/blockTools/admin#BlockToolbar": BlockToolbar_3fb289523d127dac9bbcc19f5cd50e4a,
   "@/plugins/blockTools/admin#BlockRowLabel": BlockRowLabel_3fb289523d127dac9bbcc19f5cd50e4a,
+  "@/blocks/Items/RowLabel#ItemRowLabel": ItemRowLabel_39dc2a1f62ef3a08260e2ae417b938f6,
   "@/blocks/FeatureTabs/RowLabel#TabRowLabel": TabRowLabel_8bb9acbce77ae8fabb72332d708cdf64,
   "@/blocks/FeatureStory/RowLabel#PointRowLabel": PointRowLabel_749cd47cba41f5f03b01a4fcd7fbe144,
   "@/blocks/AgentShowcase/RowLabel#PromptRowLabel": PromptRowLabel_167f586440646f82e4b9e9c0af2d2dff,

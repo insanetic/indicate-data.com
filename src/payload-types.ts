@@ -243,6 +243,7 @@ export interface Page {
     | HeroBlock
     | HeadingBlock
     | MediaSectionBlock
+    | ItemsBlock
     | ActionsBlock
     | LogoWallBlock
     | FeatureTabsBlock
@@ -713,6 +714,108 @@ export interface MediaSectionBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'media';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ItemsBlock".
+ */
+export interface ItemsBlock {
+  hidden?: boolean | null;
+  style?: ('points' | 'cards' | 'steps' | 'stats') | null;
+  columns?: ('auto' | '2' | '3' | '4' | '5') | null;
+  frame?: ('none' | 'panel') | null;
+  divider?: boolean | null;
+  items?:
+    | {
+        icon?:
+          | (
+              | 'chart'
+              | 'sparkles'
+              | 'message'
+              | 'plug'
+              | 'database'
+              | 'layers'
+              | 'users'
+              | 'shield'
+              | 'lock'
+              | 'clock'
+              | 'calendar'
+              | 'target'
+              | 'trending'
+              | 'bell'
+              | 'globe'
+              | 'building'
+              | 'buildings'
+              | 'briefcase'
+              | 'code'
+              | 'check'
+              | 'euro'
+              | 'percent'
+              | 'bed'
+              | 'upload'
+              | 'palette'
+              | 'eye'
+              | 'zap'
+              | 'search'
+            )
+          | null;
+        /**
+         * Shared across languages.
+         */
+        value?: string | null;
+        suffix?: string | null;
+        title: string;
+        size?: ('sm' | 'lg') | null;
+        text?: string | null;
+        points?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        links?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label: string;
+                /**
+                 * How the link is rendered.
+                 */
+                appearance?: 'link' | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'items';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3002,6 +3105,7 @@ export interface PagesSelect<T extends boolean = true> {
         hero?: T | HeroBlockSelect<T>;
         heading?: T | HeadingBlockSelect<T>;
         media?: T | MediaSectionBlockSelect<T>;
+        items?: T | ItemsBlockSelect<T>;
         actions?: T | ActionsBlockSelect<T>;
         logoWall?: T | LogoWallBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
@@ -3163,6 +3267,60 @@ export interface MediaSectionBlockSelect<T extends boolean = true> {
         image?: T;
       };
   width?: T;
+  settings?:
+    | T
+    | {
+        background?: T;
+        gapTop?: T;
+        gapBottom?: T;
+        anchor?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ItemsBlock_select".
+ */
+export interface ItemsBlockSelect<T extends boolean = true> {
+  hidden?: T;
+  style?: T;
+  columns?: T;
+  frame?: T;
+  divider?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        value?: T;
+        suffix?: T;
+        title?: T;
+        size?: T;
+        text?: T;
+        points?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
   settings?:
     | T
     | {

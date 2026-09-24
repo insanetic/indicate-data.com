@@ -21,6 +21,7 @@ import { HeadingBlock } from '@/blocks/Heading/Component'
 import { HeroBlock } from '@/blocks/Hero/Component'
 import { IntegrationsBlock } from '@/blocks/Integrations/Component'
 import { IntegrationDirectoryBlock } from '@/blocks/IntegrationDirectory/Component'
+import { ItemsBlock } from '@/blocks/Items/Component'
 import { LogoWallBlock } from '@/blocks/LogoWall/Component'
 import { MediaSectionBlock } from '@/blocks/MediaSection/Component'
 import { PillarsBlock } from '@/blocks/Pillars/Component'
@@ -45,6 +46,7 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   hero: HeroBlock,
   heading: HeadingBlock,
   media: MediaSectionBlock,
+  items: ItemsBlock,
   actions: ActionsBlock,
   logoWall: LogoWallBlock,
   featureTabs: FeatureTabsBlock,
