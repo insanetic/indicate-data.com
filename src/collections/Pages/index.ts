@@ -7,6 +7,7 @@ import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { blockSlugs, legacySectionSlugs } from '../../blocks/registry'
 import { Actions } from '../../blocks/Actions/config'
 import { AgentShowcase } from '../../blocks/AgentShowcase/config'
 import { CardGrid } from '../../blocks/CardGrid/config'
@@ -130,6 +131,12 @@ export const Pages: CollectionConfig<'pages'> = {
                 CallToAction,
               ],
               required: true,
+              // Legacy section blocks stay readable but cannot be added; the conversion passes
+              // `allowLegacySections` so it can still save pages that hold them.
+              filterOptions: ({ req }) =>
+                req?.context?.allowLegacySections
+                  ? true
+                  : blockSlugs.filter((slug) => !(legacySectionSlugs as readonly string[]).includes(slug)),
               admin: {
                 initCollapsed: true,
               },

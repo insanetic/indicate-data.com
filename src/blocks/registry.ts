@@ -36,3 +36,10 @@ export const blockSlugs = [
 ] as const
 
 export type BlockSlug = (typeof blockSlugs)[number]
+
+/**
+ * Structural blocks replaced by the section blocks (Heading, Media, Items, Actions, Integration
+ * tree, Split). Hidden from the block picker; the section conversion rewrites them and phase 2
+ * deletes them.
+ */
+export const legacySectionSlugs = ['featureStory', 'ctaSection', 'pillars', 'cardGrid', 'steps', 'stats', 'integrations'] as const
