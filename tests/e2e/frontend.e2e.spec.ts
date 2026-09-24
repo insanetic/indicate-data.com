@@ -45,7 +45,9 @@ test.describe('Home page', () => {
   })
 
   test('switches the language and keeps the page', async ({ page }) => {
-    await page.goto(`${base}/de`)
+    // The select navigates from a React onChange: wait until the page has hydrated, or a change
+    // made right after the load event is lost (React attaches its listeners only after load).
+    await page.goto(`${base}/de`, { waitUntil: 'networkidle' })
     await page.getByRole('combobox', { name: 'Sprache' }).selectOption('en')
     await expect(page).toHaveURL(/\/en$/)
     await expect(page.locator('html')).toHaveAttribute('lang', 'en')
