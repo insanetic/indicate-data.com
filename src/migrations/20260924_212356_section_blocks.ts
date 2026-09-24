@@ -952,6 +952,16 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_blocks_split_visual_visual_image_idx" ON "_pages_v_blocks_split" USING btree ("visual_image_id");
   CREATE UNIQUE INDEX "_pages_v_blocks_split_locales_locale_parent_id_unique" ON "_pages_v_blocks_split_locales" USING btree ("_locale","_parent_id");`)
 
+  // Document's new gap columns default to 'none', so existing rows arrive with explicit gaps and
+  // the data step's widget-spacing conversion would skip them. Carry the old spacing over first.
+  await db.execute(sql`
+  UPDATE "pages_blocks_document" SET
+    "settings_gap_top" = (CASE "settings_spacing" WHEN 'compact' THEN 'tight' WHEN 'none' THEN 'none' ELSE 'auto' END)::"enum_pages_blocks_document_settings_gap_top",
+    "settings_gap_bottom" = (CASE "settings_spacing" WHEN 'compact' THEN 'tight' WHEN 'none' THEN 'none' ELSE 'auto' END)::"enum_pages_blocks_document_settings_gap_bottom";
+  UPDATE "_pages_v_blocks_document" SET
+    "settings_gap_top" = (CASE "settings_spacing" WHEN 'compact' THEN 'tight' WHEN 'none' THEN 'none' ELSE 'auto' END)::"enum__pages_v_blocks_document_settings_gap_top",
+    "settings_gap_bottom" = (CASE "settings_spacing" WHEN 'compact' THEN 'tight' WHEN 'none' THEN 'none' ELSE 'auto' END)::"enum__pages_v_blocks_document_settings_gap_bottom";`)
+
   // Convert the legacy structural blocks and old widget spacing into section blocks (idempotent,
   // published and draft states per locale, inside this migration's transaction). A database
   // without pages (a fresh install) skips it: the current config may already expect columns that
