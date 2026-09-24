@@ -1,7 +1,7 @@
 # Composable section blocks
 
 Date: 2026-09-24
-Status: draft for review
+Status: approved
 
 ## Goal
 
@@ -169,7 +169,7 @@ Delivery in two phases, because the dev database uses schema push without a TTY:
   they should match apart from intended spacing changes. Check heading `left` / `right` / `center`.
 - e2e: block tools hide and copy work on the new blocks.
 
-## Open point for review
+## Version history (decided)
 
-Old version history: accept that restoring a pre-migration version drops the removed blocks
-(recommended), or also convert every stored version (slower migration, longer locks).
+Older version-history entries are not converted; restoring a pre-migration version drops the
+removed blocks. Accepted on review (2026-09-24) in favour of a fast migration with short locks.
