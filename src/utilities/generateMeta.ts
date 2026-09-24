@@ -24,7 +24,7 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
 
 type SeoFields = { title?: string | null; description?: string | null; image?: Media | number | null }
 
-const seoOf = (doc: Partial<Page> | Partial<Post> | null): SeoFields => {
+export const seoOf = (doc: Partial<Page> | Partial<Post> | null): SeoFields => {
   if (!doc) return {}
   if ('seo' in doc && doc.seo && (doc.seo.title || doc.seo.description || doc.seo.image)) {
     return doc.seo as SeoFields

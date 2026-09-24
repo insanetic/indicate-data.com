@@ -28,18 +28,26 @@ const getPagesSitemap = unstable_cache(
       },
     })
 
-    const dateFallback = new Date().toISOString()
+    // The posts index changes whenever a post does, so it carries the newest post's date.
+    const newestPost = await payload.find({
+      collection: 'posts',
+      overrideAccess: false,
+      draft: false,
+      depth: 0,
+      limit: 1,
+      sort: '-updatedAt',
+      where: { _status: { equals: 'published' } },
+      select: { updatedAt: true },
+    })
 
-    const defaultSitemap = locales.flatMap((locale) => [
-      {
-        loc: `${SITE_URL}/${locale}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/${locale}/posts`,
-        lastmod: dateFallback,
-      },
-    ])
+    const dateFallback = new Date().toISOString()
+    const postsLastmod = newestPost.docs[0]?.updatedAt
+
+    // Search result pages stay out of the sitemap; they are not content.
+    const defaultSitemap = locales.map((locale) => ({
+      loc: `${SITE_URL}/${locale}/posts`,
+      ...(postsLastmod ? { lastmod: postsLastmod } : {}),
+    }))
 
     const sitemap = results.docs
       ? results.docs
@@ -59,7 +67,7 @@ const getPagesSitemap = unstable_cache(
   },
   ['pages-sitemap'],
   {
-    tags: ['pages-sitemap'],
+    tags: ['pages-sitemap', 'posts-sitemap'],
   },
 )
 

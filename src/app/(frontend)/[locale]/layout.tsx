@@ -23,6 +23,7 @@ import { buildWithoutDatabase } from '@/utilities/buildWithoutDatabase'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
+import { siteStructuredData } from '@/utilities/structuredData'
 
 import '../globals.css'
 
@@ -51,7 +52,10 @@ export default async function RootLayout({ children, params }: Args) {
   const { isEnabled } = await draftMode()
   const dict = getDictionary(locale)
 
-  const consentSettings = await getCachedGlobal('consent', 1, locale)()
+  const [consentSettings, siteSettings] = await Promise.all([
+    getCachedGlobal('consent', 1, locale)(),
+    getCachedGlobal('site-settings', 1, locale)(),
+  ])
   const consent = resolveConsent(consentSettings, locale, consentSetup)
   // This site gates no embeds, so an inactive tracker (staging without a container id) leaves
   // nothing that would need a decision: no banner at all.
@@ -76,6 +80,12 @@ export default async function RootLayout({ children, params }: Args) {
           {`document.documentElement.setAttribute('data-js','');try{if(sessionStorage.getItem('indicate:intro'))document.documentElement.setAttribute('data-intro-seen','')}catch(e){}`}
         </Script>
         <ConsentDefaults enabled={trackingEnabled} settings={consent} setup={consentSetup} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(siteStructuredData(siteSettings, locale)).replace(/</g, '\\u003c'),
+          }}
+          type="application/ld+json"
+        />
       </head>
       <body>
         <Providers consent={{ settings: consent, disabled: consentDisabled }} locale={locale}>
