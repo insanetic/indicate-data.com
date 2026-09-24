@@ -9,7 +9,8 @@ import { cn } from '@/utilities/ui'
 
 /**
  * A box for one announcement, framed by the travelling gradient border. `banner` (home page):
- * Resi's mark with its breathing aura, a display heading and up to two links. `compact`
+ * Resi's mark with its breathing aura, a display heading and up to two links, always below
+ * the text. `compact`
  * (subpages): one row with a small mark, one line of text and the links at the end.
  */
 export const SpotlightBlock: React.FC<Props> = ({ layout, eyebrow, heading, text, links }) => {
@@ -50,7 +51,7 @@ export const SpotlightBlock: React.FC<Props> = ({ layout, eyebrow, heading, text
         style={{ '--resi-ring-width': '1.5px' } as React.CSSProperties}
       >
         <div aria-hidden="true" className="dot-grid pointer-events-none absolute inset-0 opacity-60" />
-        <div className="relative grid items-center gap-8 p-7 md:grid-cols-[auto_1fr] md:gap-12 md:p-12 lg:grid-cols-[auto_1fr_auto]">
+        <div className="relative grid items-center gap-8 p-7 md:grid-cols-[auto_1fr] md:gap-12 md:p-12">
           <div className="relative grid size-28 place-items-center md:size-36">
             <span aria-hidden="true" className="resi-aura absolute inset-3 rounded-full" />
             <ResiMark className="relative shadow-float" size={84} />
@@ -59,9 +60,8 @@ export const SpotlightBlock: React.FC<Props> = ({ layout, eyebrow, heading, text
             {eyebrow && <Eyebrow>{withResi(eyebrow)}</Eyebrow>}
             <h2 className="type-display max-w-[16ch] text-ink">{withResi(heading)}</h2>
             {text && <p className="type-lead max-w-[52ch] text-ink-2">{withResi(text)}</p>}
-            <div className="lg:hidden">{actions}</div>
+            {actions}
           </div>
-          <div className="hidden lg:block">{actions}</div>
         </div>
       </div>
     </div>
