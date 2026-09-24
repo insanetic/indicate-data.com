@@ -14,15 +14,17 @@ import {
 import { sectionHeader } from '@/fields/sectionHeader'
 import { sectionSettings } from '@/fields/sectionSettings'
 
-// `sectionSettings()` defaults `spacing` to `'default'`. This block draws its own vertical
-// rhythm (its header band is tinted), so the default is mutated to `'none'` here instead of
-// passing an override through `sectionSettings({ overrides: ... })`.
+// `sectionSettings()` defaults `gapTop` / `gapBottom` to `'auto'`. This block draws its own
+// vertical rhythm (its header band is tinted), so both defaults are mutated to `'none'` here
+// instead of passing an override through `sectionSettings({ overrides: ... })` (deepMerge
+// cannot reach into the field arrays).
 const settings = sectionSettings()
 if (settings.type === 'group') {
   const row = settings.fields[0]
   if (row.type === 'row') {
-    const spacing = row.fields.find((f) => 'name' in f && f.name === 'spacing')
-    if (spacing && spacing.type === 'select') spacing.defaultValue = 'none'
+    for (const f of row.fields) {
+      if ('name' in f && (f.name === 'gapTop' || f.name === 'gapBottom') && f.type === 'select') f.defaultValue = 'none'
+    }
   }
 }
 

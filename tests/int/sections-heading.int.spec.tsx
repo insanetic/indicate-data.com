@@ -2,6 +2,7 @@ import { cleanup, render } from '@testing-library/react'
 import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { Document } from '@/blocks/Document/config'
 import { SectionHeading } from '@/components/SectionHeading'
 import { sectionHeader } from '@/fields/sectionHeader'
 import { sectionSettings } from '@/fields/sectionSettings'
@@ -31,5 +32,13 @@ describe('section fields', () => {
     const header = sectionHeader() as { fields: { name: string; options?: { value: string }[] }[] }
     expect(header.fields.find((f) => f.name === 'align')?.options?.map((o) => o.value)).toEqual(['left', 'center', 'right'])
     expect(subFieldNames(sectionHeader({ withAlign: false }))).toEqual(['eyebrow', 'heading', 'lead'])
+  })
+
+  it('Document draws its own padding, so both of its gaps default to none', () => {
+    const settings = Document.fields.find((f) => 'name' in f && f.name === 'settings') as { fields: { type: string; fields?: { name?: string; defaultValue?: unknown }[] }[] }
+    const row = settings.fields.find((f) => f.type === 'row')!
+    const defaults = Object.fromEntries((row.fields || []).map((f) => [f.name, f.defaultValue]))
+    expect(defaults.gapTop).toBe('none')
+    expect(defaults.gapBottom).toBe('none')
   })
 })
