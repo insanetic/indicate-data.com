@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
+import { legacySectionSlugs } from '@/blocks/registry'
+import { aboutPage } from '@/endpoints/seed/about'
+import { homePage, pick } from '@/endpoints/seed/content'
+import { subpages } from '@/endpoints/seed/pages'
+import { pricingPage } from '@/endpoints/seed/pricing'
 import {
   convertWidgetSpacing,
   headerTextIds,
@@ -184,5 +189,28 @@ describe('locale-independent structure', () => {
     expect(types(splitLegacyBlock(en))).toEqual(['items'])
     expect(types(splitLegacyBlock(de))).toEqual(['heading', 'items'])
     expect(types(splitLegacyBlock({ ...de, id: undefined }, { withHeader: new Set() }))).toEqual(['heading', 'items'])
+  })
+})
+
+describe('seed', () => {
+  const refs = { contactPageId: 1, aboutPageId: 2, pricingPageId: 3, pages: {}, legal: {}, media: {}, links: { demoUrl: 'https://demo' }, testimonialTags: {} } as never
+  const seeded = (locale: 'de' | 'en') => [
+    homePage(pick(locale), refs).layout || [],
+    aboutPage(pick(locale), refs).layout || [],
+    pricingPage(pick(locale), refs).layout || [],
+    ...Object.values(subpages(pick(locale), refs)).map((p) => p.layout || []),
+  ]
+
+  it('every seeded layout converts to blocks without legacy slugs', () => {
+    for (const layout of seeded('de')) {
+      const converted = splitLegacyLayout(layout) as { blockType: string }[]
+      expect(converted.filter((b) => (legacySectionSlugs as readonly string[]).includes(b.blockType))).toEqual([])
+      expect(needsSectionConversion(converted)).toBe(false)
+    }
+  })
+
+  it('de and en convert to the same structure, so withIds can match rows by position', () => {
+    const [de, en] = [seeded('de'), seeded('en')].map((ls) => ls.map((l) => types(splitLegacyLayout(l) as { blockType: string }[])))
+    expect(en).toEqual(de)
   })
 })

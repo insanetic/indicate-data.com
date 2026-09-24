@@ -4,6 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { locales, type Locale } from '@/i18n/config'
+import { splitLegacyLayout } from '@/sections/legacy'
 import { keyOf } from '@/utilities/convertInlineTestimonials'
 
 import { aboutPage } from './about'
@@ -158,6 +159,11 @@ async function upsertPage(
   slug: string,
   build: (locale: Locale) => AnyData,
 ): Promise<number> {
+  // Seed content may still use the legacy section shapes; write what the migration would produce.
+  const buildConverted = (locale: Locale): AnyData => {
+    const data = build(locale)
+    return Array.isArray(data.layout) ? { ...data, layout: splitLegacyLayout(data.layout) } : data
+  }
   const [primary, ...rest] = locales
   const existing = await payload.find({
     collection: 'pages',
@@ -172,7 +178,7 @@ async function upsertPage(
     doc = await payload.update({
       collection: 'pages',
       id: existing.docs[0].id,
-      data: build(primary),
+      data: buildConverted(primary),
       locale: primary,
       depth: 0,
       req,
@@ -181,7 +187,7 @@ async function upsertPage(
   } else {
     doc = await payload.create({
       collection: 'pages',
-      data: build(primary) as RequiredDataFromCollectionSlug<'pages'>,
+      data: buildConverted(primary) as RequiredDataFromCollectionSlug<'pages'>,
       locale: primary,
       depth: 0,
       req,
@@ -193,7 +199,7 @@ async function upsertPage(
     await payload.update({
       collection: 'pages',
       id: doc.id,
-      data: withIds(build(locale), doc),
+      data: withIds(buildConverted(locale), doc),
       locale,
       depth: 0,
       req,

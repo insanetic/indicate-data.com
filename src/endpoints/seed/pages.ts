@@ -1,13 +1,17 @@
+import type { IconKey } from '@/components/Icon/options'
 import type { Page } from '@/payload-types'
+import type { LegacyBlock } from '@/sections/legacy'
 
 import { paragraphs } from './lexical'
 import type { Refs, T } from './content'
 import type { TestimonialTagSlug } from './testimonials'
 
 type PageData = Omit<Page, 'id' | 'createdAt' | 'updatedAt' | 'sizes'>
-type Block = PageData['layout'][number]
+/** A block as the seed writes it: a current block or a legacy section block (converted on write). */
+export type SeedBlock = PageData['layout'][number] | LegacyBlock
+export type SeedPage = Omit<Partial<PageData>, 'layout'> & { layout?: SeedBlock[] }
+type Block = SeedBlock
 type Appearance = 'default' | 'outline' | 'ghost' | 'link'
-type IconKey = NonNullable<NonNullable<Extract<Block, { blockType: 'steps' }>['steps']>[number]['icon']>
 type Illustration = NonNullable<NonNullable<Extract<Block, { blockType: 'hero' }>['visual']>['illustration']>
 
 /** Slugs of the product and solution pages. The header, footer and cross-links point at these. */
@@ -232,7 +236,7 @@ export const testimonials = (
   settings: { ...defaults },
 })
 
-const page = (t: T, slug: SubpageSlug, seo: { title: string; description: string }, layout: Block[]): Partial<PageData> => ({
+const page = (t: T, slug: SubpageSlug, seo: { title: string; description: string }, layout: Block[]): SeedPage => ({
   title: pageNames(t)[slug],
   slug,
   _status: 'published',
@@ -245,7 +249,7 @@ const page = (t: T, slug: SubpageSlug, seo: { title: string; description: string
 /* Product pages                                                         */
 /* ------------------------------------------------------------------ */
 
-const agentPage = (t: T, refs: Refs): Partial<PageData> =>
+const agentPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'agent',
@@ -458,7 +462,7 @@ const agentPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
+const mcpPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'mcp',
@@ -654,7 +658,7 @@ const mcpPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const buildWithAiPage = (t: T, refs: Refs): Partial<PageData> =>
+const buildWithAiPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'build-with-ai',
@@ -781,7 +785,7 @@ const buildWithAiPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const dashboardsPage = (t: T, refs: Refs): Partial<PageData> =>
+const dashboardsPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'dashboards',
@@ -923,7 +927,7 @@ const dashboardsPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const flyingKpisPage = (t: T, refs: Refs): Partial<PageData> =>
+const flyingKpisPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'flying-kpis',
@@ -1031,7 +1035,7 @@ const flyingKpisPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const integrationsPage = (t: T, refs: Refs): Partial<PageData> =>
+const integrationsPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'integrations',
@@ -1188,7 +1192,7 @@ const integrationsPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const kpiStudioPage = (t: T, refs: Refs): Partial<PageData> =>
+const kpiStudioPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'kpi-studio',
@@ -1362,7 +1366,7 @@ const kpiStudioPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const governancePage = (t: T, refs: Refs): Partial<PageData> =>
+const governancePage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'governance',
@@ -1473,7 +1477,7 @@ const governancePage = (t: T, refs: Refs): Partial<PageData> =>
 /* Solution pages                                                        */
 /* ------------------------------------------------------------------ */
 
-const hotelsPage = (t: T, refs: Refs): Partial<PageData> =>
+const hotelsPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'hotels',
@@ -1609,7 +1613,7 @@ const hotelsPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const hotelGroupsPage = (t: T, refs: Refs): Partial<PageData> =>
+const hotelGroupsPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'hotel-groups',
@@ -1735,7 +1739,7 @@ const hotelGroupsPage = (t: T, refs: Refs): Partial<PageData> =>
     ],
   )
 
-const agenciesPage = (t: T, refs: Refs): Partial<PageData> =>
+const agenciesPage = (t: T, refs: Refs): SeedPage =>
   page(
     t,
     'agencies',
@@ -1860,7 +1864,7 @@ const agenciesPage = (t: T, refs: Refs): Partial<PageData> =>
   )
 
 /** Every product and solution page, keyed by slug. */
-export const subpages = (t: T, refs: Refs): Record<SubpageSlug, Partial<PageData>> => ({
+export const subpages = (t: T, refs: Refs): Record<SubpageSlug, SeedPage> => ({
   agent: agentPage(t, refs),
   mcp: mcpPage(t, refs),
   'build-with-ai': buildWithAiPage(t, refs),

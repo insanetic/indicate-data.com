@@ -1,15 +1,11 @@
-import type { Page } from '@/payload-types'
-
 import type { Refs, T } from './content'
-import { cards, closing, hero, logos, story, testimonials } from './pages'
-
-type PageData = Omit<Page, 'id' | 'createdAt' | 'updatedAt' | 'sizes'>
+import { cards, closing, hero, logos, story, testimonials, type SeedPage } from './pages'
 
 /**
  * "Über uns": why Indicate exists and how we work, told through hospitality focus, German
  * engineering under GDPR and a direct line to the people who build the product.
  */
-export const aboutPage = (t: T, refs: Refs): Partial<PageData> => ({
+export const aboutPage = (t: T, refs: Refs): SeedPage => ({
   title: t('Über uns', 'About us'),
   slug: 'about',
   _status: 'published',

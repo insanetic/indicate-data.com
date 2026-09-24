@@ -4,7 +4,7 @@ import type { Footer, Header, Page, SiteSetting } from '@/payload-types'
 import type { LegalSlug } from './legal'
 
 import { paragraphs } from './lexical'
-import { pageBlurbs, pageIcons, pageNames, testimonials, type SubpageSlug } from './pages'
+import { pageBlurbs, pageIcons, pageNames, testimonials, type SeedPage, type SubpageSlug } from './pages'
 import type { TestimonialTagSlug } from './testimonials'
 
 /** Picks the text for the locale being seeded. */
@@ -208,7 +208,7 @@ export const footer = (t: T, refs: Refs): Partial<Footer> => ({
 
 type PageData = Omit<Page, 'id' | 'createdAt' | 'updatedAt' | 'sizes'>
 
-export const homePage = (t: T, refs: Refs): Partial<PageData> => ({
+export const homePage = (t: T, refs: Refs): SeedPage => ({
   title: t('Startseite', 'Home'),
   slug: 'home',
   _status: 'published',

@@ -1,7 +1,7 @@
 import type { Page, SubneoPricing } from '@/payload-types'
 
 import type { Refs, T } from './content'
-import { closing, defaults, faq, logos } from './pages'
+import { closing, defaults, faq, logos, type SeedPage } from './pages'
 import { pricingFamilyCodes } from '@/pricing/fixture'
 
 type PageData = Omit<Page, 'id' | 'createdAt' | 'updatedAt' | 'sizes'>
@@ -10,7 +10,7 @@ type Block = PageData['layout'][number]
 export const pricingSlug = 'pricing'
 
 /** The pricing page: plans from Subneo (block), logos, questions, closing CTA. */
-export const pricingPage = (t: T, refs: Refs): Partial<PageData> => ({
+export const pricingPage = (t: T, refs: Refs): SeedPage => ({
   title: t('Preise', 'Pricing'),
   slug: pricingSlug,
   _status: 'published',
