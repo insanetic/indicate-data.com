@@ -14,6 +14,7 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { unlocalizedCollections } from './unlocalizedCollections'
+import { blockToolsPlugin } from './blockTools'
 import { subneoPricingPlugin } from '@subneo/payload-pricing'
 import { testimonialsPlugin } from '@subneo/payload-testimonials'
 import { pricingFixtures } from '@/pricing/fixture'
@@ -150,6 +151,8 @@ export const plugins: Plugin[] = [
   subneoPricingPlugin({ fixtures: pricingFixtures }),
   // Central testimonials and cohort tags; the testimonials block on Pages references them.
   testimonialsPlugin(),
+  // Hide any page block without deleting it, and copy blocks to other pages (see spec 2026-09-24-block-tools).
+  blockToolsPlugin({ collections: { pages: { field: 'layout' } } }),
   // Must come last: strips `localized` that the plugins above add to these collections.
   // Posts, forms, search and categories are not localised yet (see spec "Assumptions").
   unlocalizedCollections(['posts', 'forms', 'form-submissions', 'search', 'categories']),

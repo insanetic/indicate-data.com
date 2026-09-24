@@ -512,6 +512,10 @@ export interface User {
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -596,6 +600,10 @@ export interface HeroBlock {
  * via the `definition` "LogoWallBlock".
  */
 export interface LogoWallBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header?: {
     eyebrow?: string | null;
     heading?: string | null;
@@ -625,6 +633,10 @@ export interface LogoWallBlock {
  * via the `definition` "FeatureTabsBlock".
  */
 export interface FeatureTabsBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -778,6 +790,10 @@ export interface FeatureTabsBlock {
  * via the `definition` "FeatureStoryBlock".
  */
 export interface FeatureStoryBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -892,6 +908,10 @@ export interface FeatureStoryBlock {
  * via the `definition` "AgentShowcaseBlock".
  */
 export interface AgentShowcaseBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -998,6 +1018,10 @@ export interface AgentShowcaseBlock {
  * via the `definition` "StepsBlock".
  */
 export interface StepsBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1057,6 +1081,10 @@ export interface StepsBlock {
  * via the `definition` "IntegrationsBlock".
  */
 export interface IntegrationsBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1144,6 +1172,10 @@ export interface IntegrationsBlock {
  * via the `definition` "IntegrationDirectoryBlock".
  */
 export interface IntegrationDirectoryBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1183,6 +1215,10 @@ export interface IntegrationDirectoryBlock {
  * via the `definition` "PillarsBlock".
  */
 export interface PillarsBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1277,6 +1313,10 @@ export interface PillarsBlock {
  * via the `definition` "CardGridBlock".
  */
 export interface CardGridBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1368,6 +1408,10 @@ export interface CardGridBlock {
  * via the `definition` "StatsBlock".
  */
 export interface StatsBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header?: {
     eyebrow?: string | null;
     heading?: string | null;
@@ -1397,6 +1441,10 @@ export interface StatsBlock {
  * via the `definition` "TestimonialsBlock".
  */
 export interface TestimonialsBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header?: {
     eyebrow?: string | null;
     heading?: string | null;
@@ -1490,6 +1538,10 @@ export interface TestimonialTag {
  * via the `definition` "PricingTeaserBlock".
  */
 export interface PricingTeaserBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1578,6 +1630,10 @@ export interface PricingTeaserBlock {
  * via the `definition` "PricingBlock".
  */
 export interface PricingBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1618,6 +1674,10 @@ export interface PricingBlock {
  * via the `definition` "FaqBlock".
  */
 export interface FaqBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1659,6 +1719,10 @@ export interface FaqBlock {
  * via the `definition` "CtaSectionBlock".
  */
 export interface CtaSectionBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1704,6 +1768,10 @@ export interface CtaSectionBlock {
  * via the `definition` "SpotlightBlock".
  */
 export interface SpotlightBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   layout?: ('banner' | 'compact') | null;
   eyebrow?: string | null;
   heading: string;
@@ -1746,6 +1814,10 @@ export interface SpotlightBlock {
  * via the `definition` "DocumentBlock".
  */
 export interface DocumentBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
     heading: string;
@@ -1841,6 +1913,10 @@ export interface Sidebar {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
@@ -1901,6 +1977,10 @@ export interface MediaBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   form: number | Form;
   enableIntro?: boolean | null;
   introContent?: {
@@ -2092,6 +2172,10 @@ export interface Form {
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   introContent?: {
     root: {
       type: string;
@@ -2126,6 +2210,10 @@ export interface ArchiveBlock {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * Stays saved; unhide any time.
+   */
+  hidden?: boolean | null;
   richText?: {
     root: {
       type: string;
@@ -2721,6 +2809,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "HeroBlock_select".
  */
 export interface HeroBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -2778,6 +2867,7 @@ export interface HeroBlockSelect<T extends boolean = true> {
  * via the `definition` "LogoWallBlock_select".
  */
 export interface LogoWallBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -2810,6 +2900,7 @@ export interface LogoWallBlockSelect<T extends boolean = true> {
  * via the `definition` "FeatureTabsBlock_select".
  */
 export interface FeatureTabsBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -2872,6 +2963,7 @@ export interface FeatureTabsBlockSelect<T extends boolean = true> {
  * via the `definition` "FeatureStoryBlock_select".
  */
 export interface FeatureStoryBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -2926,6 +3018,7 @@ export interface FeatureStoryBlockSelect<T extends boolean = true> {
  * via the `definition` "AgentShowcaseBlock_select".
  */
 export interface AgentShowcaseBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -2989,6 +3082,7 @@ export interface AgentShowcaseBlockSelect<T extends boolean = true> {
  * via the `definition` "StepsBlock_select".
  */
 export interface StepsBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3020,6 +3114,7 @@ export interface StepsBlockSelect<T extends boolean = true> {
  * via the `definition` "IntegrationsBlock_select".
  */
 export interface IntegrationsBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3078,6 +3173,7 @@ export interface IntegrationsBlockSelect<T extends boolean = true> {
  * via the `definition` "IntegrationDirectoryBlock_select".
  */
 export interface IntegrationDirectoryBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3116,6 +3212,7 @@ export interface IntegrationDirectoryBlockSelect<T extends boolean = true> {
  * via the `definition` "PillarsBlock_select".
  */
 export interface PillarsBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3170,6 +3267,7 @@ export interface PillarsBlockSelect<T extends boolean = true> {
  * via the `definition` "CardGridBlock_select".
  */
 export interface CardGridBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3224,6 +3322,7 @@ export interface CardGridBlockSelect<T extends boolean = true> {
  * via the `definition` "StatsBlock_select".
  */
 export interface StatsBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3256,6 +3355,7 @@ export interface StatsBlockSelect<T extends boolean = true> {
  * via the `definition` "TestimonialsBlock_select".
  */
 export interface TestimonialsBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3298,6 +3398,7 @@ export interface TestimonialsBlockSelect<T extends boolean = true> {
  * via the `definition` "PricingTeaserBlock_select".
  */
 export interface PricingTeaserBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3368,6 +3469,7 @@ export interface PricingTeaserBlockSelect<T extends boolean = true> {
  * via the `definition` "PricingBlock_select".
  */
 export interface PricingBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3417,6 +3519,7 @@ export interface PricingBlockSelect<T extends boolean = true> {
  * via the `definition` "FaqBlock_select".
  */
 export interface FaqBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3447,6 +3550,7 @@ export interface FaqBlockSelect<T extends boolean = true> {
  * via the `definition` "CtaSectionBlock_select".
  */
 export interface CtaSectionBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3486,6 +3590,7 @@ export interface CtaSectionBlockSelect<T extends boolean = true> {
  * via the `definition` "SpotlightBlock_select".
  */
 export interface SpotlightBlockSelect<T extends boolean = true> {
+  hidden?: T;
   layout?: T;
   eyebrow?: T;
   heading?: T;
@@ -3520,6 +3625,7 @@ export interface SpotlightBlockSelect<T extends boolean = true> {
  * via the `definition` "DocumentBlock_select".
  */
 export interface DocumentBlockSelect<T extends boolean = true> {
+  hidden?: T;
   header?:
     | T
     | {
@@ -3561,6 +3667,7 @@ export interface DocumentBlockSelect<T extends boolean = true> {
  * via the `definition` "ContentBlock_select".
  */
 export interface ContentBlockSelect<T extends boolean = true> {
+  hidden?: T;
   columns?:
     | T
     | {
@@ -3587,6 +3694,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  hidden?: T;
   media?: T;
   id?: T;
   blockName?: T;
@@ -3596,6 +3704,7 @@ export interface MediaBlockSelect<T extends boolean = true> {
  * via the `definition` "FormBlock_select".
  */
 export interface FormBlockSelect<T extends boolean = true> {
+  hidden?: T;
   form?: T;
   enableIntro?: T;
   introContent?: T;
@@ -3607,6 +3716,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "ArchiveBlock_select".
  */
 export interface ArchiveBlockSelect<T extends boolean = true> {
+  hidden?: T;
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
@@ -3621,6 +3731,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  hidden?: T;
   richText?: T;
   links?:
     | T
