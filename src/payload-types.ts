@@ -242,6 +242,8 @@ export interface Page {
   layout: (
     | HeroBlock
     | HeadingBlock
+    | MediaSectionBlock
+    | ActionsBlock
     | LogoWallBlock
     | FeatureTabsBlock
     | FeatureStoryBlock
@@ -657,6 +659,108 @@ export interface HeadingBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'heading';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaSectionBlock".
+ */
+export interface MediaSectionBlock {
+  hidden?: boolean | null;
+  visual?: {
+    type?: ('illustration' | 'image') | null;
+    illustration?:
+      | (
+          | 'stage'
+          | 'dashboard'
+          | 'agent'
+          | 'comparison'
+          | 'sources'
+          | 'team'
+          | 'integrations'
+          | 'alerts'
+          | 'builder'
+          | 'flyingKpis'
+          | 'portfolio'
+          | 'campaigns'
+          | 'agentChat'
+          | 'resi'
+          | 'mcp'
+          | 'kpiStudio'
+          | 'templates'
+          | 'governance'
+          | 'sync'
+          | 'semanticLayer'
+          | 'dimensions'
+          | 'collections'
+        )
+      | null;
+    image?: (number | null) | Media;
+  };
+  width?: ('full' | 'narrow') | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'media';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ActionsBlock".
+ */
+export interface ActionsBlock {
+  hidden?: boolean | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * How the link is rendered.
+           */
+          appearance?: ('default' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  align?: ('left' | 'center' | 'right') | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'actions';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2897,6 +3001,8 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         hero?: T | HeroBlockSelect<T>;
         heading?: T | HeadingBlockSelect<T>;
+        media?: T | MediaSectionBlockSelect<T>;
+        actions?: T | ActionsBlockSelect<T>;
         logoWall?: T | LogoWallBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         featureStory?: T | FeatureStoryBlockSelect<T>;
@@ -3031,6 +3137,66 @@ export interface HeadingBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  settings?:
+    | T
+    | {
+        background?: T;
+        gapTop?: T;
+        gapBottom?: T;
+        anchor?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaSectionBlock_select".
+ */
+export interface MediaSectionBlockSelect<T extends boolean = true> {
+  hidden?: T;
+  visual?:
+    | T
+    | {
+        type?: T;
+        illustration?: T;
+        image?: T;
+      };
+  width?: T;
+  settings?:
+    | T
+    | {
+        background?: T;
+        gapTop?: T;
+        gapBottom?: T;
+        anchor?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ActionsBlock_select".
+ */
+export interface ActionsBlockSelect<T extends boolean = true> {
+  hidden?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  align?: T;
   settings?:
     | T
     | {

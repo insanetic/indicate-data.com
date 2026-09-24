@@ -7,6 +7,7 @@ import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { Actions } from '../../blocks/Actions/config'
 import { AgentShowcase } from '../../blocks/AgentShowcase/config'
 import { CardGrid } from '../../blocks/CardGrid/config'
 import { CtaSection } from '../../blocks/CtaSection/config'
@@ -20,6 +21,7 @@ import { Hero } from '../../blocks/Hero/config'
 import { Integrations } from '../../blocks/Integrations/config'
 import { IntegrationDirectory } from '../../blocks/IntegrationDirectory/config'
 import { LogoWall } from '../../blocks/LogoWall/config'
+import { MediaSection } from '../../blocks/MediaSection/config'
 import { Pillars } from '../../blocks/Pillars/config'
 import { PricingTeaser } from '../../blocks/PricingTeaser/config'
 import { Pricing } from '../../blocks/Pricing/config'
@@ -96,6 +98,8 @@ export const Pages: CollectionConfig<'pages'> = {
               blocks: [
                 Hero,
                 Heading,
+                MediaSection,
+                Actions,
                 LogoWall,
                 FeatureTabs,
                 FeatureStory,

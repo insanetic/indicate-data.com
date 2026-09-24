@@ -2,6 +2,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { ActionsBlock } from '@/blocks/Actions/Component'
 import { Document } from '@/blocks/Document/config'
 import { HeadingBlock } from '@/blocks/Heading/Component'
 import { ActionRow } from '@/components/ActionRow'
@@ -126,5 +127,12 @@ describe('HeadingBlock', () => {
     const { container } = inLocale(<HeadingBlock blockType="heading" header={{ ...header, align: 'center' }} links={[link('Demo', 'default')]} />)
     expect(container.querySelector('[data-align="center"]')?.className).toContain('text-center')
     expect(screen.getByRole('link', { name: 'Demo' }).parentElement?.className).toContain('justify-center')
+  })
+})
+
+describe('ActionsBlock', () => {
+  it('right-aligns the row when asked', () => {
+    const { container } = inLocale(<ActionsBlock align="right" blockType="actions" links={[link('Demo', 'default')]} />)
+    expect(container.querySelector('.justify-end')).toBeTruthy()
   })
 })

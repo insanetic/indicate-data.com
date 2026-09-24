@@ -9,6 +9,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { DocumentBlock } from '@/blocks/Document/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { ActionsBlock } from '@/blocks/Actions/Component'
 import { AgentShowcaseBlock } from '@/blocks/AgentShowcase/Component'
 import { CardGridBlock } from '@/blocks/CardGrid/Component'
 import { CtaSectionBlock } from '@/blocks/CtaSection/Component'
@@ -21,6 +22,7 @@ import { HeroBlock } from '@/blocks/Hero/Component'
 import { IntegrationsBlock } from '@/blocks/Integrations/Component'
 import { IntegrationDirectoryBlock } from '@/blocks/IntegrationDirectory/Component'
 import { LogoWallBlock } from '@/blocks/LogoWall/Component'
+import { MediaSectionBlock } from '@/blocks/MediaSection/Component'
 import { PillarsBlock } from '@/blocks/Pillars/Component'
 import { PricingTeaserBlock } from '@/blocks/PricingTeaser/Component'
 import { PricingBlock } from '@/blocks/Pricing/Component'
@@ -42,6 +44,8 @@ type BlockType = Block['blockType']
 export const blockComponents: Record<BlockType, React.FC<any>> = {
   hero: HeroBlock,
   heading: HeadingBlock,
+  media: MediaSectionBlock,
+  actions: ActionsBlock,
   logoWall: LogoWallBlock,
   featureTabs: FeatureTabsBlock,
   featureStory: FeatureStoryBlock,
