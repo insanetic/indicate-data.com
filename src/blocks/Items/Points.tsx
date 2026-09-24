@@ -15,9 +15,9 @@ export const PointList: React.FC<{ items: PointRow[]; grid?: string; panel?: boo
 }) => (
   <ul
     className={cn(
-      layout === 'column' ? 'flex flex-col gap-5' : 'grid gap-x-8 gap-y-6',
+      layout === 'column' ? 'flex flex-col gap-5' : 'reveal grid gap-x-8 gap-y-6',
       layout === 'row' && grid,
-      panel && 'gap-0 divide-y divide-line lg:divide-x lg:divide-y-0',
+      panel && 'gap-0 divide-y divide-line md:divide-x md:divide-y-0',
     )}
   >
     {items.map((p, i) => (

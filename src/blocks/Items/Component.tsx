@@ -5,7 +5,7 @@ import type { ItemsBlock as Props } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 import { Cards } from './Cards'
-import { gridColumns, resolveColumns, type ItemStyle } from './columns'
+import { gridClasses, resolveColumns, type ItemStyle } from './columns'
 import { PointList } from './Points'
 import { Stats } from './Stats'
 import { Steps } from './Steps'
@@ -19,7 +19,7 @@ export const ItemsBlock: React.FC<Props> = ({ style, columns, frame, divider, it
   const list = (items || []).filter((i) => i.title)
   if (list.length === 0) return null
   const panel = frame === 'panel'
-  const props: StyleProps = { items: list, grid: gridColumns[resolveColumns(kind, columns, list.length)], panel }
+  const props: StyleProps = { items: list, grid: gridClasses(kind, panel, resolveColumns(kind, columns, list.length)), panel }
   return (
     <div className="container">
       <div

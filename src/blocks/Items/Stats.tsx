@@ -32,7 +32,9 @@ export const Stats: React.FC<StyleProps> = ({ items, grid, panel }) => (
               {stat.suffix && <span className={panel ? 'text-accent' : 'text-brand-blue-deep'}>{stat.suffix}</span>}
             </p>
           ) : null}
-          <p className={cn(stat.value ? 'type-body font-medium text-ink' : 'type-h4 text-ink')}>{withResi(stat.title)}</p>
+          <p className={cn(!stat.value ? 'type-h4 text-ink' : panel ? 'type-small text-ink-2' : 'type-body font-medium text-ink')}>
+            {withResi(stat.title)}
+          </p>
           {stat.text && <p className="type-caption text-ink-3">{withResi(stat.text)}</p>}
           {link && <CMSLink {...link} appearance="inline" className="link-arrow mt-auto type-small" />}
         </li>

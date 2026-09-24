@@ -9,7 +9,7 @@ import type { StyleProps } from './Component'
 /** Numbered steps joined by a line on wide screens. */
 export const Steps: React.FC<StyleProps> = ({ items, grid }) => (
   <ol className={cn('relative grid gap-10 md:gap-8', grid)}>
-    <span aria-hidden="true" className="steps-line absolute left-6 right-6 top-6 hidden h-px bg-line-strong lg:block" />
+    <span aria-hidden="true" className="steps-line absolute left-6 right-6 top-6 hidden h-px bg-line-strong md:block" />
     {items.map((step, i) => (
       <li className="reveal relative flex flex-col gap-5" key={step.id || i} style={{ '--i': i } as React.CSSProperties}>
         <span className="relative z-10 inline-flex size-12 items-center justify-center rounded-full border border-line-strong bg-surface-2 font-display text-lg font-medium text-accent tnum">

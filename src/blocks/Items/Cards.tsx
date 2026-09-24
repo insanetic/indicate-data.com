@@ -18,7 +18,7 @@ const tones = ['blue', 'yellow', 'coral', 'neutral'] as const
 export const Cards: React.FC<StyleProps> = ({ items, grid, panel }) => {
   if (panel) {
     return (
-      <ul className={cn('grid divide-y divide-line lg:divide-x lg:divide-y-0', grid)}>
+      <ul className={cn('grid divide-y divide-line md:divide-x md:divide-y-0', grid)}>
         {items.map((card, i) => (
           <li className="reveal flex flex-col gap-4 px-6 py-8 md:px-10 md:py-10" key={card.id || i} style={{ '--i': i } as React.CSSProperties}>
             {card.icon && <Icon className="text-accent" name={card.icon} size={26} />}
@@ -39,7 +39,8 @@ export const Cards: React.FC<StyleProps> = ({ items, grid, panel }) => {
           <li
             className={cn(
               'card-surface flex flex-col gap-4 p-6 md:p-7',
-              card.size === 'lg' && 'sm:col-span-2',
+              // md, as the old bento: below md three cards stack, and a span would add a column.
+              card.size === 'lg' && 'md:col-span-2',
               link && 'transition-colors duration-150 hover:border-line-strong',
             )}
             key={card.id || i}
