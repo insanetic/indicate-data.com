@@ -49,6 +49,10 @@ describe('resolveSpacing', () => {
     expect(tops([b('heading'), b('faq', { header: { heading: 'FAQ' } })])).toEqual(['normal', 'normal'])
   })
 
+  it('starts a group at a widget with a top-level heading', () => {
+    expect(tops([b('heading'), b('items'), b('spotlight', { heading: 'X' })])).toEqual(['normal', 'tight', 'normal'])
+  })
+
   it('starts a group at a widget without heading when the block above is a widget', () => {
     expect(tops([b('hero', { header: { heading: 'Hi' } }), b('logoWall')])).toEqual(['normal', 'normal'])
   })

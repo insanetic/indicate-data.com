@@ -11,6 +11,8 @@ export type Background = 'default' | 'tinted' | 'dark' | 'accent'
 export type RhythmBlock = {
   blockType: string
   header?: { heading?: string | null } | null
+  /** Widgets like Spotlight keep their heading at the top level instead of in a header group. */
+  heading?: string | null
   settings?: { background?: Background | null; gapTop?: Gap | null; gapBottom?: Gap | null } | null
 }
 
@@ -27,15 +29,16 @@ const background = (b: RhythmBlock): Background => b.settings?.background || 'de
 
 /**
  * A block opens a group when it is the first, changes the background, is a heading or split, or
- * is a widget with its own heading. A widget without a heading continues a group that a heading,
- * split or part started (a Heading block above an FAQ); after another widget it opens its own.
+ * is a widget with its own heading (in its header group or at the top level). A widget without a
+ * heading continues a group that a heading, split or part started (a Heading block above an FAQ);
+ * after another widget it opens its own.
  */
 export const startsGroup = (block: RhythmBlock, prev: RhythmBlock | undefined): boolean => {
   if (!prev) return true
   if (background(block) !== background(prev)) return true
   if (isLeader(block)) return true
   if (isPart(block)) return false
-  if (block.header?.heading) return true
+  if (block.header?.heading || block.heading) return true
   return !(isLeader(prev) || isPart(prev))
 }
 
