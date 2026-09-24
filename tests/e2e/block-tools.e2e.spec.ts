@@ -7,7 +7,7 @@ import { presetConsent } from '../helpers/consent'
 import { login } from '../helpers/login'
 import { cleanupTestUser, seedTestUser, testUser } from '../helpers/seedUser'
 
-const base = 'http://localhost:3000'
+const base = process.env.E2E_BASE_URL || 'http://localhost:3000'
 const run = `${Date.now()}`
 const context = { disableRevalidate: true }
 const faq = (heading: string, hidden = false) => ({ blockType: 'faq', hidden, header: { heading }, items: [{ question: `${heading}?`, answer: paragraphs(['A']) }] })
@@ -39,7 +39,7 @@ test.describe('Block tools', () => {
   })
 
   test('the admin marks the hidden block and can copy a block to another page', async ({ page }) => {
-    await login({ page, user: testUser })
+    await login({ page, serverURL: base, user: testUser })
     await page.goto(`${base}/admin/collections/pages/${pageId}`)
     await page.locator('.tabs-field__tab-button', { hasText: /Inhalt|Content/ }).click()
     await expect(page.locator('.blocks-field__block-header').first().getByText(/Ausgeblendet|Hidden/)).toBeVisible()

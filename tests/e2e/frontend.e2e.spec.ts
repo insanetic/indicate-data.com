@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { presetConsent } from '../helpers/consent'
 
-const base = 'http://localhost:3000'
+const base = process.env.E2E_BASE_URL || 'http://localhost:3000'
 
 test.beforeEach(async ({ context }) => {
   await presetConsent(context)
