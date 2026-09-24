@@ -27,6 +27,7 @@ import { StatsBlock } from '@/blocks/Stats/Component'
 import { StepsBlock } from '@/blocks/Steps/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { Section } from '@/components/Section'
+import { visibleBlocks } from '@/plugins/blockTools/visibleBlocks'
 
 type Block = Page['layout'][number]
 type BlockType = Block['blockType']
@@ -75,8 +76,10 @@ export const RenderBlocks: React.FC<{
   blocks: Block[]
   locale: Locale
   slug?: string
-}> = ({ blocks, locale, slug }) => {
-  if (!Array.isArray(blocks) || blocks.length === 0) return null
+}> = ({ blocks: allBlocks, locale, slug }) => {
+  // Hidden blocks never render; everything below (isFirst, the testimonials layout) sees only visible ones.
+  const blocks = visibleBlocks(allBlocks)
+  if (blocks.length === 0) return null
 
   return (
     <Fragment>
