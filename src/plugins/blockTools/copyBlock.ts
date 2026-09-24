@@ -82,7 +82,8 @@ export const copyBlockToPage = async ({ collection, field, sourceId, targetId, b
     const copied = remapIds(block, ids, newId)
     // After the first locale the copy already exists on the target (structure is shared); replace it in place.
     const others = rowsOf(target, field).filter((row) => row.id !== copied.id)
-    await payload.update({ ...common, id: targetId, locale: locale as never, data: { [field]: [...others, copied] } as never })
+    // overrideLock: false — a page someone else has open must not lose their lock (their next autosave would drop the copy).
+    await payload.update({ ...common, id: targetId, locale: locale as never, overrideLock: false, data: { [field]: [...others, copied] } as never })
     if (!title) title = String((target as unknown as Record<string, unknown>)[useAsTitle] ?? targetId)
   }
   return { targetId, title, blockId: String(ids.get(blockId)) }

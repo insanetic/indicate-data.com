@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest'
-import { APIError } from 'payload'
+import { APIError, Locked } from 'payload'
 
 import { copyBlockToPage, parseCopyBody, remapIds } from '@/plugins/blockTools/copyBlock'
 
@@ -137,6 +137,12 @@ describe('copyBlockToPage', () => {
     expect(fake.update.mock.calls.every(([o]: Loose[]) => o.id === 2)).toBe(true)
   })
 
+  it('respects the target page lock instead of silently removing it', async () => {
+    const fake = makeFake()
+    await copyBlockToPage(args(fake))
+    expect(fake.update.mock.calls.every(([o]: Loose[]) => o.overrideLock === false)).toBe(true)
+  })
+
   it('returns the target title in the default locale', async () => {
     const fake = makeFake()
     expect(await copyBlockToPage(args(fake))).toMatchObject({ targetId: 2, title: 'Ziel' })
@@ -175,5 +181,19 @@ describe('copy-block endpoint', () => {
     const endpoint = createCopyBlockEndpoint({ collection: 'pages', field: 'layout' })
     const res = await endpoint.handler({ user: null } as never)
     expect(res.status).toBe(401)
+  })
+
+  it('answers 423 with an editor-facing message when the target page is locked', async () => {
+    const { createCopyBlockEndpoint } = await import('@/plugins/blockTools/endpoint')
+    const endpoint = createCopyBlockEndpoint({ collection: 'pages', field: 'layout' })
+    const fake = makeFake()
+    fake.update.mockRejectedValueOnce(new Locked('Document locked'))
+    const req = Object.assign(fake.req as Loose, {
+      data: { sourceId: 1, targetId: 2, blockId: 'aaaaaaaaaaaaaaaaaaaaaaaa' },
+      payload: { ...(fake.req as Loose).payload, db: {}, logger: { error: vi.fn() } },
+    })
+    const res = await endpoint.handler(req as never)
+    expect(res.status).toBe(423)
+    expect((await res.json()).error).toMatch(/bearbeitet|being edited/)
   })
 })

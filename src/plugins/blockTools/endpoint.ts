@@ -21,7 +21,13 @@ export const createCopyBlockEndpoint = ({ collection, field }: { collection: Col
       await killTransaction(req)
       const status = error instanceof APIError ? error.status : 500
       if (status >= 500) req.payload.logger.error({ err: error, msg: 'blockTools: copy-block failed' })
-      return Response.json({ error: status >= 500 ? 'Copy failed' : (error as Error).message }, { status })
+      const message =
+        status === 423
+          ? 'Die Zielseite wird gerade bearbeitet. Später erneut versuchen. / The target page is being edited; try again later.'
+          : status >= 500
+            ? 'Copy failed'
+            : (error as Error).message
+      return Response.json({ error: message }, { status })
     }
   },
 })
