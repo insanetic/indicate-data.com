@@ -9,6 +9,8 @@ export const blockSlugs = [
   'media',
   'items',
   'actions',
+  'integrationTree',
+  'split',
   'logoWall',
   'featureTabs',
   'featureStory',

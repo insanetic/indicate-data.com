@@ -19,6 +19,7 @@ import { FeatureTabs } from '../../blocks/FeatureTabs/config'
 import { Heading } from '../../blocks/Heading/config'
 import { Hero } from '../../blocks/Hero/config'
 import { Integrations } from '../../blocks/Integrations/config'
+import { IntegrationTree } from '../../blocks/IntegrationTree/config'
 import { IntegrationDirectory } from '../../blocks/IntegrationDirectory/config'
 import { Items } from '../../blocks/Items/config'
 import { LogoWall } from '../../blocks/LogoWall/config'
@@ -26,6 +27,7 @@ import { MediaSection } from '../../blocks/MediaSection/config'
 import { Pillars } from '../../blocks/Pillars/config'
 import { PricingTeaser } from '../../blocks/PricingTeaser/config'
 import { Pricing } from '../../blocks/Pricing/config'
+import { Split } from '../../blocks/Split/config'
 import { Stats } from '../../blocks/Stats/config'
 import { Steps } from '../../blocks/Steps/config'
 import { Testimonials } from '../../blocks/Testimonials/config'
@@ -102,6 +104,8 @@ export const Pages: CollectionConfig<'pages'> = {
                 MediaSection,
                 Items,
                 Actions,
+                IntegrationTree,
+                Split,
                 LogoWall,
                 FeatureTabs,
                 FeatureStory,

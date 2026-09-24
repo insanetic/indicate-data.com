@@ -4,6 +4,7 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 import { ItemsBlock } from '@/blocks/Items/Component'
 import { gridClasses, resolveColumns } from '@/blocks/Items/columns'
+import { SplitBlock } from '@/blocks/Split/Component'
 import { LocaleProvider } from '@/providers/Locale'
 
 beforeAll(() => {
@@ -150,5 +151,23 @@ describe('ItemsBlock', () => {
     expect(list).toContain('md:grid-cols-3')
     expect(list).toContain('md:divide-x md:divide-y-0')
     expect(list).not.toContain('lg:divide-x')
+  })
+})
+
+describe('SplitBlock', () => {
+  it('puts the scene first on wide screens when it sits left, and lists the points in a column', () => {
+    const { container } = inLocale(
+      <SplitBlock
+        blockType="split"
+        header={{ heading: 'Text neben Szene' }}
+        mediaSide="left"
+        points={[{ id: 'p', title: 'Punkt eins' }]}
+        visual={{ type: 'image', image: null }}
+      />,
+    )
+    expect(container.querySelector('[data-part="text"]')?.className).toContain('lg:order-2')
+    expect(container.querySelector('[data-part="media"]')?.className).toContain('lg:order-1')
+    expect(container.querySelector('ul')?.className).toContain('flex-col')
+    expect(screen.getByText('Punkt eins')).toBeTruthy()
   })
 })

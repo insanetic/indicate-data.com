@@ -20,6 +20,7 @@ import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { HeadingBlock } from '@/blocks/Heading/Component'
 import { HeroBlock } from '@/blocks/Hero/Component'
 import { IntegrationsBlock } from '@/blocks/Integrations/Component'
+import { IntegrationTreeBlock } from '@/blocks/IntegrationTree/Component'
 import { IntegrationDirectoryBlock } from '@/blocks/IntegrationDirectory/Component'
 import { ItemsBlock } from '@/blocks/Items/Component'
 import { LogoWallBlock } from '@/blocks/LogoWall/Component'
@@ -27,6 +28,7 @@ import { MediaSectionBlock } from '@/blocks/MediaSection/Component'
 import { PillarsBlock } from '@/blocks/Pillars/Component'
 import { PricingTeaserBlock } from '@/blocks/PricingTeaser/Component'
 import { PricingBlock } from '@/blocks/Pricing/Component'
+import { SplitBlock } from '@/blocks/Split/Component'
 import { StatsBlock } from '@/blocks/Stats/Component'
 import { StepsBlock } from '@/blocks/Steps/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
@@ -48,6 +50,8 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   media: MediaSectionBlock,
   items: ItemsBlock,
   actions: ActionsBlock,
+  integrationTree: IntegrationTreeBlock,
+  split: SplitBlock,
   logoWall: LogoWallBlock,
   featureTabs: FeatureTabsBlock,
   featureStory: FeatureStoryBlock,

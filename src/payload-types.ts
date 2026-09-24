@@ -245,6 +245,8 @@ export interface Page {
     | MediaSectionBlock
     | ItemsBlock
     | ActionsBlock
+    | IntegrationTreeBlock
+    | SplitBlock
     | LogoWallBlock
     | FeatureTabsBlock
     | FeatureStoryBlock
@@ -864,6 +866,164 @@ export interface ActionsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'actions';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntegrationTreeBlock".
+ */
+export interface IntegrationTreeBlock {
+  hidden?: boolean | null;
+  groups?:
+    | {
+        title: string;
+        items?:
+          | {
+              name: string;
+              logo?: (number | null) | Media;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'integrationTree';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SplitBlock".
+ */
+export interface SplitBlock {
+  hidden?: boolean | null;
+  header: {
+    eyebrow?: string | null;
+    heading: string;
+    lead?: string | null;
+  };
+  mediaSide?: ('right' | 'left') | null;
+  visual?: {
+    type?: ('illustration' | 'image') | null;
+    illustration?:
+      | (
+          | 'stage'
+          | 'dashboard'
+          | 'agent'
+          | 'comparison'
+          | 'sources'
+          | 'team'
+          | 'integrations'
+          | 'alerts'
+          | 'builder'
+          | 'flyingKpis'
+          | 'portfolio'
+          | 'campaigns'
+          | 'agentChat'
+          | 'resi'
+          | 'mcp'
+          | 'kpiStudio'
+          | 'templates'
+          | 'governance'
+          | 'sync'
+          | 'semanticLayer'
+          | 'dimensions'
+          | 'collections'
+        )
+      | null;
+    image?: (number | null) | Media;
+  };
+  points?:
+    | {
+        icon?:
+          | (
+              | 'chart'
+              | 'sparkles'
+              | 'message'
+              | 'plug'
+              | 'database'
+              | 'layers'
+              | 'users'
+              | 'shield'
+              | 'lock'
+              | 'clock'
+              | 'calendar'
+              | 'target'
+              | 'trending'
+              | 'bell'
+              | 'globe'
+              | 'building'
+              | 'buildings'
+              | 'briefcase'
+              | 'code'
+              | 'check'
+              | 'euro'
+              | 'percent'
+              | 'bed'
+              | 'upload'
+              | 'palette'
+              | 'eye'
+              | 'zap'
+              | 'search'
+            )
+          | null;
+        title: string;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * How the link is rendered.
+           */
+          appearance?: ('default' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'split';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3107,6 +3267,8 @@ export interface PagesSelect<T extends boolean = true> {
         media?: T | MediaSectionBlockSelect<T>;
         items?: T | ItemsBlockSelect<T>;
         actions?: T | ActionsBlockSelect<T>;
+        integrationTree?: T | IntegrationTreeBlockSelect<T>;
+        split?: T | SplitBlockSelect<T>;
         logoWall?: T | LogoWallBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         featureStory?: T | FeatureStoryBlockSelect<T>;
@@ -3355,6 +3517,93 @@ export interface ActionsBlockSelect<T extends boolean = true> {
         id?: T;
       };
   align?: T;
+  settings?:
+    | T
+    | {
+        background?: T;
+        gapTop?: T;
+        gapBottom?: T;
+        anchor?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntegrationTreeBlock_select".
+ */
+export interface IntegrationTreeBlockSelect<T extends boolean = true> {
+  hidden?: T;
+  groups?:
+    | T
+    | {
+        title?: T;
+        items?:
+          | T
+          | {
+              name?: T;
+              logo?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  settings?:
+    | T
+    | {
+        background?: T;
+        gapTop?: T;
+        gapBottom?: T;
+        anchor?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SplitBlock_select".
+ */
+export interface SplitBlockSelect<T extends boolean = true> {
+  hidden?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        lead?: T;
+      };
+  mediaSide?: T;
+  visual?:
+    | T
+    | {
+        type?: T;
+        illustration?: T;
+        image?: T;
+      };
+  points?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
   settings?:
     | T
     | {
