@@ -48,7 +48,7 @@ test.describe('Block tools', () => {
     // Expand the second block and copy it.
     const second = page.locator('.blocks-field__row').nth(1)
     await second.locator('.collapsible__toggle').first().click()
-    await second.getByRole('button', { name: /Auf andere Seite kopieren|Copy to page/ }).click()
+    await second.getByRole('button', { name: /Auf andere Seite kopieren|Copy to another page/ }).click()
     await page.locator('.rs__control').last().click()
     await page.getByText(`BT e2e Ziel ${run}`, { exact: true }).click()
     await page.getByRole('button', { name: /^(Kopieren|Copy)$/ }).click()
@@ -56,5 +56,13 @@ test.describe('Block tools', () => {
 
     const draft = (await payload.findByID({ collection: 'pages', id: otherId, draft: true, depth: 0, locale: 'de' })) as { layout: { header: { heading: string } }[] }
     expect(draft.layout.map((b) => b.header.heading)).toEqual([`Ziel ${run}`, `Sichtbar ${run}`])
+
+    // Hide the expanded block with the switch: the header pill and the notice appear.
+    const toggle = second.getByRole('switch')
+    await expect(toggle).toHaveAttribute('aria-checked', 'true')
+    await toggle.click()
+    await expect(toggle).toHaveAttribute('aria-checked', 'false')
+    await expect(second.locator('.blocks-field__block-header').getByText(/Ausgeblendet|Hidden/)).toBeVisible()
+    await expect(second.getByText(/Erscheint nicht auf der Website|Not shown on the website/)).toBeVisible()
   })
 })

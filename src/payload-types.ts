@@ -512,9 +512,6 @@ export interface User {
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -600,9 +597,6 @@ export interface HeroBlock {
  * via the `definition` "LogoWallBlock".
  */
 export interface LogoWallBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header?: {
     eyebrow?: string | null;
@@ -633,9 +627,6 @@ export interface LogoWallBlock {
  * via the `definition` "FeatureTabsBlock".
  */
 export interface FeatureTabsBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -790,9 +781,6 @@ export interface FeatureTabsBlock {
  * via the `definition` "FeatureStoryBlock".
  */
 export interface FeatureStoryBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -908,9 +896,6 @@ export interface FeatureStoryBlock {
  * via the `definition` "AgentShowcaseBlock".
  */
 export interface AgentShowcaseBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1018,9 +1003,6 @@ export interface AgentShowcaseBlock {
  * via the `definition` "StepsBlock".
  */
 export interface StepsBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1081,9 +1063,6 @@ export interface StepsBlock {
  * via the `definition` "IntegrationsBlock".
  */
 export interface IntegrationsBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1172,9 +1151,6 @@ export interface IntegrationsBlock {
  * via the `definition` "IntegrationDirectoryBlock".
  */
 export interface IntegrationDirectoryBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1215,9 +1191,6 @@ export interface IntegrationDirectoryBlock {
  * via the `definition` "PillarsBlock".
  */
 export interface PillarsBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1313,9 +1286,6 @@ export interface PillarsBlock {
  * via the `definition` "CardGridBlock".
  */
 export interface CardGridBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1408,9 +1378,6 @@ export interface CardGridBlock {
  * via the `definition` "StatsBlock".
  */
 export interface StatsBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header?: {
     eyebrow?: string | null;
@@ -1441,9 +1408,6 @@ export interface StatsBlock {
  * via the `definition` "TestimonialsBlock".
  */
 export interface TestimonialsBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header?: {
     eyebrow?: string | null;
@@ -1538,9 +1502,6 @@ export interface TestimonialTag {
  * via the `definition` "PricingTeaserBlock".
  */
 export interface PricingTeaserBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1630,9 +1591,6 @@ export interface PricingTeaserBlock {
  * via the `definition` "PricingBlock".
  */
 export interface PricingBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1674,9 +1632,6 @@ export interface PricingBlock {
  * via the `definition` "FaqBlock".
  */
 export interface FaqBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1719,9 +1674,6 @@ export interface FaqBlock {
  * via the `definition` "CtaSectionBlock".
  */
 export interface CtaSectionBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1768,9 +1720,6 @@ export interface CtaSectionBlock {
  * via the `definition` "SpotlightBlock".
  */
 export interface SpotlightBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   layout?: ('banner' | 'compact') | null;
   eyebrow?: string | null;
@@ -1814,9 +1763,6 @@ export interface SpotlightBlock {
  * via the `definition` "DocumentBlock".
  */
 export interface DocumentBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   header: {
     eyebrow?: string | null;
@@ -1913,9 +1859,6 @@ export interface Sidebar {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   columns?:
     | {
@@ -1977,9 +1920,6 @@ export interface MediaBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   form: number | Form;
   enableIntro?: boolean | null;
@@ -2172,9 +2112,6 @@ export interface Form {
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   introContent?: {
     root: {
@@ -2210,9 +2147,6 @@ export interface ArchiveBlock {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
-  /**
-   * Stays saved; unhide any time.
-   */
   hidden?: boolean | null;
   richText?: {
     root: {

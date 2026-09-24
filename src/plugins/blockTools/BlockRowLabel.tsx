@@ -1,10 +1,13 @@
 'use client'
 
 import { Pill, SectionTitle, useDocumentInfo, useFormFields, useRowLabel, useTranslation } from '@payloadcms/ui'
+import { EyeOff } from 'lucide-react'
 import type { StaticLabel } from 'payload'
 import React from 'react'
 
 import { useL } from './useL'
+
+import './index.scss'
 
 const baseClass = 'blocks-field'
 
@@ -28,12 +31,14 @@ export const BlockRowLabel: React.FC<{ label?: StaticLabel }> = ({ label }) => {
       <Pill className={`${baseClass}__block-pill`} pillStyle="white" size="small">
         {labelText(label, i18n.language)}
       </Pill>
-      <SectionTitle path={`${path}.blockName`} readOnly={!docPermissions?.update} />
+      {/* Before the block name: its input stretches, so anything after it would drift to the middle. */}
       {hidden && (
-        <Pill pillStyle="warning" size="small">
+        <Pill className="block-tools-hidden-pill" pillStyle="warning" size="small">
+          <EyeOff aria-hidden size={12} />
           {l('Ausgeblendet', 'Hidden')}
         </Pill>
       )}
+      <SectionTitle path={`${path}.blockName`} readOnly={!docPermissions?.update} />
     </>
   )
 }

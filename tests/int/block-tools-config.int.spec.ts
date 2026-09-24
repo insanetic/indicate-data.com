@@ -22,17 +22,15 @@ const apply = (config: Partial<Config>, collections = { pages: { field: 'layout'
 const pagesOut = () => apply({ collections: [Pages] }).collections!.find((c) => c.slug === 'pages')!
 
 describe('blockToolsPlugin', () => {
-  it('gives every layout block a non-localised hidden checkbox and the copy button, first', () => {
+  it('gives every layout block a non-localised hidden value and the toolbar, first', () => {
     const blocks = layoutBlocks(pagesOut().fields)
     expect(blocks.map((b) => b.slug).sort()).toEqual([...blockSlugs].sort())
     for (const block of blocks) {
-      const row = block.fields[0]
-      expect(row.type).toBe('row')
-      if (row.type !== 'row') continue
-      const [hidden, copy] = row.fields
-      expect(hidden).toMatchObject({ name: 'hidden', type: 'checkbox', defaultValue: false })
+      const [hidden, toolbar] = block.fields
+      // The toolbar's switch edits `hidden`; the checkbox itself stays out of sight.
+      expect(hidden).toMatchObject({ name: 'hidden', type: 'checkbox', defaultValue: false, admin: { hidden: true } })
       expect('localized' in hidden && hidden.localized).toBeFalsy()
-      expect(copy).toMatchObject({ name: 'copyToPage', type: 'ui', admin: { components: { Field: '@/plugins/blockTools/admin#CopyToPage' } } })
+      expect(toolbar).toMatchObject({ name: 'blockToolbar', type: 'ui', admin: { components: { Field: '@/plugins/blockTools/admin#BlockToolbar' } } })
     }
   })
 
@@ -51,7 +49,7 @@ describe('blockToolsPlugin', () => {
   it('leaves the original config objects untouched', () => {
     apply({ collections: [Pages] })
     const faq = layoutBlocks(Pages.fields).find((b) => b.slug === 'faq')!
-    const hasHidden = faq.fields.some((f) => f.type === 'row' && f.fields.some((x) => 'name' in x && x.name === 'hidden'))
+    const hasHidden = faq.fields.some((f) => 'name' in f && f.name === 'hidden')
     expect(hasHidden).toBe(false)
     expect(faq.admin?.components?.Label).toBeUndefined()
   })

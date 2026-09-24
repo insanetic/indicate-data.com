@@ -1,0 +1,140 @@
+// Block tools: the bar at the top of each block and the "hidden" pill in the row header.
+// Colours come from Payload's theme variables, so light and dark mode both work.
+
+.block-tools {
+  // No divider of its own: the block's first field group already draws one below.
+  margin-bottom: calc(var(--base) * 0.5);
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: calc(var(--base) * 0.5) var(--base);
+  }
+
+  &__switch {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--base) * 0.5);
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--theme-elevation-800);
+    font: inherit;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--theme-elevation-400);
+      outline-offset: 3px;
+      border-radius: var(--style-radius-s);
+    }
+  }
+
+  &__track {
+    position: relative;
+    flex: none;
+    width: 30px;
+    height: 18px;
+    border-radius: 9px;
+    background: var(--theme-success-500);
+    transition: background-color 150ms ease-out;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 2px;
+    left: 14px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+    transition: left 150ms ease-out;
+  }
+
+  &__switch[aria-checked='false'] &__track {
+    background: var(--theme-elevation-300);
+  }
+
+  &__switch[aria-checked='false'] &__thumb {
+    left: 2px;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    margin-right: -8px;
+    border: 0;
+    border-radius: var(--style-radius-s);
+    background: none;
+    color: var(--theme-elevation-650);
+    font: inherit;
+    cursor: pointer;
+    transition: background-color 150ms ease-out, color 150ms ease-out;
+
+    &:hover:not(:disabled) {
+      background: var(--theme-elevation-100);
+      color: var(--theme-elevation-900);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--theme-elevation-400);
+      outline-offset: 1px;
+    }
+  }
+
+  &__notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: calc(var(--base) * 0.75) 0 0;
+    padding: 8px 12px;
+    border-radius: var(--style-radius-s);
+    background: var(--theme-warning-100);
+    color: var(--theme-warning-800);
+    line-height: 1.45;
+
+    svg {
+      flex: none;
+      margin-top: 2px;
+    }
+  }
+
+  &__drawer-hint {
+    margin: 0 0 var(--base);
+    color: var(--theme-elevation-650);
+  }
+
+  &__drawer-actions {
+    margin-top: var(--base);
+  }
+}
+
+.block-tools-hidden-pill {
+  .pill__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block-tools__track,
+  .block-tools__thumb,
+  .block-tools__action {
+    transition: none;
+  }
+}

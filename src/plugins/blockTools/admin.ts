@@ -1,2 +1,2 @@
 export { BlockRowLabel } from './BlockRowLabel'
-export { CopyToPage } from './CopyToPage'
+export { BlockToolbar } from './BlockToolbar'

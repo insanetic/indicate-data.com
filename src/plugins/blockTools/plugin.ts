@@ -9,28 +9,20 @@ export type BlockToolsOptions = {
   collections: Partial<Record<CollectionSlug, { field: string }>>
 }
 
-const toolsRow: Field = {
-  type: 'row',
-  fields: [
-    {
-      name: 'hidden',
-      type: 'checkbox',
-      defaultValue: false,
-      label: { de: 'Auf der Website ausblenden', en: 'Hide on website' },
-      admin: {
-        width: '50%',
-        description: {
-          de: 'Bleibt gespeichert und kann jederzeit wieder eingeblendet werden.',
-          en: 'Stays saved; unhide any time.',
-        },
-      },
-    },
-    {
-      name: 'copyToPage',
-      type: 'ui',
-      admin: { components: { Field: `${BLOCK_TOOLS_COMPONENTS}#CopyToPage` } },
-    },
-  ],
+/** Stored value; the toolbar's visibility switch edits it, so the checkbox itself stays out of sight. */
+const hiddenField: Field = {
+  name: 'hidden',
+  type: 'checkbox',
+  defaultValue: false,
+  label: { de: 'Auf der Website ausblenden', en: 'Hide on website' },
+  admin: { hidden: true },
+}
+
+/** Slim bar at the top of every block: visibility switch and "copy to page". */
+const toolbarField: Field = {
+  name: 'blockToolbar',
+  type: 'ui',
+  admin: { components: { Field: `${BLOCK_TOOLS_COMPONENTS}#BlockToolbar` } },
 }
 
 const withTools = (block: Block): Block => {
@@ -50,7 +42,7 @@ const withTools = (block: Block): Block => {
         },
       },
     },
-    fields: [toolsRow, ...block.fields],
+    fields: [hiddenField, toolbarField, ...block.fields],
   }
 }
 

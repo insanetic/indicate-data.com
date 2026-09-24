@@ -12,13 +12,13 @@ import {
   useFormModified,
   useModal,
 } from '@payloadcms/ui'
+import { Copy } from 'lucide-react'
 import React, { useState } from 'react'
 
 import { useL } from './useL'
 
 /** "Copy to page…": appends this block (as last saved) to another document's draft via the copy-block endpoint. */
-export const CopyToPage: React.FC<{ path: string }> = ({ path }) => {
-  const rowPath = path.slice(0, path.lastIndexOf('.'))
+export const CopyToPage: React.FC<{ rowPath: string }> = ({ rowPath }) => {
   const blockId = useFormFields(([fields]) => fields[`${rowPath}.id`]?.value as string | undefined)
   const { id, collectionSlug } = useDocumentInfo()
   const modified = useFormModified()
@@ -72,27 +72,40 @@ export const CopyToPage: React.FC<{ path: string }> = ({ path }) => {
     }
   }
 
+  // The server copies the last saved version; with autosave that is at most a moment away.
   const disabled = !id || !blockId || modified
 
   return (
-    <div className="field-type" style={{ alignSelf: 'flex-end' }}>
-      <Button buttonStyle="secondary" disabled={disabled} margin={false} onClick={open} size="small">
-        {l('Auf andere Seite kopieren…', 'Copy to page…')}
-      </Button>
-      {modified && <div className="field-description">{l('Erst speichern, dann kopieren.', 'Save first, then copy.')}</div>}
+    <>
+      <button
+        className="block-tools__action"
+        disabled={disabled}
+        onClick={open}
+        title={modified ? l('Wird gespeichert …', 'Saving …') : undefined}
+        type="button"
+      >
+        <Copy aria-hidden size={14} />
+        {l('Auf andere Seite kopieren', 'Copy to another page')}
+      </button>
       <Drawer slug={drawerSlug} title={l('Block auf andere Seite kopieren', 'Copy block to another page')}>
-        <p>{l('Der Block wird ans Ende des Entwurfs der Zielseite angehängt.', "The block is appended to the end of the target page's draft.")}</p>
+        <p className="block-tools__drawer-hint">
+          {l(
+            'Der Block wird mit allen Sprachen ans Ende des Entwurfs der Zielseite angehängt. Live geht er erst mit der Veröffentlichung der Zielseite.',
+            "The block is appended, in all languages, to the end of the target page's draft. It goes live when you publish that page.",
+          )}
+        </p>
         <ReactSelect
           onChange={(value) => setTarget(Array.isArray(value) ? (value[0] ?? null) : value)}
           options={options}
+          placeholder={l('Zielseite wählen …', 'Choose a page …')}
           value={target ?? undefined}
         />
-        <div style={{ marginTop: '1rem' }}>
+        <div className="block-tools__drawer-actions">
           <Button disabled={!target || busy} onClick={copy}>
-            {busy ? '…' : l('Kopieren', 'Copy')}
+            {busy ? l('Kopiert …', 'Copying …') : l('Kopieren', 'Copy')}
           </Button>
         </div>
       </Drawer>
-    </div>
+    </>
   )
 }
