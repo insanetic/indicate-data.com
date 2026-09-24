@@ -19,6 +19,7 @@ type Props = {
   /** Forces alignment regardless of the CMS setting. */
   align?: 'left' | 'center' | 'right'
   leadClassName?: string
+  'data-part'?: string
 }
 
 /** Eyebrow + heading + lead, shared by every block so sections read alike. */
@@ -29,6 +30,7 @@ export const SectionHeading: React.FC<Props> = ({
   className,
   align,
   leadClassName,
+  'data-part': dataPart,
 }) => {
   if (!header?.heading && !header?.lead) return null
   const alignment = align || header.align || 'left'
@@ -50,6 +52,7 @@ export const SectionHeading: React.FC<Props> = ({
             : 'items-start',
         className,
       )}
+      data-part={dataPart}
     >
       {header.eyebrow && <Eyebrow>{withResi(header.eyebrow)}</Eyebrow>}
       {header.heading && (

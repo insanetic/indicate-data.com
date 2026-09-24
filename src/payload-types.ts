@@ -241,6 +241,7 @@ export interface Page {
   };
   layout: (
     | HeroBlock
+    | HeadingBlock
     | LogoWallBlock
     | FeatureTabsBlock
     | FeatureStoryBlock
@@ -599,6 +600,63 @@ export interface HeroBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeadingBlock".
+ */
+export interface HeadingBlock {
+  hidden?: boolean | null;
+  /**
+   * Left: heading left, lead right. Right: mirrored. Centred: everything stacked in the middle.
+   */
+  header?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    lead?: string | null;
+    align?: ('left' | 'center' | 'right') | null;
+  };
+  size?: ('h2' | 'display') | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * How the link is rendered.
+           */
+          appearance?: ('default' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    background?: ('default' | 'tinted' | 'dark' | 'accent') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapTop?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    /**
+     * Automatic: full space where a section starts or ends, tight inside one.
+     */
+    gapBottom?: ('auto' | 'none' | 'tight' | 'normal' | 'large') | null;
+    anchor?: string | null;
+    spacing?: ('default' | 'compact' | 'none') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heading';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2838,6 +2896,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         hero?: T | HeroBlockSelect<T>;
+        heading?: T | HeadingBlockSelect<T>;
         logoWall?: T | LogoWallBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         featureStory?: T | FeatureStoryBlockSelect<T>;
@@ -2929,6 +2988,48 @@ export interface HeroBlockSelect<T extends boolean = true> {
         type?: T;
         illustration?: T;
         image?: T;
+      };
+  settings?:
+    | T
+    | {
+        background?: T;
+        gapTop?: T;
+        gapBottom?: T;
+        anchor?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeadingBlock_select".
+ */
+export interface HeadingBlockSelect<T extends boolean = true> {
+  hidden?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        lead?: T;
+        align?: T;
+      };
+  size?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
       };
   settings?:
     | T

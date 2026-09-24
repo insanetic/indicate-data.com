@@ -15,6 +15,7 @@ import { Document } from '../../blocks/Document/config'
 import { Faq } from '../../blocks/Faq/config'
 import { FeatureStory } from '../../blocks/FeatureStory/config'
 import { FeatureTabs } from '../../blocks/FeatureTabs/config'
+import { Heading } from '../../blocks/Heading/config'
 import { Hero } from '../../blocks/Hero/config'
 import { Integrations } from '../../blocks/Integrations/config'
 import { IntegrationDirectory } from '../../blocks/IntegrationDirectory/config'
@@ -94,6 +95,7 @@ export const Pages: CollectionConfig<'pages'> = {
               type: 'blocks',
               blocks: [
                 Hero,
+                Heading,
                 LogoWall,
                 FeatureTabs,
                 FeatureStory,

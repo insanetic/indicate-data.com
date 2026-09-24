@@ -16,6 +16,7 @@ import { SpotlightBlock } from '@/blocks/Spotlight/Component'
 import { FaqBlock } from '@/blocks/Faq/Component'
 import { FeatureStoryBlock } from '@/blocks/FeatureStory/Component'
 import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
+import { HeadingBlock } from '@/blocks/Heading/Component'
 import { HeroBlock } from '@/blocks/Hero/Component'
 import { IntegrationsBlock } from '@/blocks/Integrations/Component'
 import { IntegrationDirectoryBlock } from '@/blocks/IntegrationDirectory/Component'
@@ -40,6 +41,7 @@ type BlockType = Block['blockType']
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const blockComponents: Record<BlockType, React.FC<any>> = {
   hero: HeroBlock,
+  heading: HeadingBlock,
   logoWall: LogoWallBlock,
   featureTabs: FeatureTabsBlock,
   featureStory: FeatureStoryBlock,
