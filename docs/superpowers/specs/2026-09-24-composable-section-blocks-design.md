@@ -22,6 +22,29 @@ into the new blocks and removed.
 - Spacing is set per side: space above and space below, each `auto` by default.
 - Old structural blocks are converted and removed; widgets stay.
 
+## Amendments from planning (2026-09-24)
+
+These override the sections below where they differ.
+
+1. **No `blockReferences`.** The block tools plugin rejects them, and `layout` on pages is the only
+   blocks field, so there is nothing to deduplicate. New blocks are defined inline like the others.
+2. **`logoGroups` is `integrationTree`.** The Integrations block never showed a logo list: its groups
+   feed the lit integration tree. The new block renders that tree from the same groups. An old block
+   with an uploaded image becomes `media` plus a hidden `integrationTree` that keeps the groups.
+3. **Spacing fields are `settings.gapTop` / `settings.gapBottom`** (labels "Abstand oben/unten").
+   `spaceBottom` would push the Postgres enum name for `integrationDirectory` past 63 characters.
+4. **Items get `frame`: `none` / `panel`.** `panel` draws one rounded surface with hairline dividers,
+   the "Warum Indicate" look the founder asked to keep. Pillars become `heading` → `items` (cards,
+   panel) → `items` (stats, panel); the heading now sits above the panel instead of inside it.
+5. **Widget headings become optional**, so a Heading block can stand above a widget. A widget starts
+   a group only when its own heading is filled. In widgets, `right` renders the heading stack
+   right-aligned; the two-column left/right layout exists only in the Heading block.
+6. **Old `spacing` on widgets is converted too** (`default` → auto, `compact` → tight both sides,
+   `none` → none both sides), and the conversion also drives the seed: `upsertPage` passes every
+   layout through `splitLegacyBlock`, so a fresh seed and a migrated database end up identical.
+7. **Phase 1 and phase 2 ship as two separate production deploys.** The phase 1 migration reads old
+   blocks through the Local API, which only works while their configs still exist.
+
 ## Blocks
 
 All new blocks get the shared `settings` group (see Spacing) and, via the block tools plugin, the
