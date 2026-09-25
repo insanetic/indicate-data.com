@@ -773,6 +773,10 @@ export interface ItemsBlock {
         title: string;
         width?: ('auto' | 'fifth' | 'quarter' | 'third' | 'half' | 'full') | null;
         size?: ('sm' | 'lg') | null;
+        /**
+         * Shown large like a number, e.g. "GDPR". Only used when there is no number.
+         */
+        word?: string | null;
         text?: string | null;
         points?:
           | {
@@ -3473,6 +3477,7 @@ export interface ItemsBlockSelect<T extends boolean = true> {
         title?: T;
         width?: T;
         size?: T;
+        word?: T;
         text?: T;
         points?:
           | T

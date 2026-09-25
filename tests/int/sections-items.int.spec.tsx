@@ -137,6 +137,17 @@ describe('ItemsBlock', () => {
     expect(screen.getByText('Für Hotelgruppen').className).toContain('type-h4')
   })
 
+  it('stats: a word stands in for the number at number size, never counts', () => {
+    inLocale(<ItemsBlock blockType="items" frame="panel" items={[{ id: 'w', word: 'DSGVO', title: 'Gehostet in Deutschland' }]} style="stats" />)
+    expect(screen.getByText('DSGVO').className).toContain('type-stat')
+    expect(screen.getByText('Gehostet in Deutschland').className).toContain('type-small text-ink-2')
+  })
+
+  it('stats: a number wins over a word', () => {
+    const { container } = inLocale(<ItemsBlock blockType="items" items={[{ id: 'n', value: '15', word: 'Jahre', title: 'Historie' }]} style="stats" />)
+    expect(container.querySelector('.type-stat')?.textContent).toBe('15')
+  })
+
   it('cards: a double-width card spans two columns, its link renders', () => {
     const { container } = inLocale(
       <ItemsBlock

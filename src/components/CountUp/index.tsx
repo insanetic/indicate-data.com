@@ -12,7 +12,8 @@ type Props = {
 /** Counts a number up from zero once it scrolls into view. Reduced motion: shows the value. */
 export const CountUp: React.FC<Props> = ({ value, className, duration = 1400 }) => {
   const target = Number(value.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.'))
-  const numeric = value.trim() !== '' && !Number.isNaN(target)
+  // Only digits with German separators count up; "24/7" or "DSGVO" render as they are.
+  const numeric = /^\s*\d[\d.,]*\s*$/.test(value) && !Number.isNaN(target)
   const decimals = (value.split(',')[1] || '').length
   const ref = useRef<HTMLSpanElement>(null)
   const [display, setDisplay] = useState(value)

@@ -139,6 +139,19 @@ export const Items: Block = {
           ],
         },
         {
+          name: 'word',
+          type: 'text',
+          localized: true,
+          label: { de: 'Wort statt Zahl (optional)', en: 'Word instead of a number (optional)' },
+          admin: {
+            condition: forStyles('stats'),
+            description: {
+              de: 'Steht groß wie eine Zahl, z. B. „DSGVO“. Wird nur ohne Zahl gezeigt.',
+              en: 'Shown large like a number, e.g. "GDPR". Only used when there is no number.',
+            },
+          },
+        },
+        {
           name: 'text',
           type: 'textarea',
           localized: true,

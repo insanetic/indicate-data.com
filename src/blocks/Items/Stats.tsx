@@ -9,8 +9,8 @@ import { statSpan } from './columns'
 import type { StyleProps } from './Component'
 
 /**
- * Numbers that count up, with a label, an optional note and link. An entry without a number
- * shows its label large (the "For hotel groups" tiles). Each entry can set its own width.
+ * Numbers that count up, with a label, an optional note and link. A word can stand in for the
+ * number at the same size; an entry with neither shows its label large (the "For hotel groups" tiles). Each entry can set its own width.
  * In a panel every tile draws a hairline to its right and below; the panel clips the outer
  * ones, so the dividers hold for any number of rows and a short last row.
  */
@@ -33,8 +33,10 @@ export const Stats: React.FC<StyleProps> = ({ items, grid, panel, columns }) => 
               <CountUp value={stat.value} />
               {stat.suffix && <span className={panel ? 'text-accent' : 'text-brand-blue-deep'}>{stat.suffix}</span>}
             </p>
+          ) : stat.word ? (
+            <p className="type-stat text-ink">{withResi(stat.word)}</p>
           ) : null}
-          <p className={cn(!stat.value ? 'type-h4 text-ink' : panel ? 'type-small text-ink-2' : 'type-body font-medium text-ink')}>
+          <p className={cn(!(stat.value || stat.word) ? 'type-h4 text-ink' : panel ? 'type-small text-ink-2' : 'type-body font-medium text-ink')}>
             {withResi(stat.title)}
           </p>
           {stat.text && <p className="type-caption text-ink-3">{withResi(stat.text)}</p>}
