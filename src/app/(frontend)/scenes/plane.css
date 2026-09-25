@@ -74,21 +74,25 @@
     opacity: 0;
     transform: var(--open);
     fill: var(--env);
+    stroke-opacity: 1;
   }
   34% {
     opacity: 1;
     transform: var(--open);
     fill: var(--env);
+    stroke-opacity: 1;
   }
   40% {
     opacity: 1;
     transform: none;
     fill: var(--env);
+    stroke-opacity: 1;
   }
   /* The fold: five in-between poses (see `FOLD`), linear between them; the spacing eases. */
   44% {
     transform: none;
     fill: var(--env);
+    stroke-opacity: 1;
     animation-timing-function: linear;
   }
   45.5% {
@@ -111,43 +115,70 @@
     transform: var(--f5);
     animation-timing-function: linear;
   }
+  /* Outlines belong to the envelope: the matrices would scale them unevenly on the plane. */
   53%,
   100% {
     opacity: 1;
     transform: var(--to);
     fill: var(--wing);
+    stroke-opacity: 0;
   }
 }
 .loop-plane-facet {
   transform-box: view-box;
-  transform-origin: 0 0;
+  /* The facet's own centre (see `affine()`), so it turns in place while it folds. */
+  transform-origin: var(--ox) var(--oy);
   transform: var(--to);
   fill: var(--wing);
+  stroke-opacity: 0;
 }
 .loop .loop-plane-facet {
   animation-name: loop-plane-facet;
   animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
-/* Flight: a small dip, then a climb to the landing point, banking and getting smaller. */
+/* Flight: the nose rides the route (`--k1`–`--k6`, sampled in `flight`), turning with it and   */
+/* getting smaller; linear between the samples, whose spacing eases. Then it is gone.          */
 @keyframes loop-plane-fly {
   0%,
-  54% {
+  55% {
     opacity: 1;
     transform: none;
+    animation-timing-function: linear;
   }
-  57% {
+  58.17% {
     opacity: 1;
-    transform: translate(3px, 1.5px);
+    transform: var(--k1);
+    animation-timing-function: linear;
+  }
+  61.33% {
+    opacity: 1;
+    transform: var(--k2);
+    animation-timing-function: linear;
+  }
+  64.5% {
+    opacity: 1;
+    transform: var(--k3);
+    animation-timing-function: linear;
+  }
+  67.67% {
+    opacity: 1;
+    transform: var(--k4);
+    animation-timing-function: linear;
+  }
+  70.83% {
+    opacity: 1;
+    transform: var(--k5);
+    animation-timing-function: linear;
   }
   74% {
     opacity: 1;
-    transform: translate(var(--tx), var(--ty)) rotate(-12deg) scale(0.55);
+    transform: var(--k6);
   }
   77%,
   100% {
     opacity: 0;
-    transform: translate(var(--tx), var(--ty)) rotate(-12deg) scale(0.55);
+    transform: var(--k6);
   }
 }
 .loop-plane-fly {
@@ -159,12 +190,33 @@
   animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
+/* The dotted route appears as the plane takes shape and leaves with the trail. */
+@keyframes loop-plane-route {
+  0%,
+  49% {
+    opacity: 0;
+  }
+  54%,
+  84% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop .loop-plane-route {
+  animation-name: loop-plane-route;
+  animation-timing-function: ease;
+}
+
 /* The route draws behind the plane, stays a moment, then fades. */
 @keyframes loop-plane-trail {
+  /* Hidden just past the start (1.05, not 1), so no round cap sits on the nose. */
   0%,
   55% {
     opacity: 1;
-    stroke-dashoffset: 1;
+    stroke-dashoffset: 1.05;
   }
   74%,
   84% {

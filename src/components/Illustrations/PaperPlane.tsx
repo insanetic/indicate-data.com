@@ -50,14 +50,20 @@ const NOSE = at(26, -2)
 const TAIL_LOW = at(-22, 16)
 const CREASE = at(-10, 3)
 const KEEL = at(-4, 12)
-const TUCK = at(-14, 7)
+/** Inside the keel, so the fourth facet folds away out of sight. */
+const TUCK = at(-12, 10)
 
 type Tri = [Pt, Pt, Pt]
+
+/** Centre of a triangle: each facet turns around its own centre while it folds. */
+const centre = (t: Tri): Pt => ({ x: (t[0].x + t[1].x + t[2].x) / 3, y: (t[0].y + t[1].y + t[2].y) / 3 })
 
 /**
  * CSS `matrix()` that maps triangle `from` onto triangle `to` (an affine map exists for any
  * pair). Animating `none` → this matrix folds the paper without morphing a path, so it runs on
- * the compositor in every browser. Coordinates are stage units (`transform-box: view-box`).
+ * the compositor in every browser. Coordinates are stage units (`transform-box: view-box`); the
+ * matrix is written for a `transform-origin` at `from`'s centre, since CSS interpolates the
+ * rotation around the origin and a far one would swing the facet through a wide arc.
  */
 function affine(from: Tri, to: Tri): string {
   const [p0, p1, p2] = from
@@ -71,8 +77,10 @@ function affine(from: Tri, to: Tri): string {
   const b = v[1] * i[0] + v[3] * i[1]
   const c = v[0] * i[2] + v[2] * i[3]
   const d = v[1] * i[2] + v[3] * i[3]
-  const e = q0.x - (a * p0.x + c * p0.y)
-  const f = q0.y - (b * p0.x + d * p0.y)
+  const o = centre(from)
+  // x' = L·x + t about the stage origin equals o + L·(x − o) + t', so t' = t − o + L·o.
+  const e = q0.x - (a * p0.x + c * p0.y) - o.x + (a * o.x + c * o.y)
+  const f = q0.y - (b * p0.x + d * p0.y) - o.y + (b * o.x + d * o.y)
   const n = (x: number) => Number(x.toFixed(4))
   return `matrix(${n(a)}, ${n(b)}, ${n(c)}, ${n(d)}, ${n(e)}, ${n(f)})`
 }
@@ -93,7 +101,27 @@ const points = (t: Tri) => t.map((p) => `${p.x},${p.y}`).join(' ')
 
 /** The route: from the nose, a gentle climb to the top right, where the tick lands. */
 const LAND: Pt = { x: 334, y: 30 }
-const route = `M ${NOSE.x + 2} ${NOSE.y} C ${NOSE.x + 44} ${NOSE.y} ${NOSE.x + 74} ${LAND.y + 6} ${LAND.x - 8} ${LAND.y + 1}`
+const ROUTE: [Pt, Pt, Pt, Pt] = [NOSE, { x: NOSE.x + 44, y: NOSE.y }, { x: NOSE.x + 74, y: LAND.y + 6 }, { x: LAND.x - 8, y: LAND.y + 1 }]
+const route = `M ${ROUTE[0].x} ${ROUTE[0].y} C ${ROUTE[1].x} ${ROUTE[1].y} ${ROUTE[2].x} ${ROUTE[2].y} ${ROUTE[3].x} ${ROUTE[3].y}`
+
+/**
+ * The flight, sampled along the route: at each step the nose sits on the curve, turned along
+ * its direction and a little smaller. Steps are even in time, eased in distance (smoothstep),
+ * like the trail that draws behind it; the rotation turns around the nose.
+ */
+const FLY_STEPS = 6
+const flight = Array.from({ length: FLY_STEPS }, (_, i) => {
+  const u = (i + 1) / FLY_STEPS
+  const t = u * u * (3 - 2 * u)
+  const [p0, p1, p2, p3] = ROUTE
+  const m = 1 - t
+  const x = m ** 3 * p0.x + 3 * m ** 2 * t * p1.x + 3 * m * t ** 2 * p2.x + t ** 3 * p3.x
+  const y = m ** 3 * p0.y + 3 * m ** 2 * t * p1.y + 3 * m * t ** 2 * p2.y + t ** 3 * p3.y
+  const dx = 3 * m ** 2 * (p1.x - p0.x) + 6 * m * t * (p2.x - p1.x) + 3 * t ** 2 * (p3.x - p2.x)
+  const dy = 3 * m ** 2 * (p1.y - p0.y) + 6 * m * t * (p2.y - p1.y) + 3 * t ** 2 * (p3.y - p2.y)
+  const turn = (Math.atan2(dy, dx) * 180) / Math.PI - (Math.atan2(NOSE.y - P.y, NOSE.x - P.x) * 180) / Math.PI
+  return `translate(${(x - NOSE.x).toFixed(2)}px, ${(y - NOSE.y).toFixed(2)}px) rotate(${turn.toFixed(2)}deg) scale(${(1 - 0.45 * t).toFixed(3)})`
+})
 
 const v = (vars: Record<string, string | number>) => vars as React.CSSProperties
 
@@ -115,8 +143,10 @@ export const PaperPlaneIllustration: React.FC<IllustrationProps> = ({ className,
     // The loop opens with the bits already streaming, so it needs no quiet build before it.
     <Scene className={cn('w-full', className)} label={label} lead={BUILD} style={{ '--loop': '8s' } as React.CSSProperties}>
       <svg aria-hidden="true" className="aspect-[3/1] w-full overflow-visible" viewBox={`0 0 ${W} ${H}`}>
-        {/* The route, always faintly there; the flight draws over it. */}
-        <path className="hub-dots" d={route} fill="none" stroke="var(--line-strong)" strokeLinecap="round" strokeWidth="1.1" style={v({ '--gap': 4 })} />
+        {/* The route shows once there is a plane to fly it; the flight draws over it. */}
+        <g className="loop-plane-route">
+          <path className="hub-dots" d={route} fill="none" stroke="var(--line-strong)" strokeLinecap="round" strokeWidth="1.1" style={v({ '--gap': 4 })} />
+        </g>
 
         {/* Bits: in from the left, into the grid, then they give way to the bars. */}
         {ROWS.map((y, r) =>
@@ -153,27 +183,6 @@ export const PaperPlaneIllustration: React.FC<IllustrationProps> = ({ className,
           />
         ))}
 
-        {/* Envelope → plane → flight. */}
-        <g className="loop-plane-fly" style={v({ '--ox': `${P.x}px`, '--oy': `${P.y}px`, '--tx': `${LAND.x - 14 - P.x}px`, '--ty': `${LAND.y + 2 - P.y}px` })}>
-          {facets.map((f, i) => (
-            <polygon
-              className="loop-plane-facet"
-              key={i}
-              points={points(f.tri)}
-              stroke="var(--line-strong)"
-              strokeLinejoin="round"
-              strokeWidth="0.6"
-              style={v({
-                '--open': f.open ? affine(f.tri, f.open) : 'none',
-                '--to': affine(f.tri, f.plane),
-                ...Object.fromEntries(FOLD.map((t, k) => [`--f${k + 1}`, affine(f.tri, lerp(f.tri, f.plane, t))])),
-                '--env': f.envelope,
-                '--wing': f.wing,
-              })}
-            />
-          ))}
-        </g>
-
         {/* The flight: a blue line draws behind the plane, a yellow pulse runs ahead. */}
         <path className="loop-plane-trail" d={route} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeLinecap="round" strokeWidth="1.2" />
         <path
@@ -186,6 +195,32 @@ export const PaperPlaneIllustration: React.FC<IllustrationProps> = ({ className,
           strokeWidth="2.2"
           style={v({ '--comet': 0.1, '--comet-from': 0.15 })}
         />
+
+        {/* Envelope → plane → flight. */}
+        <g
+          className="loop-plane-fly"
+          style={v({ '--ox': `${NOSE.x}px`, '--oy': `${NOSE.y}px`, ...Object.fromEntries(flight.map((step, i) => [`--k${i + 1}`, step])) })}
+        >
+          {facets.map((f, i) => (
+            <polygon
+              className="loop-plane-facet"
+              key={i}
+              points={points(f.tri)}
+              stroke="var(--line-strong)"
+              strokeLinejoin="round"
+              strokeWidth="0.6"
+              style={v({
+                '--ox': `${centre(f.tri).x.toFixed(2)}px`,
+                '--oy': `${centre(f.tri).y.toFixed(2)}px`,
+                '--open': f.open ? affine(f.tri, f.open) : 'none',
+                '--to': affine(f.tri, f.plane),
+                ...Object.fromEntries(FOLD.map((t, k) => [`--f${k + 1}`, affine(f.tri, lerp(f.tri, f.plane, t))])),
+                '--env': f.envelope,
+                '--wing': f.wing,
+              })}
+            />
+          ))}
+        </g>
 
         {/* Delivered. */}
         <g className="loop-plane-tick" style={v({ '--ox': `${LAND.x}px`, '--oy': `${LAND.y}px` })}>
