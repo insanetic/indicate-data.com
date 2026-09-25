@@ -1208,3 +1208,551 @@
     opacity: 0;
   }
 }
+
+/* --- Resi hub (12 s): three exchanges of 4 s; sources feed the chat, the answer fills a card --- */
+/*                                                                                             */
+/* Percentages are of the 12 s clock; `--delay` = slot × 4 s. Elements that act the same in     */
+/* every exchange (ring, placeholder, send button) run on a 4 s clock instead (`--loop: 4s`).    */
+/* Exchange timeline: typed 0.15–0.85 s, sent 0.9 s, sources draw 1.0–1.5 s, answer 1.5 s,       */
+/* output line and card 1.75–2.6 s, everything leaves 3.65–3.95 s.                              */
+
+/* Idle wiring: dots drift slowly along every line (not on the scene clock). */
+@keyframes hub-flow {
+  to {
+    stroke-dashoffset: calc(var(--gap, 1.6) * -1);
+  }
+}
+.hub-dots {
+  stroke-dasharray: 0.001 var(--gap, 1.6);
+  animation: hub-flow 1.6s linear infinite;
+}
+
+/* Side cards drift a few pixels, each on its own phase. */
+@keyframes hub-float {
+  to {
+    transform: translateY(-4px);
+  }
+}
+.hub-float {
+  animation: hub-float 7s var(--ease-in-out-cubic) var(--float-delay, 0s) infinite alternate;
+}
+
+/* Input: placeholder gives way to the typed question, which leaves when it is sent. */
+@keyframes loop-hub-ph {
+  0%,
+  2.5% {
+    opacity: 1;
+  }
+  4%,
+  23.5% {
+    opacity: 0;
+  }
+  26%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-hub-ph {
+  animation-name: loop-hub-ph;
+}
+
+@keyframes loop-hub-type {
+  0%,
+  1.25% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+    animation-timing-function: steps(24, end);
+  }
+  7.1%,
+  7.6% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  7.9%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+.loop-hub-type {
+  animation-name: loop-hub-type;
+}
+
+/* Send button fills while there is text, is pressed, then empties again (4 s clock). */
+@keyframes loop-hub-send {
+  0%,
+  3% {
+    background-color: var(--surface-3);
+    color: var(--ink-3);
+    transform: none;
+  }
+  5%,
+  21% {
+    background-color: var(--ink);
+    color: var(--surface);
+    transform: none;
+  }
+  22.5% {
+    background-color: var(--ink);
+    color: var(--surface);
+    transform: scale(0.86);
+  }
+  25% {
+    background-color: var(--ink);
+    color: var(--surface);
+    transform: none;
+  }
+  28%,
+  100% {
+    background-color: var(--surface-3);
+    color: var(--ink-3);
+    transform: none;
+  }
+}
+.loop-hub-send {
+  animation-name: loop-hub-send;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Question bubble appears as it is sent. */
+@keyframes loop-hub-q {
+  0%,
+  7.9% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  9.5%,
+  30.4% {
+    opacity: 1;
+    transform: none;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.loop-hub-q {
+  transform-origin: right bottom;
+  animation-name: loop-hub-q;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Resi checks the figures while the source lines draw. */
+@keyframes loop-hub-think {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  8.8%,
+  12.2% {
+    opacity: 1;
+  }
+  13%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-hub-think {
+  animation-name: loop-hub-think;
+}
+
+/* A gradient light runs around the chat while Resi works (4 s clock). */
+@keyframes loop-hub-ring {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  26%,
+  54% {
+    opacity: 1;
+  }
+  60%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-hub-ring {
+  opacity: 0;
+  animation-name: loop-hub-ring;
+}
+.loop-hub-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--resi-angle),
+    transparent 0 50%,
+    var(--brand-blue) 70%,
+    var(--resi-teal) 85%,
+    var(--resi-mint) 97%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: resi-spin 1.6s linear infinite;
+}
+
+/* Answer: bubble lands, text streams in top to bottom, the source line follows. */
+@keyframes loop-hub-a {
+  0%,
+  12.5% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  14.5%,
+  30.4% {
+    opacity: 1;
+    transform: none;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.loop-hub-a {
+  animation-name: loop-hub-a;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes loop-hub-stream {
+  0%,
+  12.6% {
+    clip-path: inset(0 0 100% 0);
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  18%,
+  100% {
+    clip-path: inset(0 0 -20% 0);
+  }
+}
+.loop-hub-stream {
+  animation-name: loop-hub-stream;
+}
+
+@keyframes loop-hub-cite {
+  0%,
+  17% {
+    opacity: 0;
+  }
+  19%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-hub-cite {
+  animation-name: loop-hub-cite;
+}
+
+/* Source tiles and the KPI catalogue light up while their data is read. */
+@keyframes loop-hub-lit {
+  0%,
+  7.6% {
+    opacity: 0;
+  }
+  9%,
+  30.4% {
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-hub-lit {
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, transparent);
+  animation-name: loop-hub-lit;
+}
+
+/* The output card lights once the answer's line reaches it. */
+@keyframes loop-hub-glow {
+  0%,
+  16.5% {
+    opacity: 0;
+  }
+  18.5%,
+  30.4% {
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-hub-glow {
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--resi-mint) 16%, transparent);
+  animation-name: loop-hub-glow;
+}
+
+/* Wiring: source lines draw into the chat, the answer's line draws out to its card. */
+@keyframes loop-hub-draw {
+  0%,
+  8.3% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  12.5%,
+  30.4% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.loop-hub-draw {
+  stroke-dasharray: 1;
+  animation-name: loop-hub-draw;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes loop-hub-draw-out {
+  0%,
+  14.6% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  18.3%,
+  30.4% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.loop-hub-draw-out {
+  stroke-dasharray: 1;
+  animation-name: loop-hub-draw-out;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* A short bright pulse rides each line once as it draws. */
+@keyframes loop-hub-comet {
+  0%,
+  7.9% {
+    stroke-dashoffset: var(--comet, 0.07);
+  }
+  13%,
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+.loop-hub-comet {
+  stroke-dasharray: var(--comet, 0.07) 2;
+  stroke-dashoffset: var(--comet, 0.07);
+  animation-name: loop-hub-comet;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes loop-hub-comet-out {
+  0%,
+  14.2% {
+    stroke-dashoffset: var(--comet, 0.07);
+  }
+  18.8%,
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+.loop-hub-comet-out {
+  stroke-dasharray: var(--comet, 0.07) 2;
+  stroke-dashoffset: var(--comet, 0.07);
+  animation-name: loop-hub-comet-out;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* KPI counts up from zero (registered integer, printed through a counter). */
+@property --hub-n {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes loop-hub-count {
+  0%,
+  14.2% {
+    --hub-n: var(--hub-to);
+    opacity: 1;
+  }
+  14.9% {
+    --hub-n: var(--hub-to);
+    opacity: 0;
+  }
+  15% {
+    --hub-n: 0;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  15.8% {
+    opacity: 1;
+  }
+  21.7%,
+  100% {
+    --hub-n: var(--hub-to);
+    opacity: 1;
+  }
+}
+.loop-hub-count {
+  --hub-n: var(--hub-to);
+  counter-reset: hub var(--hub-n);
+  animation-name: loop-hub-count;
+}
+.loop-hub-count::after {
+  content: counter(hub);
+}
+
+/* Bars drop and grow again (`--delay` staggers them); a chart line redraws. */
+@keyframes loop-hub-bar {
+  0%,
+  14.2% {
+    transform: none;
+  }
+  15%,
+  15.3% {
+    transform: scaleY(0.06);
+    animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  20%,
+  100% {
+    transform: none;
+  }
+}
+.loop-hub-bar {
+  transform-origin: bottom;
+  animation-name: loop-hub-bar;
+}
+
+@keyframes loop-hub-line {
+  0%,
+  14.2% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  14.8% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  14.9% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  21.7%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+.loop-hub-line {
+  stroke-dasharray: 1;
+  animation-name: loop-hub-line;
+}
+
+@keyframes loop-hub-area {
+  0%,
+  14.2% {
+    opacity: 1;
+  }
+  14.8%,
+  19% {
+    opacity: 0;
+  }
+  22%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-hub-area {
+  animation-name: loop-hub-area;
+}
+
+/* KPI catalogue: the definition behind the current question. */
+@keyframes loop-hub-def {
+  0%,
+  7.9% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  9.5%,
+  41.2% {
+    opacity: 1;
+    transform: none;
+  }
+  42.9%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-hub-def {
+  animation-name: loop-hub-def;
+}
+
+/* Phones: the three output cards share one spot and hand over with each answer. */
+@keyframes loop-hub-swap {
+  0%,
+  12.5% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  14.6%,
+  45.8% {
+    opacity: 1;
+    transform: none;
+  }
+  47.9%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@media (max-width: 1279.98px) {
+  .loop-hub-swap {
+    animation-name: loop-hub-swap;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-dots,
+  .hub-float,
+  .loop-hub-ring::before {
+    animation: none;
+  }
+  /* The first exchange, finished: its question, answer, lit sources, lines and card. */
+  .loop .loop-hub-type,
+  .loop .loop-hub-think,
+  .loop .loop-hub-comet,
+  .loop .loop-hub-comet-out,
+  .loop .loop-hub-q:not([data-slot='0']),
+  .loop .loop-hub-a:not([data-slot='0']),
+  .loop .loop-hub-lit:not([data-slot='0']),
+  .loop .loop-hub-glow:not([data-slot='0']),
+  .loop .loop-hub-draw:not([data-slot='0']),
+  .loop .loop-hub-draw-out:not([data-slot='0']),
+  .loop .loop-hub-def:not([data-slot='0']) {
+    opacity: 0;
+  }
+  .loop .loop-hub-ph {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 1279.98px) {
+  .loop .loop-hub-swap:not([data-slot='0']) {
+    opacity: 0;
+  }
+}

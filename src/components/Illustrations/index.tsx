@@ -13,6 +13,7 @@ import { GovernanceIllustration } from './Governance'
 import { KpiStudioIllustration } from './KpiStudio'
 import { McpIllustration } from './Mcp'
 import { ResiIllustration } from './Resi'
+import { ResiHubIllustration } from './ResiHub'
 import { SyncIllustration } from './Sync'
 import { TemplatesIllustration } from './Templates'
 import { AlertsIllustration } from './Alerts'
@@ -48,6 +49,7 @@ export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>>
   agentChat: AgentChatIllustration,
   mcp: McpIllustration,
   resi: ResiIllustration,
+  resiHub: ResiHubIllustration,
   kpiStudio: KpiStudioIllustration,
   templates: TemplatesIllustration,
   governance: GovernanceIllustration,

@@ -125,6 +125,36 @@ export const labels = {
         ],
         source: 'Quelle: Mews · Reservierungen · Revenue v1.2',
       },
+      hub: {
+        title: 'Resi im Zentrum: Datenquellen fließen in den Chat, jede Antwort wird zu Kennzahl oder Diagramm',
+        role: 'Ihre KI-Agentin',
+        ask: 'Fragen Sie Resi …',
+        thinking: 'Resi prüft die Kennzahlen …',
+        catalogue: 'KPI-Katalog',
+        turns: [
+          {
+            q: 'Wie war die Auslastung letzte Woche?',
+            a: '84 %, sechs Punkte über der Vorwoche. Der Zuwachs kam fast ganz aus Direktbuchungen.',
+            source: 'Mews · Google Analytics',
+            def: 'occupancy = rooms_sold / rooms_available',
+          },
+          {
+            q: 'Hat die Meta-Kampagne den Plan erreicht?',
+            a: 'Fast: 212 von 240 Buchungen. Die Lücke liegt in KW 29 bis 31.',
+            source: 'Meta Ads · Mews',
+            def: 'campaign_bookings = bookings where utm = meta',
+          },
+          {
+            q: 'Wie läuft der Pickup für Oktober?',
+            a: '12 % über Vorjahr, getragen von Google Ads. Ich schicke es Montag ans Revenue-Team.',
+            source: 'Mews · Google Ads',
+            def: 'pickup = Δ on_the_books per day',
+          },
+        ],
+        kpi: { label: 'Auslastung · KW 37', delta: '+6' },
+        bars: { title: 'Buchungen Meta-Kampagne', value: '212 / 240', actual: 'Ist', plan: 'Plan', from: 'KW 27', to: 'KW 34' },
+        line: { title: 'Pickup Oktober', delta: '+12 %', current: '2026', last: 'Vorjahr' },
+      },
       mcp: {
         title: 'Claude Desktop',
         clients: ['Claude', 'ChatGPT', 'Claude Code', 'Langdock', 'GitHub Copilot'],
@@ -377,6 +407,36 @@ export const labels = {
           },
         ],
         source: 'Source: Mews · reservations · Revenue v1.2',
+      },
+      hub: {
+        title: 'Resi at the centre: data sources flow into the chat, every answer becomes a KPI or a chart',
+        role: 'Your AI agent',
+        ask: 'Ask Resi …',
+        thinking: 'Resi is checking the figures …',
+        catalogue: 'KPI catalogue',
+        turns: [
+          {
+            q: 'How was occupancy last week?',
+            a: '84 %, six points above the week before. Almost all of the gain came from direct bookings.',
+            source: 'Mews · Google Analytics',
+            def: 'occupancy = rooms_sold / rooms_available',
+          },
+          {
+            q: 'Did the Meta campaign hit plan?',
+            a: 'Almost: 212 of 240 bookings. The gap sits in weeks 29 to 31.',
+            source: 'Meta Ads · Mews',
+            def: 'campaign_bookings = bookings where utm = meta',
+          },
+          {
+            q: 'How is October pickup looking?',
+            a: '12 % above last year, carried by Google Ads. I will send it to the revenue team on Monday.',
+            source: 'Mews · Google Ads',
+            def: 'pickup = Δ on_the_books per day',
+          },
+        ],
+        kpi: { label: 'Occupancy · week 37', delta: '+6' },
+        bars: { title: 'Meta campaign bookings', value: '212 / 240', actual: 'Actual', plan: 'Plan', from: 'Wk 27', to: 'Wk 34' },
+        line: { title: 'October pickup', delta: '+12 %', current: '2026', last: 'Last year' },
       },
       mcp: {
         title: 'Claude Desktop',

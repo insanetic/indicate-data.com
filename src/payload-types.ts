@@ -564,6 +564,7 @@ export interface HeroBlock {
     illustration?:
       | (
           | 'stage'
+          | 'resiHub'
           | 'dashboard'
           | 'agent'
           | 'comparison'
@@ -674,6 +675,7 @@ export interface MediaSectionBlock {
     illustration?:
       | (
           | 'stage'
+          | 'resiHub'
           | 'dashboard'
           | 'agent'
           | 'comparison'
@@ -920,6 +922,7 @@ export interface SplitBlock {
     illustration?:
       | (
           | 'stage'
+          | 'resiHub'
           | 'dashboard'
           | 'agent'
           | 'comparison'
@@ -1156,6 +1159,7 @@ export interface FeatureTabsBlock {
           illustration?:
             | (
                 | 'stage'
+                | 'resiHub'
                 | 'dashboard'
                 | 'agent'
                 | 'comparison'
@@ -1243,6 +1247,7 @@ export interface FeatureStoryBlock {
     illustration?:
       | (
           | 'stage'
+          | 'resiHub'
           | 'dashboard'
           | 'agent'
           | 'comparison'
@@ -1548,6 +1553,7 @@ export interface IntegrationsBlock {
     illustration?:
       | (
           | 'stage'
+          | 'resiHub'
           | 'dashboard'
           | 'agent'
           | 'comparison'
