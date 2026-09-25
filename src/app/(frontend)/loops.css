@@ -775,71 +775,7 @@
   }
 }
 
-/* --- Resi (9 s): three exchanges take turns; question, thinking, then the answer --- */
-
-/* The question of the exchange whose third of the clock is open. `--delay` = slot × 3 s. */
-@keyframes loop-resi-q {
-  0% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  3%,
-  30% {
-    opacity: 1;
-    transform: none;
-  }
-  33.33%,
-  100% {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-}
-.loop-resi-q {
-  animation-name: loop-resi-q;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* Resi checks the figures between the question and the answer. */
-@keyframes loop-resi-think {
-  0%,
-  4% {
-    opacity: 0;
-  }
-  6%,
-  11% {
-    opacity: 1;
-  }
-  13%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-resi-think {
-  animation-name: loop-resi-think;
-}
-
-/* The answer lands after the thinking pause and leaves with the question. */
-@keyframes loop-resi-a {
-  0%,
-  12% {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  15%,
-  30% {
-    opacity: 1;
-    transform: none;
-  }
-  33.33%,
-  100% {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-}
-.loop-resi-a {
-  animation-name: loop-resi-a;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
+/* --- Resi: the orbit around her mark (the scene itself runs on the `.loop-hub-*` clock) --- */
 
 /* Dashed ring around the mark turns slowly (not on the scene clock). */
 @keyframes resi-orbit {
@@ -854,12 +790,6 @@
 @media (prefers-reduced-motion: reduce) {
   .resi-orbit {
     animation: none;
-  }
-  /* Only the first exchange, finished; the others stay hidden. */
-  .loop-resi-think,
-  .loop-resi-q:not([data-slot='0']),
-  .loop-resi-a:not([data-slot='0']) {
-    opacity: 0;
   }
 }
 
@@ -1209,7 +1139,7 @@
   }
 }
 
-/* --- Resi hub (12 s): three exchanges of 4 s; sources feed the chat, the answer fills a card --- */
+/* --- Chat stages (12 s, `resiHub` and `resi`): three exchanges of 4 s; sources feed the chat --- */
 /*                                                                                             */
 /* Percentages are of the 12 s clock; `--delay` = slot × 4 s. Elements that act the same in     */
 /* every exchange (ring, placeholder, send button) run on a 4 s clock instead (`--loop: 4s`).    */
@@ -1677,6 +1607,78 @@
 }
 .loop-hub-area {
   animation-name: loop-hub-area;
+}
+
+/* Inside an answer (hidden until it lands): bars grow, a line traces, a value counts from 0. */
+@keyframes loop-hub-grow {
+  0%,
+  13% {
+    transform: scaleY(0.06);
+    animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  19.5%,
+  100% {
+    transform: none;
+  }
+}
+.loop-hub-grow {
+  transform-origin: bottom;
+  animation-name: loop-hub-grow;
+}
+
+@keyframes loop-hub-trace {
+  0%,
+  13.5% {
+    stroke-dashoffset: 1;
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  20%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+.loop-hub-trace {
+  stroke-dasharray: 1;
+  animation-name: loop-hub-trace;
+}
+
+@keyframes loop-hub-tick {
+  0%,
+  13% {
+    --hub-n: 0;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  19%,
+  100% {
+    --hub-n: var(--hub-to);
+  }
+}
+.loop-hub-tick {
+  --hub-n: var(--hub-to);
+  counter-reset: hub var(--hub-n);
+  animation-name: loop-hub-tick;
+}
+.loop-hub-tick::after {
+  content: counter(hub);
+}
+
+/* Resi's mark swells while she works (4 s clock). */
+@keyframes loop-resi-core {
+  0%,
+  24% {
+    transform: none;
+  }
+  31% {
+    transform: scale(1.07);
+  }
+  40%,
+  100% {
+    transform: none;
+  }
+}
+.loop-resi-core {
+  animation-name: loop-resi-core;
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 /* KPI catalogue: the definition behind the current question. */

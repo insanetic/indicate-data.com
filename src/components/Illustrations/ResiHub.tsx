@@ -5,15 +5,9 @@ import { ResiMark, ResiName, withResi } from '@/components/Resi'
 import { cn } from '@/utilities/ui'
 
 import { Chip, Frame } from './primitives'
+import { Connector, LOOP, Lit, curve, perSlot, pos, slotDelay, type Pt } from './stage'
 import { labelsFor } from './labels'
 import type { IllustrationProps } from './index'
-
-/** One exchange per slot; three slots share a 12 s clock (`.loop-hub-*` in loops.css). */
-const SLOT = 4
-const SLOTS = 3
-const LOOP = SLOT * SLOTS
-
-type Pt = { x: number; y: number }
 
 /*
  * Desktop stage: a 200 × 100 coordinate system on a 2 : 1 box, so SVG units and CSS
@@ -68,14 +62,8 @@ const sourcePath = (i: number) => elbow(sources[i].at, { x: CHAT_IN, y: sources[
 const cataloguePath = elbow({ x: catalogue.edge, y: catalogue.at.y }, { x: CHAT_IN, y: catalogue.entry }, catalogue.bend)
 const outputPath = (i: number) => elbow({ x: CHAT_OUT, y: outputs[i].exit }, { x: outputs[i].at.x - 10, y: outputs[i].at.y }, OUT_BEND)
 
-/** Stage position as variables, applied only at `xl` (`relative` boxes on phones would move too). */
-const pos = (p: Pt) => ({ '--x': `${p.x / 2}%`, '--y': `${p.y}%` }) as React.CSSProperties
+/** Stage placement, only from `xl`: on phones `left`/`top` would shift the `relative` boxes. */
 const AT = 'xl:absolute xl:left-(--x) xl:top-(--y) xl:-translate-x-1/2 xl:-translate-y-1/2'
-const delay = (s: number): React.CSSProperties => ({ '--delay': `${s.toFixed(2)}s` }) as React.CSSProperties
-const slotDelay = (slot: number, extra = 0) => delay(slot * SLOT + extra)
-/** Per-exchange elements that behave the same every exchange run on a 4 s clock. */
-const perSlot = { '--loop': `${SLOT}s` } as React.CSSProperties
-
 /** Weekly campaign bookings against a flat plan; weeks under plan are marked. */
 const campaign = [31, 33, 30, 22, 21, 24, 26, 25]
 const CAMPAIGN_PLAN = 30
@@ -83,21 +71,6 @@ const CAMPAIGN_PLAN = 30
 const pickupNow = [12, 20, 27, 34, 44, 52, 60, 70, 79, 90]
 const pickupLast = [10, 15, 19, 24, 29, 33, 38, 43, 49, 56]
 const kpiTrend = [52, 55, 50, 58, 61, 64, 70, 68, 76, 84]
-
-/** Smooth path through 0–100 values on a `w` × `h` box (top = 100). */
-function curve(values: number[], w: number, h: number, pad = 2): string {
-  const step = w / (values.length - 1)
-  const y = (v: number) => pad + (1 - v / 100) * (h - pad * 2)
-  return values
-    .map((v, i) => {
-      const x = i * step
-      if (i === 0) return `M ${x} ${y(v)}`
-      const px = (i - 1) * step
-      const cx = (px + x) / 2
-      return `C ${cx} ${y(values[i - 1])}, ${cx} ${y(v)}, ${x} ${y(v)}`
-    })
-    .join(' ')
-}
 
 /**
  * Hero scene: Resi in the middle. A question is typed into her chat and sent; the sources it
@@ -114,19 +87,6 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
 
   const litBy = (source: number) => turns.flatMap((t, slot) => (t.reads.includes(source) ? [slot] : []))
 
-  const lit = (slot: number, tone: 'in' | 'out', stagger = 0) => (
-    <span
-      aria-hidden="true"
-      className={cn(
-        'pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2',
-        tone === 'in' ? 'loop-hub-lit border-brand-blue' : 'loop-hub-glow border-resi-mint',
-      )}
-      data-slot={slot}
-      key={`${tone}${slot}`}
-      style={slotDelay(slot, stagger)}
-    />
-  )
-
   const outputSlot = (output: number) => turns.findIndex((t) => t.output === output)
 
   const outputCard = (output: number, children: React.ReactNode) => {
@@ -140,7 +100,7 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
       >
         <div className="hub-float" style={{ '--float-delay': `${-output * 2.3}s` } as React.CSSProperties}>
           <div className="relative rounded-[0.875rem] border border-line-strong bg-surface-2 p-3.5 shadow-float">
-            {lit(slot, 'out')}
+            <Lit slot={slot} tone="out" />
             {children}
           </div>
         </div>
@@ -180,7 +140,7 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
             <div className={cn('relative', AT)} key={src.name} style={pos(src.at)}>
               <div className="hub-float" style={{ '--float-delay': `${-i * 1.7}s` } as React.CSSProperties}>
                 <span className="relative flex size-11 items-center justify-center rounded-[0.75rem] border border-line-strong bg-white shadow-card xl:size-12" title={src.name}>
-                  {litBy(i).map((slot) => lit(slot, 'in'))}
+                  {litBy(i).map((slot) => <Lit key={slot} slot={slot} />)}
                   {/* eslint-disable-next-line @next/next/no-img-element -- static catalogue mark, sized by CSS */}
                   <img alt="" className="size-6 object-contain xl:size-7" height={28} src={src.logo} width={28} />
                 </span>
@@ -190,7 +150,7 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
           <div className={cn('hidden w-[19%] xl:block', AT)} style={pos(catalogue.at)}>
             <div className="hub-float" style={{ '--float-delay': '-3.1s' } as React.CSSProperties}>
               <div className="relative rounded-[0.75rem] border border-line-strong bg-surface-2 px-3 py-2.5 shadow-card">
-                {turns.map((_, slot) => lit(slot, 'in', 0.16))}
+                {turns.map((_, slot) => <Lit key={slot} slot={slot} stagger={0.16} />)}
                 <span className="flex items-center justify-between gap-2 type-caption text-ink-3">
                   {h.catalogue}
                   <span className="tnum">v1.2</span>
@@ -207,7 +167,7 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
           </div>
         </div>
 
-        <Connector />
+        <Connector className="h-9 w-3 shrink-0 xl:hidden" />
 
         {/* Chat */}
         <div className="relative z-10 w-full max-w-md xl:absolute xl:left-1/2 xl:top-1/2 xl:w-[36%] xl:max-w-none xl:-translate-x-1/2 xl:-translate-y-1/2">
@@ -269,7 +229,7 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
           </div>
         </div>
 
-        <Connector out />
+        <Connector className="h-9 w-3 shrink-0 xl:hidden" out />
 
         {/* Outputs: all three on the desktop stage, one at a time on phones. */}
         <div className="grid w-full max-w-md xl:contents">
@@ -358,23 +318,3 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
     </Frame>
   )
 }
-
-/** Phones: a short vertical link between the rows; a pulse rides it once per exchange. */
-const Connector: React.FC<{ out?: boolean }> = ({ out = false }) => (
-  <svg aria-hidden="true" className="h-9 w-3 shrink-0 xl:hidden" viewBox="0 0 12 36">
-    <path className="hub-dots" d="M 6 2 V 34" fill="none" stroke="var(--line-strong)" strokeLinecap="round" strokeWidth="2" style={{ '--gap': 6 } as React.CSSProperties} />
-    {turns.map((_, slot) => (
-      <path
-        className={out ? 'loop-hub-comet-out' : 'loop-hub-comet'}
-        d="M 6 2 V 34"
-        fill="none"
-        key={slot}
-        pathLength={1}
-        stroke={out ? 'var(--resi-mint)' : 'var(--resi-teal)'}
-        strokeLinecap="round"
-        strokeWidth="3"
-        style={{ ...slotDelay(slot), '--comet': 0.3 } as React.CSSProperties}
-      />
-    ))}
-  </svg>
-)
