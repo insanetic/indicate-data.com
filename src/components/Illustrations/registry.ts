@@ -6,7 +6,7 @@ export const illustrationOptions = [
   { value: 'stage', label: { de: 'Produktbühne: Dashboard, Agent, Report (Hero)', en: 'Product stage: dashboard, agent, report (hero)' } },
   { value: 'resiHub', label: { de: 'Resi im Zentrum: Quellen, Chat, Ergebnisse (Hero, Loop)', en: 'Resi at the centre: sources, chat, results (hero, loop)' } },
   { value: 'dashboard', label: { de: 'Dashboard mit Kennzahlen', en: 'Dashboard with KPIs' } },
-  { value: 'agent', label: { de: 'KI-Agent im Gespräch', en: 'AI agent conversation' } },
+  { value: 'agent', label: { de: 'Resi im Dashboard: geprüfte Antwort wird zum Widget (Loop)', en: 'Resi on a dashboard: a checked answer becomes a widget (loop)' } },
   { value: 'comparison', label: { de: 'Vergleich Plan vs. Ist', en: 'Plan vs. actual comparison' } },
   { value: 'sources', label: { de: 'Datenquellen fließen zusammen', en: 'Sources flowing together' } },
   { value: 'team', label: { de: 'Team & Rechte', en: 'Team & permissions' } },
