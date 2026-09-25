@@ -425,8 +425,8 @@ export const homePage = (t: T, refs: Refs): SeedPage => ({
         eyebrow: 'Flying KPIs',
         heading: t('Berichte, die von allein ankommen.', 'Reports that arrive on their own.'),
         lead: t(
-          'Jedes Dashboard als E-Mail, PDF oder Digest, zum Termin Ihrer Wahl, an wen Sie wollen. Auch ohne Login.',
-          'Any dashboard as email, PDF or digest, at the time you choose, to whoever you choose. No login needed.',
+          'Jedes Dashboard oder ein Digest per E-Mail, zum Termin Ihrer Wahl, an wen Sie wollen. Auch ohne Login.',
+          'Any dashboard or a digest by email, at the time you choose, to whoever you choose. No login needed.',
         ),
         align: 'left',
       },

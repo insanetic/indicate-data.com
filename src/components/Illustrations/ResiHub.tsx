@@ -5,7 +5,7 @@ import { ResiMark, ResiName, withResi } from '@/components/Resi'
 import { cn } from '@/utilities/ui'
 
 import { Chip, Frame } from './primitives'
-import { Connector, LOOP, Lit, curve, perSlot, pos, slotDelay, type Pt } from './stage'
+import { Connector, LOOP, Lit, curve, elbow, perSlot, pos, slotDelay, type Pt } from './stage'
 import { labelsFor } from './labels'
 import type { IllustrationProps } from './index'
 
@@ -41,22 +41,6 @@ const turns: { reads: number[]; output: number }[] = [
   { reads: [2, 0], output: 2 },
   { reads: [1, 0], output: 1 },
 ]
-
-/** Orthogonal connector with rounded corners: along y of `a`, down/up at `bend`, along y of `b`. */
-function elbow(a: Pt, b: Pt, bend: number, r = 3): string {
-  if (Math.abs(a.y - b.y) < 0.01) return `M ${a.x} ${a.y} H ${b.x}`
-  const dy = Math.sign(b.y - a.y)
-  const dx1 = Math.sign(bend - a.x)
-  const dx2 = Math.sign(b.x - bend)
-  return [
-    `M ${a.x} ${a.y}`,
-    `H ${bend - dx1 * r}`,
-    `Q ${bend} ${a.y} ${bend} ${a.y + dy * r}`,
-    `V ${b.y - dy * r}`,
-    `Q ${bend} ${b.y} ${bend + dx2 * r} ${b.y}`,
-    `H ${b.x}`,
-  ].join(' ')
-}
 
 const sourcePath = (i: number) => elbow(sources[i].at, { x: CHAT_IN, y: sources[i].entry }, sources[i].bend)
 const cataloguePath = elbow({ x: catalogue.edge, y: catalogue.at.y }, { x: CHAT_IN, y: catalogue.entry }, catalogue.bend)

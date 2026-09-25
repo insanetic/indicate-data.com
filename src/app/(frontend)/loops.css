@@ -44,97 +44,258 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* --- Flying KPIs (8 s): a report leaves the dashboard on schedule and lands with recipients --- */
+/* --- Flying KPIs (9 s): the scheduler hits Monday 08:00, Resi adds highlights, four    --- */
+/* recipients receive it by email one after another (`--delay` = recipient × 0.4 s).          */
 
-.loop-fly {
-  --loop: 8s;
+.loop-post {
+  --loop: 9s;
 }
 
-/* The report card lifts off the dashboard, travels along `--fly-x`/`--fly-y` and fades. */
-@keyframes loop-fly-card {
+/* Minute hand: one full turn to 12, so the reset lands on the same angle unseen. */
+@keyframes loop-post-hand {
   0%,
-  6% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.92);
+  2% {
+    transform: rotate(-360deg);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
-  12%,
-  20% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-  44% {
-    opacity: 1;
-    transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.96);
-  }
-  50%,
+  15.6%,
   100% {
-    opacity: 0;
-    transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.96);
+    transform: none;
   }
 }
-.loop-fly-card {
-  animation-name: loop-fly-card;
-  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+.loop-post-hand {
+  transform-box: view-box;
+  transform-origin: 40px 40px;
+  animation-name: loop-post-hand;
 }
 
-/* Schedule chip highlights when the send fires. */
-@keyframes loop-fly-clock {
+/* The ring around the dial closes with the hand, holds, and fades before the reset. */
+@keyframes loop-post-ring {
   0%,
-  4% {
-    background-color: var(--surface-3);
-    color: var(--ink-2);
+  2% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
-  7%,
-  20% {
-    background-color: var(--brand-yellow-soft);
-    color: var(--ink);
+  15.6%,
+  88% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  93% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+}
+.loop-post-ring {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation-name: loop-post-ring;
+}
+
+/* 08:00: the dial flashes. */
+@keyframes loop-post-flash {
+  0%,
+  15% {
+    opacity: 0;
+  }
+  17% {
+    opacity: 1;
   }
   26%,
   100% {
-    background-color: var(--surface-3);
-    color: var(--ink-2);
+    opacity: 0;
   }
 }
-.loop-fly-clock {
-  animation-name: loop-fly-clock;
+.loop-post-flash {
+  opacity: 0;
+  box-shadow: 0 0 0 5px color-mix(in oklch, var(--resi-mint) 18%, transparent);
+  animation-name: loop-post-flash;
 }
 
-/* Delivery ticks appear one recipient after the other. */
-@keyframes loop-fly-tick {
+/* The report lights while Resi writes her highlights into it, one line after another. */
+@keyframes loop-post-lit {
   0%,
-  44% {
+  16% {
     opacity: 0;
-    transform: scale(0.6);
   }
-  48%,
+  18%,
+  31% {
+    opacity: 1;
+  }
+  36%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-post-lit {
+  opacity: 0;
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, transparent);
+  animation-name: loop-post-lit;
+}
+@keyframes loop-post-note {
+  0%,
+  16.7% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  19%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
+  92%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-post-note {
+  animation-name: loop-post-note;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Report to scheduler: the line draws and a pulse rides it. */
+@keyframes loop-post-in {
+  0%,
+  30% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  35.6%,
+  88% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  92%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.loop-post-in {
+  stroke-dasharray: 1;
+  animation-name: loop-post-in;
+}
+@keyframes loop-post-in-comet {
+  0%,
+  30% {
+    stroke-dashoffset: var(--comet, 0.12);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  36%,
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+.loop-post-in-comet {
+  stroke-dasharray: var(--comet, 0.12) 2;
+  stroke-dashoffset: var(--comet, 0.12);
+  animation-name: loop-post-in-comet;
+}
+
+/* Scheduler to each recipient, one after another. */
+@keyframes loop-post-out {
+  0%,
+  35.6% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  40%,
+  86% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  90%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.loop-post-out {
+  stroke-dasharray: 1;
+  animation-name: loop-post-out;
+}
+@keyframes loop-post-comet {
+  0%,
+  35.6% {
+    stroke-dashoffset: var(--comet, 0.1);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  40.5%,
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+.loop-post-comet {
+  stroke-dasharray: var(--comet, 0.1) 2;
+  stroke-dashoffset: var(--comet, 0.1);
+  animation-name: loop-post-comet;
+}
+
+/* A recipient lights as the email lands; its status turns from scheduled to delivered. */
+@keyframes loop-post-glow {
+  0%,
+  39.5% {
+    opacity: 0;
+  }
+  41% {
+    opacity: 1;
+  }
+  52%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-post-glow {
+  opacity: 0;
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--resi-mint) 16%, transparent);
+  animation-name: loop-post-glow;
+}
+@keyframes loop-post-wait {
+  0%,
+  39.5% {
+    opacity: 1;
+  }
+  41%,
+  86% {
+    opacity: 0;
+  }
+  89%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-post-wait {
+  opacity: 0;
+  animation-name: loop-post-wait;
+}
+@keyframes loop-post-done {
+  0%,
+  40% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  42.5%,
   86% {
     opacity: 1;
     transform: none;
   }
-  90%,
+  89%,
   100% {
     opacity: 0;
+    transform: none;
   }
 }
-.loop-fly-tick {
-  animation-name: loop-fly-tick;
+.loop-post-done {
+  animation-name: loop-post-done;
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* Timeline dot travels from "scheduled" to "sent" while the card flies. */
-@keyframes loop-fly-dot {
-  0%,
-  10% {
-    transform: translateX(0);
-  }
-  44%,
-  100% {
-    transform: translateX(var(--dot-x, 0));
-  }
-}
-.loop-fly-dot {
-  animation-name: loop-fly-dot;
-  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* --- Slots: N stacked panels that take turns (portfolio, campaigns) --- */
@@ -817,13 +978,6 @@
   }
   .loop .loop-focus-4 {
     opacity: 1;
-  }
-  .loop .loop-fly-card {
-    opacity: 1;
-    transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.96);
-  }
-  .loop .loop-fly-dot {
-    transform: translateX(var(--dot-x, 0));
   }
 }
 

@@ -20,6 +20,22 @@ export const perSlot = { '--loop': `${SLOT}s` } as React.CSSProperties
 export const pos = (p: Pt, width = 200, height = 100) =>
   ({ '--x': `${(p.x / width) * 100}%`, '--y': `${(p.y / height) * 100}%` }) as React.CSSProperties
 
+/** Orthogonal connector with rounded corners: along y of `a`, down/up at `bend`, along y of `b`. */
+export function elbow(a: Pt, b: Pt, bend: number, r = 3): string {
+  if (Math.abs(a.y - b.y) < 0.01) return `M ${a.x} ${a.y} H ${b.x}`
+  const dy = Math.sign(b.y - a.y)
+  const dx1 = Math.sign(bend - a.x)
+  const dx2 = Math.sign(b.x - bend)
+  return [
+    `M ${a.x} ${a.y}`,
+    `H ${bend - dx1 * r}`,
+    `Q ${bend} ${a.y} ${bend} ${a.y + dy * r}`,
+    `V ${b.y - dy * r}`,
+    `Q ${bend} ${b.y} ${bend + dx2 * r} ${b.y}`,
+    `H ${b.x}`,
+  ].join(' ')
+}
+
 /** Smooth path through 0–100 values on a `w` × `h` box (top = 100). */
 export function curve(values: number[], w: number, h: number, pad = 2): string {
   const step = w / (values.length - 1)

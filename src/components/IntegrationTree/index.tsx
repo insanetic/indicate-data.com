@@ -18,14 +18,14 @@ const copy = {
     centre: 'Indicate',
     dashboards: { title: 'Dashboards & Reports', detail: 'Umsatz · ADR · Kanalmix' },
     agent: { title: 'Resi & MCP', detail: 'Claude · ChatGPT · Langdock' },
-    flying: { title: 'Flying KPIs', scheduled: 'Wochenreport · Mo 08:00', sent: 'An 3 Empfänger gesendet', detail: 'PDF + Digest per E-Mail' },
+    flying: { title: 'Flying KPIs', scheduled: 'Wochenreport · Mo 08:00', sent: 'An 3 Empfänger gesendet', detail: 'Dashboard + Digest per E-Mail' },
   },
   en: {
     label: 'Data sources light up one after another and their line draws into Indicate; below, Indicate feeds dashboards, Resi and reports',
     centre: 'Indicate',
     dashboards: { title: 'Dashboards & reports', detail: 'Revenue · ADR · channel mix' },
     agent: { title: 'Resi & MCP', detail: 'Claude · ChatGPT · Langdock' },
-    flying: { title: 'Flying KPIs', scheduled: 'Weekly report · Mon 08:00', sent: 'Sent to 3 recipients', detail: 'PDF + digest by email' },
+    flying: { title: 'Flying KPIs', scheduled: 'Weekly report · Mon 08:00', sent: 'Sent to 3 recipients', detail: 'Dashboard + digest by email' },
   },
 }
 
