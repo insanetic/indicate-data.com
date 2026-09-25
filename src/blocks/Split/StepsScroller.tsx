@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { cn } from '@/utilities/ui'
 
-export type StepRow = { id: string; title: React.ReactNode; text: React.ReactNode; scene: number; ownScene: React.ReactNode | null }
+export type StepRow = { id: string; title: React.ReactNode; titleText: string; text: React.ReactNode; scene: number; ownScene: React.ReactNode | null }
 
 /** `false` on the server and through hydration (matches the SSR markup), then the real preference. */
 function useReducedMotion() {
@@ -64,25 +64,29 @@ export const StepsScroller: React.FC<Props> = ({ steps, scenes, pinned, mediaLef
               {scenes[0]}
             </div>
           )}
-          <div className={cn('relative hidden lg:grid', pinned && 'lg:sticky lg:top-28')} data-pinned={pinned ? '' : undefined}>
-            {scenes.map((scene, i) => (
-              <div
-                className={cn('[grid-area:1/1]', !reduced && 'transition-opacity duration-200 ease-out', i === visibleScene ? 'opacity-100' : 'opacity-0')}
-                data-paused={i === visibleScene ? undefined : ''}
-                data-scene-layer
-                data-visible={i === visibleScene ? 'true' : 'false'}
-                inert={i !== visibleScene}
-                key={i}
-              >
-                {scene}
-              </div>
-            ))}
+          <div
+            className={cn('relative hidden', pinned ? 'lg:sticky lg:top-28 lg:flex lg:min-h-[calc(100vh-8rem)] lg:items-center' : 'lg:block')}
+            data-pinned={pinned ? '' : undefined}
+          >
+            <div className="grid w-full">
+              {scenes.map((scene, i) => (
+                <div
+                  className={cn('[grid-area:1/1]', !reduced && 'transition-opacity duration-200 ease-out', i === visibleScene ? 'opacity-100' : 'opacity-0')}
+                  data-paused={i === visibleScene ? undefined : ''}
+                  data-scene-layer
+                  data-visible={i === visibleScene ? 'true' : 'false'}
+                  inert={i !== visibleScene}
+                  key={i}
+                >
+                  {scene}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className={cn('reveal flex flex-col gap-8 lg:col-span-5', mediaLeft ? 'lg:order-2' : 'lg:order-1')} data-part="text">
           {header}
           <ol className="relative flex flex-col">
-            <span aria-hidden="true" className="absolute bottom-3 left-[1.125rem] top-3 w-px bg-line" />
             {steps.map((s, i) => (
               <li
                 className={cn('relative flex flex-col gap-4 pb-8 last:pb-0', pinned && 'lg:min-h-[50vh]')}
@@ -92,6 +96,14 @@ export const StepsScroller: React.FC<Props> = ({ steps, scenes, pinned, mediaLef
                   items.current[i] = el
                 }}
               >
+                {/* Segment from this step's number down to the next one's; the active one is the accent colour from lg. */}
+                {i < steps.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className={cn('absolute -bottom-[1.125rem] left-[1.125rem] top-[1.125rem] w-px bg-line', i === active && 'lg:bg-accent')}
+                    data-segment
+                  />
+                )}
                 {s.ownScene && (
                   <div className="lg:hidden" data-step-scene>
                     {s.ownScene}
@@ -99,7 +111,7 @@ export const StepsScroller: React.FC<Props> = ({ steps, scenes, pinned, mediaLef
                 )}
                 <div className="flex gap-5">
                   <button
-                    aria-label={`${String(i + 1).padStart(2, '0')}`}
+                    aria-label={`${String(i + 1).padStart(2, '0')}: ${s.titleText}`}
                     className={cn(
                       'relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface font-display text-sm font-medium tnum text-accent transition-colors duration-150',
                       // Below lg every number reads the same; only from lg does the active one get the ring.

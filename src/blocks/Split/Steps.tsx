@@ -34,6 +34,7 @@ export const SplitSteps: React.FC<Props & { locale?: Locale; isFirst?: boolean }
     return {
       id: p.id || String(i),
       title: withResi(p.title),
+      titleText: p.title,
       text: p.text ? withResi(p.text) : null,
       scene,
       ownScene: own ? <Visual className="w-full" fallback="builder" locale={locale} visual={own} /> : null,

@@ -167,6 +167,8 @@ describe('SplitBlock', () => {
     expect(container.querySelector('[data-part="text"]')?.className).toContain(textOrder)
     expect(container.querySelector('[data-part="media"]')?.className).toContain(mediaOrder)
     expect(container.querySelector('ul')?.className).toContain('flex-col')
+    // One column below lg, same 390px-overflow fix as StepsScroller.
+    expect(container.querySelector('.grid')?.className).toContain('grid-cols-1')
   })
 
   it('renders without a heading (lead only)', () => {

@@ -75,6 +75,16 @@ describe('Split in steps mode', () => {
     expect(layers(container)[0].hasAttribute('inert')).toBe(true)
   })
 
+  it('per-step line segment: the active step gets the accent colour, others stay grey', () => {
+    inLocale(split([step(1), step(2, 'dimensions'), step(3)]))
+    intersect(screen.getByText('Schritt 2').closest('li')!)
+    const segment = (title: string) => screen.getByText(title).closest('li')?.querySelector('[data-segment]')
+    expect(segment('Schritt 2')?.className).toContain('lg:bg-accent')
+    expect(segment('Schritt 1')?.className).not.toContain('lg:bg-accent')
+    expect(segment('Schritt 1')?.className).toContain('bg-line')
+    expect(segment('Schritt 3')).toBeNull()
+  })
+
   it('reduced motion: layers have no transition', () => {
     reduced = true
     const { container } = inLocale(split([step(1), step(2, 'dimensions')]))
@@ -121,8 +131,8 @@ describe('Split in steps mode', () => {
     inLocale(split([step(1), step(2, 'dimensions')]))
     intersect(screen.getByText('Schritt 2').closest('li')!)
     const strip = (cls: string) => cls.split(' ').filter((c) => !c.startsWith('lg:')).sort().join(' ')
-    const active = screen.getByRole('button', { name: '02' })
-    const inactive = screen.getByRole('button', { name: '01' })
+    const active = screen.getByRole('button', { name: '02: Schritt 2' })
+    const inactive = screen.getByRole('button', { name: '01: Schritt 1' })
     expect(strip(active.className)).toBe(strip(inactive.className))
   })
 })

@@ -25,9 +25,10 @@ const isHeading = (b: unknown): b is HeadingBlock => (b as HeadingBlock)?.blockT
 const toSplit = (heading: HeadingBlock | null, steps: ItemsBlock, slug: string | null | undefined): SplitBlock => {
   const scenes = stepScenes[slug || ''] || { section: 'builder' }
   const head = heading && !heading.hidden ? heading : null
+  const baseId = (heading || steps).id
   return {
     blockType: 'split',
-    id: `${(heading || steps).id}-split`,
+    ...(baseId ? { id: `${baseId}-split` } : {}),
     blockName: steps.blockName || heading?.blockName || null,
     hidden: Boolean(steps.hidden),
     header: { eyebrow: head?.header?.eyebrow ?? null, heading: head?.header?.heading ?? null, lead: head?.header?.lead ?? null },

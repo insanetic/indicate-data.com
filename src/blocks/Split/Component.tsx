@@ -19,7 +19,7 @@ export const SplitBlock: React.FC<Props & { locale?: Locale; isFirst?: boolean }
   const list = (points || []).filter((p) => p.title)
   return (
     <div className="container">
-      <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+      <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
         <div className={cn('reveal lg:col-span-7', mediaLeft ? 'lg:order-1' : 'lg:order-2')} data-part="media" style={{ '--i': 1 } as React.CSSProperties}>
           <Visual className="w-full" fallback="builder" locale={locale} visual={visual} />
         </div>

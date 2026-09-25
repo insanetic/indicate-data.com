@@ -79,6 +79,11 @@ describe('stepsToSplit', () => {
     expect(de[0].points.map((p: any) => p.id)).toEqual(en[0].points.map((p: any) => p.id))
   })
 
+  it('id-less heading and steps yield a Split with no id key', () => {
+    const [split] = stepsToSplit([heading({ id: undefined }), items({ id: undefined })], 'x') as any[]
+    expect(split).not.toHaveProperty('id')
+  })
+
   it('is idempotent', () => {
     const once = stepsToSplit([heading(), items()], 'x')
     expect(stepsToSplit(once, 'x')).toEqual(once)
