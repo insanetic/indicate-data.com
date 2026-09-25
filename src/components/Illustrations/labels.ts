@@ -115,7 +115,7 @@ export const labels = {
       },
       resi: {
         title: 'Resi bei der Arbeit: Quellen, Kennzahl-Definition und Rechte fließen in jede Antwort',
-        role: 'Deine KI-Agentin',
+        role: 'Deine KI-Analystin',
         thinking: 'Resi prüft die Kennzahlen …',
         catalogue: 'KPI-Katalog',
         permissions: 'Rechte wie in der App',
@@ -159,7 +159,7 @@ export const labels = {
       },
       hub: {
         title: 'Resi im Zentrum: Datenquellen fließen in den Chat, jede Antwort wird zu Kennzahl oder Diagramm',
-        role: 'Deine KI-Agentin',
+        role: 'Deine KI-Analystin',
         ask: 'Frag Resi …',
         thinking: 'Resi prüft die Kennzahlen …',
         catalogue: 'KPI-Katalog',
@@ -430,7 +430,7 @@ export const labels = {
       },
       resi: {
         title: 'Resi at work: sources, KPI definitions and permissions flow into every answer',
-        role: 'Your AI agent',
+        role: 'Your AI analyst',
         thinking: 'Resi is checking the figures …',
         catalogue: 'KPI catalogue',
         permissions: 'Same permissions as in the app',
@@ -474,7 +474,7 @@ export const labels = {
       },
       hub: {
         title: 'Resi at the centre: data sources flow into the chat, every answer becomes a KPI or a chart',
-        role: 'Your AI agent',
+        role: 'Your AI analyst',
         ask: 'Ask Resi …',
         thinking: 'Resi is checking the figures …',
         catalogue: 'KPI catalogue',

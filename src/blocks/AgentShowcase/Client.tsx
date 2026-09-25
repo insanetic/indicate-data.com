@@ -44,7 +44,7 @@ const HOLD = 4200
 const copy = {
   de: {
     you: 'Du',
-    role: 'Deine KI-Agentin',
+    role: 'Deine KI-Analystin',
     chips: 'Beispielfragen',
     channels: 'Resi, in deinem Chat',
     connected: 'Indicate MCP · verbunden',
@@ -61,7 +61,7 @@ const copy = {
   },
   en: {
     you: 'You',
-    role: 'Your AI agent',
+    role: 'Your AI analyst',
     chips: 'Example questions',
     channels: 'Resi, in your chat',
     connected: 'Indicate MCP · connected',
