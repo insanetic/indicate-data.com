@@ -13,9 +13,8 @@ import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Avatar } from '@/components/Illustrations/primitives'
-import { cn } from '@/utilities/ui'
-
 import { legacySelection } from './legacy'
+import { type Slide, TestimonialSlider } from './Slider'
 
 /** Company line: linked to the case study or customer site when the testimonial has a link. */
 const Company: React.FC<{ text: string; link?: TestimonialLink | null }> = ({ text, link }) => {
@@ -29,10 +28,30 @@ const Company: React.FC<{ text: string; link?: TestimonialLink | null }> = ({ te
   return <>{text}</>
 }
 
+const labels = {
+  de: {
+    carousel: 'Kundenstimmen',
+    slide: 'Kundenstimme {n} von {total}',
+    prev: 'Vorherige Kundenstimme',
+    next: 'Nächste Kundenstimme',
+    open: '„',
+    close: '“',
+  },
+  en: {
+    carousel: 'Testimonials',
+    slide: 'Testimonial {n} of {total}',
+    prev: 'Previous testimonial',
+    next: 'Next testimonial',
+    open: '“',
+    close: '”',
+  },
+}
+
 /**
- * Editorial quotes: heading on the left, each quote set large with a yellow opening mark and
- * a hairline between them. No cards, no grid of equal boxes. The quotes come from the central
- * testimonials collection (hand-picked or chosen by tag and seed, see @subneo/payload-testimonials).
+ * Heading on the left, one quote at a time on the right (see Slider). The quotes come from the
+ * central testimonials collection (hand-picked or chosen by tag and seed, see
+ * @subneo/payload-testimonials); the author line is rendered here because the company may link
+ * to a CMS document.
  */
 export const TestimonialsBlock: React.FC<Props & { locale: Locale; layout?: Page['layout']; blockIndex?: number }> = async (props) => {
   const { header, locale, layout, blockIndex } = props
@@ -45,50 +64,48 @@ export const TestimonialsBlock: React.FC<Props & { locale: Locale; layout?: Page
   const list = selected.map((s) => s.testimonial).filter((t) => t.quote && t.name)
   if (list.length === 0) return null
 
+  const slides: Slide[] = list.map((t, i) => {
+    const name = t.name as string
+    const initials = name
+      .split(' ')
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join('')
+    const avatar = t.avatar && typeof t.avatar === 'object' ? (t.avatar as MediaType) : null
+    const logo = t.logo && typeof t.logo === 'object' ? (t.logo as MediaType) : null
+    return {
+      id: String(t.id),
+      quote: t.quote as string,
+      author: (
+        <div className="flex items-center gap-3">
+          {avatar ? (
+            <Media htmlElement={null} imgClassName="size-10 shrink-0 rounded-full object-cover" resource={avatar} />
+          ) : (
+            // No yellow: it disappears on the yellow section tone.
+            <Avatar className="size-10 shrink-0 type-small" initials={initials} tone={(['blue', 'coral'] as const)[i % 2]} />
+          )}
+          <div className="flex min-w-0 flex-col">
+            <span className="type-small font-medium text-ink">{name}</span>
+            <span className="type-caption text-ink-3">
+              {t.role}
+              {t.role && t.company ? ', ' : null}
+              {t.company && <Company link={t.link} text={t.company} />}
+            </span>
+          </div>
+          {logo && <Media htmlElement={null} imgClassName="ml-auto hidden h-6 w-auto opacity-70 lg:block" resource={logo} />}
+        </div>
+      ),
+    }
+  })
+
+  const t = labels[locale] ?? labels.de
   return (
     <div className="container">
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
         <SectionHeading className="reveal lg:col-span-4 lg:sticky lg:top-28 lg:self-start" header={header} />
-        <ul className="reveal-stagger flex flex-col divide-y divide-line border-y border-line lg:col-span-8">
-          {list.map((t, i) => {
-            const name = t.name as string
-            const initials = name
-              .split(' ')
-              .map((n) => n[0])
-              .slice(0, 2)
-              .join('')
-            const avatar = t.avatar && typeof t.avatar === 'object' ? (t.avatar as MediaType) : null
-            const logo = t.logo && typeof t.logo === 'object' ? (t.logo as MediaType) : null
-            return (
-              <li className="grid gap-6 py-10 md:grid-cols-[3rem_1fr] md:gap-8 md:py-12" key={String(t.id)} style={{ '--i': i } as React.CSSProperties}>
-                <span aria-hidden="true" className="font-display text-[3.5rem] leading-[0.7] text-accent select-none">
-                  „
-                </span>
-                <figure className="flex flex-col gap-7">
-                  <blockquote className={cn('font-display text-ink pretty', i === 0 ? 'type-h3 md:text-[1.9rem] md:leading-[1.3]' : 'type-h3')}>
-                    {t.quote}
-                  </blockquote>
-                  <figcaption className="flex items-center gap-3">
-                    {avatar ? (
-                      <Media htmlElement={null} imgClassName="size-10 rounded-full object-cover" resource={avatar} />
-                    ) : (
-                      <Avatar className="size-10 type-small" initials={initials} tone={(['blue', 'yellow', 'coral'] as const)[i % 3]} />
-                    )}
-                    <div className="flex flex-col">
-                      <span className="type-small font-medium text-ink">{name}</span>
-                      <span className="type-caption text-ink-3">
-                        {t.role}
-                        {t.role && t.company ? ', ' : null}
-                        {t.company && <Company link={t.link} text={t.company} />}
-                      </span>
-                    </div>
-                    {logo && <Media htmlElement={null} imgClassName="ml-auto h-6 w-auto opacity-70" resource={logo} />}
-                  </figcaption>
-                </figure>
-              </li>
-            )
-          })}
-        </ul>
+        <div className="reveal lg:col-span-8">
+          <TestimonialSlider labels={t} slides={slides} />
+        </div>
       </div>
     </div>
   )
