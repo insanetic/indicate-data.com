@@ -46,7 +46,8 @@ export type LegacyPillars = Base & {
   blockType: 'pillars'
   header: Header
   pillars?: { icon?: Icon; title: string; text: string; id?: Id }[] | null
-  tiles?: { value?: string | null; suffix?: string | null; label: string; links?: ItemLinks; id?: Id }[] | null
+  /** `text` and `width` exist only on the items block; the seed sets them through this converter. */
+  tiles?: { value?: string | null; suffix?: string | null; label: string; text?: string | null; width?: ItemRow['width']; links?: ItemLinks; id?: Id }[] | null
 }
 export type LegacyCardGrid = Base & {
   blockType: 'cardGrid'
@@ -194,7 +195,15 @@ export const splitLegacyBlock = (old: LegacyBlock, options: SplitOptions = {}): 
         ...itemsPart(
           'stats',
           'stats',
-          (old.tiles || []).map((t) => ({ id: t.id, value: t.value, suffix: t.suffix, title: t.label, ...(t.links?.length ? { links: t.links } : {}) })),
+          (old.tiles || []).map((t) => ({
+            id: t.id,
+            value: t.value,
+            suffix: t.suffix,
+            title: t.label,
+            ...(t.text ? { text: t.text } : {}),
+            ...(t.width ? { width: t.width } : {}),
+            ...(t.links?.length ? { links: t.links } : {}),
+          })),
           { frame: 'panel' },
         ),
       ])

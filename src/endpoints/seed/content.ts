@@ -647,8 +647,8 @@ export const homePage = (t: T, refs: Refs): SeedPage => ({
           icon: 'zap',
           title: t('Fertig in Minuten, nicht in Monaten', 'Ready in minutes, not months'),
           text: t(
-            'Anbindung per Klick, Kennzahlen und Dashboards kommen fertig mit. Kein Projekt, keine Migration, 13 Monate Historie ab dem ersten Tag.',
-            'Connect with a click, KPIs and dashboards come ready. No project, no migration, 13 months of history from day one.',
+            'Anbindung per Klick, Kennzahlen und Dashboards kommen fertig mit. Kein Projekt, keine Migration, bis zu 15 Jahre Historie ab dem ersten Tag.',
+            'Connect with a click, KPIs and dashboards come ready. No project, no migration, up to 15 years of history from day one.',
           ),
         },
         {
@@ -669,11 +669,37 @@ export const homePage = (t: T, refs: Refs): SeedPage => ({
         },
       ],
       tiles: [
-        { value: '30', suffix: '+', label: t('Anbindungen an Hotel- und Marketing-Systeme', 'connections to hotel and marketing systems'), links: [subpage(refs, 'integrations', t('Alle ansehen', 'See all'), 'link')] },
-        { value: '13', label: t('Monate Historie ab dem ersten Tag', 'months of history from day one') },
-        { value: '40', suffix: ' %', label: t('geringere Betriebskosten durch Automatisierung', 'lower operating costs through automation') },
-        { label: t('Für Hotelgruppen', 'For hotel groups'), links: [subpage(refs, 'hotel-groups', t('Mehr erfahren', 'Learn more'), 'link')] },
-        { label: t('Für Agenturen', 'For agencies'), links: [subpage(refs, 'agencies', t('Mehr erfahren', 'Learn more'), 'link')] },
+        {
+          value: '15',
+          width: 'third',
+          label: t('Jahre Historie ab dem ersten Tag', 'years of history from day one'),
+          text: t('Bis zu 15 Jahre, so weit dein System sie liefert.', 'Up to 15 years, as far back as your system goes.'),
+        },
+        {
+          value: '600',
+          suffix: '+',
+          width: 'third',
+          label: t('Spaces laufen auf Indicate', 'spaces running on Indicate'),
+          text: t('Jedes Hotel, jede Gruppe, jeder Agenturkunde hat seinen eigenen Space.', 'Every hotel, group and agency client gets its own space.'),
+        },
+        { value: '30', suffix: '+', width: 'third', label: t('Anbindungen an Hotel- und Marketing-Systeme', 'connections to hotel and marketing systems'), links: [subpage(refs, 'integrations', t('Alle ansehen', 'See all'), 'link')] },
+        {
+          width: 'fifth',
+          label: t('Automatischer, inkrementeller Sync', 'Automatic, incremental sync'),
+          text: t('Nur was sich geändert hat, ganz von selbst. Keine Exporte, keine Uploads.', 'Only what changed, on its own. No exports, no uploads.'),
+        },
+        {
+          width: 'fifth',
+          label: t('Sicherer KI-Chat mit deinen Daten', 'Secure AI chat with your data'),
+          text: t('DSGVO-konform, gehostet in Deutschland. Gästedaten bleiben drin, bis du sie freigibst.', 'GDPR-compliant, hosted in Germany. Guest data stays in until you release it.'),
+        },
+        {
+          width: 'fifth',
+          label: t('Benchmarks', 'Benchmarks'),
+          text: t('Häuser, Zeiträume und Ziele nebeneinander, mit Perzentil-Linien aus deiner eigenen Historie.', 'Properties, periods and targets side by side, with percentile lines from your own history.'),
+        },
+        { width: 'fifth', label: t('Für Hotelgruppen', 'For hotel groups'), links: [subpage(refs, 'hotel-groups', t('Mehr erfahren', 'Learn more'), 'link')] },
+        { width: 'fifth', label: t('Für Agenturen', 'For agencies'), links: [subpage(refs, 'agencies', t('Mehr erfahren', 'Learn more'), 'link')] },
       ],
       settings: { background: 'default', spacing: 'default', anchor: 'why' },
     },

@@ -3,7 +3,7 @@ import React from 'react'
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 import { ItemsBlock } from '@/blocks/Items/Component'
-import { gridClasses, resolveColumns } from '@/blocks/Items/columns'
+import { gridClasses, resolveColumns, statSpan } from '@/blocks/Items/columns'
 import { SplitBlock } from '@/blocks/Split/Component'
 import { LocaleProvider } from '@/providers/Locale'
 
@@ -57,14 +57,30 @@ describe('gridClasses', () => {
     ['cards', 3, 'md:grid-cols-3'],
     ['cards', 4, 'sm:grid-cols-2 lg:grid-cols-4'],
     ['cards', 5, 'sm:grid-cols-2 lg:grid-cols-5'],
-    // Points and numbers keep two on small screens.
+    // Points keep two on small screens.
     ['points', 3, 'sm:grid-cols-2 lg:grid-cols-3'],
     ['points', 4, 'sm:grid-cols-2 lg:grid-cols-4'],
-    ['stats', 3, 'sm:grid-cols-2 lg:grid-cols-3'],
-    ['stats', 5, 'sm:grid-cols-2 lg:grid-cols-5'],
-    ['stats', 2, 'sm:grid-cols-2'],
+    // Numbers: two on small screens, a 60-track grid from lg; the entries set their span.
+    ['stats', 3, 'sm:grid-cols-2 lg:grid-cols-60'],
+    ['stats', 5, 'sm:grid-cols-2 lg:grid-cols-60'],
   ] as const)('%s with %i columns → %s', (style, columns, expected) => {
     expect(gridClasses(style, columns)).toBe(expected)
+  })
+})
+
+describe('statSpan', () => {
+  it.each([
+    // Automatic takes one of the block's columns.
+    [null, 2, 'lg:col-span-30'],
+    ['auto', 3, 'lg:col-span-20'],
+    ['auto', 4, 'lg:col-span-15'],
+    [undefined, 5, 'lg:col-span-12'],
+    // A set width wins over the columns.
+    ['half', 5, 'lg:col-span-30'],
+    ['third', 5, 'lg:col-span-20'],
+    ['full', 3, 'sm:col-span-2 lg:col-span-60'],
+  ] as const)('%s in %i columns → %s', (width, columns, expected) => {
+    expect(statSpan(width, columns)).toBe(expected)
   })
 })
 

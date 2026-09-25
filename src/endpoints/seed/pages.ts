@@ -1181,7 +1181,7 @@ const integrationsPage = (t: T, refs: Refs): SeedPage =>
         },
         {
           q: t('Wie weit reicht die Historie?', 'How far back does the history go?'),
-          a: t('Indicate lädt beim Verbinden die Historie nach, soweit das System sie liefert; bei den meisten PMS 13 Monate und mehr.', 'Indicate backfills the history when connecting, as far as the system provides it; for most PMS 13 months and more.'),
+          a: t('Indicate lädt beim Verbinden die Historie nach, soweit das System sie liefert; bis zu 15 Jahre.', 'Indicate backfills the history when connecting, as far as the system provides it; up to 15 years.'),
         },
         {
           q: t('Mein System fehlt. Was nun?', 'My system is missing. Now what?'),
