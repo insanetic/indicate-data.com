@@ -2693,72 +2693,60 @@
   }
 }
 
-/* --- Verified answers (10 s, `agent`): a question about a widget, a checked answer, one click  --- */
-/* puts it on the dashboard. 1 s = 10 %. Question 0.4 s, ADR widget lit 0.5–3.2 s, Resi checks   */
-/* 1.0–1.8 s, answer 1.9 s (text streams, bars grow, source 3.0 s), button 4.0 s, the answer     */
-/* flies into the empty slot 4.2–5.2 s and glows, everything clears 9.2–9.6 s.                    */
+/* --- Resi on a dashboard (12 s, `agent`): two exchanges of 6 s. 1 s = 8.33 %.                --- */
+/* Exchange 1 (create): question 0.3 s, Resi checks 1.0–1.8 s, answer 1.9 s (text, bars, source), */
+/* "putting it on the dashboard" 3.0 s, the chart flies into the empty slot 3.25–4.3 s and stays. */
+/* Exchange 2 (edit, `--delay: 6s` on the chat pieces): the ADR widget lights 6.5 s and is rebuilt  */
+/* by channel at 8.0 s. Everything returns 11.3–11.8 s.                                            */
 
 .loop-verify {
-  --loop: 10s;
+  --loop: 12s;
 }
 
+/* Chat pieces, one exchange's window (0–6 s of the clock, shifted by `--delay`). */
 @keyframes loop-verify-q {
   0%,
-  3.5% {
+  2.5% {
     opacity: 0;
     transform: translateY(8px) scale(0.98);
   }
-  5.5%,
-  92% {
+  4%,
+  46% {
     opacity: 1;
     transform: none;
   }
-  96%,
+  48.5%,
   100% {
     opacity: 0;
     transform: none;
-  }
-}
-@keyframes loop-verify-lit {
-  0%,
-  4% {
-    opacity: 0;
-  }
-  6%,
-  30% {
-    opacity: 1;
-  }
-  36%,
-  100% {
-    opacity: 0;
   }
 }
 @keyframes loop-verify-think {
   0%,
-  9.5% {
+  8% {
     opacity: 0;
   }
-  10.5%,
-  17.5% {
+  8.8%,
+  14.6% {
     opacity: 1;
   }
-  18.5%,
+  15.4%,
   100% {
     opacity: 0;
   }
 }
 @keyframes loop-verify-a {
   0%,
-  18% {
+  15.4% {
     opacity: 0;
     transform: translateY(6px);
   }
-  20%,
-  92% {
+  17%,
+  46% {
     opacity: 1;
     transform: none;
   }
-  96%,
+  48.5%,
   100% {
     opacity: 0;
     transform: none;
@@ -2766,86 +2754,78 @@
 }
 @keyframes loop-verify-stream {
   0%,
-  18.5% {
+  15.8% {
     clip-path: inset(0 0 100% 0);
   }
-  26%,
+  21%,
   100% {
     clip-path: inset(0 0 -20% 0);
   }
 }
 @keyframes loop-verify-grow {
   0%,
-  22% {
+  17.5% {
     transform: scaleY(0.06);
   }
-  29%,
+  23%,
   100% {
     transform: none;
   }
 }
 @keyframes loop-verify-cite {
   0%,
-  29% {
+  21.5% {
     opacity: 0;
   }
-  31.5%,
+  23.5%,
   100% {
     opacity: 1;
   }
 }
-/* The button is pressed; its label hands over to "on the dashboard". */
-@keyframes loop-verify-press {
+/* Resi's own status while she places the widget, then done. */
+@keyframes loop-verify-busy {
   0%,
-  39.5% {
-    transform: none;
+  24.5% {
+    opacity: 0;
   }
-  40.5% {
-    transform: scale(0.94);
-  }
-  42%,
-  100% {
-    transform: none;
-  }
-}
-@keyframes loop-verify-before {
-  0%,
-  41% {
+  25.5%,
+  35.5% {
     opacity: 1;
   }
-  42%,
+  36%,
   100% {
     opacity: 0;
   }
 }
-@keyframes loop-verify-after {
+@keyframes loop-verify-done {
   0%,
-  41% {
+  35.5% {
     opacity: 0;
   }
-  42%,
+  36.5%,
   100% {
     opacity: 1;
   }
 }
-/* The new widget starts small at the button and travels into the empty slot. */
+
+/* Dashboard. The new widget lifts off at the chat's chart and flies into the empty slot. */
 @keyframes loop-verify-land {
   0%,
-  41.5% {
+  27% {
     opacity: 0;
-    transform: translate(var(--fly-x), var(--fly-y)) scale(0.5);
+    transform: translate(var(--fly-x), var(--fly-y)) scale(0.92);
   }
-  43% {
+  28.5% {
     opacity: 1;
-    transform: translate(var(--fly-x), var(--fly-y)) scale(0.5);
+    transform: translate(var(--fly-x), var(--fly-y)) scale(0.92);
     animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
   }
-  52%,
-  92% {
+  36%,
+  94% {
     opacity: 1;
     transform: none;
   }
-  96%,
+  97%,
   100% {
     opacity: 0;
     transform: none;
@@ -2853,10 +2833,53 @@
 }
 @keyframes loop-verify-slot {
   0%,
-  51% {
+  35.5% {
     opacity: 1;
   }
-  52%,
+  36%,
+  96% {
+    opacity: 0;
+  }
+  98.5%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes loop-verify-glow {
+  0%,
+  35.5% {
+    opacity: 0;
+  }
+  36.5%,
+  46% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+/* The ADR widget lights for the edit and swaps its line for bars by channel. */
+@keyframes loop-verify-lit {
+  0%,
+  53% {
+    opacity: 0;
+  }
+  55%,
+  88% {
+    opacity: 1;
+  }
+  93%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes loop-verify-old {
+  0%,
+  66.5% {
+    opacity: 1;
+  }
+  68%,
   95% {
     opacity: 0;
   }
@@ -2865,18 +2888,21 @@
     opacity: 1;
   }
 }
-@keyframes loop-verify-glow {
+@keyframes loop-verify-new {
   0%,
-  51.5% {
+  66.5% {
     opacity: 0;
+    transform: translateY(4px);
   }
-  53%,
-  66% {
+  68.5%,
+  95% {
     opacity: 1;
+    transform: none;
   }
-  72%,
+  98%,
   100% {
     opacity: 0;
+    transform: none;
   }
 }
 
@@ -2884,10 +2910,6 @@
   transform-origin: right bottom;
   animation-name: loop-verify-q;
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-.loop .loop-verify-lit {
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, var(--surface-2));
-  animation-name: loop-verify-lit;
 }
 .loop .loop-verify-think {
   animation-name: loop-verify-think;
@@ -2908,46 +2930,56 @@
 .loop .loop-verify-cite {
   animation-name: loop-verify-cite;
 }
-.loop .loop-verify-press {
-  animation-name: loop-verify-press;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+.loop .loop-verify-busy {
+  animation-name: loop-verify-busy;
 }
-.loop .loop-verify-before {
-  animation-name: loop-verify-before;
-}
-.loop .loop-verify-after {
-  animation-name: loop-verify-after;
+.loop .loop-verify-done {
+  animation-name: loop-verify-done;
 }
 .loop .loop-verify-land {
-  /* From the answer's button (right of and below the slot) into the slot. */
-  --fly-x: 20cqw;
-  --fly-y: 6.5rem;
-  transform-origin: right center;
+  /* From the answer's chart in the chat card (right of and below the slot). */
+  --fly-x: 51cqw;
+  --fly-y: 13.5cqw;
+  transform-origin: left top;
   animation-name: loop-verify-land;
 }
 @media (max-width: 639.98px) {
-  /* Stacked: the chat is far below, so the widget settles into place instead of flying. */
+  /* Stacked: the chat is below the dashboard, so the widget settles into place. */
   .loop .loop-verify-land {
     --fly-x: 0rem;
     --fly-y: 1rem;
-    transform-origin: center;
   }
 }
 .loop .loop-verify-slot {
   animation-name: loop-verify-slot;
 }
+.loop .loop-verify-glow,
+.loop .loop-verify-lit {
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, var(--surface));
+}
 .loop .loop-verify-glow {
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, var(--surface-2));
   animation-name: loop-verify-glow;
+}
+.loop .loop-verify-lit {
+  animation-name: loop-verify-lit;
+}
+.loop .loop-verify-old {
+  animation-name: loop-verify-old;
+}
+.loop .loop-verify-new {
+  animation-name: loop-verify-new;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Finished frame: question, checked answer, and the widget already on the dashboard. */
+  /* Finished first exchange: the answer with its source, the widget placed, the ADR widget as it was. */
   .loop .loop-verify-think,
-  .loop .loop-verify-lit,
+  .loop .loop-verify-busy,
   .loop .loop-verify-glow,
-  .loop .loop-verify-before,
-  .loop .loop-verify-slot {
+  .loop .loop-verify-lit,
+  .loop .loop-verify-slot,
+  .loop .loop-verify-new,
+  .loop [data-turn='1'] {
     opacity: 0;
   }
 }
