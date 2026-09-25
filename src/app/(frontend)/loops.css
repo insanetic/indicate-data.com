@@ -298,67 +298,7 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* --- Slots: N stacked panels that take turns (portfolio, campaigns) --- */
-
-/* Four slots, each a quarter of the clock. `--delay` = slot index × 25 % of `--loop`. */
-@keyframes loop-slot-4 {
-  0% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  3%,
-  22% {
-    opacity: 1;
-    transform: none;
-  }
-  25%,
-  100% {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-}
-.loop-slot-4 {
-  animation-name: loop-slot-4;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-@keyframes loop-row-4 {
-  0% {
-    background-color: transparent;
-    color: var(--ink-2);
-  }
-  3%,
-  22% {
-    background-color: var(--surface-3);
-    color: var(--ink);
-  }
-  25%,
-  100% {
-    background-color: transparent;
-    color: var(--ink-2);
-  }
-}
-.loop-row-4 {
-  animation-name: loop-row-4;
-}
-
-/* Everything stays visible; the pair whose four-slot window is open comes to the front. */
-@keyframes loop-focus-4 {
-  0% {
-    opacity: 0.35;
-  }
-  3%,
-  22% {
-    opacity: 1;
-  }
-  25%,
-  100% {
-    opacity: 0.35;
-  }
-}
-.loop-focus-4 {
-  animation-name: loop-focus-4;
-}
+/* --- Slots: three stacked panels that take turns (semantic layer, dimensions, templates) --- */
 
 /* Three slots, each a third of the clock. `--delay` = slot index × 33.33 % of `--loop`. */
 @keyframes loop-slot-3 {
@@ -441,6 +381,190 @@
 }
 .loop-pop-3 {
   animation-name: loop-pop-3;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+/* --- Three states on the 12 s clock (`portfolio`, `campaigns`) ------------------------------ */
+/*                                                                                             */
+/* One element holds three values, `--s0`–`--s2`, and changes to the next one at the start of   */
+/* each 4 s exchange (0.6 s, ease-in-out); `--delay` moves the change later in the exchange.    */
+/* Before the first change the element shows the last state, which is where the loop ends, so  */
+/* the first cycle reads the same as every other. The resting style is state 0, the finished    */
+/* first exchange that reduced motion shows.                                                     */
+
+.loop-group,
+.loop-agency {
+  --loop: 12s;
+}
+
+.loop .loop-tri-y,
+.loop .loop-tri-x,
+.loop .loop-tri-slide,
+.loop .loop-tri-show,
+.loop .loop-tri-bg,
+.loop .loop-tri-tint {
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Rows re-sort: `--s*` is the row's rank, one row height per step. */
+@keyframes loop-tri-y {
+  0% {
+    transform: translateY(calc(var(--s2) * 100%));
+  }
+  5%,
+  33.33% {
+    transform: translateY(calc(var(--s0) * 100%));
+  }
+  38.33%,
+  66.67% {
+    transform: translateY(calc(var(--s1) * 100%));
+  }
+  71.67%,
+  100% {
+    transform: translateY(calc(var(--s2) * 100%));
+  }
+}
+.loop-tri-y {
+  transform: translateY(calc(var(--s0) * 100%));
+  animation-name: loop-tri-y;
+}
+
+/* Bars: `--s*` is the length as a fraction of the track. */
+@keyframes loop-tri-x {
+  0% {
+    transform: scaleX(var(--s2));
+  }
+  5%,
+  33.33% {
+    transform: scaleX(var(--s0));
+  }
+  38.33%,
+  66.67% {
+    transform: scaleX(var(--s1));
+  }
+  71.67%,
+  100% {
+    transform: scaleX(var(--s2));
+  }
+}
+.loop-tri-x {
+  transform: scaleX(var(--s0));
+  transform-origin: left;
+  animation-name: loop-tri-x;
+}
+
+/* Markers and selections: `--s*` is the offset in the element's own widths. */
+@keyframes loop-tri-slide {
+  0% {
+    transform: translateX(calc(var(--s2) * 100%));
+  }
+  5%,
+  33.33% {
+    transform: translateX(calc(var(--s0) * 100%));
+  }
+  38.33%,
+  66.67% {
+    transform: translateX(calc(var(--s1) * 100%));
+  }
+  71.67%,
+  100% {
+    transform: translateX(calc(var(--s2) * 100%));
+  }
+}
+.loop-tri-slide {
+  transform: translateX(calc(var(--s0) * 100%));
+  animation-name: loop-tri-slide;
+}
+
+/* Crossfades: `--s*` is 1 in the element's own state, 0 otherwise. */
+@keyframes loop-tri-show {
+  0% {
+    opacity: var(--s2);
+  }
+  5%,
+  33.33% {
+    opacity: var(--s0);
+  }
+  38.33%,
+  66.67% {
+    opacity: var(--s1);
+  }
+  71.67%,
+  100% {
+    opacity: var(--s2);
+  }
+}
+.loop-tri-show {
+  opacity: var(--s0);
+  animation-name: loop-tri-show;
+}
+
+/* Fills that turn from blue (above plan) to rose (below plan). */
+@keyframes loop-tri-bg {
+  0% {
+    background-color: var(--s2);
+  }
+  5%,
+  33.33% {
+    background-color: var(--s0);
+  }
+  38.33%,
+  66.67% {
+    background-color: var(--s1);
+  }
+  71.67%,
+  100% {
+    background-color: var(--s2);
+  }
+}
+.loop-tri-bg {
+  background-color: var(--s0);
+  animation-name: loop-tri-bg;
+}
+
+/* The client's CI colour, inherited by everything on the agency stage. */
+@property --tint {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(0.7 0.16 262);
+}
+@keyframes loop-tri-tint {
+  0% {
+    --tint: var(--s2);
+  }
+  5%,
+  33.33% {
+    --tint: var(--s0);
+  }
+  38.33%,
+  66.67% {
+    --tint: var(--s1);
+  }
+  71.67%,
+  100% {
+    --tint: var(--s2);
+  }
+}
+.loop-tri-tint {
+  --tint: var(--s0);
+  animation-name: loop-tri-tint;
+}
+
+/* Once per exchange: hidden until the report is out, then stays until the exchange's clock    */
+/* restarts (its card has long faded by then). `--delay` = slot × 4 s + offset.                */
+@keyframes loop-late {
+  0%,
+  20.5% {
+    opacity: 0;
+    transform: translateY(5px) scale(0.97);
+  }
+  23%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop .loop-late {
+  animation-name: loop-late;
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
@@ -967,17 +1091,12 @@
     transform: none;
   }
   /* Slots: show only the first panel and highlight its row. */
-  .loop .loop-slot-4:not([data-first]),
   .loop .loop-slot-3:not([data-first]) {
     display: none;
   }
-  .loop .loop-row-4[data-first],
   .loop .loop-row-3[data-first] {
     background-color: var(--surface-3);
     color: var(--ink);
-  }
-  .loop .loop-focus-4 {
-    opacity: 1;
   }
 }
 
@@ -1607,7 +1726,7 @@
   }
 }
 .loop-hub-lit {
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--glow, var(--brand-blue)) 18%, transparent);
   animation-name: loop-hub-lit;
 }
 
@@ -1627,7 +1746,7 @@
   }
 }
 .loop-hub-glow {
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--resi-mint) 16%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--glow, var(--resi-mint)) 16%, transparent);
   animation-name: loop-hub-glow;
 }
 

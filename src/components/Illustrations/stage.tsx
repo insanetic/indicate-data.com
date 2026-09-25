@@ -51,7 +51,7 @@ export function curve(values: number[], w: number, h: number, pad = 2): string {
 }
 
 /** Phones: a short vertical link between stacked rows; a pulse rides it once per exchange. */
-export const Connector: React.FC<{ out?: boolean; className?: string }> = ({ out = false, className }) => (
+export const Connector: React.FC<{ out?: boolean; className?: string; color?: string }> = ({ out = false, className, color }) => (
   <svg aria-hidden="true" className={className ?? 'h-9 w-3 shrink-0'} viewBox="0 0 12 36">
     <path className="hub-dots" d="M 6 2 V 34" fill="none" stroke="var(--line-strong)" strokeLinecap="round" strokeWidth="2" style={{ '--gap': 6 } as React.CSSProperties} />
     {Array.from({ length: SLOTS }, (_, slot) => (
@@ -61,7 +61,7 @@ export const Connector: React.FC<{ out?: boolean; className?: string }> = ({ out
         fill="none"
         key={slot}
         pathLength={1}
-        stroke={out ? 'var(--resi-mint)' : 'var(--resi-teal)'}
+        stroke={color ?? (out ? 'var(--resi-mint)' : 'var(--resi-teal)')}
         strokeLinecap="round"
         strokeWidth="3"
         style={{ ...slotDelay(slot), '--comet': 0.3 } as React.CSSProperties}
