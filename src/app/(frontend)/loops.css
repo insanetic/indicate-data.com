@@ -92,7 +92,7 @@
   }
 }
 .loop-post-ring {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 0;
   animation-name: loop-post-ring;
 }
@@ -179,23 +179,23 @@
   }
 }
 .loop-post-in {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-post-in;
 }
 @keyframes loop-post-in-comet {
   0%,
   30% {
-    stroke-dashoffset: var(--comet, 0.12);
+    stroke-dashoffset: calc(var(--comet, 0.12) + 0.05);
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   36%,
   100% {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .loop-post-in-comet {
   stroke-dasharray: var(--comet, 0.12) 2;
-  stroke-dashoffset: var(--comet, 0.12);
+  stroke-dashoffset: calc(var(--comet, 0.12) + 0.05);
   animation-name: loop-post-in-comet;
 }
 
@@ -219,23 +219,23 @@
   }
 }
 .loop-post-out {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-post-out;
 }
 @keyframes loop-post-comet {
   0%,
   35.6% {
-    stroke-dashoffset: var(--comet, 0.1);
+    stroke-dashoffset: calc(var(--comet, 0.1) + 0.05);
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   40.5%,
   100% {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .loop-post-comet {
   stroke-dasharray: var(--comet, 0.1) 2;
-  stroke-dashoffset: var(--comet, 0.1);
+  stroke-dashoffset: calc(var(--comet, 0.1) + 0.05);
   animation-name: loop-post-comet;
 }
 
@@ -614,7 +614,7 @@
   }
 }
 .loop-tree-path {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   opacity: 0;
   animation-name: loop-tree-path;
 }
@@ -622,17 +622,17 @@
 /* A short bright pulse rides the line as it draws. */
 @keyframes loop-tree-comet {
   0% {
-    stroke-dashoffset: 0.06;
+    stroke-dashoffset: 0.11;
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   16%,
   100% {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .loop-tree-comet {
   stroke-dasharray: 0.06 2;
-  stroke-dashoffset: 0.06;
+  stroke-dashoffset: 0.11;
   animation-name: loop-tree-comet;
 }
 
@@ -655,23 +655,23 @@
   }
 }
 .loop-tree-out {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   opacity: 0;
   animation-name: loop-tree-out;
 }
 @keyframes loop-tree-out-comet {
   0% {
-    stroke-dashoffset: 0.1;
+    stroke-dashoffset: 0.15;
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   9%,
   100% {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .loop-tree-out-comet {
   stroke-dasharray: 0.1 2;
-  stroke-dashoffset: 0.1;
+  stroke-dashoffset: 0.15;
   animation-name: loop-tree-out-comet;
 }
 
@@ -1233,7 +1233,7 @@
   }
 }
 .loop-share-path {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-share-path;
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
@@ -1769,7 +1769,7 @@
   }
 }
 .loop-hub-draw {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-hub-draw;
   animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -1792,7 +1792,7 @@
   }
 }
 .loop-hub-draw-out {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-hub-draw-out;
   animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -1801,16 +1801,16 @@
 @keyframes loop-hub-comet {
   0%,
   7.9% {
-    stroke-dashoffset: var(--comet, 0.07);
+    stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
   }
   13%,
   100% {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .loop-hub-comet {
   stroke-dasharray: var(--comet, 0.07) 2;
-  stroke-dashoffset: var(--comet, 0.07);
+  stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
   animation-name: loop-hub-comet;
   animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -1818,16 +1818,16 @@
 @keyframes loop-hub-comet-out {
   0%,
   13.3% {
-    stroke-dashoffset: var(--comet, 0.07);
+    stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
   }
   17%,
   100% {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .loop-hub-comet-out {
   stroke-dasharray: var(--comet, 0.07) 2;
-  stroke-dashoffset: var(--comet, 0.07);
+  stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
   animation-name: loop-hub-comet-out;
   animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -1931,7 +1931,7 @@
   }
 }
 .loop-hub-line {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-hub-line;
 }
 
@@ -1982,7 +1982,7 @@
   }
 }
 .loop-hub-trace {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-hub-trace;
 }
 
@@ -2302,17 +2302,17 @@
 @keyframes loop-build-pulse {
   0%,
   31% {
-    stroke-dashoffset: var(--comet, 0.25);
+    stroke-dashoffset: calc(var(--comet, 0.25) + 0.05);
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   35.5%,
   100% {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .loop-build-pulse {
   stroke-dasharray: var(--comet, 0.25) 2;
-  stroke-dashoffset: var(--comet, 0.25);
+  stroke-dashoffset: calc(var(--comet, 0.25) + 0.05);
   animation-name: loop-build-pulse;
 }
 
@@ -2390,7 +2390,7 @@
   }
 }
 .loop-build-draw {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation-name: loop-build-draw;
 }
 @keyframes loop-build-area {
@@ -2538,10 +2538,10 @@
 /* Pulse along the wire from the question to the chat, once per send. */
 @keyframes chat-pulse {
   from {
-    stroke-dashoffset: 0.3;
+    stroke-dashoffset: 0.35;
   }
   to {
-    stroke-dashoffset: -1;
+    stroke-dashoffset: -1.05;
   }
 }
 .chat-pulse {
@@ -2581,7 +2581,7 @@
   }
 }
 .chat-trace {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   animation: chat-trace 900ms cubic-bezier(0.33, 1, 0.68, 1) both;
 }
 
