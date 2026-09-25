@@ -199,3 +199,47 @@ describeDb(`convertSectionBlocks against the database${enabled ? '' : ' (skipped
     })
   })
 })
+
+describeDb('convertStepSections against the database', () => {
+  let payload: Payload
+  let pageId: number
+  const stepsSlug = `kpi-studio-steps-${run}`
+
+  beforeAll(async () => {
+    payload = await getPayload({ config: await config })
+    const created = await payload.create({
+      collection: 'pages', locale: 'de', context,
+      data: {
+        title: `Steps ${run}`, slug: stepsSlug, _status: 'published',
+        layout: [
+          { blockType: 'heading', header: { heading: 'Schritte DE', align: 'center' }, links: [] },
+          { blockType: 'items', style: 'steps', items: [{ title: 'Eins DE' }, { title: 'Zwei DE' }] },
+        ],
+      } as never,
+    })
+    pageId = created.id
+    const de = created as unknown as Loose
+    await payload.update({
+      collection: 'pages', id: pageId, locale: 'en', context,
+      data: { _status: 'published', layout: [{ ...de.layout[0], header: { ...de.layout[0].header, heading: 'Steps EN' } }, { ...de.layout[1], items: de.layout[1].items.map((r: Loose, i: number) => ({ ...r, title: `Step ${i + 1} EN` })) }] } as never,
+    })
+  })
+
+  afterAll(async () => {
+    if (payload && pageId) await payload.delete({ collection: 'pages', id: pageId, context })
+  })
+
+  it('writes one Split per locale with the same ids, and a second run changes nothing', async () => {
+    const { runStepsConversion } = await import('@/sections/convertPages')
+    expect(await runStepsConversion(payload, { pageIds: [pageId] })).toEqual({ publishedPages: 1, draftPages: 0 })
+    const de = (await payload.findByID({ collection: 'pages', id: pageId, locale: 'de', depth: 0, context })) as unknown as Loose
+    const en = (await payload.findByID({ collection: 'pages', id: pageId, locale: 'en', depth: 0, context })) as unknown as Loose
+    expect(de.layout.map((b: Loose) => b.blockType)).toEqual(['split'])
+    expect(de.layout[0].pointStyle).toBe('steps')
+    expect(de.layout[0].header.heading).toBe('Schritte DE')
+    expect(en.layout[0].header.heading).toBe('Steps EN')
+    expect(en.layout[0].points.map((p: Loose) => p.title)).toEqual(['Step 1 EN', 'Step 2 EN'])
+    expect(de.layout[0].points.map((p: Loose) => p.id)).toEqual(en.layout[0].points.map((p: Loose) => p.id))
+    expect(await runStepsConversion(payload, { pageIds: [pageId] })).toEqual({ publishedPages: 0, draftPages: 0 })
+  })
+})
