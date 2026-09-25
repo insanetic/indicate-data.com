@@ -111,6 +111,21 @@ export const Items: Block = {
               admin: { width: '40%' },
             },
             {
+              name: 'width',
+              type: 'select',
+              defaultValue: 'auto',
+              label: { de: 'Breite', en: 'Width' },
+              admin: { width: '25%', condition: forStyles('stats') },
+              options: [
+                { label: { de: 'Automatisch (eine Spalte)', en: 'Automatic (one column)' }, value: 'auto' },
+                { label: '1/5', value: 'fifth' },
+                { label: '1/4', value: 'quarter' },
+                { label: '1/3', value: 'third' },
+                { label: '1/2', value: 'half' },
+                { label: { de: 'Ganze Zeile', en: 'Full row' }, value: 'full' },
+              ],
+            },
+            {
               name: 'size',
               type: 'select',
               defaultValue: 'sm',

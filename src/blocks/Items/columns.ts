@@ -1,6 +1,8 @@
 export const itemStyles = ['points', 'cards', 'steps', 'stats'] as const
 export type ItemStyle = (typeof itemStyles)[number]
 export type Columns = 2 | 3 | 4 | 5
+export const statWidths = ['fifth', 'quarter', 'third', 'half', 'full'] as const
+export type StatWidth = (typeof statWidths)[number]
 
 /** `auto` repeats what each style looked like as a block of its own; two entries sit side by side. */
 export const resolveColumns = (style: ItemStyle, setting: string | null | undefined, count: number): Columns => {
@@ -37,8 +39,26 @@ const twoThenLg: Record<Columns, string> = {
   5: 'sm:grid-cols-2 lg:grid-cols-5',
 }
 
+/**
+ * Numbers sit on a 60-track grid from lg so every entry can take 1/5, 1/4, 1/3, 1/2 or the
+ * full row; `auto` takes one of the block's columns. Two per row on small screens, a full-width
+ * entry spans both.
+ */
+const statSpans: Record<StatWidth, string> = {
+  fifth: 'lg:col-span-12',
+  quarter: 'lg:col-span-15',
+  third: 'lg:col-span-20',
+  half: 'lg:col-span-30',
+  full: 'sm:col-span-2 lg:col-span-60',
+}
+const autoSpans: Record<Columns, StatWidth> = { 2: 'half', 3: 'third', 4: 'quarter', 5: 'fifth' }
+
+export const statSpan = (width: string | null | undefined, columns: Columns): string =>
+  statSpans[statWidths.includes(width as StatWidth) ? (width as StatWidth) : autoSpans[columns]]
+
 /** Grid columns per style, so each style keeps the breakpoints of the block it replaces. */
 export const gridClasses = (style: ItemStyle, columns: Columns): string => {
+  if (style === 'stats') return 'sm:grid-cols-2 lg:grid-cols-60'
   if (style === 'steps') return fromMd[columns]
   if (style === 'cards') return cardColumns[columns]
   return twoThenLg[columns]

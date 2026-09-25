@@ -4,13 +4,13 @@ import type { ItemsBlock as Props } from '@/payload-types'
 
 import { cn } from '@/utilities/ui'
 
-import { gridClasses, resolveColumns, type ItemStyle } from './columns'
+import { gridClasses, resolveColumns, type Columns, type ItemStyle } from './columns'
 import { PointList } from './Points'
 import { Stats } from './Stats'
 import { Steps } from './Steps'
 
 export type ItemRow = NonNullable<Props['items']>[number]
-export type StyleProps = { items: ItemRow[]; grid: string; panel: boolean }
+export type StyleProps = { items: ItemRow[]; grid: string; panel: boolean; columns: Columns }
 
 /** One row of points, cards, steps or numbers; see `resolveColumns` for the automatic columns. */
 export const ItemsBlock: React.FC<Props> = ({ style, columns, frame, divider, items }) => {
@@ -19,7 +19,8 @@ export const ItemsBlock: React.FC<Props> = ({ style, columns, frame, divider, it
   if (list.length === 0) return null
   // Only numbers sit on a shared panel; points and cards never get a surface of their own.
   const panel = frame === 'panel' && kind === 'stats'
-  const props: StyleProps = { items: list, grid: gridClasses(kind, resolveColumns(kind, columns, list.length)), panel }
+  const cols = resolveColumns(kind, columns, list.length)
+  const props: StyleProps = { items: list, grid: gridClasses(kind, cols), panel, columns: cols }
   return (
     <div className="container">
       <div

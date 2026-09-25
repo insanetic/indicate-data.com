@@ -769,6 +769,7 @@ export interface ItemsBlock {
         value?: string | null;
         suffix?: string | null;
         title: string;
+        width?: ('auto' | 'fifth' | 'quarter' | 'third' | 'half' | 'full') | null;
         size?: ('sm' | 'lg') | null;
         text?: string | null;
         points?:
@@ -3464,6 +3465,7 @@ export interface ItemsBlockSelect<T extends boolean = true> {
         value?: T;
         suffix?: T;
         title?: T;
+        width?: T;
         size?: T;
         text?: T;
         points?:

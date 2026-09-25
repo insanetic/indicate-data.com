@@ -5,13 +5,16 @@ import { CountUp } from '@/components/CountUp'
 import { withResi } from '@/components/Resi'
 import { cn } from '@/utilities/ui'
 
+import { statSpan } from './columns'
 import type { StyleProps } from './Component'
 
 /**
  * Numbers that count up, with a label, an optional note and link. An entry without a number
- * shows its label large (the "For hotel groups" tiles). In a panel: bordered tiles.
+ * shows its label large (the "For hotel groups" tiles). Each entry can set its own width.
+ * In a panel every tile draws a hairline to its right and below; the panel clips the outer
+ * ones, so the dividers hold for any number of rows and a short last row.
  */
-export const Stats: React.FC<StyleProps> = ({ items, grid, panel }) => (
+export const Stats: React.FC<StyleProps> = ({ items, grid, panel, columns }) => (
   <ul className={cn('grid', grid, panel ? '' : 'reveal-stagger gap-8')}>
     {items.map((stat, i) => {
       const link = (stat.links || []).find((l) => l.link?.label)?.link
@@ -19,9 +22,8 @@ export const Stats: React.FC<StyleProps> = ({ items, grid, panel }) => (
         <li
           className={cn(
             'flex flex-col gap-2',
-            panel
-              ? 'reveal border-b border-line p-6 sm:[&:nth-child(2n)]:border-l lg:border-b-0 lg:[&:not(:first-child)]:border-l lg:[&:nth-child(2n)]:border-l'
-              : 'border-l border-line pl-5',
+            statSpan(stat.width, columns),
+            panel ? 'reveal p-6 shadow-[1px_0_0_var(--line),0_1px_0_var(--line)]' : 'border-l border-line pl-5',
           )}
           key={stat.id || i}
           style={{ '--i': i } as React.CSSProperties}
