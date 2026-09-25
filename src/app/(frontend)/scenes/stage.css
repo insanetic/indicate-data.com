@@ -1,0 +1,85 @@
+/* ------------------------------------------------------------------ */
+/* Hero scenes (`Scene.tsx`): build-in once, then the 12 s clock         */
+/* ------------------------------------------------------------------ */
+/*                                                                      */
+/* Once its observer runs (`data-io`), the scene pauses while offscreen, */
+/* so its clock never runs unseen. On arrival the centrepiece           */
+/* scales in first, the tiles around it follow in `--build` order, the  */
+/* idle wiring draws from the centre, and after `--t0` (1.3 s) the loop */
+/* keyframes start. Class names here avoid `loop-` on purpose: they run */
+/* once and must not pick up the shared loop timing.                    */
+
+.scene {
+  --loop: 12s;
+}
+
+/* In a hero the whole visual fades in first (`.intro-visual`); the build waits for it. */
+[data-intro='play'] .intro-visual {
+  --intro: 0.6s;
+}
+html[data-intro-seen] [data-intro='play'] .intro-visual {
+  --intro: 0s;
+}
+
+.scene[data-io]:not([data-run]),
+.scene[data-io]:not([data-run]) *,
+.scene[data-io]:not([data-run]) *::before,
+.scene[data-io]:not([data-run]) *::after {
+  animation-play-state: paused !important;
+}
+
+@keyframes scene-build {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.scene-build {
+  animation: scene-build 600ms var(--ease-out-expo) calc(var(--build, 0s) + var(--intro, 0s)) both;
+}
+
+/* Tiles on the outer ring travel a few pixels toward their place instead of scaling. */
+@keyframes scene-build-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--from-x, 0), var(--from-y, 6px));
+  }
+}
+.scene-build-in {
+  animation: scene-build-in 650ms var(--ease-out-expo) calc(var(--build, 0s) + var(--intro, 0s)) both;
+}
+
+/* Idle wiring: drawn from the centre outward during the build (`pathLength={1}`). */
+@keyframes scene-wire {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.scene-wire {
+  stroke-dasharray: 1 2;
+  animation: scene-wire 700ms cubic-bezier(0.65, 0, 0.35, 1) calc(var(--build, 0.3s) + var(--intro, 0s)) both;
+}
+
+@keyframes scene-fade {
+  from {
+    opacity: 0;
+  }
+}
+.scene-fade {
+  animation: scene-fade 700ms ease calc(var(--build, 0.4s) + var(--intro, 0s)) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-build,
+  .scene-build-in,
+  .scene-wire,
+  .scene-fade {
+    animation: none;
+  }
+  .scene-wire {
+    stroke-dasharray: none;
+  }
+}

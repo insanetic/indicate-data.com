@@ -1,0 +1,288 @@
+/* --- KPI Studio (12 s, `kpiStudio`): one definition, the same number everywhere ------------ */
+/*                                                                                             */
+/* Percentages are of the 12 s clock (1 s = 8.33 %). Exchange 1 (0–4 s): the `status` line      */
+/* draws in 1.0–1.5 s, the `$where` line is typed 1.55–2.4 s. Exchange 2 (4–8 s): the three     */
+/* fields draw in, the checks tick at 5.6 / 6.0 / 6.4 s and the preview rolls to 119 € at 6.4 s. */
+/* Exchange 3 (8–12 s): released at 8.6 s, the fan-out reaches the consumers at 9.95 s and all   */
+/* four roll to 119 € and v1.2 together. Everything returns to v1.1 in 11.6–12 s.               */
+/* Resting styles (reduced motion) are the released state.                                      */
+
+@property --kpi-n {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 119;
+}
+
+/* The edited line is typed in once the `status` line has arrived. */
+@keyframes loop-kpi-type {
+  0%,
+  12.9% {
+    clip-path: inset(0 100% 0 -2px);
+    opacity: 1;
+    animation-timing-function: steps(28, end);
+  }
+  20%,
+  96.7% {
+    clip-path: inset(0 -2px 0 -2px);
+    opacity: 1;
+  }
+  99%,
+  100% {
+    clip-path: inset(0 -2px 0 -2px);
+    opacity: 0;
+  }
+}
+.loop-kpi-type {
+  animation-name: loop-kpi-type;
+}
+
+/* Line highlight while its field is read; `--delay` = slot × 4 s (same phases as the lit rings). */
+@keyframes loop-kpi-hl {
+  0%,
+  9.5% {
+    opacity: 0;
+  }
+  11.5%,
+  30.4% {
+    opacity: 1;
+  }
+  33%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-kpi-hl {
+  opacity: 0;
+  animation-name: loop-kpi-hl;
+}
+
+/* Dry run: each check turns from pending to ticked; `--delay` staggers the three rows. */
+@keyframes loop-kpi-row {
+  0%,
+  46.7% {
+    opacity: 0.45;
+  }
+  48.5%,
+  96.7% {
+    opacity: 1;
+  }
+  99%,
+  100% {
+    opacity: 0.45;
+  }
+}
+.loop-kpi-row {
+  animation-name: loop-kpi-row;
+}
+
+@keyframes loop-kpi-check {
+  0%,
+  46.7% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  48.5%,
+  96.7% {
+    opacity: 1;
+    transform: none;
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop .loop-kpi-check {
+  animation-name: loop-kpi-check;
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Numbers roll from v1.1 (124 €) to v1.2 (119 €): the preview at 6.4 s, consumers at 9.95 s. */
+@keyframes loop-kpi-roll {
+  0%,
+  53.3% {
+    --kpi-n: 124;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  58.3%,
+  96.7% {
+    --kpi-n: 119;
+    opacity: 1;
+  }
+  98.2% {
+    --kpi-n: 119;
+    opacity: 0;
+  }
+  98.3% {
+    --kpi-n: 124;
+    opacity: 0;
+  }
+  100% {
+    --kpi-n: 124;
+    opacity: 1;
+  }
+}
+@keyframes loop-kpi-roll-out {
+  0%,
+  82.9% {
+    --kpi-n: 124;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  87.5%,
+  96.7% {
+    --kpi-n: 119;
+    opacity: 1;
+  }
+  98.2% {
+    --kpi-n: 119;
+    opacity: 0;
+  }
+  98.3% {
+    --kpi-n: 124;
+    opacity: 0;
+  }
+  100% {
+    --kpi-n: 124;
+    opacity: 1;
+  }
+}
+.loop-kpi-roll,
+.loop-kpi-roll-out {
+  --kpi-n: 119;
+  counter-reset: kpi var(--kpi-n);
+  display: inline-block;
+}
+.loop-kpi-roll {
+  animation-name: loop-kpi-roll;
+}
+.loop-kpi-roll-out {
+  animation-name: loop-kpi-roll-out;
+}
+.loop-kpi-roll::after,
+.loop-kpi-roll-out::after {
+  content: counter(kpi);
+}
+
+/* Version badges on the consumers: v1.1 hands over to v1.2 as the release arrives. */
+@keyframes loop-kpi-old {
+  0%,
+  82.9% {
+    opacity: 1;
+  }
+  84.5%,
+  98.2% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes loop-kpi-new {
+  0%,
+  82.9% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  84.5%,
+  96.7% {
+    opacity: 1;
+    transform: none;
+  }
+  98.2%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-kpi-old {
+  opacity: 0;
+  animation-name: loop-kpi-old;
+}
+.loop-kpi-new {
+  animation-name: loop-kpi-new;
+}
+
+/* The definition's status: draft until it is released at 8.6 s. */
+@keyframes loop-kpi-draft {
+  0%,
+  71.7% {
+    opacity: 1;
+  }
+  73.3%,
+  98.2% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes loop-kpi-live {
+  0%,
+  71.7% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  73.3%,
+  96.7% {
+    opacity: 1;
+    transform: none;
+  }
+  98.2%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-kpi-draft {
+  opacity: 0;
+  animation-name: loop-kpi-draft;
+}
+.loop .loop-kpi-live {
+  transform-origin: right center;
+  animation-name: loop-kpi-live;
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Preview: the v1.2 line draws over the dashed v1.1 line as the dry run finishes. */
+@keyframes loop-kpi-trace {
+  0%,
+  53.3% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  60%,
+  96.7% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  98.2% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  98.3%,
+  100% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+}
+.loop-kpi-trace {
+  stroke-dasharray: 1 2;
+  animation-name: loop-kpi-trace;
+}
+
+/* Reduced motion: the release, finished. The shared hub rules show exchange 1's lines and    */
+/* rings; this scene shows exchange 3's instead (the fan-out and the lit consumers).          */
+@media (prefers-reduced-motion: reduce) {
+  .loop.scene-studio .loop-hub-lit[data-slot='0'],
+  .loop.scene-studio .loop-hub-draw[data-slot='0'] {
+    opacity: 0;
+  }
+  .loop.scene-studio .loop-hub-lit[data-slot='2'],
+  .loop.scene-studio .loop-hub-glow[data-slot='2'],
+  .loop.scene-studio .loop-hub-draw-out[data-slot='2'] {
+    opacity: 1;
+  }
+}

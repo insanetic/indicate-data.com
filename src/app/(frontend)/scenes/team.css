@@ -1,0 +1,161 @@
+/* --- Team (12 s, `agentChat`): Resi between the systems and the people ----------------------- */
+/*                                                                                             */
+/* Percentages are of the 12 s clock (1 s = 8.33 %); `--delay` = slot × 4 s. Per exchange: the   */
+/* asker lights and their question appears 0.1–0.3 s, its wire draws to Resi 0.3–0.85 s, the     */
+/* systems wire in 1.0–1.5 s (`.loop-hub-draw`), her answer leaves 1.6–2.0 s                     */
+/* (`.loop-hub-draw-out`), the reply replaces the question 1.9–2.15 s, everything clears by 3.95 s. */
+
+/* The person (or the Monday schedule) who starts the exchange. */
+@keyframes loop-team-lit {
+  0%,
+  0.8% {
+    opacity: 0;
+  }
+  2.2%,
+  30.4% {
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-team-lit {
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand-blue) 18%, var(--surface));
+  animation-name: loop-team-lit;
+}
+
+/* Their question, until Resi's answer takes its place. */
+@keyframes loop-team-ask {
+  0%,
+  1% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.97);
+  }
+  2.8%,
+  13.2% {
+    opacity: 1;
+    transform: none;
+  }
+  15%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+.loop-team-ask {
+  opacity: 0;
+  transform-origin: right top;
+  animation-name: loop-team-ask;
+}
+.loop .loop-team-ask {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* The question's wire draws toward Resi and a pulse rides it. */
+@keyframes loop-team-in {
+  0%,
+  2.5% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  7%,
+  26% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  34%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.loop-team-in {
+  stroke-dasharray: 1 2;
+  animation-name: loop-team-in;
+}
+.loop .loop-team-in {
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes loop-team-comet-in {
+  0%,
+  2.4% {
+    stroke-dashoffset: var(--comet-from, 0.12);
+  }
+  7.6%,
+  100% {
+    stroke-dashoffset: -1.05;
+  }
+}
+.loop-team-comet-in {
+  stroke-dasharray: var(--comet, 0.07) 2;
+  stroke-dashoffset: var(--comet-from, 0.12);
+  animation-name: loop-team-comet-in;
+}
+.loop .loop-team-comet-in {
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Her answer lands where the question was, once her line reaches the person. */
+@keyframes loop-team-reply {
+  0%,
+  15.8% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  17.8%,
+  30.4% {
+    opacity: 1;
+    transform: none;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+.loop-team-reply {
+  transform-origin: left top;
+  animation-name: loop-team-reply;
+}
+.loop .loop-team-reply {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* What Resi is doing, and for whom, on her card. */
+@keyframes loop-team-status {
+  0%,
+  1.5% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  3.5%,
+  31% {
+    opacity: 1;
+    transform: none;
+  }
+  33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+.loop-team-status {
+  animation-name: loop-team-status;
+}
+.loop .loop-team-status {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The first exchange, finished: Lena lit, her answer under her card, the status for her. */
+  .loop .loop-team-comet-in,
+  .loop .loop-team-ask,
+  .loop .loop-team-lit:not([data-slot='0']),
+  .loop .loop-team-in:not([data-slot='0']),
+  .loop .loop-team-reply:not([data-slot='0']),
+  .loop .loop-team-status:not([data-slot='0']) {
+    opacity: 0;
+  }
+}

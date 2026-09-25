@@ -1,0 +1,65 @@
+/* --- Access (`governance`, 12 s): who reaches which space -------------------------------------- */
+/*                                                                                             */
+/* Lines, rings, comets and grants use `.loop-hub-*` and `.loop-tri-show`. Here: the audit log. */
+/* Each entry runs its own 12 s life, started LOG_AT (2.7 s) into its exchange with a negative   */
+/* delay so the first cycle already shows the log as it looks at the loop's end: it slides in on */
+/* top, moves down one row per exchange, and leaves at the bottom just before it comes back.     */
+/* `--rest` is the row's place in the finished first exchange, the resting (reduced motion) frame. */
+
+@keyframes loop-access-row {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  4%,
+  33.33% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  37.5%,
+  66.67% {
+    opacity: 1;
+    transform: translateY(100%);
+  }
+  70.83%,
+  95.83% {
+    opacity: 1;
+    transform: translateY(200%);
+  }
+  99.9% {
+    opacity: 0;
+    transform: translateY(300%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+.loop-access-row {
+  transform: translateY(calc(var(--rest, 0) * 100%));
+  animation-name: loop-access-row;
+}
+.loop .loop-access-row {
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* The new entry is marked for a moment as it lands. */
+@keyframes loop-access-new {
+  0% {
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  22%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-access-new {
+  opacity: 0;
+  animation-name: loop-access-new;
+}
+.loop .loop-access-new {
+  animation-timing-function: ease;
+}

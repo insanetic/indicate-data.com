@@ -1,0 +1,145 @@
+/* --- MCP (12 s, `mcp`): three assistants ask the Indicate MCP server in turn ------------------- */
+/*                                                                                              */
+/* Percentages are of the 12 s clock; `--delay` = slot × 4 s (+ a per-hop offset from Mcp.tsx).   */
+/* Exchange timeline: the assistant lights 0.1 s, its question 0.3 s, the request travels to the   */
+/* server 0.7–1.2 s, tool calls tick 1.1 / 1.35 / 1.6 s, KPIs light 1.5 s, the answer travels back  */
+/* 1.8–2.6 s and lands 2.5 s, everything leaves 3.65–3.95 s. Wires, comets and lit rings reuse the  */
+/* `.loop-hub-*` keyframes. Resting style = the finished first exchange (reduced motion).           */
+
+/* The asking assistant's tile lights as soon as the exchange begins. */
+@keyframes loop-mcp-lit {
+  0%,
+  0.5% {
+    opacity: 0;
+  }
+  2%,
+  30.4% {
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-mcp-lit {
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand-blue) 18%, var(--surface));
+  animation-name: loop-mcp-lit;
+}
+
+/* The conversation of the asking assistant: in with the exchange, out before the next. */
+@keyframes loop-mcp-turn {
+  0%,
+  0.8% {
+    opacity: 0;
+  }
+  2.5%,
+  30.4% {
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-mcp-turn {
+  animation-name: loop-mcp-turn;
+}
+
+@keyframes loop-mcp-q {
+  0%,
+  2.1% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  4.6%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-mcp-q {
+  transform-origin: right bottom;
+  animation-name: loop-mcp-q;
+}
+.loop .loop-mcp-q {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes loop-mcp-a {
+  0%,
+  20.4% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  23.3%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-mcp-a {
+  animation-name: loop-mcp-a;
+}
+.loop .loop-mcp-a {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Tool calls tick off one after another (`--delay` adds 0.25 s per call). */
+@keyframes loop-mcp-call {
+  0%,
+  9.2% {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  11%,
+  30.4% {
+    opacity: 1;
+    transform: none;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-mcp-call {
+  animation-name: loop-mcp-call;
+}
+.loop .loop-mcp-call {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* The guardrail line, once the aggregates are on their way back. */
+@keyframes loop-mcp-note {
+  0%,
+  16% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  18%,
+  30.4% {
+    opacity: 1;
+    transform: none;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-mcp-note {
+  animation-name: loop-mcp-note;
+}
+.loop .loop-mcp-note {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The first exchange, finished: its assistant lit, its conversation, calls and guardrail line. */
+  .loop .loop-mcp-lit:not([data-slot='0']),
+  .loop .loop-mcp-turn:not([data-slot='0']),
+  .loop .loop-mcp-call:not([data-slot='0']),
+  .loop .loop-mcp-note:not([data-slot='0']) {
+    opacity: 0;
+  }
+}

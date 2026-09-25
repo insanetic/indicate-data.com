@@ -1,0 +1,101 @@
+/* --- Templates (`templates`, 12 s): one template per exchange rolls out to three properties --- */
+/*                                                                                            */
+/* Shares the `.loop-hub-*` phases (lines, rings, counters, charts); `.loop-roll-show` hands   */
+/* the template's shape and each property's numbers over, the press and the remap are its own. */
+
+/* "Apply to 3 properties" is pressed just before the lines fan out (4 s clock, 1.45 s). */
+@keyframes loop-roll-press {
+  0%,
+  34% {
+    transform: none;
+    background-color: var(--surface-3);
+  }
+  37% {
+    transform: scale(0.96);
+    background-color: var(--brand-blue-soft);
+  }
+  44% {
+    transform: none;
+    background-color: var(--brand-blue-soft);
+  }
+  62%,
+  100% {
+    transform: none;
+    background-color: var(--surface-3);
+  }
+}
+.loop .loop-roll-press {
+  animation-name: loop-roll-press;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Bergwald runs Apaleo: once its dashboard is filled in the first exchange, the chip shows   */
+/* where its occupancy comes from, and stays until the next template fans out (12 s clock).   */
+@keyframes loop-roll-remap {
+  0%,
+  20.5% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  23%,
+  45.5% {
+    opacity: 1;
+    transform: none;
+  }
+  48%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop .loop-roll-remap {
+  animation-name: loop-roll-remap;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Per-exchange layers (the template's name and shape, each property's numbers): the old one  */
+/* leaves in 0.2 s before the new one fades in, so two values never overlap. `--delay` =      */
+/* slot × 4 s − 12 s + offset; the resting style is the first exchange (reduced motion).      */
+@keyframes loop-roll-show {
+  0%,
+  2% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  5%,
+  33.33% {
+    opacity: 1;
+    transform: none;
+  }
+  35%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop .loop-roll-show {
+  animation-name: loop-roll-show;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* The area under a chart shows once its line has traced (same phases as `.loop-hub-trace`);  */
+/* unlike `.loop-hub-area` it never shows the old result, since the layer arrives fresh.        */
+@keyframes loop-roll-area {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  24%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop .loop-roll-area {
+  animation-name: loop-roll-area;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop .loop-roll-show:not([data-slot='0']) {
+    opacity: 0;
+  }
+}

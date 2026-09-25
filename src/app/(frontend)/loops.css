@@ -18,7 +18,8 @@
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-fill-mode: both;
-  animation-delay: var(--delay, 0s);
+  /* `--t0`: a scene's build-in (`scenes/stage.css`) runs first, the clock starts after it. */
+  animation-delay: calc(var(--delay, 0s) + var(--t0, 0s));
 }
 
 /* --- Log lines (hero, 8 s): entries appear one after another, then the log clears --- */
@@ -298,7 +299,7 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* --- Slots: three stacked panels that take turns (semantic layer, dimensions, templates) --- */
+/* --- Slots: three stacked panels that take turns (semantic layer, dimensions) --- */
 
 /* Three slots, each a third of the clock. `--delay` = slot index × 33.33 % of `--loop`. */
 @keyframes loop-slot-3 {
@@ -362,27 +363,6 @@
   animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* A comment/notification pops in during a three-slot window. */
-@keyframes loop-pop-3 {
-  0%,
-  12% {
-    opacity: 0;
-    transform: translateY(6px) scale(0.97);
-  }
-  15%,
-  30% {
-    opacity: 1;
-    transform: none;
-  }
-  33.33%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-pop-3 {
-  animation-name: loop-pop-3;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
 /* --- Three states on the 12 s clock (`portfolio`, `campaigns`) ------------------------------ */
 /*                                                                                             */
 /* One element holds three values, `--s0`–`--s2`, and changes to the next one at the start of   */
@@ -801,183 +781,6 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* --- Chat (8 s): a question is typed, the agent thinks, the answer and its source appear --- */
-
-.loop-chat {
-  --loop: 8s;
-}
-
-/* Question bubble: typed at the start, stays, fades before the reset. */
-@keyframes loop-chat-q {
-  0%,
-  2% {
-    clip-path: inset(0 100% 0 0);
-    opacity: 1;
-  }
-  16%,
-  90% {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-  }
-  94%,
-  100% {
-    clip-path: inset(0 0 0 0);
-    opacity: 0;
-  }
-}
-.loop-chat-q {
-  animation-name: loop-chat-q;
-  animation-timing-function: steps(32, end);
-}
-
-/* Thinking indicator between question and answer. */
-@keyframes loop-chat-think {
-  0%,
-  16% {
-    opacity: 0;
-  }
-  18%,
-  30% {
-    opacity: 1;
-  }
-  32%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-chat-think {
-  animation-name: loop-chat-think;
-}
-
-/* Answer, evidence and follow-ups pop in one after another (`--delay`) and leave before the reset. */
-@keyframes loop-chat-in {
-  0%,
-  30% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  34%,
-  88% {
-    opacity: 1;
-    transform: none;
-  }
-  92%,
-  100% {
-    opacity: 0;
-    transform: none;
-  }
-}
-.loop-chat-in {
-  animation-name: loop-chat-in;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* A row (tool call, log line) that starts pending and ticks off: the check fades in. */
-@keyframes loop-chat-tick {
-  0%,
-  22% {
-    opacity: 0;
-  }
-  26%,
-  88% {
-    opacity: 1;
-  }
-  92%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-chat-tick {
-  animation-name: loop-chat-tick;
-}
-
-/* --- Studio (10 s): a definition is typed, the preview updates, the version is released --- */
-
-.loop-studio {
-  --loop: 10s;
-}
-
-/* Code block reveals line by line (clip from the bottom), then holds. */
-@keyframes loop-studio-code {
-  0%,
-  2% {
-    clip-path: inset(0 0 100% 0);
-  }
-  36%,
-  100% {
-    clip-path: inset(0 0 0 0);
-  }
-}
-.loop-studio-code {
-  animation-name: loop-studio-code;
-  animation-timing-function: steps(9, end);
-}
-
-/* Preview value: the old value fades, the new one settles in. */
-@keyframes loop-studio-old {
-  0%,
-  38% {
-    opacity: 1;
-  }
-  42%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-studio-old {
-  animation-name: loop-studio-old;
-}
-@keyframes loop-studio-new {
-  0%,
-  40% {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  46%,
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-.loop-studio-new {
-  animation-name: loop-studio-new;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* The new version row appears in the history, then its "released" chip. */
-@keyframes loop-studio-row {
-  0%,
-  56% {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  60%,
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-.loop-studio-row {
-  animation-name: loop-studio-row;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-@keyframes loop-studio-chip {
-  0%,
-  70% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  74%,
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-.loop-studio-chip {
-  animation-name: loop-studio-chip;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
 /* --- Sync (12 s): three connections of 4 s, each connected a different way; data follows --- */
 /*                                                                                             */
 /* Per connection (4 s clock, `--loop: 4s`): link or sign-in 0.6–1.1 s, connected ~1.0 s, the   */
@@ -1157,14 +960,6 @@
   }
   .loop .loop-tree-sent {
     opacity: 0;
-  }
-  .loop .loop-chat-q,
-  .loop .loop-studio-code {
-    clip-path: none;
-  }
-  .loop .loop-chat-think,
-  .loop .loop-studio-old {
-    display: none;
   }
   /* Slots: show only the first panel and highlight its row. */
   .loop .loop-slot-3:not([data-first]) {

@@ -1,6 +1,12 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import './loops.css';
+@import './scenes/stage.css';
+@import './scenes/team.css';
+@import './scenes/mcp.css';
+@import './scenes/studio.css';
+@import './scenes/access.css';
+@import './scenes/rollout.css';
 
 @config '../../../tailwind.config.mjs';
 
