@@ -108,4 +108,21 @@ describe('Split in steps mode', () => {
     fireEvent.click(screen.getByRole('button', { name: /02/ }))
     expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({ block: 'center', behavior: 'smooth' })
   })
+
+  it('resiHub as the section scene: the mobile copy and the desktop layer share no duplicate ids', () => {
+    const { container } = inLocale(
+      <SplitBlock blockType="split" header={{ heading: 'X' }} pointStyle="steps" visual={{ type: 'illustration', illustration: 'resiHub' } as never} points={[step(1), step(2)] as never} />,
+    )
+    const ids = [...container.querySelectorAll('[id]')].map((el) => el.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('below lg every step number looks the same; the active ring is an lg-only difference', () => {
+    inLocale(split([step(1), step(2, 'dimensions')]))
+    intersect(screen.getByText('Schritt 2').closest('li')!)
+    const strip = (cls: string) => cls.split(' ').filter((c) => !c.startsWith('lg:')).sort().join(' ')
+    const active = screen.getByRole('button', { name: '02' })
+    const inactive = screen.getByRole('button', { name: '01' })
+    expect(strip(active.className)).toBe(strip(inactive.className))
+  })
 })

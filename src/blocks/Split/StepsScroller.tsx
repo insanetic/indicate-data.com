@@ -101,8 +101,9 @@ export const StepsScroller: React.FC<Props> = ({ steps, scenes, pinned, mediaLef
                   <button
                     aria-label={`${String(i + 1).padStart(2, '0')}`}
                     className={cn(
-                      'relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full border bg-surface font-display text-sm font-medium tnum transition-colors duration-150',
-                      i === active ? 'border-accent text-accent' : 'border-line-strong text-accent lg:text-ink-2',
+                      'relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface font-display text-sm font-medium tnum text-accent transition-colors duration-150',
+                      // Below lg every number reads the same; only from lg does the active one get the ring.
+                      i === active ? 'lg:border-accent' : 'lg:text-ink-2',
                     )}
                     onClick={(e) => e.currentTarget.closest('li')?.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' })}
                     type="button"
