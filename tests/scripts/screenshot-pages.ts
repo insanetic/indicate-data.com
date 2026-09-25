@@ -1,16 +1,16 @@
 /**
  * Full-page screenshots of the seeded pages, desktop and mobile, for before/after comparisons:
- *   pnpm exec tsx scripts/screenshot-pages.ts <out-dir> [base-url]
+ *   pnpm exec tsx tests/scripts/screenshot-pages.ts <out-dir> [base-url]
  * Needs the site running (default http://localhost:3000). Reveal animations are forced visible.
  */
 import { chromium } from '@playwright/test'
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 
-import { presetConsent } from '../tests/helpers/consent'
+import { presetConsent } from '../helpers/consent'
 
 const [outDir, base = 'http://localhost:3000'] = process.argv.slice(2)
-if (!outDir) throw new Error('usage: tsx scripts/screenshot-pages.ts <out-dir> [base-url]')
+if (!outDir) throw new Error('usage: tsx tests/scripts/screenshot-pages.ts <out-dir> [base-url]')
 
 const slugs = ['', 'about', 'pricing', 'contact', 'agent', 'mcp', 'build-with-ai', 'integrations', 'kpi-studio', 'governance', 'dashboards', 'flying-kpis', 'hotels', 'hotel-groups', 'agencies']
 const viewports = { desktop: { width: 1440, height: 900 }, mobile: { width: 390, height: 844 } }
