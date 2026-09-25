@@ -100,13 +100,6 @@ export const labels = {
       scheduled: 'Geplant',
       created: 'Erstellt',
       sent: 'Gesendet',
-      underHood: 'Unter der Haube',
-      log: [
-        ['mews', 'reservations', '1.284 Zeilen', '0,8 s'],
-        ['google-ads', 'campaigns', '312 Zeilen', '0,4 s'],
-        ['re-guest', 'requests', '96 Zeilen', '0,3 s'],
-        ['meta', 'adsets', '48 Zeilen', '0,2 s'],
-      ],
       resi: {
         title: 'Resi bei der Arbeit: Quellen, Kennzahl-Definition und Rechte fließen in jede Antwort',
         role: 'Deine KI-Analystin',
@@ -275,8 +268,6 @@ export const labels = {
         edited: 'von Resi bearbeitet',
         other: 'Sonstige',
       },
-      kpiStudio: 'KPI Studio',
-      weeklyReport: 'Wochenreport',
     },
   },
   en: {
@@ -377,13 +368,6 @@ export const labels = {
       scheduled: 'Scheduled',
       created: 'Created',
       sent: 'Sent',
-      underHood: 'Under the hood',
-      log: [
-        ['mews', 'reservations', '1,284 rows', '0.8 s'],
-        ['google-ads', 'campaigns', '312 rows', '0.4 s'],
-        ['re-guest', 'requests', '96 rows', '0.3 s'],
-        ['meta', 'adsets', '48 rows', '0.2 s'],
-      ],
       resi: {
         title: 'Resi at work: sources, KPI definitions and permissions flow into every answer',
         role: 'Your AI analyst',
@@ -552,8 +536,6 @@ export const labels = {
         edited: 'edited by Resi',
         other: 'Other',
       },
-      kpiStudio: 'KPI Studio',
-      weeklyReport: 'Weekly report',
     },
   },
 } satisfies Record<Locale, unknown>

@@ -16,8 +16,10 @@ export const Scene: React.FC<{
   label: string
   className?: string
   style?: React.CSSProperties
+  /** Seconds of the first exchange to skip when it opens quietly, so the first cycle starts on its first move. */
+  lead?: number
   children: React.ReactNode
-}> = ({ label, className, style, children }) => {
+}> = ({ label, className, style, lead = 0, children }) => {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export const Scene: React.FC<{
       className={cn('scene loop relative select-none pointer-events-none text-left', className)}
       ref={ref}
       role="img"
-      style={{ '--t0': `calc(${BUILD}s + var(--intro, 0s))`, ...style } as React.CSSProperties}
+      style={{ '--t0': `calc(${(BUILD - lead).toFixed(2)}s + var(--intro, 0s))`, ...style } as React.CSSProperties}
     >
       {children}
     </div>

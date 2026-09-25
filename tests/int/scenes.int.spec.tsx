@@ -6,13 +6,14 @@ import { describe, expect, it } from 'vitest'
 
 import { illustrations } from '@/components/Illustrations'
 
-/** The five hero scenes rebuilt on the wired stage, with the stylesheet each one owns. */
+/** The hero scenes rebuilt on the wired stage, with the stylesheet each one owns. */
 const scenes = [
   { key: 'agentChat', file: 'AgentChat.tsx', css: 'team.css' },
   { key: 'mcp', file: 'Mcp.tsx', css: 'mcp.css' },
   { key: 'kpiStudio', file: 'KpiStudio.tsx', css: 'studio.css' },
   { key: 'governance', file: 'Governance.tsx', css: 'access.css' },
   { key: 'templates', file: 'Templates.tsx', css: 'rollout.css' },
+  { key: 'stage', file: 'HotelStage.tsx', css: 'morning.css' },
 ] as const
 
 const root = process.cwd()

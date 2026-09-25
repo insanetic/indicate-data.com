@@ -9,7 +9,7 @@ export const SLOTS = 3
 export const LOOP = SLOT * SLOTS
 
 /** Seconds the hero scenes' build-in takes before their clock starts (see `scenes/stage.css`). */
-export const BUILD = 1.3
+export const BUILD = 1.1
 
 /** Build-in order: `0` is the centrepiece, higher numbers arrive later (40–70 ms apart). */
 export const build = (order: number, extra = 0): React.CSSProperties =>

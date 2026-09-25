@@ -137,7 +137,7 @@ export const KpiStudioIllustration: React.FC<IllustrationProps> = ({ className, 
   )
 
   return (
-    <Scene className={cn('scene-studio w-full', className)} label={c.label}>
+    <Scene className={cn('scene-studio w-full', className)} label={c.label} lead={0.9}>
       <div className="relative flex flex-col items-center xl:block xl:aspect-[2/1] xl:[container-type:inline-size]">
         {/* Desktop wiring: dotted idle lines; per exchange the read lines draw in, the release fans out. */}
         <svg aria-hidden="true" className="absolute inset-0 hidden size-full xl:block" viewBox="0 0 200 100">

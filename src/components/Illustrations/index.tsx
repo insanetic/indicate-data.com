@@ -26,7 +26,7 @@ import { IntegrationsIllustration } from './Integrations'
 import { PortfolioIllustration } from './Portfolio'
 import { SourcesIllustration } from './Sources'
 import { TeamIllustration } from './Team'
-import { HeroStage } from '@/blocks/Hero/Stage'
+import { HotelStageIllustration } from './HotelStage'
 import type { IllustrationKey } from './registry'
 
 import type { Locale } from '@/i18n/config'
@@ -34,7 +34,7 @@ import type { Locale } from '@/i18n/config'
 export type IllustrationProps = { className?: string; locale?: Locale | null }
 
 export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>> = {
-  stage: HeroStage,
+  stage: HotelStageIllustration,
   dashboard: DashboardIllustration,
   agent: AgentIllustration,
   comparison: ComparisonIllustration,

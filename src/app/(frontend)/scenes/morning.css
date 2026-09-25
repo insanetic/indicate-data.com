@@ -1,0 +1,200 @@
+/* --- Hotel stage (12 s, `stage`): the workflow runs behind, the benefits land in front ------ */
+/*                                                                                             */
+/* Percentages are of the 12 s clock (1 s = 8.33 %); `--delay` = slot × 4 s where set. Exchange  */
+/* 1: the lane lights 0.8–1.3 s, the drop reaches the dashboard 1.3–1.7 s, KPIs count and the     */
+/* chart traces 2.0–2.8 s. Exchange 2 (4–8 s): the question is typed 4.15–4.85 s and sent at      */
+/* 4.9 s, Resi answers at 5.75 s and her line lights the pickup widget. Exchange 3 (8–12 s): the   */
+/* schedule fires, the KPI chips lift at 9.3 s and land in the email at 10.4 s, it is delivered   */
+/* at 11.4 s. The chat keeps the last question and answer until exchange 2 asks again.             */
+
+/* Dashboard header: "syncing" while the data arrives, then "updated 07:00". */
+@keyframes loop-morning-syncing {
+  0%,
+  6.5% {
+    opacity: 0;
+  }
+  7.5%,
+  16% {
+    opacity: 1;
+  }
+  17.5%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-morning-syncing {
+  opacity: 0;
+  animation-name: loop-morning-syncing;
+}
+
+@keyframes loop-morning-updated {
+  0%,
+  6.5% {
+    opacity: 1;
+    transform: none;
+  }
+  7.5%,
+  16.5% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  18.5%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-morning-updated {
+  animation-name: loop-morning-updated;
+}
+.loop .loop-morning-updated {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* The sync icon turns while it runs (not on the scene clock). */
+@keyframes morning-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.loop-morning-syncing svg {
+  animation: morning-spin 1s linear infinite;
+}
+
+/* Chat on the whole 12 s clock: the last exchange stays readable until the question returns. */
+
+@keyframes loop-morning-q {
+  0%,
+  29.5% {
+    opacity: 1;
+    transform: none;
+  }
+  31.5% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  31.6%,
+  40.8% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  42.5%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-morning-q {
+  transform-origin: right bottom;
+  animation-name: loop-morning-q;
+}
+
+@keyframes loop-morning-a {
+  0%,
+  29.5% {
+    opacity: 1;
+    transform: none;
+  }
+  31.5% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  31.6%,
+  47.9% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  49.9%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-morning-a {
+  animation-name: loop-morning-a;
+}
+
+/* The input's placeholder steps aside while the question is typed. */
+@keyframes loop-morning-ph {
+  0%,
+  34% {
+    opacity: 1;
+  }
+  34.6%,
+  41.2% {
+    opacity: 0;
+  }
+  42%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-morning-ph {
+  animation-name: loop-morning-ph;
+}
+
+.loop .loop-morning-q,
+.loop .loop-morning-a {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Flying KPIs: a chip lifts off its tile, travels to the email and hands over to its copy there. */
+/* `--dx`/`--dy` are stage units; the stage is a size container, 1 unit = 0.5cqw.                  */
+@keyframes loop-morning-fly {
+  0%,
+  10.8% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  12.5% {
+    opacity: 1;
+    transform: translateY(-0.9cqw) scale(1);
+  }
+  19.5% {
+    opacity: 1;
+    transform: translate(calc(var(--dx) * 0.5cqw), calc(var(--dy) * 0.5cqw)) scale(0.97);
+  }
+  21%,
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--dx) * 0.5cqw), calc(var(--dy) * 0.5cqw)) scale(0.97);
+  }
+}
+.loop-morning-fly {
+  opacity: 0;
+  animation-name: loop-morning-fly;
+}
+.loop .loop-morning-fly {
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* The email's delivery (chips, note, ticks, "delivered"): appears once per exchange 3 like   */
+/* `.loop-late`, but the card stays on stage, so the old delivery fades just before it restarts. */
+@keyframes loop-morning-late {
+  0%,
+  20.5% {
+    opacity: 0;
+    transform: translateY(5px) scale(0.97);
+  }
+  23%,
+  96% {
+    opacity: 1;
+    transform: none;
+  }
+  98.5%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop .loop-morning-late {
+  animation-name: loop-morning-late;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Still frame: the refreshed dashboard, the last answer and the last delivery. */
+  .loop-morning-syncing svg {
+    animation: none;
+  }
+}

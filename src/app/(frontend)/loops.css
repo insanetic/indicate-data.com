@@ -22,29 +22,6 @@
   animation-delay: calc(var(--delay, 0s) + var(--t0, 0s));
 }
 
-/* --- Log lines (hero, 8 s): entries appear one after another, then the log clears --- */
-
-@keyframes loop-log {
-  0%,
-  2% {
-    opacity: 0;
-    transform: translateX(-4px);
-  }
-  5%,
-  86% {
-    opacity: 1;
-    transform: none;
-  }
-  90%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-log {
-  animation-name: loop-log;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
 /* --- Flying KPIs (9 s): the scheduler hits Monday 08:00, Resi adds highlights, three   --- */
 /* recipients receive it by email one after another (`--delay` = recipient × 0.4 s).          */
 

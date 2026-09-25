@@ -5,7 +5,7 @@
 /* Once its observer runs (`data-io`), the scene pauses while offscreen, */
 /* so its clock never runs unseen. On arrival the centrepiece           */
 /* scales in first, the tiles around it follow in `--build` order, the  */
-/* idle wiring draws from the centre, and after `--t0` (1.3 s) the loop */
+/* idle wiring draws from the centre, and after `--t0` (1.1 s) the loop */
 /* keyframes start. Class names here avoid `loop-` on purpose: they run */
 /* once and must not pick up the shared loop timing.                    */
 
