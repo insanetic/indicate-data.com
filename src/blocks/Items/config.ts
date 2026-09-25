@@ -13,8 +13,8 @@ const forStyles =
     styles.includes(((blockData as { style?: ItemStyle } | undefined)?.style || 'points') as ItemStyle)
 
 /**
- * A row of points, cards, numbered steps or numbers. Columns follow the entry count unless set;
- * `panel` puts the row on one rounded surface with hairline dividers.
+ * A row of entries, numbered steps or numbers. Columns follow the entry count unless set;
+ * `panel` puts a row of numbers on one rounded surface with hairline dividers.
  */
 export const Items: Block = {
   slug: 'items',
@@ -33,8 +33,11 @@ export const Items: Block = {
           defaultValue: 'points',
           label: { de: 'Darstellung', en: 'Style' },
           admin: { width: '34%' },
+          // Cards render exactly like points now; the value stays for existing rows but is no longer offered.
+          filterOptions: ({ options, siblingData }) =>
+            options.filter((o) => (typeof o === 'string' ? o : o.value) !== 'cards' || (siblingData as { style?: string })?.style === 'cards'),
           options: [
-            { label: { de: 'Punkte (Icon, Titel, Text)', en: 'Points (icon, title, text)' }, value: 'points' },
+            { label: { de: 'Einträge (Icon, Titel, Text, Link)', en: 'Entries (icon, title, text, link)' }, value: 'points' },
             { label: { de: 'Karten', en: 'Cards' }, value: 'cards' },
             { label: { de: 'Schritte (nummeriert)', en: 'Steps (numbered)' }, value: 'steps' },
             { label: { de: 'Zahlen', en: 'Numbers' }, value: 'stats' },
@@ -59,7 +62,7 @@ export const Items: Block = {
           type: 'select',
           defaultValue: 'none',
           label: { de: 'Rahmen', en: 'Frame' },
-          admin: { width: '22%' },
+          admin: { width: '22%', condition: (_data, siblingData) => siblingData?.style === 'stats' },
           options: [
             { label: { de: 'Ohne', en: 'None' }, value: 'none' },
             { label: { de: 'Gemeinsame Fläche', en: 'Shared panel' }, value: 'panel' },
@@ -112,7 +115,7 @@ export const Items: Block = {
               type: 'select',
               defaultValue: 'sm',
               label: { de: 'Breite', en: 'Width' },
-              admin: { width: '20%', condition: forStyles('cards') },
+              admin: { width: '20%', condition: forStyles('points', 'cards') },
               options: [
                 { label: { de: 'Normal', en: 'Normal' }, value: 'sm' },
                 { label: { de: 'Doppelt', en: 'Double' }, value: 'lg' },
@@ -131,7 +134,7 @@ export const Items: Block = {
           type: 'array',
           maxRows: 5,
           label: { de: 'Stichpunkte (optional)', en: 'Bullet points (optional)' },
-          admin: { condition: forStyles('cards') },
+          admin: { condition: forStyles('points', 'cards') },
           fields: [{ name: 'text', type: 'text', required: true, localized: true, label: { de: 'Punkt', en: 'Point' } }],
         },
         linkGroup({
@@ -140,7 +143,7 @@ export const Items: Block = {
           overrides: {
             maxRows: 1,
             label: { de: 'Link (optional)', en: 'Link (optional)' },
-            admin: { condition: forStyles('cards', 'stats') },
+            admin: { condition: forStyles('points', 'cards', 'stats') },
           },
         }),
       ],

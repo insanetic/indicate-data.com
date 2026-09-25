@@ -13,7 +13,7 @@ export const resolveColumns = (style: ItemStyle, setting: string | null | undefi
 
 // Literal class names so Tailwind finds them.
 
-/** One column, then all N from md (old Steps and Pillars panel). */
+/** One column, then all N from md (old Steps). */
 const fromMd: Record<Columns, string> = {
   2: 'md:grid-cols-2',
   3: 'md:grid-cols-3',
@@ -37,9 +37,9 @@ const twoThenLg: Record<Columns, string> = {
   5: 'sm:grid-cols-2 lg:grid-cols-5',
 }
 
-/** Grid columns per style and frame, so each style keeps the breakpoints of the block it replaces. */
-export const gridClasses = (style: ItemStyle, panel: boolean, columns: Columns): string => {
-  if (style === 'steps' || (panel && (style === 'cards' || style === 'points'))) return fromMd[columns]
+/** Grid columns per style, so each style keeps the breakpoints of the block it replaces. */
+export const gridClasses = (style: ItemStyle, columns: Columns): string => {
+  if (style === 'steps') return fromMd[columns]
   if (style === 'cards') return cardColumns[columns]
   return twoThenLg[columns]
 }

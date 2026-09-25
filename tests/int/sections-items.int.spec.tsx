@@ -49,27 +49,22 @@ describe('resolveColumns', () => {
 describe('gridClasses', () => {
   it.each([
     // Steps: three across from md, as the old Steps block.
-    ['steps', false, 2, 'md:grid-cols-2'],
-    ['steps', false, 3, 'md:grid-cols-3'],
-    ['steps', true, 4, 'md:grid-cols-4'],
-    ['steps', false, 5, 'md:grid-cols-5'],
-    // Panel cells (Pillars) go straight from one column to N at md.
-    ['cards', true, 3, 'md:grid-cols-3'],
-    ['cards', true, 4, 'md:grid-cols-4'],
-    ['points', true, 3, 'md:grid-cols-3'],
-    // Separate cards follow the old CardGrid layouts.
-    ['cards', false, 2, 'sm:grid-cols-2'],
-    ['cards', false, 3, 'md:grid-cols-3'],
-    ['cards', false, 4, 'sm:grid-cols-2 lg:grid-cols-4'],
-    ['cards', false, 5, 'sm:grid-cols-2 lg:grid-cols-5'],
-    // Points without a panel (FeatureStory) and numbers (Pillars tiles) keep two on small screens.
-    ['points', false, 3, 'sm:grid-cols-2 lg:grid-cols-3'],
-    ['points', false, 4, 'sm:grid-cols-2 lg:grid-cols-4'],
-    ['stats', false, 3, 'sm:grid-cols-2 lg:grid-cols-3'],
-    ['stats', true, 5, 'sm:grid-cols-2 lg:grid-cols-5'],
-    ['stats', false, 2, 'sm:grid-cols-2'],
-  ] as const)('%s (panel %s, %i columns) → %s', (style, panel, columns, expected) => {
-    expect(gridClasses(style, panel, columns)).toBe(expected)
+    ['steps', 2, 'md:grid-cols-2'],
+    ['steps', 3, 'md:grid-cols-3'],
+    ['steps', 5, 'md:grid-cols-5'],
+    // Cards follow the old CardGrid layouts.
+    ['cards', 2, 'sm:grid-cols-2'],
+    ['cards', 3, 'md:grid-cols-3'],
+    ['cards', 4, 'sm:grid-cols-2 lg:grid-cols-4'],
+    ['cards', 5, 'sm:grid-cols-2 lg:grid-cols-5'],
+    // Points and numbers keep two on small screens.
+    ['points', 3, 'sm:grid-cols-2 lg:grid-cols-3'],
+    ['points', 4, 'sm:grid-cols-2 lg:grid-cols-4'],
+    ['stats', 3, 'sm:grid-cols-2 lg:grid-cols-3'],
+    ['stats', 5, 'sm:grid-cols-2 lg:grid-cols-5'],
+    ['stats', 2, 'sm:grid-cols-2'],
+  ] as const)('%s with %i columns → %s', (style, columns, expected) => {
+    expect(gridClasses(style, columns)).toBe(expected)
   })
 })
 
@@ -140,17 +135,22 @@ describe('ItemsBlock', () => {
     expect(screen.getByRole('link', { name: 'Mehr erfahren' })).toBeTruthy()
   })
 
-  it('panel frame puts the row on one rounded surface', () => {
-    const { container } = inLocale(<ItemsBlock blockType="items" frame="panel" items={rows(3)} style="cards" />)
-    expect(container.querySelector('[data-style="cards"]')?.className).toContain('rounded-[1.25rem]')
+  it('stats: panel frame puts the row on one rounded surface', () => {
+    const { container } = inLocale(<ItemsBlock blockType="items" frame="panel" items={[{ id: 's', value: '13', title: 'Monate' }]} style="stats" />)
+    expect(container.querySelector('[data-style="stats"]')?.className).toContain('rounded-[1.25rem]')
   })
 
-  it.each(['cards', 'points'] as const)('%s in a panel: hairlines turn vertical from md', (style) => {
-    const { container } = inLocale(<ItemsBlock blockType="items" frame="panel" items={rows(3)} style={style} />)
-    const list = container.querySelector('ul')!.className
-    expect(list).toContain('md:grid-cols-3')
-    expect(list).toContain('md:divide-x md:divide-y-0')
-    expect(list).not.toContain('lg:divide-x')
+  it.each(['cards', 'points'] as const)('%s: one shape, no surface or border even with a panel frame, icon above the title', (style) => {
+    const { container } = inLocale(
+      <ItemsBlock blockType="items" frame="panel" items={[{ id: 'i', icon: 'zap', title: 'Schnell', text: 'Text' }]} style={style} />,
+    )
+    const wrapper = container.querySelector(`[data-style="${style}"]`)!.className
+    expect(wrapper).not.toContain('rounded')
+    expect(wrapper).not.toContain('bg-surface')
+    const item = container.querySelector('li')!
+    expect(item.className).not.toMatch(/card-surface|border|bg-/)
+    expect(item.className).toContain('flex-col')
+    expect(item.firstElementChild?.tagName.toLowerCase()).toBe('svg')
   })
 })
 

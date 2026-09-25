@@ -6,7 +6,8 @@ import type { Locale } from '@/i18n/config'
 import { CMSLink } from '@/components/Link'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Visual } from '@/components/Illustrations'
-import { Icon, IconTile } from '@/components/Icon'
+import { Feature } from '@/components/Feature'
+import { Icon } from '@/components/Icon'
 import { FeatureTabsClient, type TabData } from './Client'
 
 export const FeatureTabsBlock: React.FC<Props & { locale?: Locale }> = ({ header, tabs, locale }) => {
@@ -24,15 +25,9 @@ export const FeatureTabsBlock: React.FC<Props & { locale?: Locale }> = ({ header
           {tab.description && <p className="type-body text-ink-2 pretty max-w-[52ch]">{tab.description}</p>}
         </div>
         {(tab.points || []).length > 0 && (
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-6">
             {tab.points!.map((p, pi) => (
-              <li className="flex gap-4" key={p.id || pi}>
-                <IconTile name={p.icon} tone="neutral" />
-                <div className="flex flex-col gap-0.5 pt-1">
-                  <p className="font-medium text-ink">{p.title}</p>
-                  {p.text && <p className="type-small text-ink-2 pretty">{p.text}</p>}
-                </div>
-              </li>
+              <Feature icon={p.icon} key={p.id || pi} text={p.text} title={p.title} />
             ))}
           </ul>
         )}

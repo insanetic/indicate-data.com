@@ -4,7 +4,6 @@ import type { ItemsBlock as Props } from '@/payload-types'
 
 import { cn } from '@/utilities/ui'
 
-import { Cards } from './Cards'
 import { gridClasses, resolveColumns, type ItemStyle } from './columns'
 import { PointList } from './Points'
 import { Stats } from './Stats'
@@ -18,15 +17,16 @@ export const ItemsBlock: React.FC<Props> = ({ style, columns, frame, divider, it
   const kind: ItemStyle = style || 'points'
   const list = (items || []).filter((i) => i.title)
   if (list.length === 0) return null
-  const panel = frame === 'panel'
-  const props: StyleProps = { items: list, grid: gridClasses(kind, panel, resolveColumns(kind, columns, list.length)), panel }
+  // Only numbers sit on a shared panel; points and cards never get a surface of their own.
+  const panel = frame === 'panel' && kind === 'stats'
+  const props: StyleProps = { items: list, grid: gridClasses(kind, resolveColumns(kind, columns, list.length)), panel }
   return (
     <div className="container">
       <div
         className={cn(divider && 'border-t border-line pt-8', panel && 'overflow-hidden rounded-[1.25rem] border border-line bg-surface-2')}
         data-style={kind}
       >
-        {kind === 'cards' ? <Cards {...props} /> : kind === 'steps' ? <Steps {...props} /> : kind === 'stats' ? <Stats {...props} /> : <PointList {...props} />}
+        {kind === 'steps' ? <Steps {...props} /> : kind === 'stats' ? <Stats {...props} /> : <PointList {...props} />}
       </div>
     </div>
   )
