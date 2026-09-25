@@ -685,13 +685,13 @@ export const homePage = (t: T, refs: Refs): SeedPage => ({
         { value: '30', suffix: '+', width: 'third', label: t('Anbindungen an Hotel- und Marketing-Systeme', 'connections to hotel and marketing systems'), links: [subpage(refs, 'integrations', t('Alle ansehen', 'See all'), 'link')] },
         {
           width: 'fifth',
-          label: t('Automatischer, inkrementeller Sync', 'Automatic, incremental sync'),
-          text: t('Nur was sich geändert hat, ganz von selbst. Keine Exporte, keine Uploads.', 'Only what changed, on its own. No exports, no uploads.'),
+          label: t('Gehostet in Deutschland', 'Hosted in Germany'),
+          text: t('DSGVO-konform, auf Servern in Deutschland. Deine Daten bleiben deine Daten.', 'GDPR-compliant, on servers in Germany. Your data stays yours.'),
         },
         {
           width: 'fifth',
-          label: t('Sicherer KI-Chat mit deinen Daten', 'Secure AI chat with your data'),
-          text: t('DSGVO-konform, gehostet in Deutschland. Gästedaten bleiben drin, bis du sie freigibst.', 'GDPR-compliant, hosted in Germany. Guest data stays in until you release it.'),
+          label: t('Frag Resi nach deinen Zahlen', 'Ask Resi about your numbers'),
+          text: t('Auslastung, ADR, Kampagnen: Resi antwortet in Sekunden, die Quelle gleich dabei.', 'Occupancy, ADR, campaigns: Resi answers in seconds, with the source right next to it.'),
         },
         {
           width: 'fifth',
