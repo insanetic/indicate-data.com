@@ -1,0 +1,125 @@
+/* --- Widgets (12 s, `dashboard`): every connection brings its KPIs, Resi builds the widgets --- */
+/*                                                                                             */
+/* Percentages are of the 12 s clock (1 s = 8.33 %). Each exchange: the connection and its KPI  */
+/* chips light at 0.9 s, the line runs down to Resi's mark 1.0–1.5 s, the widget lands at       */
+/* 1.6–2.0 s and her ring lights it; its chart traces, bars grow and the number counts on the   */
+/* shared `.loop-hub-*` phases. Widgets stay until 11.5 s, then the canvas clears for the next  */
+/* cycle. The palette switches to the property's colours at 9.2 s (`.loop-tri-tint`). Resting    */
+/* styles (reduced motion) are the finished dashboard.                                          */
+
+/* A widget lands in its exchange and stays until the canvas clears; one keyframe per slot so  */
+/* every widget leaves together at the end of the loop.                                         */
+@keyframes loop-widgets-in-0 {
+  0%,
+  13.3% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  16.7%,
+  95.8% {
+    opacity: 1;
+    transform: none;
+  }
+  98.3%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes loop-widgets-in-1 {
+  0%,
+  46.7% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  50%,
+  95.8% {
+    opacity: 1;
+    transform: none;
+  }
+  98.3%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes loop-widgets-in-2 {
+  0%,
+  80% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  83.3%,
+  95.8% {
+    opacity: 1;
+    transform: none;
+  }
+  98.3%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-widgets-in-0 {
+  animation-name: loop-widgets-in-0;
+}
+.loop-widgets-in-1 {
+  animation-name: loop-widgets-in-1;
+}
+.loop-widgets-in-2 {
+  animation-name: loop-widgets-in-2;
+}
+.loop .loop-widgets-in-0,
+.loop .loop-widgets-in-1,
+.loop .loop-widgets-in-2 {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* A connection's KPI chips light while its line runs (same phases as `.loop-hub-lit`). */
+@keyframes loop-widgets-chip {
+  0%,
+  7.6% {
+    opacity: 0;
+  }
+  9%,
+  30.4% {
+    opacity: 1;
+  }
+  32.9%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-widgets-chip {
+  opacity: 0;
+  animation-name: loop-widgets-chip;
+}
+
+/* The area under the revenue line shows once the line has traced (`.loop-hub-trace` phases). */
+@keyframes loop-widgets-area {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  24%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-widgets-area {
+  animation-name: loop-widgets-area;
+}
+.loop .loop-widgets-area {
+  animation-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The finished dashboard, in the property's colours. */
+  .loop.scene-widgets .loop-tri-tint {
+    --tint: var(--s2);
+  }
+  .loop.scene-widgets .loop-hub-lit:not([data-slot='0']),
+  .loop.scene-widgets .loop-hub-glow {
+    opacity: 0;
+  }
+}

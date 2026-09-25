@@ -12,7 +12,6 @@ export const labels = {
     plan: 'Plan',
     lastYear: 'Vorjahr',
     thisYear: 'Dieses Jahr',
-    sourcesOk: 'Alle 4 Datenquellen aktuell',
     healthy: 'Gesund',
     syncing: 'Aktualisiert',
     question: 'Warum ist der Pickup diese Woche höher?',
@@ -226,7 +225,6 @@ export const labels = {
       },
       sync: {
         title: 'Sync: selbst verbinden oder einen sicheren Link an Kollegin oder Kunde schicken, die Historie wird geladen, danach nur noch Neues, Duplikate entfernt und Daten bereinigt, bereit für Dashboards, Resi und MCP',
-        busy: 'Aktualisiert …',
         connect: 'Verbinden',
         noPassword: 'Du siehst kein Passwort',
         methods: [
@@ -280,7 +278,6 @@ export const labels = {
     plan: 'Plan',
     lastYear: 'Last year',
     thisYear: 'This year',
-    sourcesOk: 'All 4 sources up to date',
     healthy: 'Healthy',
     syncing: 'Synced',
     question: 'Why is pickup higher this week?',
@@ -494,7 +491,6 @@ export const labels = {
       },
       sync: {
         title: 'Sync: connect it yourself or send a secure link to a colleague or client, the history loads, then only what is new, duplicates removed and data cleansed, ready for dashboards, Resi and MCP',
-        busy: 'Refreshing …',
         connect: 'Connect',
         noPassword: 'You never see a password',
         methods: [

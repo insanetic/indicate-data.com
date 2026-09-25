@@ -14,6 +14,7 @@ const scenes = [
   { key: 'governance', file: 'Governance.tsx', css: 'access.css' },
   { key: 'templates', file: 'Templates.tsx', css: 'rollout.css' },
   { key: 'stage', file: 'HotelStage.tsx', css: 'morning.css' },
+  { key: 'dashboard', file: 'Dashboard.tsx', css: 'widgets.css' },
 ] as const
 
 const root = process.cwd()
