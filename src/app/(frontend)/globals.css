@@ -1108,3 +1108,10 @@ dialog.consent-dialog[open] {
 dialog.consent-dialog::backdrop {
   background: oklch(0.145 0.005 260 / 0.4);
 }
+
+/* Scene layers that are not shown (Split steps) stop every animation inside them. */
+[data-paused] *,
+[data-paused] *::before,
+[data-paused] *::after {
+  animation-play-state: paused;
+}
