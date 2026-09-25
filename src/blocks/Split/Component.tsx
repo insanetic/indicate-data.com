@@ -9,7 +9,12 @@ import { Visual } from '@/components/Illustrations'
 import { Feature } from '@/components/Feature'
 import { cn } from '@/utilities/ui'
 
-export const SplitBlock: React.FC<Props & { locale?: Locale; isFirst?: boolean }> = ({ header, mediaSide, visual, points, links, locale, isFirst }) => {
+import { SplitSteps } from './Steps'
+
+export const SplitBlock: React.FC<Props & { locale?: Locale; isFirst?: boolean }> = (props) => {
+  if (props.pointStyle === 'steps') return <SplitSteps {...props} />
+
+  const { header, mediaSide, visual, points, links, locale, isFirst } = props
   const mediaLeft = mediaSide === 'left'
   const list = (points || []).filter((p) => p.title)
   return (
