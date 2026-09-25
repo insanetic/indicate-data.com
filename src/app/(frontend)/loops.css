@@ -1358,7 +1358,9 @@
   opacity: 0;
   animation-name: loop-hub-ring;
 }
-.loop-hub-ring::before {
+.loop-hub-ring::before,
+.loop-build-ring::before,
+.resi-halo::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -1800,7 +1802,9 @@
 @media (prefers-reduced-motion: reduce) {
   .hub-dots,
   .hub-float,
-  .loop-hub-ring::before {
+  .loop-hub-ring::before,
+  .loop-build-ring::before,
+  .resi-halo::before {
     animation: none;
   }
   /* The first exchange, finished: its question, answer, lit sources, lines and card. */
@@ -2020,30 +2024,6 @@
   opacity: 0;
   animation-name: loop-build-ring;
 }
-.loop-build-ring::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: conic-gradient(
-    from var(--resi-angle),
-    transparent 0 50%,
-    var(--brand-blue) 70%,
-    var(--resi-teal) 85%,
-    var(--resi-mint) 97%,
-    transparent 100%
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: resi-spin 1.6s linear infinite;
-}
 
 /* One pulse along the wire per widget, just before it lands. */
 @keyframes loop-build-pulse {
@@ -2217,5 +2197,146 @@
   .loop .loop-build-type,
   .loop .loop-build-spinner {
     opacity: 0;
+  }
+}
+
+/* --- Interactive chat (AgentShowcase): one-shot motion, driven by React state ------------ */
+
+/* The working light around the chat (the ring is shared with `.loop-hub-ring`). */
+.resi-halo {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.resi-halo[data-on] {
+  opacity: 1;
+}
+
+@keyframes chat-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.chat-rise {
+  animation: chat-rise 320ms cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+@keyframes chat-fade {
+  from {
+    opacity: 0;
+  }
+}
+.chat-fade-late {
+  animation: chat-fade 500ms ease 450ms both;
+}
+
+@keyframes chat-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+.chat-pop {
+  animation: chat-pop 260ms cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+/* The active question lights up, then settles to its border. */
+@keyframes chat-lit {
+  0% {
+    opacity: 0;
+  }
+  15%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.35;
+  }
+}
+.chat-lit {
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, transparent);
+  animation: chat-lit 1.6s ease both;
+}
+
+/* Pulse along the wire from the question to the chat, once per send. */
+@keyframes chat-pulse {
+  from {
+    stroke-dashoffset: 0.3;
+  }
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+.chat-pulse {
+  stroke-dasharray: 0.3 2;
+  animation: chat-pulse 500ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+/* Autoplay: time until the next question. */
+@keyframes chat-progress {
+  from {
+    transform: scaleX(0);
+  }
+}
+.chat-progress {
+  transform-origin: left;
+  animation: chat-progress var(--hold, 4s) linear both;
+}
+
+/* Charts inside an answer build once. */
+@keyframes chat-grow {
+  from {
+    transform: scaleY(0.06);
+  }
+}
+.chat-grow {
+  transform-origin: bottom;
+  animation: chat-grow 700ms cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+@keyframes chat-trace {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.chat-trace {
+  stroke-dasharray: 1;
+  animation: chat-trace 900ms cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@keyframes chat-spinin {
+  from {
+    opacity: 0;
+    transform: rotate(-120deg) scale(0.85);
+  }
+}
+.chat-spinin {
+  animation: chat-spinin 800ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-rise,
+  .chat-fade-late,
+  .chat-pop,
+  .chat-lit,
+  .chat-pulse,
+  .chat-grow,
+  .chat-trace,
+  .chat-spinin {
+    animation: none;
+  }
+  .chat-lit {
+    opacity: 0.35;
+  }
+  .chat-pulse {
+    display: none;
   }
 }
