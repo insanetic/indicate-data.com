@@ -44,7 +44,7 @@ const HOLD = 4200
 const copy = {
   de: {
     you: 'Du',
-    role: 'Deine KI-Agentin',
+    role: 'Deine KI-Analystin',
     chips: 'Beispielfragen',
     channels: 'Resi, in deinem Chat',
     connected: 'Indicate MCP · verbunden',
@@ -61,7 +61,7 @@ const copy = {
   },
   en: {
     you: 'You',
-    role: 'Your AI agent',
+    role: 'Your AI analyst',
     chips: 'Example questions',
     channels: 'Resi, in your chat',
     connected: 'Indicate MCP · connected',
@@ -85,8 +85,8 @@ const toolCalls = ['indicate · list_kpis', 'indicate · check_access', 'indicat
  * chat while Resi works through three steps (in the app in plain words, in Claude, ChatGPT
  * or Langdock as Indicate MCP tool calls); the answer streams in, the KPI counts up and the
  * chart builds. While in view it plays the example questions in turn (a thin bar shows when
- * the next one comes) until the visitor picks a question or a surface. Reduced motion shows
- * each answer finished and does not autoplay.
+ * the next one comes); picking a question or a surface plays it at once and the cycle carries
+ * on from there. Reduced motion shows each answer finished and does not autoplay.
  */
 export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: string[] }> = ({
   prompts,
@@ -102,7 +102,6 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
   const [words, setWords] = useState(0)
   const [pressed, setPressed] = useState(false)
   const [run, setRun] = useState(0)
-  const [auto, setAuto] = useState(true)
   const [inView, setInView] = useState(false)
   const timers = useRef<number[]>([])
   const rootRef = useRef<HTMLDivElement>(null)
@@ -181,17 +180,14 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
     }
   }, [])
   useEffect(() => {
-    if (!auto || reduced || !inView || phase !== 'done' || prompts.length < 2) return
+    if (reduced || !inView || phase !== 'done' || prompts.length < 2) return
     const id = window.setTimeout(() => play((active + 1) % prompts.length), HOLD)
     return () => window.clearTimeout(id)
-  }, [auto, reduced, inView, phase, active, prompts.length, play])
+  }, [reduced, inView, phase, active, prompts.length, play])
 
-  const pick = (index: number) => {
-    setAuto(false)
-    play(index)
-  }
+  // A click plays that question now; autoplay then carries on from there.
+  const pick = (index: number) => play(index)
   const pickChannel = (index: number) => {
-    setAuto(false)
     setChannel(index)
     play(active)
   }
@@ -228,7 +224,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
                 <button
                   aria-pressed={on}
                   className={cn(
-                    'pressable relative flex w-[16rem] shrink-0 snap-start items-start gap-3 rounded-[0.875rem] border px-3.5 py-3 text-left type-small transition-colors duration-150 lg:w-auto',
+                    'pressable relative flex w-[16rem] shrink-0 snap-start rounded-[0.875rem] border px-3.5 py-3 text-left type-small transition-colors duration-150 lg:w-auto',
                     on
                       ? 'border-line-strong bg-surface-2 text-ink'
                       : 'border-line bg-surface text-ink-2 hover:border-line-strong hover:text-ink',
@@ -244,16 +240,8 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
                       key={`lit-${run}`}
                     />
                   )}
-                  <span
-                    className={cn(
-                      'mt-px inline-flex size-5 shrink-0 items-center justify-center rounded-md text-[0.6875rem] font-semibold tnum',
-                      on ? 'bg-brand-blue text-white' : 'bg-surface-3 text-ink-3',
-                    )}
-                  >
-                    {i + 1}
-                  </span>
                   <span className="pretty">{p.question}</span>
-                  {on && auto && done && !reduced && (
+                  {on && done && !reduced && (
                     <span
                       aria-hidden="true"
                       className="absolute inset-x-3.5 bottom-1.5 h-0.5 overflow-hidden rounded-full bg-line"
