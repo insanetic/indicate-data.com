@@ -240,11 +240,12 @@
 
 /* A short yellow pulse runs the route just ahead of the plane; it rests beyond both ends. */
 @keyframes loop-plane-comet {
+  /* Leaves a beat before the plane, so it always runs ahead of the nose. */
   0%,
-  55% {
+  52% {
     stroke-dashoffset: var(--comet-from);
   }
-  76%,
+  73%,
   100% {
     stroke-dashoffset: -1.05;
   }

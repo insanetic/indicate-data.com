@@ -42,16 +42,21 @@ const M: Pt = { x: E.x, y: E.y + 3 }
 /** The open flap points up; closing it is a reflection across the top edge. */
 const M_OPEN: Pt = { x: E.x, y: A.y - (M.y - A.y) }
 
-/** The paper plane the envelope folds into, nose to the right: two wings, a keel and its fold. */
+/**
+ * The paper plane the envelope folds into, seen from above with the nose to the right: an
+ * arrowhead with a notch at the back, creased from the notch to the nose (upper half light,
+ * lower half blue), and a thin fold along the crease inside the lower half. Nothing sticks out
+ * of the outline.
+ */
 const P = { x: 200, y: 60 }
 const at = (x: number, y: number): Pt => ({ x: P.x + x, y: P.y + y })
-const TAIL_TOP = at(-24, -16)
-const NOSE = at(26, -2)
-const TAIL_LOW = at(-22, 16)
-const CREASE = at(-10, 3)
-const KEEL = at(-4, 12)
-/** Inside the keel, so the fourth facet folds away out of sight. */
-const TUCK = at(-12, 10)
+const TAIL_TOP = at(-22, -15)
+const NOSE = at(24, 0)
+const TAIL_LOW = at(-22, 15)
+const NOTCH = at(-12, 0)
+const FOLD_TIP = at(-6, 6)
+/** Inside the fold, so the fourth facet folds away out of sight. */
+const TUCK = at(2, 2)
 
 type Tri = [Pt, Pt, Pt]
 
@@ -87,11 +92,11 @@ function affine(from: Tri, to: Tri): string {
 
 /** Envelope facet → plane facet; `open` is the facet's pose before the flap closes. */
 const facets: { tri: Tri; plane: Tri; open?: Tri; envelope: string; wing: string }[] = [
-  { tri: [A, B, M], plane: [TAIL_TOP, NOSE, CREASE], open: [A, B, M_OPEN], envelope: 'var(--surface-3)', wing: 'var(--ink)' },
-  { tri: [B, C, M], plane: [NOSE, TAIL_LOW, CREASE], envelope: 'var(--surface-2)', wing: 'var(--brand-blue)' },
-  // Corners in the same turning order as the envelope's, so no in-between pose goes flat.
-  { tri: [C, D, M], plane: [TAIL_LOW, CREASE, KEEL], envelope: 'var(--surface-2)', wing: 'color-mix(in oklab, var(--brand-blue) 55%, var(--surface))' },
-  { tri: [D, A, M], plane: [KEEL, TUCK, CREASE], envelope: 'var(--surface-2)', wing: 'color-mix(in oklab, var(--brand-blue) 55%, var(--surface))' },
+  // Corner orders keep every in-between triangle turning the same way, so no pose goes flat.
+  { tri: [A, B, M], plane: [TAIL_TOP, NOSE, NOTCH], open: [A, B, M_OPEN], envelope: 'var(--surface-3)', wing: 'var(--ink)' },
+  { tri: [B, C, M], plane: [NOTCH, NOSE, TAIL_LOW], envelope: 'var(--surface-2)', wing: 'var(--brand-blue)' },
+  { tri: [C, D, M], plane: [NOSE, FOLD_TIP, NOTCH], envelope: 'var(--surface-2)', wing: 'color-mix(in oklab, var(--brand-blue) 55%, var(--surface))' },
+  { tri: [D, A, M], plane: [FOLD_TIP, NOTCH, TUCK], envelope: 'var(--surface-2)', wing: 'color-mix(in oklab, var(--brand-blue) 55%, var(--surface))' },
 ]
 /** The fold in between: the facet part-way to the plane (smoothstep), so the matrices stay close. */
 const FOLD = [0.074, 0.259, 0.5, 0.741, 0.926]
@@ -106,7 +111,7 @@ const route = `M ${ROUTE[0].x} ${ROUTE[0].y} C ${ROUTE[1].x} ${ROUTE[1].y} ${ROU
 
 /**
  * The flight, sampled along the route: at each step the nose sits on the curve, turned along
- * its direction and a little smaller. Steps are even in time, eased in distance (smoothstep),
+ * its direction (damped) and a little smaller. Steps are even in time, eased in distance (smoothstep),
  * like the trail that draws behind it; the rotation turns around the nose.
  */
 const FLY_STEPS = 6
@@ -119,7 +124,8 @@ const flight = Array.from({ length: FLY_STEPS }, (_, i) => {
   const y = m ** 3 * p0.y + 3 * m ** 2 * t * p1.y + 3 * m * t ** 2 * p2.y + t ** 3 * p3.y
   const dx = 3 * m ** 2 * (p1.x - p0.x) + 6 * m * t * (p2.x - p1.x) + 3 * t ** 2 * (p3.x - p2.x)
   const dy = 3 * m ** 2 * (p1.y - p0.y) + 6 * m * t * (p2.y - p1.y) + 3 * t ** 2 * (p3.y - p2.y)
-  const turn = (Math.atan2(dy, dx) * 180) / Math.PI - (Math.atan2(NOSE.y - P.y, NOSE.x - P.x) * 180) / Math.PI
+  // It banks with 60 % of the route's slope: at the full angle the top-down arrowhead reads as squashed.
+  const turn = 0.6 * ((Math.atan2(dy, dx) * 180) / Math.PI - (Math.atan2(NOSE.y - P.y, NOSE.x - P.x) * 180) / Math.PI)
   return `translate(${(x - NOSE.x).toFixed(2)}px, ${(y - NOSE.y).toFixed(2)}px) rotate(${turn.toFixed(2)}deg) scale(${(1 - 0.45 * t).toFixed(3)})`
 })
 
