@@ -22,7 +22,7 @@ export const illustrationOptions = [
   { value: 'kpiStudio', label: { de: 'KPI Studio: Definition, Vorschau, Version (Loop)', en: 'KPI Studio: definition, preview, version (loop)' } },
   { value: 'templates', label: { de: 'Vorlagen: Template anwenden (Loop)', en: 'Templates: applying a template (loop)' } },
   { value: 'governance', label: { de: 'Governance: Spaces, Rollen, Audit-Log (Loop)', en: 'Governance: spaces, roles, audit log (loop)' } },
-  { value: 'sync', label: { de: 'Sync: Verbindungen und Historie (Loop)', en: 'Sync: connections and history (loop)' } },
+  { value: 'sync', label: { de: 'Sync: verbinden oder per Link verbinden lassen, Historie, Dedupe & Cleanse (Loop)', en: 'Sync: connect or send a link, history, dedupe & cleanse (loop)' } },
   { value: 'semanticLayer', label: { de: 'Semantic Layer: Katalog, Definition, überall gleich (Loop)', en: 'Semantic layer: catalogue, definition, same everywhere (loop)' } },
   { value: 'dimensions', label: { de: 'Dimensionen: Gruppierung und Perspektive (Loop)', en: 'Dimensions: grouping and perspective (loop)' } },
   { value: 'collections', label: { de: 'KPI-Sammlung: freigeben und teilen (Loop)', en: 'KPI collection: release and share (loop)' } },

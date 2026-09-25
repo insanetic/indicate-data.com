@@ -978,68 +978,148 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* --- Sync (8 s): connections refresh one after another; the history bar fills --- */
+/* --- Sync (12 s): three connections of 4 s, each connected a different way; data follows --- */
+/*                                                                                             */
+/* Per connection (4 s clock, `--loop: 4s`): link or sign-in 0.6–1.1 s, connected ~1.0 s, the   */
+/* history burst leaves the source 1.3–2.0 s, increments 2.3–3.3 s. A packet crosses the wire   */
+/* (`--run` units) in 1 s at constant speed and is under the dedupe & cleanse step at 16.4 %    */
+/* of the clock (42 of 64 units, see Sync.tsx); `--delay` = departure.                         */
 
 .loop-sync {
-  --loop: 8s;
+  --loop: 12s;
 }
 
-/* Status chip: "syncing" pulse then "healthy". `--delay` staggers rows. */
-@keyframes loop-sync-row {
-  0%,
-  4% {
-    background-color: var(--brand-yellow-soft);
+/* Rows that pass through untouched. */
+@keyframes loop-sync-pkt {
+  0% {
+    transform: none;
+    opacity: 0;
   }
-  16%,
-  100% {
-    background-color: transparent;
-  }
-}
-.loop-sync-row {
-  animation-name: loop-sync-row;
-}
-@keyframes loop-sync-busy {
-  0%,
-  4% {
+  1.5%,
+  23% {
     opacity: 1;
   }
-  16%,
+  25%,
   100% {
+    transform: translateX(var(--run));
     opacity: 0;
   }
 }
-.loop-sync-busy {
-  animation-name: loop-sync-busy;
+.loop-sync-pkt {
+  opacity: 0;
+  animation-name: loop-sync-pkt;
 }
-@keyframes loop-sync-ok {
-  0%,
-  12% {
+
+/* Duplicates stop inside the step. */
+@keyframes loop-sync-dup {
+  0% {
+    transform: none;
     opacity: 0;
   }
-  16%,
+  1.5%,
+  16% {
+    opacity: 1;
+  }
+  16.4%,
   100% {
+    transform: translateX(calc(var(--run) * 0.656));
+    opacity: 0;
+  }
+}
+.loop-sync-dup {
+  opacity: 0;
+  animation-name: loop-sync-dup;
+}
+
+/* Messy rows go in hollow and come out solid. */
+@keyframes loop-sync-dirty {
+  0% {
+    transform: none;
+    opacity: 0;
+  }
+  1.5%,
+  16% {
+    opacity: 1;
+  }
+  16.4% {
+    opacity: 0;
+  }
+  25%,
+  100% {
+    transform: translateX(var(--run));
+    opacity: 0;
+  }
+}
+.loop-sync-dirty {
+  opacity: 0;
+  animation-name: loop-sync-dirty;
+}
+@keyframes loop-sync-clean {
+  0%,
+  16.4% {
+    transform: none;
+    opacity: 0;
+  }
+  16.4% {
+    transform: translateX(calc(var(--run) * 0.656));
+  }
+  16.8%,
+  23% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    transform: translateX(var(--run));
+    opacity: 0;
+  }
+}
+.loop-sync-clean {
+  opacity: 0;
+  animation-name: loop-sync-clean;
+}
+
+/* The history bar: the old one clears as the next source connects, then fills with the burst. */
+@keyframes loop-sync-fill {
+  0%,
+  4% {
+    transform: none;
+    opacity: 1;
+  }
+  7% {
+    transform: none;
+    opacity: 0;
+  }
+  8%,
+  34% {
+    transform: scaleX(0.03);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  56%,
+  100% {
+    transform: none;
     opacity: 1;
   }
 }
-.loop-sync-ok {
-  animation-name: loop-sync-ok;
-}
-
-/* History bar fills from the first day to today. */
-@keyframes loop-sync-bar {
-  0%,
-  6% {
-    transform: scaleX(0.04);
-  }
-  60%,
-  100% {
-    transform: scaleX(1);
-  }
-}
-.loop-sync-bar {
+.loop-sync-fill {
   transform-origin: left;
-  animation-name: loop-sync-bar;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  animation-name: loop-sync-fill;
+}
+
+/* Status that gives way when `.loop-late` arrives (waiting → connected). */
+@keyframes loop-early {
+  0%,
+  20.5% {
+    opacity: 1;
+  }
+  23%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-early {
+  opacity: 0;
+  animation-name: loop-early;
 }
 
 /* Centre tile: a light in the logo's three colours travels around the white tile on a conic gradient. */
@@ -1083,12 +1163,8 @@
     clip-path: none;
   }
   .loop .loop-chat-think,
-  .loop .loop-sync-busy,
   .loop .loop-studio-old {
     display: none;
-  }
-  .loop .loop-sync-bar {
-    transform: none;
   }
   /* Slots: show only the first panel and highlight its row. */
   .loop .loop-slot-3:not([data-first]) {
