@@ -690,8 +690,8 @@ export const homePage = (t: T, refs: Refs): SeedPage => ({
         },
         {
           width: 'fifth',
-          label: t('Frag Resi nach deinen Zahlen', 'Ask Resi about your numbers'),
-          text: t('Auslastung, ADR, Kampagnen: Resi antwortet in Sekunden, die Quelle gleich dabei.', 'Occupancy, ADR, campaigns: Resi answers in seconds, with the source right next to it.'),
+          label: t('Resi, deine KI-Analystin', 'Resi, your AI analyst'),
+          text: t('Schlau, präzise und diskret: Resi rechnet mit geprüften Kennzahlen und achtet deinen Datenschutz.', 'Smart, precise and discreet: Resi works on verified KPIs and respects your privacy.'),
         },
         {
           width: 'fifth',
