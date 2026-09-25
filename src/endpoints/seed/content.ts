@@ -695,8 +695,8 @@ export const homePage = (t: T, refs: Refs): SeedPage => ({
         },
         {
           width: 'fifth',
-          label: t('Benchmarks', 'Benchmarks'),
-          text: t('Häuser, Zeiträume und Ziele nebeneinander, mit Perzentil-Linien aus deiner eigenen Historie.', 'Properties, periods and targets side by side, with percentile lines from your own history.'),
+          label: t('Benchmarks nach deinen Regeln', 'Benchmarks on your terms'),
+          text: t('Miss dich an dir selbst, bau deinen eigenen Benchmark oder vergleich dich mit anderen Häusern.', 'Benchmark against yourself, build your own or compare with other properties.'),
         },
         { width: 'fifth', label: t('Für Hotelgruppen', 'For hotel groups'), links: [subpage(refs, 'hotel-groups', t('Mehr erfahren', 'Learn more'), 'link')] },
         { width: 'fifth', label: t('Für Agenturen', 'For agencies'), links: [subpage(refs, 'agencies', t('Mehr erfahren', 'Learn more'), 'link')] },
