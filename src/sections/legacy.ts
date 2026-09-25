@@ -198,7 +198,7 @@ export const splitLegacyBlock = (old: LegacyBlock, options: SplitOptions = {}): 
           (old.tiles || []).map((t) => ({
             id: t.id,
             value: t.value,
-            suffix: t.suffix,
+            unit: t.suffix,
             title: t.label,
             ...(t.text ? { text: t.text } : {}),
             ...(t.width ? { width: t.width } : {}),
@@ -234,7 +234,7 @@ export const splitLegacyBlock = (old: LegacyBlock, options: SplitOptions = {}): 
     case 'stats':
       return finish(old, [
         ...headingPart(old, options, 'center'),
-        ...itemsPart('items', 'stats', (old.items || []).map((s) => ({ id: s.id, value: s.value, suffix: s.suffix, title: s.label, text: s.note }))),
+        ...itemsPart('items', 'stats', (old.items || []).map((s) => ({ id: s.id, value: s.value, unit: s.suffix, title: s.label, text: s.note }))),
       ])
     case 'integrations': {
       const customImage = old.visual?.type === 'image' && Boolean(old.visual.image)

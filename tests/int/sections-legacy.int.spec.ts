@@ -75,7 +75,7 @@ describe('splitLegacyBlock', () => {
     expect(types(out)).toEqual(['heading', 'items', 'items'])
     expect(out[0].header.align).toBe('center')
     expect(out[1]).toMatchObject({ id: 'why-cards', style: 'cards', frame: 'panel', columns: '4' })
-    expect(out[2]).toMatchObject({ id: 'why-stats', style: 'stats', frame: 'panel', items: [{ id: 't1', value: '30', suffix: '+', title: 'Anbindungen', links: [link('Alle', 'link')] }, { id: 't2', title: 'Für Agenturen' }] })
+    expect(out[2]).toMatchObject({ id: 'why-stats', style: 'stats', frame: 'panel', items: [{ id: 't1', value: '30', unit: '+', title: 'Anbindungen', links: [link('Alle', 'link')] }, { id: 't2', title: 'Für Agenturen' }] })
   })
 
   it('pillars without tiles → no numbers block', () => {
@@ -100,7 +100,7 @@ describe('splitLegacyBlock', () => {
   it('stats without a heading → numbers only, tinted by default; note becomes the text', () => {
     const out = splitLegacyBlock({ blockType: 'stats', header: { heading: null }, items: [{ id: 'v', value: '40', suffix: '%', label: 'weniger', note: 'Quelle' }] }) as Loose[]
     expect(types(out)).toEqual(['items'])
-    expect(out[0]).toMatchObject({ style: 'stats', items: [{ id: 'v', value: '40', suffix: '%', title: 'weniger', text: 'Quelle' }], settings: { background: 'tinted' } })
+    expect(out[0]).toMatchObject({ style: 'stats', items: [{ id: 'v', value: '40', unit: '%', title: 'weniger', text: 'Quelle' }], settings: { background: 'tinted' } })
   })
 
   it('integrations → heading, tree, actions', () => {

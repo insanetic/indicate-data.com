@@ -115,8 +115,8 @@ describe('ItemsBlock', () => {
     expect(line?.className).not.toContain('lg:block')
   })
 
-  it('stats: value with suffix and the label', () => {
-    inLocale(<ItemsBlock blockType="items" items={[{ id: 's', value: '40', suffix: '%', title: 'geringere Kosten' }]} style="stats" />)
+  it('stats: value with unit and the label', () => {
+    inLocale(<ItemsBlock blockType="items" items={[{ id: 's', value: '40', unit: '%', title: 'geringere Kosten' }]} style="stats" />)
     expect(screen.getByText('%')).toBeTruthy()
     expect(screen.getByText('geringere Kosten').className).toContain('type-body font-medium')
   })
@@ -127,7 +127,7 @@ describe('ItemsBlock', () => {
         blockType="items"
         frame="panel"
         items={[
-          { id: 'a', value: '40', suffix: '%', title: 'geringere Kosten' },
+          { id: 'a', value: '40', unit: '%', title: 'geringere Kosten' },
           { id: 'b', title: 'Für Hotelgruppen' },
         ]}
         style="stats"

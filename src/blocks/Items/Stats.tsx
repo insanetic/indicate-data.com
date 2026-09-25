@@ -31,7 +31,7 @@ export const Stats: React.FC<StyleProps> = ({ items, grid, panel, columns }) => 
           {stat.value ? (
             <p className="type-stat text-ink">
               <CountUp value={stat.value} />
-              {stat.suffix && <span className={panel ? 'text-accent' : 'text-brand-blue-deep'}>{stat.suffix}</span>}
+              {stat.unit && <span className={panel ? 'text-accent' : 'text-brand-blue-deep'}>{stat.unit}</span>}
             </p>
           ) : stat.word ? (
             <p className="type-stat text-ink">{withResi(stat.word)}</p>

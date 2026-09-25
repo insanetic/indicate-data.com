@@ -97,11 +97,14 @@ export const Items: Block = {
               admin: { width: '20%', condition: forStyles('stats'), description: { de: 'Gilt für alle Sprachen.', en: 'Shared across languages.' } },
             },
             {
-              name: 'suffix',
+              name: 'unit',
               type: 'text',
-              label: { de: 'Zusatz (z. B. %)', en: 'Suffix (e.g. %)' },
+              localized: true,
+              label: { de: 'Zusatz (z. B. %, Jahre)', en: 'Unit (e.g. %, years)' },
               admin: { width: '15%', condition: forStyles('stats') },
             },
+            // Replaced by the translatable `unit`; the stat_unit migration moved its values over.
+            { name: 'suffix', type: 'text', admin: { hidden: true } },
             {
               name: 'title',
               type: 'text',

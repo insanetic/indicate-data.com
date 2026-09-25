@@ -769,6 +769,7 @@ export interface ItemsBlock {
          * Shared across languages.
          */
         value?: string | null;
+        unit?: string | null;
         suffix?: string | null;
         title: string;
         width?: ('auto' | 'fifth' | 'quarter' | 'third' | 'half' | 'full') | null;
@@ -3473,6 +3474,7 @@ export interface ItemsBlockSelect<T extends boolean = true> {
     | {
         icon?: T;
         value?: T;
+        unit?: T;
         suffix?: T;
         title?: T;
         width?: T;

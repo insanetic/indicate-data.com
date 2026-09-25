@@ -8,6 +8,8 @@ import * as migration_20260925_092249_illustration_resi_hub from './20260925_092
 import * as migration_20260925_154446_stat_width from './20260925_154446_stat_width';
 import * as migration_20260925_155847_illustration_paper_plane from './20260925_155847_illustration_paper_plane';
 import * as migration_20260925_162647_stat_word from './20260925_162647_stat_word';
+import * as migration_20260925_163707_stat_unit from './20260925_163707_stat_unit';
+import * as migration_20260925_163800_convert_sections from './20260925_163800_convert_sections';
 
 export const migrations = [
   {
@@ -58,6 +60,16 @@ export const migrations = [
   {
     up: migration_20260925_162647_stat_word.up,
     down: migration_20260925_162647_stat_word.down,
-    name: '20260925_162647_stat_word'
+    name: '20260925_162647_stat_word',
+  },
+  {
+    up: migration_20260925_163707_stat_unit.up,
+    down: migration_20260925_163707_stat_unit.down,
+    name: '20260925_163707_stat_unit',
+  },
+  {
+    up: migration_20260925_163800_convert_sections.up,
+    down: migration_20260925_163800_convert_sections.down,
+    name: '20260925_163800_convert_sections',
   },
 ];

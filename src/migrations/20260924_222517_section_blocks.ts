@@ -1,6 +1,5 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
-import { convertSectionBlocks } from '../sections/convertPages'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
@@ -962,17 +961,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     "settings_gap_top" = (CASE "settings_spacing" WHEN 'compact' THEN 'tight' WHEN 'none' THEN 'none' ELSE 'auto' END)::"enum__pages_v_blocks_document_settings_gap_top",
     "settings_gap_bottom" = (CASE "settings_spacing" WHEN 'compact' THEN 'tight' WHEN 'none' THEN 'none' ELSE 'auto' END)::"enum__pages_v_blocks_document_settings_gap_bottom";`)
 
-  // Convert the legacy structural blocks and old widget spacing into section blocks (idempotent,
-  // published and draft states per locale, inside this migration's transaction). A database
-  // without pages (a fresh install) skips it: the current config may already expect columns that
-  // later migrations add.
-  const pages = await db.execute(sql`SELECT 1 FROM "pages" LIMIT 1`)
-  if (pages.rows.length === 0) {
-    payload.logger.info('[sections] no pages to convert')
-    return
-  }
-  const result = await convertSectionBlocks({ payload, req })
-  payload.logger.info(`[sections] converted ${result.publishedPages} published pages and ${result.draftPages} drafts`)
+  // The conversion into section blocks runs in 20260925_163800_convert_sections, after every
+  // migration that adds columns the current config reads.
 }
 
 // Schema only. The converted content lives in the new tables, so a down loses it; roll back a
