@@ -948,6 +948,10 @@ export interface SplitBlock {
       | null;
     image?: (number | null) | Media;
   };
+  /**
+   * Steps: numbered, the scene follows the step in view while scrolling.
+   */
+  pointStyle?: ('points' | 'steps') | null;
   points?:
     | {
         icon?:
@@ -984,6 +988,38 @@ export interface SplitBlock {
           | null;
         title: string;
         text?: string | null;
+        ownVisual?: boolean | null;
+        visual?: {
+          type?: ('illustration' | 'image') | null;
+          illustration?:
+            | (
+                | 'stage'
+                | 'resiHub'
+                | 'dashboard'
+                | 'agent'
+                | 'comparison'
+                | 'sources'
+                | 'team'
+                | 'integrations'
+                | 'alerts'
+                | 'builder'
+                | 'flyingKpis'
+                | 'portfolio'
+                | 'campaigns'
+                | 'agentChat'
+                | 'resi'
+                | 'mcp'
+                | 'kpiStudio'
+                | 'templates'
+                | 'governance'
+                | 'sync'
+                | 'semanticLayer'
+                | 'dimensions'
+                | 'collections'
+              )
+            | null;
+          image?: (number | null) | Media;
+        };
         id?: string | null;
       }[]
     | null;
@@ -3587,12 +3623,21 @@ export interface SplitBlockSelect<T extends boolean = true> {
         illustration?: T;
         image?: T;
       };
+  pointStyle?: T;
   points?:
     | T
     | {
         icon?: T;
         title?: T;
         text?: T;
+        ownVisual?: T;
+        visual?:
+          | T
+          | {
+              type?: T;
+              illustration?: T;
+              image?: T;
+            };
         id?: T;
       };
   links?:
