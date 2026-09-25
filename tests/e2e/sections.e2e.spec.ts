@@ -60,42 +60,4 @@ test.describe('Section blocks', () => {
     const heading = await page.getByRole('heading', { name: `Rechts ${run}` }).boundingBox()
     expect(heading!.y).toBeLessThan(lead!.y)
   })
-
-  test('steps: the pinned scene follows the step in view, and the scene comes first on phones', async ({ page, context: browser }) => {
-    const slug = `steps-e2e-${run}`
-    await payload.create({
-      collection: 'pages', locale: 'de', context,
-      data: {
-        title: `Steps e2e ${run}`, slug, _status: 'published',
-        layout: [{
-          blockType: 'split', header: { heading: `Schritte ${run}` }, pointStyle: 'steps',
-          visual: { type: 'illustration', illustration: 'semanticLayer' },
-          points: [
-            { title: 'Eins', text: 'A' },
-            { title: 'Zwei', text: 'B', ownVisual: true, visual: { type: 'illustration', illustration: 'kpiStudio' } },
-            { title: 'Drei', text: 'C', ownVisual: true, visual: { type: 'illustration', illustration: 'dimensions' } },
-          ],
-        }],
-      } as never,
-    })
-    try {
-      await presetConsent(browser)
-      await page.setViewportSize({ width: 1440, height: 900 })
-      await page.goto(`${base}/de/${slug}`)
-      const layers = page.locator('[data-scene-layer]')
-      await expect(layers).toHaveCount(3)
-      await page.getByText('Drei', { exact: true }).scrollIntoViewIfNeeded()
-      await page.getByText('Drei', { exact: true }).evaluate((el) => el.closest('li')!.scrollIntoView({ block: 'center' }))
-      await expect(layers.nth(2)).toHaveAttribute('data-visible', 'true')
-      await expect(page.locator('li[data-active="true"]')).toContainText('Drei')
-
-      await page.setViewportSize({ width: 390, height: 844 })
-      await page.goto(`${base}/de/${slug}`)
-      const scene = await page.locator('[data-mobile-top-scene]').boundingBox()
-      const heading = await page.getByRole('heading', { name: `Schritte ${run}` }).boundingBox()
-      expect(scene!.y).toBeLessThan(heading!.y)
-    } finally {
-      await payload.delete({ collection: 'pages', where: { slug: { equals: slug } }, context })
-    }
-  })
 })

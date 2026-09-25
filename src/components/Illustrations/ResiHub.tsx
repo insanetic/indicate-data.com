@@ -68,10 +68,6 @@ const kpiTrend = [52, 55, 50, 58, 61, 64, 70, 68, 76, 84]
 export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, locale }) => {
   const l = labelsFor(locale)
   const h = l.scenes.hub
-  // Unique per mount: a hard-coded id would collide when the same scene renders twice at once
-  // (Split steps mode keeps a mobile copy and a desktop layer both mounted), leaving `url(#…)`
-  // pointing at whichever copy comes first — possibly a hidden one, so the fill vanishes.
-  const areaId = React.useId()
 
   const litBy = (source: number) => turns.flatMap((t, slot) => (t.reads.includes(source) ? [slot] : []))
 
@@ -248,7 +244,7 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
               </div>
               <svg aria-hidden="true" className="mt-2 aspect-[3/1] w-full" viewBox="0 0 120 40">
                 <defs>
-                  <linearGradient id={areaId} x1="0" x2="0" y1="0" y2="1">
+                  <linearGradient id="hub-area" x1="0" x2="0" y1="0" y2="1">
                     <stop offset="0" stopColor="var(--brand-blue)" stopOpacity="0.28" />
                     <stop offset="1" stopColor="var(--brand-blue)" stopOpacity="0" />
                   </linearGradient>
@@ -257,7 +253,7 @@ export const ResiHubIllustration: React.FC<IllustrationProps> = ({ className, lo
                   <line key={y} stroke="var(--line)" strokeWidth="0.5" x1="0" x2="120" y1={y} y2={y} />
                 ))}
                 <path d={curve(pickupLast, 120, 40)} fill="none" stroke="var(--ink-3)" strokeDasharray="2 2.5" strokeWidth="1.25" />
-                <path className="loop-hub-area" d={`${curve(pickupNow, 120, 40)} L 120 40 L 0 40 Z`} fill={`url(#${areaId})`} style={slotDelay(lineSlot)} />
+                <path className="loop-hub-area" d={`${curve(pickupNow, 120, 40)} L 120 40 L 0 40 Z`} fill="url(#hub-area)" style={slotDelay(lineSlot)} />
                 <path className="loop-hub-line" d={curve(pickupNow, 120, 40)} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeLinecap="round" strokeWidth="2" style={slotDelay(lineSlot)} />
               </svg>
               <div className="mt-2 flex gap-3 type-caption text-ink-3">

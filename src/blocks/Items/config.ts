@@ -33,15 +33,9 @@ export const Items: Block = {
           defaultValue: 'points',
           label: { de: 'Darstellung', en: 'Style' },
           admin: { width: '34%' },
-          // Cards render exactly like points, steps moved to the Split block; both values stay for
-          // existing rows but are no longer offered.
-          filterOptions: ({ options, siblingData }) => {
-            const current = (siblingData as { style?: string })?.style
-            return options.filter((o) => {
-              const value = typeof o === 'string' ? o : o.value
-              return !(value === 'cards' || value === 'steps') || value === current
-            })
-          },
+          // Cards render exactly like points now; the value stays for existing rows but is no longer offered.
+          filterOptions: ({ options, siblingData }) =>
+            options.filter((o) => (typeof o === 'string' ? o : o.value) !== 'cards' || (siblingData as { style?: string })?.style === 'cards'),
           options: [
             { label: { de: 'Einträge (Icon, Titel, Text, Link)', en: 'Entries (icon, title, text, link)' }, value: 'points' },
             { label: { de: 'Karten', en: 'Cards' }, value: 'cards' },

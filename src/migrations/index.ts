@@ -5,7 +5,6 @@ import * as migration_20260923_131001_testimonials from './20260923_131001_testi
 import * as migration_20260924_170610_block_hidden from './20260924_170610_block_hidden';
 import * as migration_20260924_222517_section_blocks from './20260924_222517_section_blocks';
 import * as migration_20260925_092249_illustration_resi_hub from './20260925_092249_illustration_resi_hub';
-import * as migration_20260925_095828_split_steps from './20260925_095828_split_steps';
 
 export const migrations = [
   {
@@ -41,11 +40,6 @@ export const migrations = [
   {
     up: migration_20260925_092249_illustration_resi_hub.up,
     down: migration_20260925_092249_illustration_resi_hub.down,
-    name: '20260925_092249_illustration_resi_hub',
-  },
-  {
-    up: migration_20260925_095828_split_steps.up,
-    down: migration_20260925_095828_split_steps.down,
-    name: '20260925_095828_split_steps'
+    name: '20260925_092249_illustration_resi_hub'
   },
 ];

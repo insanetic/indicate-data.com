@@ -5,7 +5,6 @@ import { fileURLToPath } from 'url'
 
 import { locales, type Locale } from '@/i18n/config'
 import { splitLegacyLayout } from '@/sections/legacy'
-import { stepsToSplit } from '@/sections/steps'
 import { keyOf } from '@/utilities/convertInlineTestimonials'
 
 import { aboutPage } from './about'
@@ -160,10 +159,10 @@ async function upsertPage(
   slug: string,
   build: (locale: Locale) => AnyData,
 ): Promise<number> {
-  // Seed content may still use the legacy section shapes; write what the migrations would produce.
+  // Seed content may still use the legacy section shapes; write what the migration would produce.
   const buildConverted = (locale: Locale): AnyData => {
     const data = build(locale)
-    return Array.isArray(data.layout) ? { ...data, layout: stepsToSplit(splitLegacyLayout(data.layout), slug) } : data
+    return Array.isArray(data.layout) ? { ...data, layout: splitLegacyLayout(data.layout) } : data
   }
   const [primary, ...rest] = locales
   const existing = await payload.find({
