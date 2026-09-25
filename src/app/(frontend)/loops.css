@@ -1726,7 +1726,8 @@
   }
 }
 .loop-hub-lit {
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--glow, var(--brand-blue)) 18%, transparent);
+  /* Opaque halo (mixed with the ground, not transparent) so wires end at it instead of showing through. */
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--glow, var(--brand-blue)) 18%, var(--surface));
   animation-name: loop-hub-lit;
 }
 
@@ -1746,7 +1747,7 @@
   }
 }
 .loop-hub-glow {
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--glow, var(--resi-mint)) 16%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--glow, var(--resi-mint)) 16%, var(--surface));
   animation-name: loop-hub-glow;
 }
 

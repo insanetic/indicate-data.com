@@ -116,7 +116,7 @@ const at = (p: Pt) => pos(p, W, H)
 const TintLit: React.FC<{ slot: number; stagger?: number }> = ({ slot, stagger = 0 }) => (
   <span
     aria-hidden="true"
-    className="loop-hub-lit pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 border-(--tint)"
+    className="loop-hub-lit pointer-events-none absolute -inset-[2px] rounded-[inherit] border-2 border-(--tint)"
     data-slot={slot}
     style={{ ...slotDelay(slot, stagger), '--glow': 'var(--tint)' } as React.CSSProperties}
   />
@@ -265,7 +265,7 @@ export const CampaignsIllustration: React.FC<IllustrationProps> = ({ className, 
             {clients.map((_, slot) => (
               <span
                 aria-hidden="true"
-                className="loop-hub-glow pointer-events-none absolute -inset-[3px] z-10 rounded-[1.4rem] border-2 border-(--tint)"
+                className="loop-hub-glow pointer-events-none absolute -inset-[2px] z-10 rounded-[1.375rem] border-2 border-(--tint)"
                 data-slot={slot}
                 key={slot}
                 style={{ ...slotDelay(slot, 0.3), '--glow': 'var(--tint)' } as React.CSSProperties}

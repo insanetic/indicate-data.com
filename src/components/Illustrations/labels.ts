@@ -76,8 +76,8 @@ export const labels = {
         node: 'Gruppe',
         nodeNote: '4 Spaces, 1 Login',
         board: 'Zentrale',
-        month: 'September',
         above: 'über Plan',
+        near: 'knapp darunter',
         below: 'unter Plan',
       },
       agency: {
@@ -398,8 +398,8 @@ export const labels = {
         node: 'Group',
         nodeNote: '4 spaces, 1 login',
         board: 'Head office',
-        month: 'September',
         above: 'above plan',
+        near: 'just below',
         below: 'below plan',
       },
       agency: {

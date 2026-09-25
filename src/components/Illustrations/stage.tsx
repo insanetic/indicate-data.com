@@ -75,7 +75,7 @@ export const Lit: React.FC<{ slot: number; tone?: 'in' | 'out'; stagger?: number
   <span
     aria-hidden="true"
     className={
-      'pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 ' +
+      'pointer-events-none absolute -inset-[2px] rounded-[inherit] border-2 ' +
       (tone === 'in' ? 'loop-hub-lit border-brand-blue' : 'loop-hub-glow border-resi-mint')
     }
     data-slot={slot}

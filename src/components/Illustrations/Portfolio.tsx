@@ -34,10 +34,14 @@ const properties: { name: string; pms: string; logo: string; at: Pt }[] = [
 type Metric = { values: number[]; plan: number[]; scale: number; unit: string }
 /** Head office ranks the group by one metric per exchange: occupancy, ADR, RevPAR (= occupancy × ADR). */
 const metrics: Metric[] = [
-  { values: [84, 77, 91, 69], plan: [80, 81, 85, 72], scale: 100, unit: ' %' },
-  { values: [142, 188, 121, 164], plan: [138, 180, 125, 158], scale: 200, unit: ' €' },
-  { values: [119, 145, 110, 113], plan: [110, 146, 106, 114], scale: 160, unit: ' €' },
+  { values: [84, 77, 91, 69], plan: [80, 81, 85, 71], scale: 100, unit: ' %' },
+  { values: [142, 188, 114, 164], plan: [145, 180, 125, 158], scale: 200, unit: ' €' },
+  { values: [119, 145, 104, 113], plan: [110, 146, 106, 108], scale: 160, unit: ' €' },
 ]
+/** Within 4 % under plan is a warning (yellow), further under is a miss (rose), on or over plan is blue. */
+const WARN = 0.96
+const statusColor = (value: number, plan: number) =>
+  value >= plan ? 'var(--brand-blue)' : value >= plan * WARN ? 'var(--brand-yellow)' : 'var(--brand-coral)'
 /** Rank (0 = top) of each property in each metric. */
 const ranks = metrics.map((m) => {
   const order = m.values.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v)
@@ -76,8 +80,8 @@ const at = (p: Pt) => pos(p, W, H)
  * left, each in its own space on its own PMS; their lines converge on the group, whose ring
  * closes a quarter per property, and one line carries the result to head office's board. Each
  * exchange (4 s) head office switches the metric (occupancy, ADR, RevPAR), the four lines draw
- * in, and the rows slide into the new order: bars against a plan tick, rose below plan, the
- * leader on the yellow rail. Below `lg` the pieces stack. Reduced motion shows the occupancy
+ * in, and the rows slide into the new order: bars against a plan tick, blue on or over plan, yellow
+ * just under it, rose clearly under, the leader on the rail. Below `lg` the pieces stack. Reduced motion shows the occupancy
  * ranking with its lines drawn. Timing: `.loop-hub-*` and `.loop-tri-*` in loops.css.
  */
 export const PortfolioIllustration: React.FC<IllustrationProps> = ({ className, locale }) => {
@@ -167,7 +171,7 @@ export const PortfolioIllustration: React.FC<IllustrationProps> = ({ className, 
             {Array.from({ length: SLOTS }, (_, slot) => (
               <span
                 aria-hidden="true"
-                className="loop-hub-glow pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 border-brand-blue"
+                className="loop-hub-glow pointer-events-none absolute -inset-[2px] rounded-[inherit] border-2 border-brand-blue"
                 data-slot={slot}
                 key={slot}
                 style={{ ...slotDelay(slot, 0.3), '--glow': 'var(--brand-blue)' } as React.CSSProperties}
@@ -192,7 +196,7 @@ export const PortfolioIllustration: React.FC<IllustrationProps> = ({ className, 
 
             <div className="relative mx-4 mt-2 h-44">
               {/* Places stay put; the rows move. The top place is the leader's. */}
-              <span aria-hidden="true" className="absolute -left-4 top-2 h-7 w-[3px] rounded-r-full bg-brand-yellow" />
+              <span aria-hidden="true" className="absolute -left-4 top-2 h-7 w-[3px] rounded-r-full bg-ink" />
               {properties.map((_, place) => (
                 <span className="absolute left-0 flex h-11 w-4 items-center type-caption tnum text-ink-3" key={place} style={{ top: `${place * 2.75}rem` }}>
                   {place + 1}
@@ -206,7 +210,7 @@ export const PortfolioIllustration: React.FC<IllustrationProps> = ({ className, 
                       <span className="loop-tri-x absolute inset-0" style={tri((slot) => metrics[slot].values[i] / metrics[slot].scale, SORT_AT)}>
                         <span
                           className="loop-tri-bg block size-full rounded-full"
-                          style={tri((slot) => (metrics[slot].values[i] >= metrics[slot].plan[i] ? 'var(--brand-blue)' : 'var(--brand-coral)'), SORT_AT)}
+                          style={tri((slot) => statusColor(metrics[slot].values[i], metrics[slot].plan[i]), SORT_AT)}
                         />
                       </span>
                       <span className="loop-tri-slide absolute inset-0" style={tri((slot) => metrics[slot].plan[i] / metrics[slot].scale, SORT_AT)}>
@@ -238,9 +242,11 @@ export const PortfolioIllustration: React.FC<IllustrationProps> = ({ className, 
                 <i className="size-1.5 rounded-full bg-brand-blue" /> {g.above}
               </li>
               <li className="flex items-center gap-1.5">
+                <i className="size-1.5 rounded-full bg-brand-yellow" /> {g.near}
+              </li>
+              <li className="flex items-center gap-1.5">
                 <i className="size-1.5 rounded-full bg-brand-coral" /> {g.below}
               </li>
-              <li className="ml-auto">{g.month}</li>
             </ul>
           </div>
         </div>
