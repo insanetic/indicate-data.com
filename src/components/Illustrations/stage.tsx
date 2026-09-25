@@ -64,7 +64,7 @@ export const Connector: React.FC<{ out?: boolean; className?: string; color?: st
         stroke={color ?? (out ? 'var(--resi-mint)' : 'var(--resi-teal)')}
         strokeLinecap="round"
         strokeWidth="3"
-        style={{ ...slotDelay(slot), '--comet': 0.3 } as React.CSSProperties}
+        style={{ ...slotDelay(slot), '--comet': 0.3, '--comet-from': 0.35 } as React.CSSProperties}
       />
     ))}
   </svg>

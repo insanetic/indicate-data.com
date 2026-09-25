@@ -168,11 +168,11 @@
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   35.6%,
-  88% {
+  62% {
     stroke-dashoffset: 0;
     opacity: 1;
   }
-  92%,
+  72%,
   100% {
     stroke-dashoffset: 0;
     opacity: 0;
@@ -185,7 +185,7 @@
 @keyframes loop-post-in-comet {
   0%,
   30% {
-    stroke-dashoffset: calc(var(--comet, 0.12) + 0.05);
+    stroke-dashoffset: var(--comet-from, 0.17);
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   36%,
@@ -195,7 +195,7 @@
 }
 .loop-post-in-comet {
   stroke-dasharray: var(--comet, 0.12) 2;
-  stroke-dashoffset: calc(var(--comet, 0.12) + 0.05);
+  stroke-dashoffset: var(--comet-from, 0.17);
   animation-name: loop-post-in-comet;
 }
 
@@ -208,11 +208,11 @@
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   40%,
-  86% {
+  66% {
     stroke-dashoffset: 0;
     opacity: 1;
   }
-  90%,
+  76%,
   100% {
     stroke-dashoffset: 0;
     opacity: 0;
@@ -225,7 +225,7 @@
 @keyframes loop-post-comet {
   0%,
   35.6% {
-    stroke-dashoffset: calc(var(--comet, 0.1) + 0.05);
+    stroke-dashoffset: var(--comet-from, 0.15);
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   40.5%,
@@ -235,7 +235,7 @@
 }
 .loop-post-comet {
   stroke-dasharray: var(--comet, 0.1) 2;
-  stroke-dashoffset: calc(var(--comet, 0.1) + 0.05);
+  stroke-dashoffset: var(--comet-from, 0.15);
   animation-name: loop-post-comet;
 }
 
@@ -1835,11 +1835,11 @@
     opacity: 1;
   }
   12.5%,
-  30.4% {
+  26% {
     stroke-dashoffset: 0;
     opacity: 1;
   }
-  32.9%,
+  34%,
   100% {
     stroke-dashoffset: 0;
     opacity: 0;
@@ -1858,11 +1858,11 @@
     opacity: 1;
   }
   16.5%,
-  30.4% {
+  28% {
     stroke-dashoffset: 0;
     opacity: 1;
   }
-  32.9%,
+  36%,
   100% {
     stroke-dashoffset: 0;
     opacity: 0;
@@ -1874,11 +1874,13 @@
   animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* A short bright pulse rides each line once as it draws. */
+/* A short bright pulse rides each line once as it draws. It rests just beyond both ends
+   (`--comet-from` = `--comet` + 0.05, set together; a `calc()` here would stop the offset
+   from interpolating), so no zero-length dash paints a cap dot. */
 @keyframes loop-hub-comet {
   0%,
   7.9% {
-    stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
+    stroke-dashoffset: var(--comet-from, 0.12);
   }
   13%,
   100% {
@@ -1887,7 +1889,7 @@
 }
 .loop-hub-comet {
   stroke-dasharray: var(--comet, 0.07) 2;
-  stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
+  stroke-dashoffset: var(--comet-from, 0.12);
   animation-name: loop-hub-comet;
   animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -1895,7 +1897,7 @@
 @keyframes loop-hub-comet-out {
   0%,
   13.3% {
-    stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
+    stroke-dashoffset: var(--comet-from, 0.12);
   }
   17%,
   100% {
@@ -1904,7 +1906,7 @@
 }
 .loop-hub-comet-out {
   stroke-dasharray: var(--comet, 0.07) 2;
-  stroke-dashoffset: calc(var(--comet, 0.07) + 0.05);
+  stroke-dashoffset: var(--comet-from, 0.12);
   animation-name: loop-hub-comet-out;
   animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -2379,7 +2381,7 @@
 @keyframes loop-build-pulse {
   0%,
   31% {
-    stroke-dashoffset: calc(var(--comet, 0.25) + 0.05);
+    stroke-dashoffset: var(--comet-from, 0.3);
     animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
   }
   35.5%,
@@ -2389,7 +2391,7 @@
 }
 .loop-build-pulse {
   stroke-dasharray: var(--comet, 0.25) 2;
-  stroke-dashoffset: calc(var(--comet, 0.25) + 0.05);
+  stroke-dashoffset: var(--comet-from, 0.3);
   animation-name: loop-build-pulse;
 }
 

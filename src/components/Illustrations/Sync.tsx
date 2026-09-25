@@ -86,7 +86,7 @@ export const SyncIllustration: React.FC<IllustrationProps> = ({ className, local
           {connections.map((_, slot) => (
             <g key={slot}>
               <path className="loop-hub-draw" d={authPath} data-slot={slot} fill="none" pathLength={1} stroke="var(--brand-yellow)" strokeWidth="0.45" style={slotDelay(slot, -0.4)} />
-              <path className="loop-hub-comet" d={authPath} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, -0.4), '--comet': 0.3 } as React.CSSProperties} />
+              <path className="loop-hub-comet" d={authPath} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, -0.4), '--comet': 0.3, '--comet-from': 0.35 } as React.CSSProperties} />
               <path className="loop-hub-draw" d={dataPath} data-slot={slot} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeWidth="0.45" style={slotDelay(slot, 0.3)} />
             </g>
           ))}

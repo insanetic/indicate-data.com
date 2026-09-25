@@ -128,7 +128,7 @@ export const ResiIllustration: React.FC<IllustrationProps> = ({ className, local
                 <path className="loop-hub-draw" d={d} data-slot={slot} fill="none" key={d} pathLength={1} stroke="var(--resi-teal)" strokeWidth="0.45" style={slotDelay(slot, 0.15 + k * 0.1)} />
               ))}
               <path className="loop-hub-draw-out" d={outPath} data-slot={slot} fill="none" pathLength={1} stroke="var(--resi-mint)" strokeWidth="0.45" style={slotDelay(slot, -0.3)} />
-              <path className="loop-hub-comet-out" d={outPath} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, -0.3), '--comet': 0.12 } as React.CSSProperties} />
+              <path className="loop-hub-comet-out" d={outPath} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, -0.3), '--comet': 0.12, '--comet-from': 0.17 } as React.CSSProperties} />
             </g>
           ))}
         </svg>

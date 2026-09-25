@@ -205,7 +205,7 @@ const Wire: React.FC = () => {
         stroke="var(--resi-mint)"
         strokeLinecap="round"
         strokeWidth="3"
-        style={{ ...widgetDelay(i), '--comet': comet } as React.CSSProperties}
+        style={{ ...widgetDelay(i), '--comet': comet, '--comet-from': comet + 0.05 } as React.CSSProperties}
       />
     ))
   return (

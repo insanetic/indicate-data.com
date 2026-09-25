@@ -157,11 +157,11 @@ export const CampaignsIllustration: React.FC<IllustrationProps> = ({ className, 
               {inPaths.map((d, k) => (
                 <React.Fragment key={d}>
                   <path className="loop-hub-draw" d={d} data-slot={slot} fill="none" pathLength={1} stroke="var(--tint)" strokeWidth="0.45" style={slotDelay(slot, k * 0.1)} />
-                  <path className="loop-hub-comet" d={d} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, k * 0.1), '--comet': 0.25 } as React.CSSProperties} />
+                  <path className="loop-hub-comet" d={d} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, k * 0.1), '--comet': 0.25, '--comet-from': 0.3 } as React.CSSProperties} />
                 </React.Fragment>
               ))}
               <path className="loop-hub-draw-out" d={outPath} data-slot={slot} fill="none" pathLength={1} stroke="var(--tint)" strokeWidth="0.45" style={slotDelay(slot, 0.2)} />
-              <path className="loop-hub-comet-out" d={outPath} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, 0.2), '--comet': 0.2 } as React.CSSProperties} />
+              <path className="loop-hub-comet-out" d={outPath} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, 0.2), '--comet': 0.2, '--comet-from': 0.25 } as React.CSSProperties} />
             </g>
           ))}
         </svg>

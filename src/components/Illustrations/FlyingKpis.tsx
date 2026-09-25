@@ -64,7 +64,7 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
           {RECIPIENTS.map((_, i) => (
             <React.Fragment key={i}>
               <path className="loop-post-out" d={outPath(i)} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeLinejoin="round" strokeWidth="0.5" style={delay(i * STEP)} />
-              <path className="loop-post-comet" d={outPath(i)} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="1" style={delay(i * STEP)} />
+              <path className="loop-post-comet" d={outPath(i)} fill="none" pathLength={1} stroke="var(--brand-yellow)" strokeLinecap="round" strokeWidth="1" style={delay(i * STEP)} />
             </React.Fragment>
           ))}
         </svg>

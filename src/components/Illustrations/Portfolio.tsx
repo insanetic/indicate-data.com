@@ -106,7 +106,7 @@ export const PortfolioIllustration: React.FC<IllustrationProps> = ({ className, 
                 </React.Fragment>
               ))}
               <path className="loop-hub-draw-out" d={outPath} data-slot={slot} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeWidth="0.45" style={slotDelay(slot, 0.35)} />
-              <path className="loop-hub-comet-out" d={outPath} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, 0.35), '--comet': 0.2 } as React.CSSProperties} />
+              <path className="loop-hub-comet-out" d={outPath} fill="none" pathLength={1} stroke="var(--brand-yellow)" strokeLinecap="round" strokeWidth="0.9" style={{ ...slotDelay(slot, 0.35), '--comet': 0.1, '--comet-from': 0.15 } as React.CSSProperties} />
             </g>
           ))}
         </svg>
