@@ -67,7 +67,7 @@ export const HeroStage: React.FC<{ className?: string }> = ({ className }) => {
 
   return (
     <div
-      aria-label="Indicate: Dashboard, Agent, Report und die technische Ebene dahinter"
+      aria-label="Indicate: Dashboard, Resi, Report und die technische Ebene dahinter"
       className={cn('loop relative select-none text-left', className)}
       role="img"
       style={{ '--loop': '8s' } as React.CSSProperties}

@@ -1,7 +1,7 @@
 import { Check, LayoutDashboard } from 'lucide-react'
 import React from 'react'
 
-import { BrandBars } from '@/components/BrandBars'
+import { ResiMark, ResiName, withResi } from '@/components/Resi'
 import { cn } from '@/utilities/ui'
 
 import { Bars, Chip, Frame } from './primitives'
@@ -20,13 +20,13 @@ export const AgentChatIllustration: React.FC<IllustrationProps> = ({ className, 
   const delay = (s: string) => ({ '--delay': s }) as React.CSSProperties
 
   return (
-    <Frame className={cn('loop loop-chat w-full', className)} label="Chat mit dem Indicate Agent: Frage, Antwort mit Kennzahl und Quelle, Kontext daneben">
+    <Frame className={cn('loop loop-chat w-full', className)} label="Chat mit Resi: Frage, Antwort mit Kennzahl und Quelle, Kontext daneben">
       <div className="grid overflow-hidden rounded-[1rem] border border-line-strong bg-surface-2 shadow-float md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         {/* Chat */}
         <div className="flex flex-col gap-4 border-b border-line p-4 md:border-b-0 md:border-r md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="flex items-center gap-2 type-caption font-medium text-ink-2">
-              <BrandBars size={12} /> {c.title}
+              <ResiMark size={20} /> <ResiName /> · {c.title}
             </span>
             <span className="flex gap-1.5">
               {c.sources.map((src) => (
@@ -41,16 +41,12 @@ export const AgentChatIllustration: React.FC<IllustrationProps> = ({ className, 
 
           <div className="relative min-h-[9.5rem]">
             <div className="loop-chat-think absolute left-0 top-0 flex items-center gap-2.5 type-small text-ink-3">
-              <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-line bg-surface">
-                <BrandBars size={12} thinking />
-              </span>
-              {l.scenes.builderThinking}
+              <ResiMark size={28} thinking />
+              {withResi(l.scenes.resi.thinking)}
             </div>
 
             <div className="loop-chat-in flex gap-2.5" style={delay('0s')}>
-              <span className="mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-line bg-surface">
-                <BrandBars size={12} />
-              </span>
+              <ResiMark className="mt-0.5" size={28} />
               <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-[0.875rem] rounded-tl-sm border border-line bg-surface p-3.5">
                 <p className="type-small text-ink-2 pretty">{c.answer}</p>
                 <div className="grid grid-cols-[auto_1fr] items-end gap-4 rounded-card-inner border border-line bg-surface-2 p-3">

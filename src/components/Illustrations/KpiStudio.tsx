@@ -1,6 +1,8 @@
 import { Check } from 'lucide-react'
 import React from 'react'
 
+import { withResi } from '@/components/Resi'
+
 import { BrandBars } from '@/components/BrandBars'
 import { cn } from '@/utilities/ui'
 
@@ -100,7 +102,7 @@ export const KpiStudioIllustration: React.FC<IllustrationProps> = ({ className, 
                 )
               })}
             </ul>
-            <span className="loop-studio-chip px-1 pt-1 type-caption text-ink-3">{s.usedIn}</span>
+            <span className="loop-studio-chip px-1 pt-1 type-caption text-ink-3">{withResi(s.usedIn)}</span>
           </div>
         </div>
       </div>

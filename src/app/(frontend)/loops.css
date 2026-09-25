@@ -21,115 +21,6 @@
   animation-delay: var(--delay, 0s);
 }
 
-/* --- Builder (10 s): a dashboard is described, thought about, then assembled --- */
-
-/* Typed prompt: text is revealed left to right, then the bubble fades before the reset. */
-@keyframes loop-type {
-  0%,
-  2% {
-    clip-path: inset(0 100% 0 0);
-    opacity: 1;
-  }
-  14%,
-  90% {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-  }
-  94%,
-  100% {
-    clip-path: inset(0 0 0 0);
-    opacity: 0;
-  }
-}
-.loop-type {
-  animation-name: loop-type;
-  animation-timing-function: steps(28, end);
-}
-
-/* Thinking row: visible only between the prompt and the first widget. */
-@keyframes loop-think {
-  0%,
-  14% {
-    opacity: 0;
-  }
-  16%,
-  22% {
-    opacity: 1;
-  }
-  24%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-think {
-  animation-name: loop-think;
-}
-
-/* Widgets pop in one after another (`--delay` staggers them) and leave before the reset. */
-@keyframes loop-widget {
-  0%,
-  22% {
-    opacity: 0;
-    transform: translateY(8px) scale(0.97);
-  }
-  25%,
-  78% {
-    opacity: 1;
-    transform: none;
-  }
-  81%,
-  100% {
-    opacity: 0;
-    transform: none;
-  }
-}
-.loop-widget {
-  animation-name: loop-widget;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* A chart line draws inside its widget. */
-@keyframes loop-draw {
-  0%,
-  28% {
-    stroke-dashoffset: 1;
-  }
-  42%,
-  78% {
-    stroke-dashoffset: 0;
-  }
-  81%,
-  100% {
-    stroke-dashoffset: 1;
-  }
-}
-.loop-draw {
-  stroke-dasharray: 1;
-  animation-name: loop-draw;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* Confirmation chip after the dashboard is complete. */
-@keyframes loop-done {
-  0%,
-  56% {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  59%,
-  78% {
-    opacity: 1;
-    transform: none;
-  }
-  81%,
-  100% {
-    opacity: 0;
-  }
-}
-.loop-done {
-  animation-name: loop-done;
-}
-
 /* --- Log lines (hero, 8 s): entries appear one after another, then the log clears --- */
 
 @keyframes loop-log {
@@ -896,21 +787,16 @@
   .loop [class*='loop-'] {
     animation: none;
   }
-  .loop .loop-draw {
-    stroke-dashoffset: 0;
-  }
   .loop .loop-tree-centre {
     background: var(--gradient-resi);
   }
   .loop .loop-tree-sent {
     opacity: 0;
   }
-  .loop .loop-type,
   .loop .loop-chat-q,
   .loop .loop-studio-code {
     clip-path: none;
   }
-  .loop .loop-think,
   .loop .loop-chat-think,
   .loop .loop-sync-busy,
   .loop .loop-studio-old {
@@ -1938,6 +1824,398 @@
 
 @media (prefers-reduced-motion: reduce) and (max-width: 1279.98px) {
   .loop .loop-hub-swap:not([data-slot='0']) {
+    opacity: 0;
+  }
+}
+
+/* --- Builder (10 s): a dashboard from one sentence --------------------------------------- */
+/* Typed 0.2–1.4 s, sent 1.5 s, Resi's steps 1.8–3.6 s (`--delay` = step × 0.6 s), widgets      */
+/* land from 3.4 s (`--delay` = widget × 0.3 s), confirmation 5.6 s, all clears 8.0–9.9 s.      */
+
+.loop-build {
+  --loop: 10s;
+}
+
+@keyframes loop-build-type {
+  0%,
+  2% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+    animation-timing-function: steps(40, end);
+  }
+  14%,
+  15% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  15.5%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+.loop-build-type {
+  animation-name: loop-build-type;
+}
+
+@keyframes loop-build-ph {
+  0%,
+  1.5% {
+    opacity: 1;
+  }
+  2.2%,
+  15.5% {
+    opacity: 0;
+  }
+  17%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-build-ph {
+  animation-name: loop-build-ph;
+}
+
+@keyframes loop-build-send {
+  0%,
+  2.5% {
+    background-color: var(--surface-3);
+    color: var(--ink-3);
+    transform: none;
+  }
+  4%,
+  14% {
+    background-color: var(--ink);
+    color: var(--surface);
+    transform: none;
+  }
+  15% {
+    background-color: var(--ink);
+    color: var(--surface);
+    transform: scale(0.86);
+  }
+  16.5% {
+    background-color: var(--ink);
+    color: var(--surface);
+    transform: none;
+  }
+  18%,
+  100% {
+    background-color: var(--surface-3);
+    color: var(--ink-3);
+    transform: none;
+  }
+}
+.loop-build-send {
+  animation-name: loop-build-send;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes loop-build-q {
+  0%,
+  15.5% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  17.5%,
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  88%,
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.loop-build-q {
+  transform-origin: right bottom;
+  animation-name: loop-build-q;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Resi's reply and each step row (`--delay` staggers the steps). */
+@keyframes loop-build-step {
+  0%,
+  17% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  19.5%,
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  88%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-build-work,
+.loop-build-step {
+  animation-name: loop-build-step;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* A step's spinner gives way to a check. */
+@keyframes loop-build-spinner {
+  0%,
+  23% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-build-spinner {
+  animation-name: loop-build-spinner;
+}
+@keyframes loop-build-check {
+  0%,
+  23% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  25.5% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  27%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-build-check {
+  animation-name: loop-build-check;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes build-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.build-spin {
+  animation: build-spin 0.9s linear infinite;
+}
+
+/* A light runs around the chat while Resi works. */
+@keyframes loop-build-ring {
+  0%,
+  16% {
+    opacity: 0;
+  }
+  19%,
+  52% {
+    opacity: 1;
+  }
+  58%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-build-ring {
+  opacity: 0;
+  animation-name: loop-build-ring;
+}
+.loop-build-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--resi-angle),
+    transparent 0 50%,
+    var(--brand-blue) 70%,
+    var(--resi-teal) 85%,
+    var(--resi-mint) 97%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: resi-spin 1.6s linear infinite;
+}
+
+/* One pulse along the wire per widget, just before it lands. */
+@keyframes loop-build-pulse {
+  0%,
+  31% {
+    stroke-dashoffset: var(--comet, 0.25);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  35.5%,
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+.loop-build-pulse {
+  stroke-dasharray: var(--comet, 0.25) 2;
+  stroke-dashoffset: var(--comet, 0.25);
+  animation-name: loop-build-pulse;
+}
+
+/* Widgets land on their slots, lit for a moment, and leave before the reset. */
+@keyframes loop-build-widget {
+  0%,
+  34% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  37%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  84%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-build-widget {
+  animation-name: loop-build-widget;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes loop-build-lit {
+  0%,
+  34.5% {
+    opacity: 0;
+  }
+  36.5% {
+    opacity: 1;
+  }
+  44%,
+  100% {
+    opacity: 0;
+  }
+}
+.loop-build-lit {
+  opacity: 0;
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--resi-mint) 16%, transparent);
+  animation-name: loop-build-lit;
+}
+
+/* Widget content plays once it has landed. */
+@keyframes loop-build-count {
+  0%,
+  35% {
+    --hub-n: 0;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  43%,
+  100% {
+    --hub-n: var(--hub-to);
+  }
+}
+.loop-build-count {
+  --hub-n: var(--hub-to);
+  counter-reset: hub var(--hub-n);
+  animation-name: loop-build-count;
+}
+.loop-build-count::after {
+  content: counter(hub);
+}
+
+@keyframes loop-build-draw {
+  0%,
+  35% {
+    stroke-dashoffset: 1;
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  46%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+.loop-build-draw {
+  stroke-dasharray: 1;
+  animation-name: loop-build-draw;
+}
+@keyframes loop-build-area {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  47%,
+  100% {
+    opacity: 1;
+  }
+}
+.loop-build-area {
+  animation-name: loop-build-area;
+}
+
+@keyframes loop-build-grow {
+  0%,
+  35% {
+    transform: scaleY(0.06);
+    animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  44%,
+  100% {
+    transform: none;
+  }
+}
+.loop-build-grow {
+  transform-origin: bottom;
+  animation-name: loop-build-grow;
+}
+
+@keyframes loop-build-spinin {
+  0%,
+  35% {
+    opacity: 0;
+    transform: rotate(-120deg) scale(0.85);
+    animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  44%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.loop-build-spinin {
+  animation-name: loop-build-spinin;
+}
+
+@keyframes loop-build-done {
+  0%,
+  55% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  58%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  84%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-build-done {
+  animation-name: loop-build-done;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .build-spin {
+    animation: none;
+  }
+  /* The finished dashboard: request, checked steps, widgets, confirmation. */
+  .loop .loop-build-type,
+  .loop .loop-build-spinner {
     opacity: 0;
   }
 }

@@ -1,18 +1,17 @@
 import React from 'react'
 
-import { BrandBars } from '@/components/BrandBars'
 import { cn } from '@/utilities/ui'
 
 import { Backdrop, Card, Chip, Frame, Sparkline } from './primitives'
 import { labelsFor } from './labels'
 import type { IllustrationProps } from './index'
-import { withResi } from '@/components/Resi'
+import { ResiMark, withResi } from '@/components/Resi'
 
-/** A short exchange with the agent: question, answer with a small chart, and where it works. */
+/** A short exchange with Resi: question, answer with a small chart, and where it works. */
 export const AgentIllustration: React.FC<IllustrationProps> = ({ className, locale }) => {
   const l = labelsFor(locale)
   return (
-    <Frame className={cn('aspect-[5/4] w-full', className)} label="Gespräch mit dem Indicate Agent">
+    <Frame className={cn('aspect-[5/4] w-full', className)} label="Gespräch mit Resi">
       <Backdrop tone="blue" />
       <Card className="absolute inset-x-[8%] top-[9%] flex flex-col gap-4 p-5">
         <div className="flex justify-end">
@@ -22,9 +21,7 @@ export const AgentIllustration: React.FC<IllustrationProps> = ({ className, loca
           </div>
         </div>
         <div className="flex gap-3">
-          <span className="mt-1 inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-surface-2">
-            <BrandBars size={12} />
-          </span>
+          <ResiMark className="mt-1" size={28} />
           <div className="flex w-full flex-col gap-3 rounded-[1rem] rounded-tl-sm border border-line bg-surface-2 p-3.5">
             <span className="type-caption text-ink-3">{withResi(l.agent)}</span>
             <span className="type-small text-ink pretty">{l.a1}</span>

@@ -1,6 +1,8 @@
 import { Check, Mail } from 'lucide-react'
 import React from 'react'
 
+import { withResi } from '@/components/Resi'
+
 import { BrandBars } from '@/components/BrandBars'
 import { cn } from '@/utilities/ui'
 
@@ -83,7 +85,7 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
           </div>
           <ul className="mt-2 flex flex-col gap-1.5 type-caption text-ink-3">
             <li className="flex items-center gap-2"><i className="size-1.5 rounded-full bg-line-strong" /> PDF · 4 KPIs</li>
-            <li className="flex items-center gap-2"><i className="size-1.5 rounded-full bg-line-strong" /> {s.assistant}: 3 Highlights</li>
+            <li className="flex items-center gap-2"><i className="size-1.5 rounded-full bg-line-strong" /> {withResi(`${s.assistant}: 3 Highlights`)}</li>
           </ul>
         </div>
 

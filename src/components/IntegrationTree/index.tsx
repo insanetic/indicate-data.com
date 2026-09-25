@@ -4,7 +4,7 @@ import React from 'react'
 import { BrandBars } from '@/components/BrandBars'
 import { Connector, type Pt } from '@/components/Illustrations/stage'
 import { Media } from '@/components/Media'
-import { ResiMark } from '@/components/Resi'
+import { ResiMark, withResi } from '@/components/Resi'
 import type { Locale } from '@/i18n/config'
 import type { Media as MediaType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
@@ -14,17 +14,17 @@ export type TreeSystem = { name: string; logo?: MediaType | number | null; logoS
 
 const copy = {
   de: {
-    label: 'Datenquellen leuchten nacheinander auf und ihre Leitung zeichnet sich bis zu Indicate; darunter versorgt Indicate Dashboards, Agent und Reports',
+    label: 'Datenquellen leuchten nacheinander auf und ihre Leitung zeichnet sich bis zu Indicate; darunter versorgt Indicate Dashboards, Resi und Reports',
     centre: 'Indicate',
     dashboards: { title: 'Dashboards & Reports', detail: 'Umsatz · ADR · Kanalmix' },
-    agent: { title: 'Agent & MCP', detail: 'Resi · Claude · ChatGPT · Langdock' },
+    agent: { title: 'Resi & MCP', detail: 'Claude · ChatGPT · Langdock' },
     flying: { title: 'Flying KPIs', scheduled: 'Wochenreport · Mo 08:00', sent: 'An 3 Empfänger gesendet', detail: 'PDF + Digest per E-Mail' },
   },
   en: {
-    label: 'Data sources light up one after another and their line draws into Indicate; below, Indicate feeds dashboards, the agent and reports',
+    label: 'Data sources light up one after another and their line draws into Indicate; below, Indicate feeds dashboards, Resi and reports',
     centre: 'Indicate',
     dashboards: { title: 'Dashboards & reports', detail: 'Revenue · ADR · channel mix' },
-    agent: { title: 'Agent & MCP', detail: 'Resi · Claude · ChatGPT · Langdock' },
+    agent: { title: 'Resi & MCP', detail: 'Claude · ChatGPT · Langdock' },
     flying: { title: 'Flying KPIs', scheduled: 'Weekly report · Mon 08:00', sent: 'Sent to 3 recipients', detail: 'PDF + digest by email' },
   },
 }
@@ -142,7 +142,7 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
       <span aria-hidden="true" className="loop-tree-glow pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 border-resi-mint" style={delay(outDelay(i))} />
       <span className="flex items-center gap-2 type-caption font-medium text-ink">
         <Icon aria-hidden="true" className="shrink-0 text-resi-teal" size={15} strokeWidth={1.75} />
-        {title}
+        {withResi(title)}
       </span>
       {body}
     </div>
