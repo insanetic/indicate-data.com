@@ -57,7 +57,7 @@ export const StepsScroller: React.FC<Props> = ({ steps, scenes, pinned, mediaLef
 
   return (
     <div className="container">
-      <div className={cn('grid gap-12 lg:grid-cols-12 lg:gap-16', pinned ? 'items-start' : 'items-center')}>
+      <div className={cn('grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16', pinned ? 'items-start' : 'items-center')}>
         <div className={cn('lg:col-span-7', mediaLeft ? 'lg:order-1' : 'lg:order-2', pinned && 'lg:self-stretch')} data-part="media">
           {showTopScene && (
             <div className="lg:hidden" data-mobile-top-scene>
