@@ -5,7 +5,6 @@ type Answer = { kpi: string; value: number; unit: string; delta: string; up: boo
 
 type TeamCopy = {
   title: string
-  role: string
   catalogue: string
   /** The catalogue definition each exchange uses. */
   defs: [string, string, string]
@@ -24,7 +23,6 @@ type TeamCopy = {
 
 const de: TeamCopy = {
   title: 'Resi in der Mitte des Teams: Mews, Google Ads, Re:Guest und Meta links, Lena, Jonas und Anna rechts; sie beantwortet Fragen, heftet ein Diagramm ans Dashboard und verschickt montags den Wochenbericht per E-Mail',
-  role: 'Deine KI-Analystin',
   catalogue: 'KPI-Katalog',
   defs: ['occupancy · Wochenende', 'occupancy · Zimmerkategorie', 'Wochenbericht · 6 KPIs'],
   people: [
@@ -59,7 +57,6 @@ const de: TeamCopy = {
 
 const en: TeamCopy = {
   title: 'Resi at the centre of the team: Mews, Google Ads, Re:Guest and Meta on the left, Lena, Jonas and Anna on the right; she answers questions, pins a chart to the dashboard and sends the weekly report by email on Monday',
-  role: 'Your AI analyst',
   catalogue: 'KPI catalogue',
   defs: ['occupancy · weekend', 'occupancy · room category', 'Weekly report · 6 KPIs'],
   people: [

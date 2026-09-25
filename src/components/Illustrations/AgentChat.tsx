@@ -155,24 +155,17 @@ export const AgentChatIllustration: React.FC<IllustrationProps> = ({ className, 
   )
 
   const resiCard = (
-    <div className="relative flex h-full flex-col items-center justify-center gap-2.5 rounded-[1.25rem] border border-line-strong bg-surface-2 px-5 py-4 text-center shadow-float">
+    <div className="relative flex h-full flex-col items-center justify-center gap-2.5 rounded-[1.25rem] border border-line-strong bg-surface-2 px-5 pb-4 pt-10 text-center shadow-float">
       <span aria-hidden="true" className="loop-hub-ring pointer-events-none absolute -inset-px rounded-[inherit]" style={perSlot} />
-      <span className="relative grid size-16 place-items-center">
+      {/* Her mark sits on the card's top edge; it swells while she works, the aura breathes. */}
+      <span className="absolute left-1/2 top-0 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center">
         <span aria-hidden="true" className="resi-aura absolute -inset-2 rounded-full" />
         <span className="loop-resi-core relative grid place-items-center" style={perSlot}>
-          <ResiMark className="shadow-float" size={56} />
-          {turns.map((_, slot) => (
-            <span className="loop-hub-think absolute inset-0" key={slot} style={slotDelay(slot)}>
-              <ResiMark size={56} thinking />
-            </span>
-          ))}
+          <ResiMark className="shadow-float ring-4 ring-surface" size={56} />
         </span>
       </span>
-      <span className="flex flex-col items-center">
-        {/* The spaces keep "Resi" a separate word in the text content. */}
-        {' '}<ResiName className="font-display text-xl font-medium leading-6" />{' '}
-        <span className="type-caption leading-4 text-ink-3">{c.role}</span>
-      </span>
+      {/* The spaces keep "Resi" a separate word in the text content. */}
+      {' '}<ResiName className="font-display text-xl font-medium leading-6" />{' '}
       <span className="grid w-full border-t border-line pt-2.5">{turns.map((_, slot) => statusLine(slot))}</span>
     </div>
   )
