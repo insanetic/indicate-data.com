@@ -73,6 +73,11 @@ html[data-intro-seen] [data-intro='play'] .intro-visual {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Scene rules like `.loop .loop-x { animation-name: … }` load after the shared reset in    */
+  /* loops.css with the same specificity; this one outranks them, so every scene stands still. */
+  .loop.scene [class*='loop-'] {
+    animation-name: none;
+  }
   .scene-build,
   .scene-build-in,
   .scene-wire,

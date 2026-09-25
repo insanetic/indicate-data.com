@@ -14,13 +14,14 @@ const scenes = [
   { key: 'governance', file: 'Governance.tsx', css: 'access.css' },
   { key: 'templates', file: 'Templates.tsx', css: 'rollout.css' },
   { key: 'stage', file: 'HotelStage.tsx', css: 'morning.css' },
+  { key: 'paperPlane', file: 'PaperPlane.tsx', css: 'plane.css', slots: false },
   { key: 'dashboard', file: 'Dashboard.tsx', css: 'widgets.css' },
 ] as const
 
 const root = process.cwd()
 const read = (...p: string[]) => fs.readFileSync(path.join(root, ...p), 'utf8')
 
-describe.each(scenes)('$key scene', ({ key, file, css }) => {
+describe.each(scenes as readonly { key: keyof typeof illustrations; file: string; css: string; slots?: boolean }[])('$key scene', ({ key, file, css, slots = true }) => {
   for (const locale of ['de', 'en'] as const) {
     it(`renders on the scene frame with three exchanges (${locale})`, () => {
       const Scene = illustrations[key]
@@ -29,7 +30,8 @@ describe.each(scenes)('$key scene', ({ key, file, css }) => {
       expect(frame).not.toBeNull()
       expect(frame?.classList.contains('scene')).toBe(true)
       expect(frame?.getAttribute('aria-label')?.length).toBeGreaterThan(10)
-      for (const slot of ['0', '1', '2']) {
+      // One continuous transformation has no exchanges to mark.
+      for (const slot of slots ? ['0', '1', '2'] : []) {
         expect(container.querySelector(`[data-slot="${slot}"]`), `data-slot ${slot}`).not.toBeNull()
       }
     })

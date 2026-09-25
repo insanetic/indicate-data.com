@@ -1,0 +1,234 @@
+/* --- Paper plane (`paperPlane`, 8 s): bytes → KPIs → envelope → plane → delivered ---------- */
+/*                                                                                             */
+/* Percentages are of the 8 s clock (1 s = 12.5 %). Bits stream in 0–1.0 s (staggered by      */
+/* `--delay`) and give way at 1.5–1.85 s; the bars grow 1.6–2.1 s and slide into the envelope   */
+/* 2.55–3.05 s while it appears (2.4–2.7 s) and its flap closes (to 3.2 s); the envelope folds  */
+/* into the plane 3.5–4.25 s; it dips, then climbs along the route 4.4–5.9 s while the trail    */
+/* draws and the pulse runs ahead; the tick lands at 5.8–6.1 s and fades by 7.6 s.              */
+/* Resting styles (reduced motion) are the plane on its spot, the drawn route and the tick.     */
+
+/* Bits: in from the left, a beat in the grid, then they shrink away into their bar. */
+@keyframes loop-plane-bit {
+  0% {
+    opacity: 0;
+    transform: translate(var(--fx), var(--fy)) scale(0.8);
+  }
+  13%,
+  19% {
+    opacity: 1;
+    transform: none;
+  }
+  23%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+.loop-plane-bit {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.loop .loop-plane-bit {
+  animation-name: loop-plane-bit;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* KPI bars: grow from the left of their row, hold, then slide small into the envelope. */
+@keyframes loop-plane-bar {
+  0%,
+  19% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  20% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  26%,
+  32% {
+    opacity: 1;
+    transform: none;
+  }
+  38%,
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.4);
+  }
+}
+.loop-plane-bar {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+.loop .loop-plane-bar {
+  animation-name: loop-plane-bar;
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Facets: the envelope appears with its flap open, the flap closes, then every facet folds */
+/* onto its place in the plane (`--to`, an affine matrix in stage units) and takes its colour. */
+@keyframes loop-plane-facet {
+  0%,
+  30% {
+    opacity: 0;
+    transform: var(--open);
+    fill: var(--env);
+  }
+  34% {
+    opacity: 1;
+    transform: var(--open);
+    fill: var(--env);
+  }
+  40% {
+    opacity: 1;
+    transform: none;
+    fill: var(--env);
+  }
+  /* The fold: five in-between poses (see `FOLD`), linear between them; the spacing eases. */
+  44% {
+    transform: none;
+    fill: var(--env);
+    animation-timing-function: linear;
+  }
+  45.5% {
+    transform: var(--f1);
+    animation-timing-function: linear;
+  }
+  47% {
+    transform: var(--f2);
+    animation-timing-function: linear;
+  }
+  48.5% {
+    transform: var(--f3);
+    animation-timing-function: linear;
+  }
+  50% {
+    transform: var(--f4);
+    animation-timing-function: linear;
+  }
+  51.5% {
+    transform: var(--f5);
+    animation-timing-function: linear;
+  }
+  53%,
+  100% {
+    opacity: 1;
+    transform: var(--to);
+    fill: var(--wing);
+  }
+}
+.loop-plane-facet {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transform: var(--to);
+  fill: var(--wing);
+}
+.loop .loop-plane-facet {
+  animation-name: loop-plane-facet;
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Flight: a small dip, then a climb to the landing point, banking and getting smaller. */
+@keyframes loop-plane-fly {
+  0%,
+  54% {
+    opacity: 1;
+    transform: none;
+  }
+  57% {
+    opacity: 1;
+    transform: translate(3px, 1.5px);
+  }
+  74% {
+    opacity: 1;
+    transform: translate(var(--tx), var(--ty)) rotate(-12deg) scale(0.55);
+  }
+  77%,
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(-12deg) scale(0.55);
+  }
+}
+.loop-plane-fly {
+  transform-box: view-box;
+  transform-origin: var(--ox) var(--oy);
+}
+.loop .loop-plane-fly {
+  animation-name: loop-plane-fly;
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* The route draws behind the plane, stays a moment, then fades. */
+@keyframes loop-plane-trail {
+  0%,
+  55% {
+    opacity: 1;
+    stroke-dashoffset: 1;
+  }
+  74%,
+  84% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  92%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+.loop-plane-trail {
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 0;
+}
+.loop .loop-plane-trail {
+  animation-name: loop-plane-trail;
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* A short yellow pulse runs the route just ahead of the plane; it rests beyond both ends. */
+@keyframes loop-plane-comet {
+  0%,
+  55% {
+    stroke-dashoffset: var(--comet-from);
+  }
+  76%,
+  100% {
+    stroke-dashoffset: -1.05;
+  }
+}
+.loop-plane-comet {
+  stroke-dasharray: var(--comet) 2;
+  stroke-dashoffset: var(--comet-from);
+}
+.loop .loop-plane-comet {
+  animation-name: loop-plane-comet;
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Delivered: the tick pops where the plane arrives. */
+@keyframes loop-plane-tick {
+  0%,
+  72% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  76%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  95%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop-plane-tick {
+  transform-box: view-box;
+  transform-origin: var(--ox) var(--oy);
+}
+.loop .loop-plane-tick {
+  animation-name: loop-plane-tick;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}

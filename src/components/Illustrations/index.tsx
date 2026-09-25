@@ -23,6 +23,7 @@ import { ComparisonIllustration } from './Comparison'
 import { DashboardIllustration } from './Dashboard'
 import { FlyingKpisIllustration } from './FlyingKpis'
 import { IntegrationsIllustration } from './Integrations'
+import { PaperPlaneIllustration } from './PaperPlane'
 import { PortfolioIllustration } from './Portfolio'
 import { SourcesIllustration } from './Sources'
 import { TeamIllustration } from './Team'
@@ -57,6 +58,7 @@ export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>>
   semanticLayer: SemanticLayerIllustration,
   dimensions: DimensionsIllustration,
   collections: CollectionsIllustration,
+  paperPlane: PaperPlaneIllustration,
 }
 
 export type VisualData = {
