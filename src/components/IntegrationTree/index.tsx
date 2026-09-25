@@ -16,7 +16,6 @@ const copy = {
   de: {
     label: 'Datenquellen leuchten nacheinander auf und ihre Leitung zeichnet sich bis zu Indicate; darunter versorgt Indicate Dashboards, Agent und Reports',
     centre: 'Indicate',
-    sync: 'Sync alle 15 Min.',
     dashboards: { title: 'Dashboards & Reports', detail: 'Umsatz · ADR · Kanalmix' },
     agent: { title: 'Agent & MCP', detail: 'Resi · Claude · ChatGPT · Langdock' },
     flying: { title: 'Flying KPIs', scheduled: 'Wochenreport · Mo 08:00', sent: 'An 3 Empfänger gesendet', detail: 'PDF + Digest per E-Mail' },
@@ -24,7 +23,6 @@ const copy = {
   en: {
     label: 'Data sources light up one after another and their line draws into Indicate; below, Indicate feeds dashboards, the agent and reports',
     centre: 'Indicate',
-    sync: 'Sync every 15 min',
     dashboards: { title: 'Dashboards & reports', detail: 'Revenue · ADR · channel mix' },
     agent: { title: 'Agent & MCP', detail: 'Resi · Claude · ChatGPT · Langdock' },
     flying: { title: 'Flying KPIs', scheduled: 'Weekly report · Mon 08:00', sent: 'Sent to 3 recipients', detail: 'PDF + digest by email' },
@@ -135,10 +133,6 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
       <span className="flex flex-col items-center justify-center gap-1 rounded-[1rem] bg-white px-6 py-4 text-[oklch(0.2_0.02_262)]">
         <BrandBars size={26} />
         <span className="font-display text-base font-medium">{t.centre}</span>
-        <span className="flex items-center gap-1.5 text-[0.6875rem] leading-4 text-[oklch(0.45_0.02_262)]">
-          <i className="size-1.5 rounded-full bg-[oklch(0.65_0.17_150)]" />
-          {t.sync}
-        </span>
       </span>
     </span>
   )
