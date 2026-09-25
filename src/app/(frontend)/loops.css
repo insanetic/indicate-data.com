@@ -44,7 +44,7 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* --- Flying KPIs (9 s): the scheduler hits Monday 08:00, Resi adds highlights, four    --- */
+/* --- Flying KPIs (9 s): the scheduler hits Monday 08:00, Resi adds highlights, three   --- */
 /* recipients receive it by email one after another (`--delay` = recipient × 0.4 s).          */
 
 .loop-post {

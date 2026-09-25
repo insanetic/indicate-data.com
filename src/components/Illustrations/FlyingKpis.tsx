@@ -21,12 +21,11 @@ const STEP = 0.4
 const W = 200
 const H = 90
 const REPORT: Pt = { x: 38, y: 45 }
-const NODE: Pt = { x: 100, y: 42 }
+const NODE: Pt = { x: 100, y: 45 }
 const RECIPIENTS: Pt[] = [
-  { x: 170, y: 14 },
-  { x: 170, y: 35 },
-  { x: 170, y: 56 },
-  { x: 170, y: 77 },
+  { x: 170, y: 20 },
+  { x: 170, y: 45 },
+  { x: 170, y: 70 },
 ]
 const BEND = 128
 const at = (p: Pt) => pos(p, W, H)
@@ -43,7 +42,7 @@ const lastYear = [40, 42, 44, 46, 45, 50, 52, 55, 57, 60]
  * Looping scene (wide), 9 s: reports that arrive on their own. The scheduler's minute hand
  * sweeps to Monday 08:00 and its ring closes; the weekly report on the left lights up and
  * Resi writes three highlights into it; a pulse carries it to the scheduler, then lines draw
- * out to four recipients one after another (dashboards and digests, always by email), each lighting up as its status turns from
+ * out to three recipients one after another (dashboards and digests, always by email), each lighting up as its status turns from
  * scheduled to delivered. Idle lines carry a slow dotted flow. Below `lg` the pieces stack.
  * Reduced motion shows everything delivered. Timing: `.loop-post-*` in loops.css.
  */
@@ -118,6 +117,7 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
         <Connector className="h-9 w-3 shrink-0 lg:hidden" />
 
         {/* Scheduler */}
+        {/* The dial sits on the wire; the schedule hangs below it. */}
         <div className={cn('relative z-10 flex flex-col items-center gap-2.5', AT)} style={at(NODE)}>
           <div className="relative grid size-28 place-items-center rounded-full border border-line-strong bg-surface-2 shadow-float">
             <span aria-hidden="true" className="loop-post-flash pointer-events-none absolute -inset-[3px] rounded-full border-2 border-resi-mint" />
@@ -147,7 +147,7 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
               <circle cx="40" cy="40" fill="var(--ink)" r="3" />
             </svg>
           </div>
-          <span className="flex items-center gap-1.5 rounded-pill border border-line bg-surface-2 px-2.5 py-1 type-caption font-medium text-ink-2 whitespace-nowrap">
+          <span className="flex items-center gap-1.5 whitespace-nowrap rounded-pill border border-line bg-surface-2 px-2.5 py-1 type-caption font-medium text-ink-2 lg:absolute lg:left-1/2 lg:top-full lg:mt-3 lg:-translate-x-1/2">
             <Clock aria-hidden="true" className="text-resi-teal" size={13} strokeWidth={1.75} />
             {p.schedule} · {p.repeat}
           </span>

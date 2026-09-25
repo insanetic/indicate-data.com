@@ -57,7 +57,7 @@ export const labels = {
       delivered: 'Zugestellt',
       recipients: ['Geschäftsführung', 'Eigentümer', 'Revenue-Team'],
       post: {
-        title: 'Flying KPIs: Montag um 08:00 wird der Wochenreport erstellt, Resi ergänzt drei Highlights und vier Empfänger bekommen ihn zugestellt',
+        title: 'Flying KPIs: Montag um 08:00 wird der Wochenreport erstellt, Resi ergänzt drei Highlights und drei Empfänger bekommen ihn zugestellt',
         schedule: 'Montag · 08:00',
         repeat: 'jede Woche',
         highlights: 'Resi · 3 Highlights',
@@ -66,7 +66,6 @@ export const labels = {
           { name: 'Geschäftsführung', via: 'Dashboard per E-Mail', kind: 'dashboard' },
           { name: 'Eigentümer', via: 'Digest per E-Mail', kind: 'digest' },
           { name: 'Revenue-Team', via: 'Dashboard per E-Mail', kind: 'dashboard' },
-          { name: 'Hausbank', via: 'Digest ohne Login', kind: 'digest' },
         ],
         scheduled: 'Geplant',
         delivered: 'Zugestellt',
@@ -373,7 +372,7 @@ export const labels = {
       delivered: 'Delivered',
       recipients: ['Management', 'Owners', 'Revenue team'],
       post: {
-        title: 'Flying KPIs: on Monday at 08:00 the weekly report is created, Resi adds three highlights and four recipients receive it',
+        title: 'Flying KPIs: on Monday at 08:00 the weekly report is created, Resi adds three highlights and three recipients receive it',
         schedule: 'Monday · 08:00',
         repeat: 'every week',
         highlights: 'Resi · 3 highlights',
@@ -382,7 +381,6 @@ export const labels = {
           { name: 'Management', via: 'Dashboard by email', kind: 'dashboard' },
           { name: 'Owners', via: 'Digest by email', kind: 'digest' },
           { name: 'Revenue team', via: 'Dashboard by email', kind: 'dashboard' },
-          { name: 'House bank', via: 'Digest, no login', kind: 'digest' },
         ],
         scheduled: 'Scheduled',
         delivered: 'Delivered',
