@@ -155,20 +155,18 @@ describe('ItemsBlock', () => {
 })
 
 describe('SplitBlock', () => {
-  it('puts the scene first on wide screens when it sits left, and lists the points in a column', () => {
+  it.each([
+    ['right', 'lg:order-1', 'lg:order-2'],
+    ['left', 'lg:order-2', 'lg:order-1'],
+  ] as const)('scene %s: media comes first in the DOM, the sides come from lg:order', (side, textOrder, mediaOrder) => {
     const { container } = inLocale(
-      <SplitBlock
-        blockType="split"
-        header={{ heading: 'Text neben Szene' }}
-        mediaSide="left"
-        points={[{ id: 'p', title: 'Punkt eins' }]}
-        visual={{ type: 'image', image: null }}
-      />,
+      <SplitBlock blockType="split" header={{ heading: 'Text neben Szene' }} mediaSide={side} points={[{ id: 'p', title: 'Punkt eins' }]} visual={{ type: 'image', image: null }} />,
     )
-    expect(container.querySelector('[data-part="text"]')?.className).toContain('lg:order-2')
-    expect(container.querySelector('[data-part="media"]')?.className).toContain('lg:order-1')
+    const parts = [...container.querySelectorAll('[data-part]')].map((el) => el.getAttribute('data-part'))
+    expect(parts).toEqual(['media', 'text'])
+    expect(container.querySelector('[data-part="text"]')?.className).toContain(textOrder)
+    expect(container.querySelector('[data-part="media"]')?.className).toContain(mediaOrder)
     expect(container.querySelector('ul')?.className).toContain('flex-col')
-    expect(screen.getByText('Punkt eins')).toBeTruthy()
   })
 
   it('renders without a heading (lead only)', () => {
