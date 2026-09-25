@@ -17,7 +17,7 @@ export const labels = {
     syncing: 'Aktualisiert',
     question: 'Warum ist der Pickup diese Woche höher?',
     answer: 'Vor allem mehr Direktbuchungen fürs Wochenende: +18 % gegenüber der Vorwoche.',
-    you: 'Sie',
+    you: 'Du',
     agent: 'Resi',
     space: 'Space',
     owner: 'Owner',
@@ -101,7 +101,7 @@ export const labels = {
         ['meta', 'adsets', '48 Zeilen', '0,2 s'],
       ],
       chat: {
-        title: 'Chat mit Ihren Daten',
+        title: 'Chat mit deinen Daten',
         context: 'Kontext',
         question: 'Welche Zimmerkategorie verkauft sich im Oktober am schlechtesten?',
         answer: 'Die Juniorsuiten: 61 % Auslastung im Oktober, 14 Punkte unter dem Haus. Unter der Woche bleiben sie frei, am Wochenende sind sie fast voll.',
@@ -115,7 +115,7 @@ export const labels = {
       },
       resi: {
         title: 'Resi bei der Arbeit: Quellen, Kennzahl-Definition und Rechte fließen in jede Antwort',
-        role: 'Ihre KI-Agentin',
+        role: 'Deine KI-Agentin',
         thinking: 'Resi prüft die Kennzahlen …',
         catalogue: 'KPI-Katalog',
         permissions: 'Rechte wie in der App',
@@ -159,8 +159,8 @@ export const labels = {
       },
       hub: {
         title: 'Resi im Zentrum: Datenquellen fließen in den Chat, jede Antwort wird zu Kennzahl oder Diagramm',
-        role: 'Ihre KI-Agentin',
-        ask: 'Fragen Sie Resi …',
+        role: 'Deine KI-Agentin',
+        ask: 'Frag Resi …',
         thinking: 'Resi prüft die Kennzahlen …',
         catalogue: 'KPI-Katalog',
         turns: [
@@ -269,7 +269,7 @@ export const labels = {
       templates: {
         title: 'Vorlagen',
         items: ['Mews · Revenue & Auslastung', 'Google Ads · Kampagnen', 'Re:Guest · Anfragen & Angebote'],
-        by: ['Indicate', 'Indicate', 'Ihre Agentur'],
+        by: ['Indicate', 'Indicate', 'Deine Agentur'],
         apply: 'Anwenden auf',
         applied: 'Angewendet',
         remap: 'Kennzahlen zugeordnet',
@@ -310,7 +310,7 @@ export const labels = {
         historyStart: '−13 Monate',
         historyEnd: 'heute',
         invite: 'Verbindungslink',
-        inviteText: 'Das Hotel gibt sein PMS selbst frei. Sie sehen nie ein Passwort.',
+        inviteText: 'Das Hotel gibt sein PMS selbst frei. Du siehst nie ein Passwort.',
         inviteSteps: ['Link senden', 'Hotel bestätigt', 'Daten fließen'],
       },
       kpiStudio: 'KPI Studio',

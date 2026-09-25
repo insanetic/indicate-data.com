@@ -43,15 +43,15 @@ const HOLD = 4200
 
 const copy = {
   de: {
-    you: 'Sie',
-    role: 'Ihre KI-Agentin',
+    you: 'Du',
+    role: 'Deine KI-Agentin',
     chips: 'Beispielfragen',
-    channels: 'Resi, in Ihrem Chat',
+    channels: 'Resi, in deinem Chat',
     connected: 'Indicate MCP · verbunden',
-    placeholder: 'Fragen Sie Resi …',
+    placeholder: 'Frag Resi …',
     steps: [
       'Kennzahl im Katalog gefunden',
-      'Rechte geprüft · Ihr Space',
+      'Rechte geprüft · dein Space',
       'Daten aus PMS und Kanälen',
     ],
     direct: 'Direkt',
