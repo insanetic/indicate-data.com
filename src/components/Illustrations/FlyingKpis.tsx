@@ -60,10 +60,10 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
             <path className="hub-dots" d={d} fill="none" key={d} stroke="var(--line-strong)" strokeLinecap="round" strokeWidth="0.45" />
           ))}
           <path className="loop-post-in" d={inPath} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeWidth="0.5" />
-          <path className="loop-post-in-comet" d={inPath} fill="none" pathLength={1} stroke="var(--resi-teal)" strokeLinecap="round" strokeWidth="1" />
+          <path className="loop-post-in-comet" d={inPath} fill="none" pathLength={1} stroke="var(--brand-yellow)" strokeLinecap="round" strokeWidth="1" />
           {RECIPIENTS.map((_, i) => (
             <React.Fragment key={i}>
-              <path className="loop-post-out" d={outPath(i)} fill="none" pathLength={1} stroke="var(--resi-mint)" strokeLinejoin="round" strokeWidth="0.5" style={delay(i * STEP)} />
+              <path className="loop-post-out" d={outPath(i)} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeLinejoin="round" strokeWidth="0.5" style={delay(i * STEP)} />
               <path className="loop-post-comet" d={outPath(i)} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="1" style={delay(i * STEP)} />
             </React.Fragment>
           ))}
@@ -91,7 +91,7 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
                   <div className="flex flex-col gap-0.5" key={k.label}>
                     <span className="type-caption text-ink-3">{k.label}</span>
                     <span className="font-display text-lg font-medium leading-tight tnum text-ink">{k.value}</span>
-                    <span className="type-caption font-medium tnum text-[oklch(0.78_0.15_160)]">{k.delta}</span>
+                    <span className="type-caption font-medium tnum text-success-deep">{k.delta}</span>
                   </div>
                 ))}
               </div>
@@ -114,16 +114,16 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
           </div>
         </div>
 
-        <Connector className="h-9 w-3 shrink-0 lg:hidden" />
+        <Connector className="h-9 w-3 shrink-0 lg:hidden" color="var(--brand-yellow)" />
 
         {/* Scheduler */}
         {/* The dial sits on the wire; the schedule hangs below it. */}
         <div className={cn('relative z-10 flex flex-col items-center gap-2.5', AT)} style={at(NODE)}>
           <div className="relative grid size-28 place-items-center rounded-full border border-line-strong bg-surface-2 shadow-float">
-            <span aria-hidden="true" className="loop-post-flash pointer-events-none absolute -inset-[3px] rounded-full border-2 border-resi-mint" />
+            <span aria-hidden="true" className="loop-post-flash pointer-events-none absolute -inset-[3px] rounded-full border-2 border-brand-blue" />
             <svg aria-hidden="true" className="absolute inset-0 size-full -rotate-90" viewBox="0 0 100 100">
               <circle cx="50" cy="50" fill="none" r="44" stroke="var(--line)" strokeWidth="3" />
-              <circle className="loop-post-ring" cx="50" cy="50" fill="none" pathLength={1} r="44" stroke="var(--resi-teal)" strokeLinecap="round" strokeWidth="3" />
+              <circle className="loop-post-ring" cx="50" cy="50" fill="none" pathLength={1} r="44" stroke="var(--brand-blue)" strokeLinecap="round" strokeWidth="3" />
             </svg>
             <svg aria-hidden="true" className="relative size-20" viewBox="0 0 80 80">
               {Array.from({ length: 12 }, (_, i) => (
@@ -142,18 +142,18 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
               {/* Hour hand on 8, minute hand sweeps a full turn to 12 */}
               <line stroke="var(--ink)" strokeLinecap="round" strokeWidth="3" transform="rotate(240 40 40)" x1="40" x2="40" y1="40" y2="22" />
               <g className="loop-post-hand">
-                <line stroke="var(--resi-mint)" strokeLinecap="round" strokeWidth="2.25" x1="40" x2="40" y1="40" y2="13" />
+                <line stroke="var(--brand-yellow)" strokeLinecap="round" strokeWidth="2.25" x1="40" x2="40" y1="40" y2="13" />
               </g>
               <circle cx="40" cy="40" fill="var(--ink)" r="3" />
             </svg>
           </div>
           <span className="flex items-center gap-1.5 whitespace-nowrap rounded-pill border border-line bg-surface-2 px-2.5 py-1 type-caption font-medium text-ink-2 lg:absolute lg:left-1/2 lg:top-full lg:mt-3 lg:-translate-x-1/2">
-            <Clock aria-hidden="true" className="text-resi-teal" size={13} strokeWidth={1.75} />
+            <Clock aria-hidden="true" className="text-brand-blue" size={13} strokeWidth={1.75} />
             {p.schedule} · {p.repeat}
           </span>
         </div>
 
-        <Connector className="h-9 w-3 shrink-0 lg:hidden" out />
+        <Connector className="h-9 w-3 shrink-0 lg:hidden" color="var(--brand-blue)" out />
 
         {/* Recipients */}
         <div className="flex w-full max-w-md flex-col gap-2.5 lg:contents">
@@ -162,7 +162,7 @@ export const FlyingKpisIllustration: React.FC<IllustrationProps> = ({ className,
             return (
               <div className={cn('relative z-10 w-full lg:w-[27%]', AT)} key={r.name} style={at(RECIPIENTS[i])}>
                 <div className="relative flex items-center gap-3 rounded-[0.875rem] border border-line-strong bg-surface-2 px-3 py-2.5 shadow-card">
-                  <span aria-hidden="true" className="loop-post-glow pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 border-resi-mint" style={delay(i * STEP)} />
+                  <span aria-hidden="true" className="loop-post-glow pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 border-brand-blue" style={delay(i * STEP)} />
                   <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-3 text-ink-2">
                     <Icon aria-hidden="true" size={15} strokeWidth={1.75} />
                   </span>

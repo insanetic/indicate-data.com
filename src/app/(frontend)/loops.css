@@ -113,7 +113,7 @@
 }
 .loop-post-flash {
   opacity: 0;
-  box-shadow: 0 0 0 5px color-mix(in oklch, var(--resi-mint) 18%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklch, var(--brand-blue) 18%, transparent);
   animation-name: loop-post-flash;
 }
 
@@ -255,7 +255,7 @@
 }
 .loop-post-glow {
   opacity: 0;
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--resi-mint) 16%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, transparent);
   animation-name: loop-post-glow;
 }
 @keyframes loop-post-wait {
@@ -692,7 +692,7 @@
 }
 .loop-tree-glow {
   opacity: 0;
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--resi-mint) 16%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-blue) 18%, transparent);
   animation-name: loop-tree-glow;
 }
 
@@ -1042,7 +1042,7 @@
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Centre tile: a blue-to-mint light travels around the white tile on a conic gradient. */
+/* Centre tile: a light in the logo's three colours travels around the white tile on a conic gradient. */
 @property --tree-angle {
   syntax: '<angle>';
   inherits: false;
@@ -1058,9 +1058,9 @@
   background: conic-gradient(
     from var(--tree-angle),
     transparent 0deg,
-    var(--brand-blue) 50deg,
-    var(--resi-teal) 90deg,
-    var(--resi-mint) 120deg,
+    var(--brand-yellow) 50deg,
+    var(--brand-blue) 90deg,
+    var(--brand-coral) 120deg,
     transparent 150deg,
     transparent 360deg
   );
@@ -1073,7 +1073,7 @@
     animation: none;
   }
   .loop .loop-tree-centre {
-    background: var(--gradient-resi);
+    background: linear-gradient(100deg, var(--brand-yellow), var(--brand-blue) 55%, var(--brand-coral));
   }
   .loop .loop-tree-sent {
     opacity: 0;

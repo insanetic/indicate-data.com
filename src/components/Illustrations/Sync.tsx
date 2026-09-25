@@ -47,7 +47,7 @@ export const SyncIllustration: React.FC<IllustrationProps> = ({ className, local
                   <span className="loop-sync-busy absolute inset-y-0 right-0 flex items-center gap-1.5 text-ink-2" style={delay(i)}>
                     <BrandBars size={10} thinking /> {s.busy}
                   </span>
-                  <span className="loop-sync-ok absolute inset-y-0 right-0 flex items-center gap-1 text-[oklch(0.78_0.15_160)]" style={delay(i)}>
+                  <span className="loop-sync-ok absolute inset-y-0 right-0 flex items-center gap-1 text-success-deep" style={delay(i)}>
                     <Check aria-hidden="true" size={12} strokeWidth={2.5} /> {s.ok}
                   </span>
                 </span>

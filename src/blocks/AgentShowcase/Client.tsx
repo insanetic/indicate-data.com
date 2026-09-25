@@ -317,7 +317,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
                   className="chat-rise flex items-center gap-1.5 rounded-pill border border-line px-2.5 py-1 type-caption text-ink-2"
                   key={`c-${channel}`}
                 >
-                  <i className="size-1.5 rounded-full bg-[oklch(0.78_0.15_160)]" /> {t.connected}
+                  <i className="size-1.5 rounded-full bg-success" /> {t.connected}
                 </span>
               )}
             </div>
@@ -350,7 +350,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
                             external && 'font-mono',
                           )}
                         >
-                          <span className="grid size-4 shrink-0 place-items-center rounded-full bg-[oklch(0.3_0.07_160)] text-resi-mint">
+                          <span className="grid size-4 shrink-0 place-items-center rounded-full bg-success-soft text-resi-mint">
                             <Check aria-hidden="true" size={10} strokeWidth={3} />
                           </span>
                           <span className="truncate">{stepLabels.join(' · ')}</span>
@@ -368,7 +368,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
                             >
                               <span className="relative grid size-4 shrink-0 place-items-center">
                                 {k < steps ? (
-                                  <span className="chat-pop grid size-4 place-items-center rounded-full bg-[oklch(0.3_0.07_160)] text-resi-mint">
+                                  <span className="chat-pop grid size-4 place-items-center rounded-full bg-success-soft text-resi-mint">
                                     <Check aria-hidden="true" size={10} strokeWidth={3} />
                                   </span>
                                 ) : (
@@ -425,7 +425,7 @@ export const AgentShowcaseClient: React.FC<{ prompts: PromptData[]; channels?: s
                                             'rounded-pill px-2 py-0.5 type-caption font-medium tnum',
                                             negative
                                               ? 'bg-brand-coral-soft text-brand-coral'
-                                              : 'bg-[oklch(0.3_0.07_160)] text-[oklch(0.8_0.15_160)]',
+                                              : 'bg-success-soft text-success-deep',
                                           )}
                                         >
                                           {prompt.kpiDelta}

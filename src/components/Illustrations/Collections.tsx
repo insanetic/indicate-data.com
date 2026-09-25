@@ -87,7 +87,7 @@ export const CollectionsIllustration: React.FC<IllustrationProps> = ({ className
                   {g.members.map((m, j) => (
                     <li className="flex items-center gap-1.5 rounded-pill border border-line bg-surface px-2.5 py-0.5 text-[0.6875rem] font-medium leading-5 text-ink" key={m}>
                       {m}
-                      <Check aria-hidden="true" className="loop-share-tick text-[oklch(0.78_0.15_160)]" size={11} strokeWidth={2.5} style={delay(i * 0.6 + j * 0.2)} />
+                      <Check aria-hidden="true" className="loop-share-tick text-success-deep" size={11} strokeWidth={2.5} style={delay(i * 0.6 + j * 0.2)} />
                     </li>
                   ))}
                 </ul>

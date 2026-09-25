@@ -42,7 +42,7 @@ export const TeamIllustration: React.FC<IllustrationProps> = ({ className, local
                 {r.role}
               </Chip>
               <span className="flex items-center gap-1 type-caption text-ink-3">
-                <Check aria-hidden="true" className="size-3.5 text-[oklch(0.5_0.14_160)]" strokeWidth={2.5} /> {l.twoFactor}
+                <Check aria-hidden="true" className="size-3.5 text-success-deep" strokeWidth={2.5} /> {l.twoFactor}
               </span>
             </li>
           ))}

@@ -60,7 +60,7 @@ export const AgentChatIllustration: React.FC<IllustrationProps> = ({ className, 
                   </div>
                 </div>
                 <span className="loop-chat-in flex items-center gap-1.5 type-caption text-ink-3" style={delay('0.3s')}>
-                  <Check aria-hidden="true" className="text-[oklch(0.78_0.15_160)]" size={12} strokeWidth={2.5} /> {c.source}
+                  <Check aria-hidden="true" className="text-success-deep" size={12} strokeWidth={2.5} /> {c.source}
                 </span>
               </div>
             </div>
@@ -85,7 +85,7 @@ export const AgentChatIllustration: React.FC<IllustrationProps> = ({ className, 
               <li className="flex items-center justify-between gap-3 rounded-card-inner border border-line bg-surface px-3 py-2 type-caption" key={src}>
                 <span className="font-medium text-ink">{src}</span>
                 <span className="flex items-center gap-1 text-ink-3">
-                  <i className="size-1.5 rounded-full bg-[oklch(0.78_0.15_160)]" />
+                  <i className="size-1.5 rounded-full bg-success" />
                   {l.syncing}
                 </span>
               </li>

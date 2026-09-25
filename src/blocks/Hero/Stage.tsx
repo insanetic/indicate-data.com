@@ -87,7 +87,7 @@ export const HeroStage: React.FC<{ className?: string }> = ({ className }) => {
                 <span>{row[1]}</span>
                 <span className="ml-auto tnum">{row[2]}</span>
                 <span className="tnum">{row[3]}</span>
-                <Check aria-hidden="true" className="text-[oklch(0.78_0.15_160)]" size={12} strokeWidth={2.5} />
+                <Check aria-hidden="true" className="text-success-deep" size={12} strokeWidth={2.5} />
               </li>
             ))}
           </ul>
@@ -124,7 +124,7 @@ export const HeroStage: React.FC<{ className?: string }> = ({ className }) => {
                   <span className="font-display text-[1.6rem] font-medium leading-none tnum text-ink">
                     {k.format(k.value * progress)}
                   </span>
-                  <span className={cn('type-caption font-medium tnum text-[oklch(0.78_0.15_160)] transition-opacity duration-500', progress > 0.9 ? 'opacity-100' : 'opacity-0')}>
+                  <span className={cn('type-caption font-medium tnum text-success-deep transition-opacity duration-500', progress > 0.9 ? 'opacity-100' : 'opacity-0')}>
                     {k.delta}
                   </span>
                 </div>
@@ -174,7 +174,7 @@ export const HeroStage: React.FC<{ className?: string }> = ({ className }) => {
           </span>
           <span className="flex flex-col">
             <span className="type-caption font-medium text-ink">{s.weeklyReport} · {s.schedule}</span>
-            <span className="flex items-center gap-1 type-caption text-[oklch(0.78_0.15_160)]">
+            <span className="flex items-center gap-1 type-caption text-success-deep">
               <Check aria-hidden="true" size={11} strokeWidth={2.5} /> {s.delivered} · 3
             </span>
           </span>

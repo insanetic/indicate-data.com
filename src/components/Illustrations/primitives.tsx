@@ -71,7 +71,7 @@ export const Chip: React.FC<{
     blue: 'bg-brand-blue-soft text-brand-blue-deep',
     yellow: 'bg-brand-yellow-soft text-ink',
     coral: 'bg-brand-coral-soft text-brand-coral',
-    green: 'bg-[oklch(0.3_0.07_160)] text-[oklch(0.8_0.15_160)]',
+    green: 'bg-success-soft text-success-deep',
     neutral: 'bg-surface-2 text-ink-2',
   }
   return (
@@ -103,7 +103,7 @@ export const Kpi: React.FC<{
     </span>
     {delta && (
       <span
-        className={cn('text-[0.75rem] leading-4 font-medium tnum', positive ? 'text-[oklch(0.5_0.14_160)]' : 'text-brand-coral')}
+        className={cn('text-[0.75rem] leading-4 font-medium tnum', positive ? 'text-success-deep' : 'text-brand-coral')}
       >
         {delta}
       </span>

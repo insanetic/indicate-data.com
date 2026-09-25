@@ -65,7 +65,7 @@ export const KpiStudioIllustration: React.FC<IllustrationProps> = ({ className, 
                   <span className="loop-studio-new absolute left-0 top-0">119 €</span>
                 </span>
               </div>
-              <span className="loop-studio-new type-caption font-medium tnum text-[oklch(0.78_0.15_160)]">+9,4 % {l.vsLastYear}</span>
+              <span className="loop-studio-new type-caption font-medium tnum text-success-deep">+9,4 % {l.vsLastYear}</span>
             </div>
             <Sparkline className="mt-3 h-10" height={40} points={[52, 58, 55, 66, 70, 78, 84]} />
           </div>

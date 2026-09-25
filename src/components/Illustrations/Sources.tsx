@@ -44,7 +44,7 @@ export const SourcesIllustration: React.FC<IllustrationProps> = ({ className, lo
               {s.name[0]}
             </span>
             <span className="type-caption font-medium text-ink">{s.name}</span>
-            <i className="ml-auto size-1.5 rounded-full bg-[oklch(0.62_0.15_160)]" />
+            <i className="ml-auto size-1.5 rounded-full bg-success" />
           </li>
         ))}
       </ul>

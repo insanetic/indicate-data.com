@@ -119,6 +119,8 @@
   --ring: var(--accent);
   --radius: 0.5rem;
   --success: oklch(0.72 0.15 160);
+  --success-deep: oklch(0.8 0.15 160); /* success text: deltas, delivered, healthy */
+  --success-soft: oklch(0.3 0.07 160); /* success chip and check backgrounds */
   --warning: var(--brand-yellow);
   --error: var(--brand-coral);
 }
@@ -139,6 +141,7 @@
   --line: oklch(0.7 0.14 88);
   --line-strong: oklch(0.55 0.12 88);
   --brand-blue-deep: oklch(0.3 0.1 262);
+  --success-deep: oklch(0.36 0.1 160);
   --gradient-resi: linear-gradient(100deg, oklch(0.36 0.13 262) 0%, oklch(0.36 0.09 200) 55%, oklch(0.36 0.1 160) 100%);
   --btn-primary-bg: oklch(0.16 0.01 88);
   --btn-primary-fg: var(--brand-yellow);
@@ -191,6 +194,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-success: var(--success);
+  --color-success-deep: var(--success-deep);
+  --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
   --color-error: var(--error);
   --radius-sm: calc(var(--radius) - 4px);

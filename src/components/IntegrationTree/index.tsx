@@ -127,7 +127,7 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
     </span>
   )
 
-  // White so the three brand colours of the mark stay visible; a blue light travels around it.
+  // White so the three brand colours of the mark stay visible; a light in the same colours travels around it.
   const centre = (
     <span className="loop-tree-centre relative inline-flex rounded-[calc(1rem+2px)] p-[2px] shadow-float">
       <span className="flex flex-col items-center justify-center gap-1 rounded-[1rem] bg-white px-6 py-4 text-[oklch(0.2_0.02_262)]">
@@ -139,9 +139,9 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
 
   const card = (i: number, Icon: LucideIcon, title: string, body: React.ReactNode) => (
     <div className="relative flex w-full flex-col gap-2.5 rounded-[0.875rem] border border-line-strong bg-surface-2 p-3.5 shadow-card" key={title}>
-      <span aria-hidden="true" className="loop-tree-glow pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 border-resi-mint" style={delay(outDelay(i))} />
+      <span aria-hidden="true" className="loop-tree-glow pointer-events-none absolute -inset-[3px] rounded-[inherit] border-2 border-brand-blue" style={delay(outDelay(i))} />
       <span className="flex items-center gap-2 type-caption font-medium text-ink">
-        <Icon aria-hidden="true" className="shrink-0 text-resi-teal" size={15} strokeWidth={1.75} />
+        <Icon aria-hidden="true" className="shrink-0 text-brand-blue" size={15} strokeWidth={1.75} />
         {withResi(title)}
       </span>
       {body}
@@ -192,8 +192,8 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
               {t.flying.scheduled}
               <i className="size-1.5 rounded-full bg-ink-3" />
             </span>
-            <span className="loop-tree-sent flex items-center gap-2 rounded-btn border border-resi-mint/40 bg-surface px-2.5 py-1.5 type-caption text-ink [grid-area:1/1]" style={delay(outDelay(2))}>
-              <Check aria-hidden="true" className="text-resi-mint" size={13} strokeWidth={2.5} />
+            <span className="loop-tree-sent flex items-center gap-2 rounded-btn border border-success/40 bg-surface px-2.5 py-1.5 type-caption text-ink [grid-area:1/1]" style={delay(outDelay(2))}>
+              <Check aria-hidden="true" className="text-success-deep" size={13} strokeWidth={2.5} />
               {t.flying.sent}
             </span>
           </span>
@@ -217,12 +217,12 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
           {tiles.map((_, i) => (
             <React.Fragment key={`a${i}`}>
               <path className="loop-tree-path" d={sourcePath(slots[i])} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeLinejoin="round" strokeWidth="0.5" style={delay(i * step)} />
-              <path className="loop-tree-comet" d={sourcePath(slots[i])} fill="none" pathLength={1} stroke="var(--resi-teal)" strokeLinecap="round" strokeWidth="1" style={delay(i * step)} />
+              <path className="loop-tree-comet" d={sourcePath(slots[i])} fill="none" pathLength={1} stroke="var(--brand-yellow)" strokeLinecap="round" strokeWidth="1" style={delay(i * step)} />
             </React.Fragment>
           ))}
           {OUTPUTS.map((p, i) => (
             <React.Fragment key={`o${i}`}>
-              <path className="loop-tree-out" d={outputPath(p)} fill="none" pathLength={1} stroke="var(--resi-mint)" strokeLinejoin="round" strokeWidth="0.5" style={delay(outDelay(i) - 0.5)} />
+              <path className="loop-tree-out" d={outputPath(p)} fill="none" pathLength={1} stroke="var(--brand-blue)" strokeLinejoin="round" strokeWidth="0.5" style={delay(outDelay(i) - 0.5)} />
               <path className="loop-tree-out-comet" d={outputPath(p)} fill="none" pathLength={1} stroke="var(--ink)" strokeLinecap="round" strokeWidth="1" style={delay(outDelay(i) - 0.5)} />
             </React.Fragment>
           ))}
@@ -250,9 +250,9 @@ export const IntegrationTree: React.FC<{ systems: TreeSystem[]; locale?: Locale 
       {/* Phones: the same pieces stacked */}
       <div className="flex flex-col items-center lg:hidden">
         <div className="flex flex-wrap justify-center gap-2.5">{tiles.map((sys, i) => <React.Fragment key={i}>{tile(sys, i)}</React.Fragment>)}</div>
-        <Connector />
+        <Connector color="var(--brand-yellow)" />
         {centre}
-        <Connector out />
+        <Connector color="var(--brand-blue)" out />
         <div className="flex w-full max-w-sm flex-col gap-2.5">{outputs}</div>
       </div>
     </div>

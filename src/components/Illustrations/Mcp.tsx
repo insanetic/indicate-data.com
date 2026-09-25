@@ -62,7 +62,7 @@ export const McpIllustration: React.FC<IllustrationProps> = ({ className, locale
                   <span className="truncate">{args}</span>
                   <Check
                     aria-hidden="true"
-                    className="loop-chat-tick ml-auto shrink-0 text-[oklch(0.78_0.15_160)]"
+                    className="loop-chat-tick ml-auto shrink-0 text-success-deep"
                     size={12}
                     strokeWidth={2.5}
                     style={delay(`${i * 0.35}s`)}

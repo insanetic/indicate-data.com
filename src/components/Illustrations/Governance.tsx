@@ -82,7 +82,7 @@ export const GovernanceIllustration: React.FC<IllustrationProps> = ({ className,
                   {matrix[ri].map((ok, ai) => (
                     <td className={cn('py-1.5 text-center', ai === matrix[ri].length - 1 && 'rounded-r-md')} key={ai}>
                       {ok ? (
-                        <Check aria-hidden="true" className="inline text-[oklch(0.78_0.15_160)]" size={13} strokeWidth={2.5} />
+                        <Check aria-hidden="true" className="inline text-success-deep" size={13} strokeWidth={2.5} />
                       ) : (
                         <i className="inline-block size-1 rounded-full bg-surface-3 align-middle" />
                       )}

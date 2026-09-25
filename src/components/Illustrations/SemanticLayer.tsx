@@ -58,13 +58,13 @@ export const SemanticLayerIllustration: React.FC<IllustrationProps> = ({ classNa
                 {...first(i)}
               >
                 <span className="truncate font-medium">{k.name}</span>
-                <i className="size-1.5 shrink-0 rounded-full bg-[oklch(0.78_0.15_160)]" />
+                <i className="size-1.5 shrink-0 rounded-full bg-success" />
               </li>
             ))}
             {s.others.map((name) => (
               <li className="flex items-center justify-between gap-2 rounded-card-inner px-2.5 py-2 type-small text-ink-3" key={name}>
                 <span className="truncate">{name}</span>
-                <i className="size-1.5 shrink-0 rounded-full bg-[oklch(0.78_0.15_160)]" />
+                <i className="size-1.5 shrink-0 rounded-full bg-success" />
               </li>
             ))}
           </ul>
@@ -137,7 +137,7 @@ export const SemanticLayerIllustration: React.FC<IllustrationProps> = ({ classNa
                   ))}
                 </span>
               </span>
-              <Check aria-hidden="true" className="ml-auto shrink-0 text-[oklch(0.78_0.15_160)]" size={13} strokeWidth={2.5} />
+              <Check aria-hidden="true" className="ml-auto shrink-0 text-success-deep" size={13} strokeWidth={2.5} />
             </li>
           ))}
           <li className="px-1 type-caption text-ink-3">{s.same}</li>

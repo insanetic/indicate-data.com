@@ -60,7 +60,7 @@ export const BuilderIllustration: React.FC<IllustrationProps> = ({ className, lo
           <span className="loop-build-count" style={{ ...widgetDelay(i), '--hub-to': value } as React.CSSProperties} />
           {unit}
         </span>
-        <span className="mt-auto type-caption font-medium tnum text-[oklch(0.78_0.15_160)]">{delta}</span>
+        <span className="mt-auto type-caption font-medium tnum text-success-deep">{delta}</span>
       </>,
       layout,
     )
@@ -93,7 +93,7 @@ export const BuilderIllustration: React.FC<IllustrationProps> = ({ className, lo
                         <span className="loop-build-spinner absolute inset-0 grid place-items-center text-ink-3" style={delay(k * 0.6)}>
                           <LoaderCircle aria-hidden="true" className="build-spin" size={14} strokeWidth={2} />
                         </span>
-                        <span className="loop-build-check absolute inset-0 grid place-items-center rounded-full bg-[oklch(0.3_0.07_160)] text-resi-mint" style={delay(k * 0.6)}>
+                        <span className="loop-build-check absolute inset-0 grid place-items-center rounded-full bg-success-soft text-resi-mint" style={delay(k * 0.6)}>
                           <Check aria-hidden="true" size={10} strokeWidth={3} />
                         </span>
                       </span>
