@@ -586,6 +586,7 @@ export interface HeroBlock {
           | 'semanticLayer'
           | 'dimensions'
           | 'collections'
+          | 'paperPlane'
         )
       | null;
     image?: (number | null) | Media;
@@ -697,6 +698,7 @@ export interface MediaSectionBlock {
           | 'semanticLayer'
           | 'dimensions'
           | 'collections'
+          | 'paperPlane'
         )
       | null;
     image?: (number | null) | Media;
@@ -945,6 +947,7 @@ export interface SplitBlock {
           | 'semanticLayer'
           | 'dimensions'
           | 'collections'
+          | 'paperPlane'
         )
       | null;
     image?: (number | null) | Media;
@@ -1182,6 +1185,7 @@ export interface FeatureTabsBlock {
                 | 'semanticLayer'
                 | 'dimensions'
                 | 'collections'
+                | 'paperPlane'
               )
             | null;
           image?: (number | null) | Media;
@@ -1270,6 +1274,7 @@ export interface FeatureStoryBlock {
           | 'semanticLayer'
           | 'dimensions'
           | 'collections'
+          | 'paperPlane'
         )
       | null;
     image?: (number | null) | Media;
@@ -1576,6 +1581,7 @@ export interface IntegrationsBlock {
           | 'semanticLayer'
           | 'dimensions'
           | 'collections'
+          | 'paperPlane'
         )
       | null;
     image?: (number | null) | Media;
