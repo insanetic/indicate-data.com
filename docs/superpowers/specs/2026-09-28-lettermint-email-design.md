@@ -1,7 +1,7 @@
 # Email through Lettermint — design
 
 Date: 2026-09-28
-Status: approved in conversation, awaiting spec review
+Status: approved 2026-09-28; plan `docs/superpowers/plans/2026-09-28-lettermint-email.md`
 
 ## Goal
 
@@ -227,7 +227,8 @@ import.
 
 ### Env and deploy
 
-- `LETTERMINT_API_TOKEN` added to `src/environment.d.ts` and `deploy/production.env.example`.
+- `LETTERMINT_API_TOKEN` added to `src/environment.d.ts`, the app config template
+  `deploy/app.env.example` and the env table in `deploy/README.md`.
 - `.env.example` is not readable from this session; the user adds the line there.
 - Production secret in Infisical and the Ansible role in `../indicate-infra`: follow-up, done by
   the user or on request.
