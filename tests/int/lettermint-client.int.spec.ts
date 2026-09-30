@@ -20,6 +20,18 @@ describe('sendMail', () => {
     expect(JSON.parse(String(init.body))).toEqual(body)
   })
 
+  it('refuses redirects so the token header never follows one', async () => {
+    const fetch = vi.fn(async () => json(202, { message_id: 'm1', status: 'pending' }))
+    await sendMail(body, opts(fetch))
+    await pingToken(opts(fetch))
+    for (const call of fetch.mock.calls as unknown as [string, RequestInit][]) expect(call[1].redirect).toBe('error')
+  })
+
+  it('accepts a 2xx whose body is not JSON', async () => {
+    const fetch = vi.fn(async () => new Response('Accepted', { status: 202 }))
+    expect(await sendMail(body, opts(fetch))).toEqual({ message_id: null, status: 'accepted' })
+  })
+
   it('keeps the per-field messages of a 422', async () => {
     const fetch = vi.fn(async () => json(422, { message: 'The from field is invalid.', errors: { from: ['Domain not verified'] } }))
     const err = await sendMail(body, opts(fetch)).catch((e: unknown) => e)

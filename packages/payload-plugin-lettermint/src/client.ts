@@ -33,6 +33,8 @@ const call = async (path: string, init: RequestInit, o: ClientOptions): Promise<
     return await doFetch(`${o.baseUrl}${path}`, {
       ...init,
       headers: { Accept: 'application/json', ...(init.headers as Record<string, string>), 'x-lettermint-token': o.token },
+      // Never forward the token header to wherever a redirect points.
+      redirect: 'error',
       signal: AbortSignal.timeout(o.timeoutMs),
     })
   } catch (error) {
@@ -58,7 +60,12 @@ const failure = async (res: Response): Promise<LettermintError> => {
 export const sendMail = async (body: LettermintSendBody, o: ClientOptions): Promise<LettermintSendResponse> => {
   const res = await call('/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, o)
   if (!res.ok) throw await failure(res)
-  return (await res.json()) as LettermintSendResponse
+  try {
+    return (await res.json()) as LettermintSendResponse
+  } catch {
+    // Accepted, but the body is not JSON: the mail is on its way, only the id is unknown.
+    return { message_id: null, status: 'accepted' }
+  }
 }
 
 /** True when Lettermint accepts the token, false when it refuses it; any other failure throws. */
