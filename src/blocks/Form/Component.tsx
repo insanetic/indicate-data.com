@@ -10,6 +10,8 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
+import { useLocale } from '@/providers/Locale'
+import { buildSubmissionBody, HONEYPOT_FIELD } from './submission'
 import { track } from '@subneo/payload-consent/react'
 
 export type FormBlockType = {
@@ -58,17 +60,13 @@ export const FormBlock: React.FC<
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
+  const locale = useLocale()
 
   const onSubmit = useCallback(
     (data: FormFieldBlock[]) => {
       let loadingTimerID: ReturnType<typeof setTimeout>
       const submitForm = async () => {
         setError(undefined)
-
-        const dataToSend = Object.entries(data).map(([name, value]) => ({
-          field: name,
-          value,
-        }))
 
         // delay loading indicator by 1s
         loadingTimerID = setTimeout(() => {
@@ -77,10 +75,9 @@ export const FormBlock: React.FC<
 
         try {
           const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
-            body: JSON.stringify({
-              form: formID,
-              submissionData: dataToSend,
-            }),
+            body: JSON.stringify(
+              buildSubmissionBody(formID, data as unknown as Record<string, unknown>, locale),
+            ),
             headers: {
               'Content-Type': 'application/json',
             },
@@ -128,7 +125,7 @@ export const FormBlock: React.FC<
 
       void submitForm()
     },
-    [router, formID, redirect, confirmationType, formFromProps.title],
+    [router, formID, redirect, confirmationType, formFromProps.title, locale],
   )
 
   return (
@@ -145,6 +142,22 @@ export const FormBlock: React.FC<
           {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
+              {/* Trap for bots: off-screen, skipped by keyboard and screen readers. */}
+              <div
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}
+              >
+                <label htmlFor={`${formID}-${HONEYPOT_FIELD}`}>Leave this field empty</label>
+                <input
+                  id={`${formID}-${HONEYPOT_FIELD}`}
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore
+                  {...register(HONEYPOT_FIELD as never)}
+                />
+              </div>
               <div className="mb-4 last:mb-0">
                 {formFromProps &&
                   formFromProps.fields &&
