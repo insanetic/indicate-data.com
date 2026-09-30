@@ -1,0 +1,30 @@
+{
+  "name": "@subneo/payload-lettermint",
+  "version": "0.1.0",
+  "description": "Send Payload CMS email through Lettermint. The token comes from the environment only; sender, team recipients and route are edited in the admin, next to a token status and a test mail.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./admin": "./src/admin.ts"
+  },
+  "files": ["src", "README.md", "LICENSE"],
+  "scripts": { "build": "tsc -p tsconfig.json" },
+  "peerDependencies": {
+    "@payloadcms/ui": "^3.0.0",
+    "payload": "^3.0.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": { "typescript": "^5.7.0" },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+      "./admin": { "types": "./dist/admin.d.ts", "import": "./dist/admin.js" }
+    }
+  }
+}

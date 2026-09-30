@@ -63,6 +63,12 @@
       ],
       "@subneo/payload-testimonials/admin": [
         "./packages/payload-plugin-testimonials/src/admin.ts"
+      ],
+      "@subneo/payload-lettermint": [
+        "./packages/payload-plugin-lettermint/src/index.ts"
+      ],
+      "@subneo/payload-lettermint/admin": [
+        "./packages/payload-plugin-lettermint/src/admin.ts"
       ]
     }
   },
