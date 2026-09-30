@@ -1,7 +1,7 @@
-import type { Config, CollectionConfig, Field } from 'payload'
+import type { Block, Config, CollectionConfig, Field } from 'payload'
 import { describe, expect, it } from 'vitest'
 
-import { createTestimonialsBlock, testimonialsPlugin } from '@subneo/payload-testimonials'
+import { createTestimonialsBlock, getPluginOptions, testimonialsPlugin } from '@subneo/payload-testimonials'
 
 import { Testimonials } from '@/blocks/Testimonials/config'
 
@@ -75,14 +75,103 @@ describe('testimonialsPlugin', () => {
     })
   })
 
-  it('lets an access override replace only the key it names', async () => {
-    const create = () => false
-    const t = collection(await testimonialsPlugin({ access: { create } })(base), 'testimonials')
-    expect(t.access?.create).toBe(create)
-    const read = t.access!.read as (args: unknown) => unknown
-    expect(read({ req: {} })).toEqual({ _status: { equals: 'published' } })
-    expect(t.access?.update).toBeTypeOf('function')
-    expect(t.access?.delete).toBeTypeOf('function')
+  describe('overrides', () => {
+    it('merge access key by key', async () => {
+      const create = () => false
+      const t = collection(await testimonialsPlugin({ testimonialsOverrides: { access: { create } } })(base), 'testimonials')
+      expect(t.access?.create).toBe(create)
+      const read = t.access!.read as (args: unknown) => unknown
+      expect(read({ req: {} })).toEqual({ _status: { equals: 'published' } })
+      expect(t.access?.update).toBeTypeOf('function')
+      expect(t.access?.delete).toBeTypeOf('function')
+    })
+
+    it('extend the default fields and keep the slug', async () => {
+      const config = await testimonialsPlugin({
+        slugs: { tags: 'cohorts' },
+        testimonialsOverrides: { fields: ({ defaultFields }) => [...defaultFields, { name: 'rating', type: 'number' }] },
+        tagsOverrides: { slug: 'ignored', admin: { hidden: true } } as never,
+      })(base)
+      const t = collection(config, 'testimonials')
+      expect(flat(t.fields)).toEqual(expect.arrayContaining(['quote', 'name', 'rating']))
+      const tags = collection(config, 'cohorts')
+      expect(tags.admin).toMatchObject({ hidden: true, useAsTitle: 'title' })
+      expect(tags.access?.read).toBeTypeOf('function')
+    })
+
+    it('append hooks after the plugin ones', async () => {
+      const mine = () => undefined
+      const t = collection(await testimonialsPlugin({ testimonialsOverrides: { hooks: { afterChange: [mine] } } })(base), 'testimonials')
+      expect(t.hooks?.afterChange).toHaveLength(2)
+      expect(t.hooks?.afterChange?.[1]).toBe(mine)
+      expect(t.hooks?.beforeChange).toHaveLength(1)
+    })
+  })
+
+  describe('block wiring', () => {
+    const pages = (block = createTestimonialsBlock({ slug: 'quotes' })) =>
+      ({
+        slug: 'pages',
+        admin: { useAsTitle: 'title' },
+        fields: [
+          { name: 'title', type: 'text' },
+          { type: 'tabs', tabs: [{ label: 'Content', fields: [{ name: 'layout', type: 'blocks', blocks: [block] }] }] },
+          { name: 'extra', type: 'group', fields: [{ name: 'sections', type: 'blocks', blocks: [block] }] },
+          { name: 'rows', type: 'array', fields: [{ name: 'inner', type: 'blocks', blocks: [block] }] },
+        ],
+      }) as CollectionConfig
+
+    const wired = (config: Config) => {
+      const tabs = collection(config, 'pages').fields[1] as unknown as { tabs: { fields: { blocks: { fields: Field[] }[] }[] }[] }
+      return tabs.tabs[0].fields[0].blocks[0]
+    }
+
+    it('points the block at the configured slugs and preview path', async () => {
+      const config = await testimonialsPlugin({
+        slugs: { testimonials: 'quotes-db', tags: 'cohorts' },
+        componentPaths: { selectionPreview: 'my/Preview#P' },
+      })({ ...base, collections: [pages()] })
+      const block = wired(config)
+      expect(byName(block.fields, 'testimonials').relationTo).toBe('quotes-db')
+      expect(byName(block.fields, 'pinned').relationTo).toBe('quotes-db')
+      expect(byName(block.fields, 'exclude').relationTo).toBe('quotes-db')
+      expect(byName(block.fields, 'tags').relationTo).toBe('cohorts')
+      const preview = byName(block.fields, 'preview').admin as { components: { Field: { path: string; clientProps: unknown } } }
+      expect(preview.components.Field).toEqual({ path: 'my/Preview#P', clientProps: { apiSlug: 'quotes-db' } })
+    })
+
+    it('leaves the original block object untouched', async () => {
+      const block = createTestimonialsBlock()
+      await testimonialsPlugin({ slugs: { testimonials: 'other' } })({ ...base, collections: [pages(block)] })
+      expect(byName(block.fields, 'testimonials').relationTo).toBe('testimonials')
+    })
+
+    it('stores the options with the found locations in config.custom', async () => {
+      const config = await testimonialsPlugin({ cacheTag: 'q' })({ ...base, collections: [pages()] })
+      const o = getPluginOptions(config)
+      expect(o.cacheTag).toBe('q')
+      // The array row is not addressable by path, so it is wired but not listed.
+      expect(o.locations).toEqual([
+        { collection: 'pages', path: 'layout', blockSlug: 'quotes' },
+        { collection: 'pages', path: 'extra.sections', blockSlug: 'quotes' },
+      ])
+      expect(byName(collection(config, 'testimonials').fields, 'usage')).toBeDefined()
+    })
+
+    it('wires a block referenced from config.blocks', async () => {
+      const config = await testimonialsPlugin({ slugs: { testimonials: 'q' } })({
+        ...base,
+        blocks: [createTestimonialsBlock()],
+        collections: [{ slug: 'pages', fields: [{ name: 'layout', type: 'blocks', blocks: [], blockReferences: ['testimonials'] }] } as unknown as CollectionConfig],
+      })
+      expect(byName((config.blocks as Block[])[0].fields, 'testimonials').relationTo).toBe('q')
+      expect(getPluginOptions(config).locations).toEqual([{ collection: 'pages', path: 'layout', blockSlug: 'testimonials' }])
+    })
+
+    it('has no usage panel when the block is used nowhere', async () => {
+      const t = collection(await testimonialsPlugin()(base), 'testimonials')
+      expect(byName(t.fields, 'usage')).toBeUndefined()
+    })
   })
 
   it('does nothing when disabled', async () => {

@@ -5,7 +5,7 @@ import { slugField } from 'payload'
 import { createPreviewEndpoint, createUsageEndpoint } from './endpoints'
 import { createRevalidateHook, setTitle } from './hooks'
 import { l } from './labels'
-import type { ResolvedOptions } from './types'
+import type { CollectionOverrides, ResolvedOptions } from './types'
 
 const authenticated: Access = ({ req }) => Boolean(req.user)
 /**
@@ -58,9 +58,37 @@ const linkField = (o: ResolvedOptions): Field => {
   }
 }
 
+type Hooks = NonNullable<CollectionConfig['hooks']>
+
+/** Appends the site's hooks after the plugin's, per hook type, so an override can't drop the cache revalidation. */
+const mergeHooks = (base: Hooks, extra: Hooks = {}): Hooks => {
+  const merged: Record<string, unknown[]> = { ...(base as Record<string, unknown[]>) }
+  for (const [key, list] of Object.entries(extra as Record<string, unknown[] | undefined>)) {
+    if (list?.length) merged[key] = [...(merged[key] || []), ...list]
+  }
+  return merged as Hooks
+}
+
+/**
+ * Applies a site's overrides the way Payload's own plugins do: `access` and `admin` key by key,
+ * `hooks` appended, `fields` through the function, everything else replaced.
+ */
+export const applyOverrides = (base: CollectionConfig, overrides: CollectionOverrides = {}): CollectionConfig => {
+  const { fields, access, admin, hooks, ...rest } = overrides
+  return {
+    ...base,
+    ...rest,
+    slug: base.slug,
+    access: { ...base.access, ...access },
+    admin: { ...base.admin, ...admin },
+    hooks: mergeHooks(base.hooks || {}, hooks),
+    fields: fields ? fields({ defaultFields: base.fields }) : base.fields,
+  }
+}
+
 export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConfig => {
   const revalidate = createRevalidateHook(o.cacheTag)
-  return {
+  return applyOverrides({
     slug: o.slugs.testimonials,
     labels: { singular: l('Kundenstimme', 'Testimonial'), plural: l('Kundenstimmen', 'Testimonials') },
     admin: {
@@ -74,10 +102,9 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
       create: authenticated,
       update: authenticated,
       delete: authenticated,
-      ...o.access,
     },
     versions: { drafts: true },
-    endpoints: [createUsageEndpoint(o), createPreviewEndpoint(o)],
+    endpoints: [createUsageEndpoint(o), createPreviewEndpoint()],
     hooks: { beforeChange: [setTitle], afterChange: [revalidate], afterDelete: [revalidate] },
     fields: [
       { name: 'title', type: 'text', admin: { hidden: true } },
@@ -115,7 +142,7 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
         access: { read: ({ req }) => Boolean(req.user) },
         admin: { position: 'sidebar', description: l('Z. B. wer freigegeben hat. Wird nie angezeigt.', 'E.g. who approved it. Never shown.') },
       },
-      ...(o.usage
+      ...(o.usage && o.locations.length
         ? [
             {
               name: 'usage',
@@ -123,23 +150,23 @@ export const createTestimonialsCollection = (o: ResolvedOptions): CollectionConf
               label: l('Verwendet auf', 'Shown on'),
               admin: {
                 position: 'sidebar',
-                components: { Field: { path: o.componentPaths.usagePanel, clientProps: { apiSlug: o.slugs.testimonials, usageCollection: o.usage.collection } } },
+                components: { Field: { path: o.componentPaths.usagePanel, clientProps: { apiSlug: o.slugs.testimonials } } },
               },
             } as Field,
           ]
         : []),
     ],
-  }
+  }, o.testimonialsOverrides)
 }
 
 export const createTagsCollection = (o: ResolvedOptions): CollectionConfig => {
   const revalidate = createRevalidateHook(o.cacheTag)
-  return {
+  return applyOverrides({
     slug: o.slugs.tags,
     labels: { singular: l('Zielgruppen-Tag', 'Cohort tag'), plural: l('Zielgruppen-Tags', 'Cohort tags') },
     admin: { group: o.adminGroup, useAsTitle: 'title', defaultColumns: ['title', 'slug'] },
     access: { read: () => true, create: authenticated, update: authenticated, delete: authenticated },
     hooks: { afterChange: [revalidate], afterDelete: [revalidate] },
     fields: [{ name: 'title', type: 'text', required: true, localized: o.localized, label: l('Name', 'Name') }, slugField()],
-  }
+  }, o.tagsOverrides)
 }

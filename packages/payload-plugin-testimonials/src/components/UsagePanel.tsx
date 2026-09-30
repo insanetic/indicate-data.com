@@ -6,11 +6,8 @@ import React, { useEffect, useState } from 'react'
 import type { Usage } from '../usage'
 import { useL } from './i18n'
 
-/** Sidebar list of the pages that show or reference this testimonial. */
-export const UsagePanel: React.FC<{ apiSlug?: string; usageCollection?: string }> = ({
-  apiSlug = 'testimonials',
-  usageCollection = 'pages',
-}) => {
+/** Sidebar list of the documents that show or reference this testimonial. */
+export const UsagePanel: React.FC<{ apiSlug?: string }> = ({ apiSlug = 'testimonials' }) => {
   const t = useL()
   const { id } = useDocumentInfo()
   const { config } = useConfig()
@@ -37,8 +34,8 @@ export const UsagePanel: React.FC<{ apiSlug?: string; usageCollection?: string }
         <>
           <ul style={{ paddingLeft: '1rem', margin: '0.25rem 0' }}>
             {usages.map((u) => (
-              <li key={`${u.docId}-${u.blockIndex}`}>
-                <a href={`${config.routes.admin}/collections/${usageCollection}/${u.docId}`}>{u.docTitle}</a>
+              <li key={`${u.collection}-${u.docId}-${u.blockIndex}`}>
+                <a href={`${config.routes.admin}/collections/${u.collection}/${u.docId}`}>{u.docTitle}</a>
                 {u.heading ? ` · ${u.heading}` : ''} · {reason(u)}
                 {!u.shown && ` (${t('derzeit ausgeblendet', 'currently hidden')})`}
               </li>

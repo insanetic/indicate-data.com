@@ -15,6 +15,9 @@ testimonial lists the pages that show it, so you can see what a change touches b
 - Admin: a live preview of the automatic pick with a reshuffle button, and a "Shown on" panel on
   each testimonial.
 
+It has no frontend markup. Each site renders the block with its own component, the same split as
+Payload's form builder: the plugin owns the data and the admin, the site owns the design.
+
 ## Install
 
 1. Add the package (path alias in `tsconfig.json`, or install it). Entry points:
@@ -30,8 +33,10 @@ testimonial lists the pages that show it, so you can see what a change touches b
    })
    ```
 
-3. Put the block in your layout field. `before` and `after` take the site's own fields, such as a
-   section heading or spacing settings:
+3. Put the block in a blocks field of a collection. `before` and `after` take the site's own
+   fields, such as a section heading or spacing settings. The block has no slugs of its own: the
+   plugin finds it (in collections, globals and `config.blocks`) and points it at its collections,
+   so register the block in the config the plugin receives, not in a plugin that runs later.
 
    ```ts
    import { createTestimonialsBlock } from '@subneo/payload-testimonials'
@@ -54,6 +59,9 @@ import { getTestimonials } from '@subneo/payload-testimonials/server'
 
 const selected = await getTestimonials({ payload, block, layout, blockIndex, locale, draft })
 ```
+
+The collection slug, link collections and cache tag come from the plugin's options, which it
+stores in `config.custom`; `getPluginOptions(payload)` reads them if your own code needs them.
 
 Pass the page `layout` and the block's `blockIndex` whenever you have them. The package then
 resolves every testimonials block on the page in order, and an automatic block's own picks skip
@@ -89,8 +97,8 @@ accounts for what the earlier blocks show before anything is saved.
 
 ## Caching
 
-Outside draft mode the pool of testimonials is cached with `unstable_cache` under the tag
-`testimonials` (see `cacheTag`). Saving or deleting a testimonial or a tag calls
+Outside draft mode the pool of testimonials is cached with `unstable_cache` under the plugin's
+`cacheTag` (default `testimonials`). Saving or deleting a testimonial or a tag calls
 `revalidateTag`, and pages pick up the change on the next request. Nothing else expires the
 cache.
 
@@ -103,8 +111,10 @@ never fails on it.
 - **Block preview.** In automatic mode the block shows which testimonials it would show right
   now, computed from the unsaved form values of the page up to this block, how many match its
   filter, and a button for a new seed.
-- **Shown on.** The testimonial sidebar lists the published pages whose blocks show it, and the
-  ones that reference it but currently do not show it. Configure where it looks with `usage`.
+- **Shown on.** The testimonial sidebar lists the published documents whose blocks show it, and
+  the ones that reference it but currently do not show it. It looks in every blocks field that
+  holds the testimonials block, found when the plugin runs, including fields inside groups, named
+  tabs and rows. A block inside an array or inside another block is wired up but not listed.
 - **Internal note.** Readable only by logged-in users, never through the public API.
 
 The admin components are registered by import-map path. If your import map resolves the package
@@ -133,22 +143,37 @@ users see everything.
 | `linkCollections` | `['pages', 'posts']` | Collections a testimonial can link to (a case study, say). `[]` allows external links only. |
 | `adminGroup` | Kundenstimmen / Testimonials | Admin sidebar group. |
 | `cacheTag` | `'testimonials'` | Next cache tag of the loaded pool. |
-| `usage` | `{ collection: 'pages', field: 'layout', blockSlug: 'testimonials' }` | Where the "Shown on" panel looks for blocks. `false` hides the panel. |
+| `usage` | `true` | `false` hides the "Shown on" panel. |
 | `componentPaths` | `@subneo/payload-testimonials/admin#…` | Import-map paths of `usagePanel` and `selectionPreview`. |
-| `access` | see below | Access for the testimonials collection, merged key by key over the defaults. |
+| `testimonialsOverrides` | `{}` | Overrides for the testimonials collection, see below. |
+| `tagsOverrides` | `{}` | Overrides for the tags collection, see below. |
 
-The default access: visitors read published testimonials, logged-in users read everything and may
-create, update and delete. To let only editors write, for example:
+### Overrides
+
+Both collections take overrides in the shape Payload's own plugins use (form builder, search,
+SEO): `fields` is a function that gets the default fields, `access` and `admin` merge key by key,
+`hooks` are appended after the plugin's own (so the cache revalidation stays), and any other
+collection key replaces the default. The slug comes from `slugs`.
 
 ```ts
-testimonialsPlugin({ access: { create: isEditor, update: isEditor, delete: isEditor } })
+testimonialsPlugin({
+  testimonialsOverrides: {
+    access: { create: isEditor, update: isEditor, delete: isEditor },
+    fields: ({ defaultFields }) => [...defaultFields, { name: 'rating', type: 'number', min: 1, max: 5 }],
+  },
+  tagsOverrides: { admin: { hidden: true } },
+})
 ```
 
-Tags are readable by everyone and writable by logged-in users; `access` does not change them.
+The default access: visitors read published testimonials, logged-in users read everything and may
+create, update and delete. Tags are readable by everyone and writable by logged-in users.
 
-`createTestimonialsBlock(options)` takes `slug`, `interfaceName`, `before`, `after`,
-`extraFields` (placed before `after`, meant for legacy fields kept for a migration),
-`testimonialsSlug`, `tagsSlug` and `selectionPreviewPath`. Match the slugs to the plugin's.
+Extra fields end up in the pool that `getTestimonials` returns, so the site's component can use
+them. They do not change the selection.
+
+`createTestimonialsBlock(options)` takes `slug`, `interfaceName`, `before`, `after` and
+`extraFields` (placed before `after`, meant for legacy fields kept for a migration). The slugs of
+the collections it points at and the preview component path come from the plugin.
 
 ## Moving inline quotes into the collection
 

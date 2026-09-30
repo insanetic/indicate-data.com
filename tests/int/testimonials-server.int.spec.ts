@@ -10,6 +10,7 @@ vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
 }))
 
+import { PLUGIN_KEY, resolveOptions } from '@subneo/payload-testimonials'
 import { getTestimonials, loadPool } from '@subneo/payload-testimonials/server'
 
 const docs = [
@@ -21,10 +22,11 @@ const docs = [
 // Typed so `find.mock.calls[n][0]` is the find options, not an empty tuple.
 type FindFn = (options: Record<string, unknown>) => Promise<unknown>
 
-const fakePayload = (impl?: FindFn) => {
+const fakePayload = (impl?: FindFn, options?: Record<string, unknown>) => {
   const find = vi.fn<FindFn>(impl || (async () => ({ docs })))
   const error = vi.fn()
-  return { payload: { find, logger: { error, debug: vi.fn() } } as never, find, error }
+  const custom = options ? { [PLUGIN_KEY]: resolveOptions(options) } : {}
+  return { payload: { config: { custom }, find, logger: { error, debug: vi.fn() } } as never, find, error }
 }
 
 describe('loadPool', () => {
@@ -39,8 +41,14 @@ describe('loadPool', () => {
 
   it('only populates slug and title of linked docs', async () => {
     const { payload, find } = fakePayload()
-    await loadPool({ payload, linkCollections: ['pages', 'posts'] })
+    await loadPool({ payload })
     expect(find.mock.calls[0][0].populate).toEqual({ pages: { slug: true, title: true }, posts: { slug: true, title: true } })
+  })
+
+  it('reads the slug and link collections from the plugin options in the config', async () => {
+    const { payload, find } = fakePayload(undefined, { slugs: { testimonials: 'quotes' }, linkCollections: ['cases'] })
+    await loadPool({ payload })
+    expect(find.mock.calls[0][0]).toMatchObject({ collection: 'quotes', populate: { cases: { slug: true, title: true } } })
   })
 
   it('never loads the internal note into the pool', async () => {
@@ -69,16 +77,15 @@ describe('getTestimonials', () => {
   })
 
   it('keys the cached pool by slug, locale and link collections, invalidated by tag only', async () => {
-    const { payload } = fakePayload()
     cache.keyParts.length = 0
     cache.options.length = 0
-    await getTestimonials({ payload, block: { mode: 'auto' }, locale: 'en', linkCollections: ['pages'] })
-    await getTestimonials({ payload, block: { mode: 'auto' }, locale: 'en', linkCollections: ['pages', 'posts'] })
+    await getTestimonials({ payload: fakePayload(undefined, { linkCollections: ['pages'] }).payload, block: { mode: 'auto' }, locale: 'en' })
+    await getTestimonials({ payload: fakePayload(undefined, { linkCollections: ['pages', 'posts'], cacheTag: 'quotes' }).payload, block: { mode: 'auto' }, locale: 'en' })
     expect(cache.keyParts).toEqual([
       ['testimonials-pool', 'testimonials', 'en', 'pages'],
       ['testimonials-pool', 'testimonials', 'en', 'pages,posts'],
     ])
-    expect(cache.options).toEqual([{ tags: ['testimonials'] }, { tags: ['testimonials'] }])
+    expect(cache.options).toEqual([{ tags: ['testimonials'] }, { tags: ['quotes'] }])
     for (const options of cache.options) expect(options).not.toHaveProperty('revalidate')
   })
 
