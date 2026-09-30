@@ -111,6 +111,7 @@ Runtime environment:
 | `CRON_SECRET` | yes | Bearer token for Payload's jobs endpoint. |
 | `GTM_ID` | no | Fallback Tag Manager container id. Normally set in the admin under Cookies & tracking → Integrations, which wins over this. Neither: no tracker and no consent banner. |
 | `SUBNEO_API_KEY` | no | Can also be stored in the admin. |
+| `LETTERMINT_API_TOKEN` | no | Lettermint project token for outgoing email. Environment only, never stored in the database; empty means mail is only logged. Sender and team recipients live in the admin under Website → E-Mail. |
 
 Image defaults you normally leave alone: `MEDIA_DIR=/app/media`, `PAYLOAD_MIGRATE_ON_START=true`,
 `NODE_ENV=production`, `PORT`, `HOSTNAME`.

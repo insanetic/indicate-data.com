@@ -125,6 +125,7 @@ export interface Config {
     header: Header;
     footer: Footer;
     'subneo-pricing': SubneoPricing;
+    'email-settings': EmailSetting;
     consent: Consent;
   };
   globalsSelect: {
@@ -132,6 +133,7 @@ export interface Config {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     'subneo-pricing': SubneoPricingSelect<false> | SubneoPricingSelect<true>;
+    'email-settings': EmailSettingsSelect<false> | EmailSettingsSelect<true>;
     consent: ConsentSelect<false> | ConsentSelect<true>;
   };
   locale: 'de' | 'en';
@@ -5551,6 +5553,30 @@ export interface SubneoPricing {
   createdAt?: string | null;
 }
 /**
+ * Sent through Lettermint. The token lives only in the environment variable LETTERMINT_API_TOKEN, never in the database.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-settings".
+ */
+export interface EmailSetting {
+  id: number;
+  /**
+   * Must be on a domain verified in Lettermint.
+   */
+  fromAddress: string;
+  fromName: string;
+  /**
+   * Comma-separated. Receives the form notifications whose "To" is empty.
+   */
+  notifyTo: string;
+  /**
+   * Empty: the project's default route. Should be a transactional route.
+   */
+  route?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "consent".
  */
@@ -5889,6 +5915,19 @@ export interface SubneoPricingSelect<T extends boolean = true> {
       };
   defaultCtaUrl?: T;
   contactUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-settings_select".
+ */
+export interface EmailSettingsSelect<T extends boolean = true> {
+  fromAddress?: T;
+  fromName?: T;
+  notifyTo?: T;
+  route?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

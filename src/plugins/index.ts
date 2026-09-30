@@ -17,6 +17,8 @@ import { unlocalizedCollections } from './unlocalizedCollections'
 import { blockToolsPlugin } from './blockTools'
 import { subneoPricingPlugin } from '@subneo/payload-pricing'
 import { testimonialsPlugin } from '@subneo/payload-testimonials'
+import { lettermintPlugin } from '@subneo/payload-lettermint'
+import { emailPluginOptions } from '@/email/config'
 import { pricingFixtures } from '@/pricing/fixture'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
@@ -151,6 +153,8 @@ export const plugins: Plugin[] = [
   subneoPricingPlugin({ fixtures: pricingFixtures }),
   // Central testimonials and cohort tags; the testimonials block on Pages references them.
   testimonialsPlugin(),
+  // All outgoing email (forms, password reset) through Lettermint; token from LETTERMINT_API_TOKEN only.
+  lettermintPlugin(emailPluginOptions),
   // Hide any page block without deleting it, and copy blocks to other pages (see spec 2026-09-24-block-tools).
   blockToolsPlugin({ collections: { pages: { field: 'layout' } } }),
   // Must come last: strips `localized` that the plugins above add to these collections.

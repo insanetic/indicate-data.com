@@ -14,6 +14,8 @@ declare global {
       SUBNEO_API_URL?: string
       /** Bearer token accepted by POST /api/subneo-pricing/refresh. */
       SUBNEO_REFRESH_SECRET?: string
+      /** Lettermint project token (`lm_…`) for outgoing email. Env only, never stored in the database. */
+      LETTERMINT_API_TOKEN?: string
     }
   }
 }
