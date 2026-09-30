@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
+import { passwordResetHTML, passwordResetSubject } from '../../email/passwordReset'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -15,7 +16,12 @@ export const Users: CollectionConfig = {
     defaultColumns: ['name', 'email'],
     useAsTitle: 'name',
   },
-  auth: true,
+  auth: {
+    forgotPassword: {
+      generateEmailSubject: passwordResetSubject,
+      generateEmailHTML: passwordResetHTML,
+    },
+  },
   fields: [
     {
       name: 'name',
