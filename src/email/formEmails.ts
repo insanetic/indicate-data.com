@@ -1,5 +1,5 @@
 import type { BeforeEmail } from '@payloadcms/plugin-form-builder/types'
-import { bareAddress, getEmailSettings } from '@subneo/payload-lettermint'
+import { bareAddress, getEmailSettings, splitAddressList } from '@subneo/payload-lettermint'
 
 import { defaultLocale, isLocale } from '@/i18n/config'
 
@@ -34,9 +34,14 @@ export const createBeforeEmail =
       if (language !== 'all' && language !== locale) return []
       if (!entry.emailTo?.trim()) return [{ ...email, to: settings.notifyTo.join(', ') }]
       if (visitorAddressed(entry.emailTo)) {
-        const recipient = bareAddress(String(email.to)).toLowerCase()
+        const recipients = splitAddressList(String(email.to))
+        const recipient = recipients.length === 1 ? bareAddress(recipients[0]).toLowerCase() : ''
+        if (!recipient.includes('@')) {
+          req.payload.logger.warn('[email] confirmation recipient is not a single address; mail not sent')
+          return []
+        }
         if (!cap.allow(recipient)) {
-          req.payload.logger.warn(`[email] confirmation limit reached for an address at ${recipient.split('@')[1] ?? 'unknown'}; mail not sent`)
+          req.payload.logger.warn(`[email] confirmation limit reached for an address at ${recipient.split('@')[1]}; mail not sent`)
           return []
         }
       }

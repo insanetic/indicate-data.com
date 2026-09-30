@@ -65,6 +65,29 @@ describe('beforeEmail', () => {
   })
 })
 
+describe('beforeEmail with an address list', () => {
+  it('drops a comma list without using up either address', async () => {
+    const cap = createCap()
+    const beforeEmail = createBeforeEmail(cap)
+    for (let i = 0; i < 5; i++) {
+      const { args, warn } = params({ form: 7, locale: 'de' })
+      const out = await beforeEmail(incoming('a1@x.io, victim@y.org'), args)
+      expect(out.map((e) => e.subject)).toEqual(['s0'])
+      expect(warn).toHaveBeenCalled()
+      expect(JSON.stringify(warn.mock.calls)).not.toMatch(/x\.io|victim|y\.org/)
+    }
+    expect(cap.allow('a1@x.io')).toBe(true)
+    expect(cap.allow('victim@y.org')).toBe(true)
+  })
+
+  it('drops an unresolved placeholder', async () => {
+    const { args, warn } = params({ form: 7, locale: 'de' })
+    const out = await createBeforeEmail(createCap())(incoming('{{email}}'), args)
+    expect(out.map((e) => e.subject)).toEqual(['s0'])
+    expect(warn).toHaveBeenCalled()
+  })
+})
+
 describe('createCap', () => {
   it('allows three per rolling hour', () => {
     let now = 0
@@ -81,11 +104,14 @@ describe('rejectHoneypot', () => {
 
   it('rejects a filled trap', () => {
     expect(() => run('https://spam.example')).toThrow(APIError)
-    try {
-      run('x')
-    } catch (err) {
-      expect((err as APIError).status).toBe(400)
-    }
+    expect(() => run('x')).toThrow(expect.objectContaining({ status: 400 }))
+  })
+
+  it('rejects a filled trap that is not a string', () => {
+    const fill = (value: unknown) => rejectHoneypot({ data: { submissionData: [{ field: '_hp', value }] }, operation: 'create' } as never)
+    expect(() => fill(1)).toThrow(APIError)
+    expect(() => fill(['x'])).toThrow(APIError)
+    expect(fill(null)).toEqual({ submissionData: [] })
   })
 
   it('strips an empty trap before save', () => {

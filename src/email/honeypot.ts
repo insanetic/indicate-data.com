@@ -9,7 +9,7 @@ export const rejectHoneypot: CollectionBeforeValidateHook = ({ data, operation }
   if (operation !== 'create' || !data || !Array.isArray(data.submissionData)) return data
   const entries = data.submissionData as { field?: unknown; value?: unknown }[]
   const trap = entries.find((entry) => entry?.field === HONEYPOT_FIELD)
-  if (trap && typeof trap.value === 'string' && trap.value.trim() !== '') {
+  if (trap && trap.value != null && String(trap.value).trim() !== '') {
     throw new APIError('Submission rejected.', 400, undefined, true)
   }
   return { ...data, submissionData: entries.filter((entry) => entry?.field !== HONEYPOT_FIELD) }
