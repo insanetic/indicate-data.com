@@ -14,7 +14,7 @@ type Status = {
 
 type TestResult =
   | { ok: true; to: string; messageId: string | null }
-  | { ok: false; status: number; message: string; errors?: Record<string, string[]> | null }
+  | { ok: false; status: number; message: string; errors?: Record<string, string[] | string> | null }
 
 const muted = { color: 'var(--theme-elevation-500)' }
 const warning = { color: 'var(--theme-warning-500)' }
@@ -29,41 +29,64 @@ export const EmailStatusField: React.FC = () => {
   const base = `${config.serverURL}${config.routes.api}/lettermint`
   const [status, setStatus] = useState<Status | null>(null)
   const [loadFailed, setLoadFailed] = useState(false)
+  const [checkFailed, setCheckFailed] = useState(false)
   const [busy, setBusy] = useState<'check' | 'test' | null>(null)
   const [result, setResult] = useState<TestResult | null>(null)
 
-  const load = useCallback(
-    async (check: boolean) => {
-      try {
-        const res = await fetch(`${base}/status${check ? '?check=1' : ''}`, { credentials: 'include' })
-        if (!res.ok) throw new Error(String(res.status))
-        setStatus((await res.json()) as Status)
-        setLoadFailed(false)
-      } catch {
-        setLoadFailed(true)
-      }
+  const fetchStatus = useCallback(
+    async (check: boolean): Promise<Status> => {
+      const res = await fetch(`${base}/status${check ? '?check=1' : ''}`, { credentials: 'include' })
+      if (!res.ok) throw new Error(String(res.status))
+      return (await res.json()) as Status
     },
     [base],
   )
 
   useEffect(() => {
-    void load(false)
-  }, [load])
+    let cancelled = false
+    fetchStatus(false)
+      .then((data) => {
+        if (cancelled) return
+        setStatus(data)
+        setLoadFailed(false)
+      })
+      .catch(() => {
+        if (!cancelled) setLoadFailed(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [fetchStatus])
 
   const checkToken = async () => {
     setBusy('check')
-    await load(true)
+    setCheckFailed(false)
+    try {
+      setStatus(await fetchStatus(true))
+      setLoadFailed(false)
+    } catch {
+      // Keep the status we have; only the check failed.
+      setCheckFailed(true)
+    }
     setBusy(null)
   }
 
   const sendTest = async () => {
     setBusy('test')
     setResult(null)
+    let res: Response
     try {
-      const res = await fetch(`${base}/test`, { method: 'POST', credentials: 'include' })
-      setResult((await res.json()) as TestResult)
+      res = await fetch(`${base}/test`, { method: 'POST', credentials: 'include' })
     } catch {
       setResult({ ok: false, status: 0, message: t('Server nicht erreichbar.', 'Server not reachable.') })
+      setBusy(null)
+      return
+    }
+    try {
+      setResult((await res.json()) as TestResult)
+    } catch {
+      // The server answered, but not with JSON (a proxy's error page).
+      setResult({ ok: false, status: res.status, message: t(`Server antwortete mit ${res.status}.`, `Server answered ${res.status}.`) })
     }
     setBusy(null)
   }
@@ -95,6 +118,7 @@ export const EmailStatusField: React.FC = () => {
       {token?.valid === true && <p style={success}>{t('Lettermint akzeptiert den Token.', 'Lettermint accepts the token.')}</p>}
       {token?.valid === false && <p style={failure}>{t('Lettermint lehnt den Token ab.', 'Lettermint rejects the token.')}</p>}
       {token?.checkError && <p style={failure}>{token.checkError}</p>}
+      {checkFailed && <p style={failure}>{t('Token-Prüfung fehlgeschlagen.', 'Token check failed.')}</p>}
       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
         <Button buttonStyle="secondary" size="small" disabled={!token?.configured || busy !== null} onClick={() => void checkToken()}>
           {t('Token prüfen', 'Check token')}
@@ -105,7 +129,7 @@ export const EmailStatusField: React.FC = () => {
           disabled={!token?.configured || !email || busy !== null}
           onClick={() => void sendTest()}
         >
-          {t(`Testmail an ${email} senden`, `Send test mail to ${email}`)}
+          {email ? t(`Testmail an ${email} senden`, `Send test mail to ${email}`) : t('Testmail senden', 'Send test mail')}
         </Button>
       </div>
       <p style={muted}>
@@ -123,7 +147,7 @@ export const EmailStatusField: React.FC = () => {
           {result.errors && (
             <ul>
               {Object.entries(result.errors).map(([field, messages]) => (
-                <li key={field}>{`${field}: ${messages.join(', ')}`}</li>
+                <li key={field}>{`${field}: ${Array.isArray(messages) ? messages.join(', ') : String(messages)}`}</li>
               ))}
             </ul>
           )}
