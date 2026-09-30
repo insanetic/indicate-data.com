@@ -2690,6 +2690,10 @@ export interface Form {
           };
           [k: string]: unknown;
         } | null;
+        /**
+         * Only send when the form was filled in on a page in this language.
+         */
+        language: 'all' | 'de' | 'en';
         id?: string | null;
       }[]
     | null;
@@ -2820,6 +2824,7 @@ export interface FormSubmission {
         id?: string | null;
       }[]
     | null;
+  locale?: ('de' | 'en') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -4912,6 +4917,7 @@ export interface FormsSelect<T extends boolean = true> {
         emailFrom?: T;
         subject?: T;
         message?: T;
+        language?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -4930,6 +4936,7 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  locale?: T;
   updatedAt?: T;
   createdAt?: T;
 }

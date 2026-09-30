@@ -37,6 +37,7 @@ export const contactForm: Omit<Form, 'createdAt' | 'id' | 'updatedAt'> = {
     {
       emailFrom: '"Indicate Data" <hello@indicate-data.io>',
       emailTo: 'hello@indicate-data.io',
+      language: 'all',
       subject: 'Neue Kontaktanfrage über die Website',
       message: {
         root: {
