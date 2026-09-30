@@ -1,3 +1,4 @@
+import type { ManualCatalogue } from './manual'
 import type { Cadence, EntitlementKind, EntitlementView, PeriodKey, Plan, PriceModel, Quantity } from '@subneo/sdk'
 
 /* ------------------------------------------------------------------ */
@@ -13,6 +14,8 @@ export interface SubneoPricingPluginOptions {
   adminGroup?: string | Record<string, string>
   /** Example plans by family code, served when the global's source is "Example data". */
   fixtures?: Record<string, Plan[]>
+  /** Import-map paths of the admin components; override when the package is not resolvable by name. */
+  componentPaths?: { rowLabel?: string }
   /** Cache tag for the fetched plans; default `subneo-pricing`. */
   cacheTag?: string
   /** Environment variable names used when the global leaves a value empty. */
@@ -30,6 +33,7 @@ export interface ResolvedPluginOptions {
   globalSlug: string
   adminGroup: string | Record<string, string>
   fixtures: Record<string, Plan[]>
+  componentPaths: { rowLabel: string }
   cacheTag: string
   env: { apiKey: string; baseUrl: string; refreshSecret: string }
 }
@@ -41,6 +45,7 @@ export const resolveOptions = (options: SubneoPricingPluginOptions = {}): Resolv
   globalSlug: options.globalSlug || DEFAULT_GLOBAL_SLUG,
   adminGroup: options.adminGroup || 'Subneo',
   fixtures: options.fixtures || {},
+  componentPaths: { rowLabel: options.componentPaths?.rowLabel || '@subneo/payload-pricing/admin#ManualRowLabel' },
   cacheTag: options.cacheTag || DEFAULT_CACHE_TAG,
   env: {
     apiKey: options.env?.apiKey || 'SUBNEO_API_KEY',
@@ -53,7 +58,7 @@ export const resolveOptions = (options: SubneoPricingPluginOptions = {}): Resolv
 /* Settings (the global, as read for one locale)                        */
 /* ------------------------------------------------------------------ */
 
-export type PricingSource = 'subneo' | 'fixture'
+export type PricingSource = 'subneo' | 'manual' | 'fixture'
 
 export type FamilyRole = 'app' | 'addon'
 
@@ -93,7 +98,7 @@ export interface GroupOverride {
   order?: number | null
 }
 
-export interface SubneoPricingSettings {
+export interface SubneoPricingSettings extends ManualCatalogue {
   source?: PricingSource | null
   baseUrl?: string | null
   apiKey?: string | null

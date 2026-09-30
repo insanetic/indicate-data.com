@@ -5478,7 +5478,7 @@ export interface Footer {
  */
 export interface SubneoPricing {
   id: number;
-  source: 'subneo' | 'fixture';
+  source: 'subneo' | 'manual' | 'fixture';
   /**
    * Empty: SUBNEO_API_URL or https://api.subneo.io/v1
    */
@@ -5492,6 +5492,69 @@ export interface SubneoPricing {
    * Leave empty to use the environment variable SUBNEO_API_KEY. Only logged-in users can read this value.
    */
   apiKey?: string | null;
+  manualGroups?:
+    | {
+        code: string;
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Every feature a plan can carry. The order on the cards and in the table comes from the list inside each plan.
+   */
+  manualFeatures?:
+    | {
+        code: string;
+        name: string;
+        description?: string | null;
+        kind: 'boolean' | 'allocation' | 'consumable' | 'number' | 'string';
+        group: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The order within a family is the order on the page.
+   */
+  manualPlans?:
+    | {
+        code: string;
+        name: string;
+        family: string;
+        /**
+         * Both prices empty: price on request.
+         */
+        monthlyPrice?: number | null;
+        /**
+         * E.g. 1080 = 90 € per month. Empty: no yearly plan.
+         */
+        yearlyPrice?: number | null;
+        tagline?: string | null;
+        badge?: string | null;
+        featured?: boolean | null;
+        /**
+         * Value by type: “ja”/“nein”; amount “3” (more can be added), “10/10” (included/maximum) or “unbegrenzt”; monthly allowance “500”; number “50”; text as typed. A missing feature shows “–” in the table.
+         */
+        entitlements?:
+          | {
+              featureCode: string;
+              value: string;
+              id?: string | null;
+            }[]
+          | null;
+        featureRates?:
+          | {
+              featureCode: string;
+              price: number;
+              /**
+               * Empty: per unit.
+               */
+              packageSize?: number | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   families?:
     | {
         code: string;
@@ -5840,6 +5903,51 @@ export interface SubneoPricingSelect<T extends boolean = true> {
   apiVersion?: T;
   cacheSeconds?: T;
   apiKey?: T;
+  manualGroups?:
+    | T
+    | {
+        code?: T;
+        name?: T;
+        id?: T;
+      };
+  manualFeatures?:
+    | T
+    | {
+        code?: T;
+        name?: T;
+        description?: T;
+        kind?: T;
+        group?: T;
+        id?: T;
+      };
+  manualPlans?:
+    | T
+    | {
+        code?: T;
+        name?: T;
+        family?: T;
+        monthlyPrice?: T;
+        yearlyPrice?: T;
+        tagline?: T;
+        badge?: T;
+        featured?: T;
+        entitlements?:
+          | T
+          | {
+              featureCode?: T;
+              value?: T;
+              id?: T;
+            };
+        featureRates?:
+          | T
+          | {
+              featureCode?: T;
+              price?: T;
+              packageSize?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   families?:
     | T
     | {

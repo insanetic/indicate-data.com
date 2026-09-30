@@ -4,6 +4,7 @@ import { unstable_cache } from 'next/cache'
 
 import { SUBNEO_API_URL, SUBNEO_API_VERSION, createSubneoClient, isSubneoError, type Plan } from '@subneo/sdk'
 
+import { manualToPlans } from './manual'
 import { buildPricingModel } from './model'
 import { resolveOptions, type PricingModel, type SubneoPricingPluginOptions, type SubneoPricingSettings } from './types'
 
@@ -17,8 +18,9 @@ export interface GetPricingArgs extends SubneoPricingPluginOptions {
 
 /**
  * Reads the settings global, loads every configured family (from Subneo, cached by tag and TTL,
- * or from the fixtures in preview mode) and returns the view model. Failures are logged and
- * surface as `status: 'partial' | 'unavailable'`; live mode never falls back to example data.
+ * from the plans typed into the global, or from the fixtures in preview mode) and returns the
+ * view model. Failures are logged and surface as `status: 'partial' | 'unavailable'`; live mode
+ * never falls back to example data.
  */
 export const getPricing = async (args: GetPricingArgs): Promise<PricingModel> => {
   const { payload, locale, familyCodes = [] } = args
@@ -32,12 +34,17 @@ export const getPricing = async (args: GetPricingArgs): Promise<PricingModel> =>
     ...(locale ? { locale: locale as 'all' } : {}),
   })) as unknown as SubneoPricingSettings
 
-  const source = settings.source === 'subneo' ? 'subneo' : 'fixture'
+  const source = settings.source === 'subneo' || settings.source === 'manual' ? settings.source : 'fixture'
   const families = (settings.families || []).map((f) => f.code).filter((code) => familyCodes.length === 0 || familyCodes.includes(code))
 
   const plansByFamily: Record<string, Plan[] | undefined> = {}
   if (source === 'fixture') {
     for (const code of families) plansByFamily[code] = options.fixtures[code] || []
+    return buildPricingModel({ settings, plansByFamily, familyCodes, source })
+  }
+  if (source === 'manual') {
+    const manual = manualToPlans(settings)
+    for (const code of families) plansByFamily[code] = manual[code] || []
     return buildPricingModel({ settings, plansByFamily, familyCodes, source })
   }
 

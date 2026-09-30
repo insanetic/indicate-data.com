@@ -53,6 +53,7 @@ import { ColumnRowLabel as ColumnRowLabel_ec255a65fa6fa8d1faeb09cf35284224 } fro
 import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
 import { LinkRowLabel as LinkRowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
 import { ColumnRowLabel as ColumnRowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
+import { ManualRowLabel as ManualRowLabel_0af282ff93fdd716e6fa916c2aa2b0aa } from '@subneo/payload-pricing/admin'
 import { ServiceRowLabel as ServiceRowLabel_727a383662493648970548c3be70defa } from '@subneo/payload-consent/admin'
 import { CategoryRowLabel as CategoryRowLabel_727a383662493648970548c3be70defa } from '@subneo/payload-consent/admin'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
@@ -116,6 +117,7 @@ export const importMap = {
   "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
   "@/Footer/RowLabel#LinkRowLabel": LinkRowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
   "@/Footer/RowLabel#ColumnRowLabel": ColumnRowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
+  "@subneo/payload-pricing/admin#ManualRowLabel": ManualRowLabel_0af282ff93fdd716e6fa916c2aa2b0aa,
   "@subneo/payload-consent/admin#ServiceRowLabel": ServiceRowLabel_727a383662493648970548c3be70defa,
   "@subneo/payload-consent/admin#CategoryRowLabel": CategoryRowLabel_727a383662493648970548c3be70defa,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,

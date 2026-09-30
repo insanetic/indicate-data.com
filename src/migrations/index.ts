@@ -10,6 +10,8 @@ import * as migration_20260925_155847_illustration_paper_plane from './20260925_
 import * as migration_20260925_162647_stat_word from './20260925_162647_stat_word';
 import * as migration_20260925_163707_stat_unit from './20260925_163707_stat_unit';
 import * as migration_20260925_163800_convert_sections from './20260925_163800_convert_sections';
+import * as migration_20260930_121714_pricing_manual from './20260930_121714_pricing_manual';
+import * as migration_20260930_121800_pricing_manual_data from './20260930_121800_pricing_manual_data';
 
 export const migrations = [
   {
@@ -71,5 +73,15 @@ export const migrations = [
     up: migration_20260925_163800_convert_sections.up,
     down: migration_20260925_163800_convert_sections.down,
     name: '20260925_163800_convert_sections',
+  },
+  {
+    up: migration_20260930_121714_pricing_manual.up,
+    down: migration_20260930_121714_pricing_manual.down,
+    name: '20260930_121714_pricing_manual',
+  },
+  {
+    up: migration_20260930_121800_pricing_manual_data.up,
+    down: migration_20260930_121800_pricing_manual_data.down,
+    name: '20260930_121800_pricing_manual_data',
   },
 ];
