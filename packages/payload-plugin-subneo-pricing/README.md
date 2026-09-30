@@ -39,11 +39,11 @@ const model = await getPricing({ payload, locale, familyCodes, fixtures })
 ## Plans maintained by hand
 
 While a catalogue is not live in Subneo yet, set the data source to "Maintained by hand" and
-edit the "Plans (manual)" tab: comparison groups, features (code, name, type, group) and plans
-(family, EUR monthly and yearly price, add-on prices, and one text value per feature). Values by
-feature type: `ja`/`nein`; amount `3` (more can be added), `10/10` (included/maximum) or
-`unbegrenzt`; monthly allowance `500`; number `50`; text as typed. The admin refuses values that do
-not fit the feature's type.
+edit the "Plans (manual)" tab: comparison groups, features (code, name, group) and plans (family,
+EUR monthly and yearly price, add-on prices, and one free text value per feature). The value
+decides how it shows: `ja`/`nein` a checkmark or dash, `3`, `10/10` (included/maximum) or
+`unbegrenzt` an amount, `500 pro Monat` a monthly allowance, anything else the text as typed. Only
+an unknown feature code is refused.
 
 `manualToPlans()` turns these fields into the exact `GET /v1/plans` shape (rate codes
 `monthly_eur`/`yearly_eur`, rank = order within the family), so switching to the live API later

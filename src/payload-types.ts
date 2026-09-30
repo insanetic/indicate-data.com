@@ -5516,7 +5516,7 @@ export interface SubneoPricing {
         code: string;
         name: string;
         description?: string | null;
-        kind: 'boolean' | 'allocation' | 'consumable' | 'number' | 'string';
+        kind?: ('boolean' | 'allocation' | 'consumable' | 'number' | 'string') | null;
         group: string;
         id?: string | null;
       }[]
@@ -5541,7 +5541,7 @@ export interface SubneoPricing {
         badge?: string | null;
         featured?: boolean | null;
         /**
-         * Value by type: “ja”/“nein”; amount “3” (more can be added), “10/10” (included/maximum) or “unbegrenzt”; monthly allowance “500”; number “50”; text as typed. A missing feature shows “–” in the table.
+         * Any value. “ja” shows a checkmark, “nein” a dash; “3”, “10/10” (included/maximum) or “unbegrenzt” an amount; “500 pro Monat” a monthly allowance. Anything else shows exactly as typed (e.g. “bis zu 5”). A missing feature shows “–” in the table.
          */
         entitlements?:
           | {

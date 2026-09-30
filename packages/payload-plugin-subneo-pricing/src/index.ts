@@ -8,6 +8,7 @@ export {
   manualToPlans,
   plansToManual,
   parseManualValue,
+  resolveManualValue,
   formatManualValue,
   validateManualEntitlement,
   MANUAL_CURRENCY,

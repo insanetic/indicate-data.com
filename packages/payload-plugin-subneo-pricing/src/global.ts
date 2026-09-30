@@ -285,12 +285,12 @@ const manualTab = (rowLabel: string) => ({
         {
           type: 'row',
           fields: [
-            { name: 'kind', type: 'select', required: true, defaultValue: 'boolean', label: l('Art', 'Type'), options: KINDS, admin: { width: '50%' } },
+            // Kept for data copied from Subneo-shaped plans; the typed value decides the type.
+            { name: 'kind', type: 'select', defaultValue: 'boolean', label: l('Art', 'Type'), options: KINDS, admin: { hidden: true } },
             text('group', l('Gruppe (Code)', 'Group (code)'), {
               required: true,
-              admin: { width: '50%' },
               validate: (value: unknown, { data }: { data: Partial<ManualCatalogue> }) =>
-                !value || (data?.manualGroups || []).some((g) => g.code === value) || 'Unbekannte Gruppe / Unknown group',
+                !value || !Array.isArray(data?.manualGroups) || data.manualGroups.some((g) => g?.code === value) || 'Unbekannte Gruppe / Unknown group',
             } as Partial<Field>),
           ],
         },
@@ -352,8 +352,8 @@ const manualTab = (rowLabel: string) => ({
             initCollapsed: true,
             components: { RowLabel: rowLabel },
             description: l(
-              'Wert je nach Art: „ja“/„nein“; Menge „3“ (mehr dazubuchbar), „10/10“ (enthalten/maximal) oder „unbegrenzt“; Monatskontingent „500“; Zahl „50“; Text wie geschrieben. Fehlt eine Leistung, zeigt die Tabelle „–“.',
-              'Value by type: “ja”/“nein”; amount “3” (more can be added), “10/10” (included/maximum) or “unbegrenzt”; monthly allowance “500”; number “50”; text as typed. A missing feature shows “–” in the table.',
+              'Beliebiger Wert. „ja“ zeigt einen Haken, „nein“ einen Strich; „3“, „10/10“ (enthalten/maximal) oder „unbegrenzt“ eine Menge; „500 pro Monat“ ein Monatskontingent. Alles andere erscheint genau so, wie es hier steht (z. B. „bis zu 5“). Fehlt eine Leistung, zeigt die Tabelle „–“.',
+              'Any value. “ja” shows a checkmark, “nein” a dash; “3”, “10/10” (included/maximum) or “unbegrenzt” an amount; “500 pro Monat” a monthly allowance. Anything else shows exactly as typed (e.g. “bis zu 5”). A missing feature shows “–” in the table.',
             ),
           },
           fields: [

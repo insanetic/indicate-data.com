@@ -5,6 +5,7 @@ import {
   manualToPlans,
   parseManualValue,
   plansToManual,
+  resolveManualValue,
   validateManualEntitlement,
   type SubneoPricingSettings,
 } from '@subneo/payload-pricing'
@@ -56,6 +57,8 @@ describe('manual plans', () => {
     expect(core.featureRates).toContainEqual({ featureCode: 'resi_credits', price: 5, packageSize: 100 })
     expect(core.entitlements).toContainEqual({ featureCode: 'dashboards', value: '10/10' })
     expect(core.entitlements).toContainEqual({ featureCode: 'pipelines', value: '3' })
+    expect(core.entitlements).toContainEqual({ featureCode: 'resi_credits', value: '100 pro Monat' })
+    expect(core.entitlements).toContainEqual({ featureCode: 'api_tokens', value: '0' })
   })
 
   it('renders the same page as the example data it was copied from', () => {
@@ -80,9 +83,33 @@ describe('manual plans', () => {
     expect(plans.f[1].rates).toEqual([])
   })
 
-  it('names the problem when an editor saves a bad value', () => {
+  it('accepts any value and refuses only unknown feature codes', () => {
     expect(validateManualEntitlement(manual, 'dashboards', '10/10')).toBe(true)
-    expect(validateManualEntitlement(manual, 'dashboards', 'viele')).toMatch(/10\/10/)
+    expect(validateManualEntitlement(manual, 'dashboards', 'bis zu 5')).toBe(true)
     expect(validateManualEntitlement(manual, 'nope', 'ja')).toMatch(/nope/)
+    // partial admin form data: no feature list to check against
+    expect(validateManualEntitlement({}, 'dashboards', '3')).toBe(true)
+  })
+
+  it('lets the typed value decide its type', () => {
+    // new features carry the hidden default hint "boolean"
+    expect(resolveManualValue('boolean', 'ja')).toEqual({ kind: 'boolean', value: { bool: true } })
+    expect(resolveManualValue('boolean', '1')).toMatchObject({ kind: 'allocation', value: { included: '1', max: 'infinite' } })
+    expect(resolveManualValue('boolean', '0')).toMatchObject({ kind: 'allocation', value: { included: '0', max: '0' } })
+    expect(resolveManualValue('boolean', '10/10')).toMatchObject({ kind: 'allocation', value: { included: '10', max: '10' } })
+    expect(resolveManualValue('boolean', '500 pro Monat')).toMatchObject({ kind: 'consumable', value: { included: '500', resetPeriod: 'month' } })
+    expect(resolveManualValue(undefined, 'unbegrenzt')).toMatchObject({ kind: 'allocation', value: { included: 'infinite' } })
+    expect(resolveManualValue('boolean', 'bis zu 5')).toEqual({ kind: 'string', value: { text: 'bis zu 5' } })
+    // a stored hint wins when the value fits it (copied example data)
+    expect(resolveManualValue('consumable', '100')).toMatchObject({ kind: 'consumable', value: { included: '100' } })
+    expect(resolveManualValue('number', '50')).toEqual({ kind: 'number', value: { number: '50' } })
+    expect(resolveManualValue('allocation', ' ')).toBeUndefined()
+    expect(resolveManualValue('weird' as never, 'Priority')).toEqual({ kind: 'string', value: { text: 'Priority' } })
+    const plans = manualToPlans({
+      manualGroups: [{ code: 'g', name: 'G' }],
+      manualFeatures: [{ code: 'users', name: 'Users', kind: 'allocation', group: 'g' }],
+      manualPlans: [{ code: 'a', name: 'A', family: 'f', entitlements: [{ featureCode: 'users', value: '24/7 Support' }] }],
+    })
+    expect(plans.f[0].entitlements[0]).toMatchObject({ kind: 'string', value: { text: '24/7 Support' } })
   })
 })

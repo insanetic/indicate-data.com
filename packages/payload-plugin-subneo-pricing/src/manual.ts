@@ -28,7 +28,8 @@ export interface ManualFeature {
   code: string
   name: string
   description?: string | null
-  kind: EntitlementKind
+  /** Hidden in the admin; only a hint, the typed value decides (see `resolveManualValue`). */
+  kind?: EntitlementKind
   /** Code of a `ManualGroup`. */
   group: string
 }
@@ -42,7 +43,7 @@ export interface ManualFeatureRate {
 
 export interface ManualEntitlement {
   featureCode: string
-  /** Text form of the value, see `parseManualValue`. */
+  /** Text form of the value, see `resolveManualValue`. */
   value: string
 }
 
@@ -75,8 +76,11 @@ export const MANUAL_RATE_CODES = { month: 'monthly_eur', year: 'yearly_eur' } as
 /* Values                                                               */
 /* ------------------------------------------------------------------ */
 
-const YES = ['ja', 'yes', 'true', 'x', '✓', '1']
-const NO = ['nein', 'no', 'false', '-', '–', '—', '0']
+/** "500 pro Monat", "500/Monat", "500 per month", "500 / mo." */
+const PER_MONTH = /\s*(\/|pro|per|je)\s*(monat|month|mo\.?)\s*$/i
+
+const YES = ['ja', 'yes', 'true', 'x', '✓']
+const NO = ['nein', 'no', 'false', '-', '–', '—']
 const UNLIMITED = ['unbegrenzt', 'unlimited', '∞', 'infinite']
 
 export type ParseResult = { ok: true; value: EntitlementValue } | { ok: false; error: string }
@@ -90,8 +94,9 @@ const capacity = (raw: string): Capacity | undefined => {
 /**
  * Reads the text an editor typed for one entitlement:
  * - on/off: `ja` or `nein`
- * - amount: `3` (3 included, more can be added) or `10/10` (included / maximum); `unbegrenzt`
- * - monthly allowance: `500` or `unbegrenzt`, reset each calendar month
+ * - amount: `3` (3 included, more can be added), `0` (none) or `10/10` (included / maximum);
+ *   `unbegrenzt`
+ * - monthly allowance: `500`, `500 pro Monat` or `unbegrenzt`, reset each calendar month
  * - number: `50`
  * - text: shown as typed
  */
@@ -108,12 +113,13 @@ export const parseManualValue = (kind: EntitlementKind, raw: string | null | und
     case 'allocation': {
       const [includedRaw, maxRaw, ...rest] = text.split('/')
       const included = capacity(includedRaw)
-      const max = maxRaw === undefined ? INFINITE : capacity(maxRaw)
+      // A lone number can be topped up; a lone 0 means none.
+      const max = maxRaw === undefined ? (included === '0' ? '0' : INFINITE) : capacity(maxRaw)
       if (!included || !max || rest.length) return { ok: false, error: '3, 10/10 oder unbegrenzt' }
       return { ok: true, value: { min: '0', included, max } }
     }
     case 'consumable': {
-      const included = capacity(text)
+      const included = capacity(text.replace(PER_MONTH, ''))
       if (!included) return { ok: false, error: '500 oder unbegrenzt' }
       return {
         ok: true,
@@ -126,7 +132,26 @@ export const parseManualValue = (kind: EntitlementKind, raw: string | null | und
     }
     case 'string':
       return { ok: true, value: { text } }
+    default:
+      return { ok: false, error: `unknown type "${String(kind)}"` }
   }
+}
+
+/**
+ * The entitlement to publish for a typed value. The value decides its own type: `ja`/`nein` is a
+ * checkmark, `500 pro Monat` a monthly allowance, `3`, `10/10` or `unbegrenzt` an amount, anything
+ * else is shown as typed. `hint` (the type stored with features copied from Subneo-shaped data)
+ * wins when the value fits it, so e.g. a copied allowance "100" stays monthly.
+ */
+export const resolveManualValue = (hint: EntitlementKind | null | undefined, raw: string | null | undefined): { kind: EntitlementKind; value: EntitlementValue } | undefined => {
+  const text = (raw ?? '').trim()
+  if (!text) return undefined
+  const order: EntitlementKind[] = PER_MONTH.test(text) ? ['consumable'] : ['boolean', 'allocation']
+  for (const kind of hint ? [hint, ...order] : order) {
+    const parsed = parseManualValue(kind, text)
+    if (parsed.ok && kind !== 'string') return { kind, value: parsed.value }
+  }
+  return { kind: 'string', value: { text } }
 }
 
 const capacityText = (c: Capacity | undefined): string => (c === INFINITE ? 'unbegrenzt' : c || '0')
@@ -137,13 +162,16 @@ export const formatManualValue = (kind: EntitlementKind, value: EntitlementValue
     case 'boolean':
       return value.bool ? 'ja' : 'nein'
     case 'allocation':
+      if (value.included === '0' && value.max === '0') return '0'
       return value.max === undefined || value.max === INFINITE ? capacityText(value.included) : `${capacityText(value.included)}/${capacityText(value.max)}`
     case 'consumable':
-      return capacityText(value.included)
+      return `${capacityText(value.included)} pro Monat`
     case 'number':
       return value.number || '0'
     case 'string':
       return value.text || ''
+    default:
+      return ''
   }
 }
 
@@ -197,9 +225,10 @@ const toRates = (plan: ManualPlan): PlanRate[] => {
 }
 
 /**
- * Plans by family code. Entitlements keep the plan's own order, as in Subneo; an entitlement whose
- * feature is unknown or whose value does not parse is left out (the admin refuses to save those,
- * so this only guards against data saved before a feature was renamed).
+ * Plans by family code. Entitlements keep the plan's own order, as in Subneo. A value that does
+ * not fit the feature's type is published as text; an entitlement whose feature is unknown or
+ * whose value is empty is left out (the admin refuses to save those, so this only guards against
+ * data saved before a feature was renamed).
  */
 export const manualToPlans = (catalogue: ManualCatalogue): Record<string, Plan[]> => {
   const groups = new Map((catalogue.manualGroups || []).map((g) => [g.code, g]))
@@ -215,16 +244,16 @@ export const manualToPlans = (catalogue: ManualCatalogue): Record<string, Plan[]
     for (const e of plan.entitlements || []) {
       const feature = byCode.get(e.featureCode)
       if (!feature) continue
-      const parsed = parseManualValue(feature.kind, e.value)
-      if (!parsed.ok) continue
+      const resolved = resolveManualValue(feature.kind, e.value)
+      if (!resolved) continue
       const group = groups.get(feature.group)
       entitlements.push({
         featureCode: feature.code,
         name: feature.name,
         ...(feature.description ? { description: feature.description } : {}),
-        kind: feature.kind,
+        kind: resolved.kind,
         group: { code: feature.group, name: group?.name || feature.group },
-        value: parsed.value,
+        value: resolved.value,
         position: entitlements.length,
       })
     }
@@ -287,11 +316,13 @@ export const plansToManual = (plansByFamily: Record<string, Plan[]>): { manualGr
 /* Admin validation                                                     */
 /* ------------------------------------------------------------------ */
 
-/** Error text for one entitlement row, or `true`. Used by the global's field validation. */
-export const validateManualEntitlement = (catalogue: ManualCatalogue | undefined, featureCode: string | undefined, value: string | undefined): true | string => {
-  if (!featureCode) return true
-  const feature = (catalogue?.manualFeatures || []).find((f) => f.code === featureCode)
-  if (!feature) return `Unbekannter Feature-Code „${featureCode}“ / Unknown feature code`
-  const parsed = parseManualValue(feature.kind, value)
-  return parsed.ok ? true : `Erwartet / Expected: ${parsed.error}`
+/**
+ * Error text for one entitlement row, or `true`. Used by the global's field validation. Only an
+ * unknown feature code is refused; any value is accepted (see `resolveManualValue`). The admin's
+ * form data can be partial, so a missing feature list is not an error here.
+ */
+export const validateManualEntitlement = (catalogue: ManualCatalogue | undefined, featureCode: string | undefined, _value?: string): true | string => {
+  const features = catalogue?.manualFeatures
+  if (!featureCode || !Array.isArray(features)) return true
+  return features.some((f) => f?.code === featureCode) ? true : `Unbekannter Feature-Code „${featureCode}“ / Unknown feature code`
 }
