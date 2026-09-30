@@ -88,6 +88,42 @@ describe('beforeEmail with an address list', () => {
   })
 })
 
+describe('beforeEmail with an HTML-escaped recipient', () => {
+  // The form builder HTML-escapes `{{email}}` before this hook sees it.
+  it('caps a display-name address on the bare address, whatever the name', async () => {
+    const beforeEmail = createBeforeEmail(createCap())
+    const sent: unknown[] = []
+    for (const name of ['a', 'b', 'c', 'd']) {
+      const { args, warn } = params({ form: 7, locale: 'de' })
+      const out = await beforeEmail(incoming(`&quot;${name}&quot; &lt;victim@y.org&gt;`), args)
+      sent.push(out.map((e) => [e.subject, e.to]))
+      if (name === 'd') expect(warn.mock.calls[0][0]).toContain('y.org')
+    }
+    expect(sent).toEqual([
+      [['s0', 'hello@indicate-data.io, sales@indicate-data.io'], ['s1', 'victim@y.org']],
+      [['s0', 'hello@indicate-data.io, sales@indicate-data.io'], ['s1', 'victim@y.org']],
+      [['s0', 'hello@indicate-data.io, sales@indicate-data.io'], ['s1', 'victim@y.org']],
+      [['s0', 'hello@indicate-data.io, sales@indicate-data.io']],
+    ])
+  })
+
+  it('drops an address with trailing text without using up the cap', async () => {
+    const cap = createCap()
+    const beforeEmail = createBeforeEmail(cap)
+    for (const visitor of ['victim@y.org (1)', 'victim@y.org (2)']) {
+      const { args, warn } = params({ form: 7, locale: 'de' })
+      expect((await beforeEmail(incoming(visitor), args)).map((e) => e.subject)).toEqual(['s0'])
+      expect(JSON.stringify(warn.mock.calls)).not.toMatch(/victim|y\.org/)
+    }
+    expect(cap.allow('victim@y.org')).toBe(true)
+  })
+
+  it('decodes an apostrophe in the address', async () => {
+    const out = await createBeforeEmail(createCap())(incoming('o&#39;brien@x.io'), params({ form: 7, locale: 'de' }).args)
+    expect(out.map((e) => e.to)).toEqual(['hello@indicate-data.io, sales@indicate-data.io', "o'brien@x.io"])
+  })
+})
+
 describe('createCap', () => {
   it('allows three per rolling hour', () => {
     let now = 0
