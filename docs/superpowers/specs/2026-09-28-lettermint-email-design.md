@@ -138,17 +138,17 @@ Payload only ever hands the adapter simple messages. Mapping:
 | `route` | text | Lettermint route slug; empty = the project's default route. Should be a transactional route. |
 | `status` | ui | `EmailStatusField`: token status, hint, test button. |
 
-Access: read and update for logged-in users only. Not added to the MCP plugin. Labels de/en like
+Access: read and update for admin users only (`req.user.collection === config.admin.user`; MCP and other API-key users are refused). Not added to the MCP plugin. Labels de/en like
 the other packages. `getEmailSettings(payload)` returns the resolved settings (global values with
 plugin defaults filled in) for site code.
 
 ### Package: endpoints and admin field
 
-- `GET /api/lettermint/status` (logged in, else 401) returns
+- `GET /api/lettermint/status` (admin user, else 401) returns
   `{ token: { configured, envName, hint }, sender, notifyTo, route }`. `hint` is `…` plus the last
   four characters, and only when the token is at least 12 characters long; otherwise `null`. With
   `?check=1` it also pings Lettermint and adds `token.valid: true | false`.
-- `POST /api/lettermint/test` (logged in, else 401) sends a short test mail to `req.user.email`
+- `POST /api/lettermint/test` (admin user, else 401) sends a short test mail to `req.user.email`
   only, using the saved settings. Returns `{ ok: true, messageId }` or `{ ok: false, status,
   message, errors }` with Lettermint's text. No arbitrary recipient, so it cannot be used as a relay.
 - `EmailStatusField` shows "Token: configured via LETTERMINT_API_TOKEN (…ab12)" or "missing — mail
@@ -263,8 +263,8 @@ production state at implementation time.
 - The token exists only in the process environment. It is never written to the database, returned
   by an API (only a 4-character hint, and only for tokens of 12+ characters), logged, or included
   in an error.
-- Both endpoints require a logged-in user; the test mail goes only to that user's own address.
-- The global is readable only by logged-in users and is not exposed through MCP.
+- Both endpoints require an admin user (not an MCP or other API key); the test mail goes only to that user's own address.
+- The global is readable only by admin users and is not exposed through MCP.
 - Placeholder values in form mails are HTML-escaped by the form builder; the JSON API leaves no
   room for header injection.
 - Confirmation mails carry no visitor-supplied text; honeypot and cap limit abuse of the
