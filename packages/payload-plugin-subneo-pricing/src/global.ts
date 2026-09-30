@@ -4,6 +4,7 @@ import { SUBNEO_API_URL, SUBNEO_API_VERSION } from '@subneo/sdk'
 
 import { l } from './labels'
 import { revalidatePricing } from './hooks'
+import { validateManualEntitlement, type ManualCatalogue } from './manual'
 import type { ResolvedPluginOptions } from './types'
 
 type Args = ResolvedPluginOptions & { localized: boolean }
@@ -15,7 +16,7 @@ const text = (name: string, label: Record<string, string>, extra: Partial<Field>
  * Connection, plan families and display overrides. Readable only by logged-in users so the API
  * key never leaves the server; the loader reads it with `overrideAccess`.
  */
-export const createSubneoPricingGlobal = ({ globalSlug, adminGroup, env, localized }: Args): GlobalConfig => ({
+export const createSubneoPricingGlobal = ({ globalSlug, adminGroup, env, componentPaths, localized }: Args): GlobalConfig => ({
   slug: globalSlug,
   label: l('Preise (Subneo)', 'Pricing (Subneo)'),
   access: { read: ({ req }) => Boolean(req.user) },
@@ -40,6 +41,7 @@ export const createSubneoPricingGlobal = ({ globalSlug, adminGroup, env, localiz
               label: l('Datenquelle', 'Data source'),
               options: [
                 { label: l('Subneo API (live)', 'Subneo API (live)'), value: 'subneo' },
+                { label: l('Manuell gepflegt (Tab „Pakete (manuell)“)', 'Maintained by hand (tab “Plans (manual)”)'), value: 'manual' },
                 { label: l('Beispieldaten (Vorschau)', 'Example data (preview)'), value: 'fixture' },
               ],
             },
@@ -75,6 +77,7 @@ export const createSubneoPricingGlobal = ({ globalSlug, adminGroup, env, localiz
             }),
           ],
         },
+        manualTab(componentPaths.rowLabel),
         {
           label: l('Paketfamilien', 'Plan families'),
           description: l(
@@ -216,4 +219,182 @@ export const createSubneoPricingGlobal = ({ globalSlug, adminGroup, env, localiz
       ],
     },
   ],
+})
+
+const isManual = (data: Partial<{ source: string }> | undefined) => data?.source === 'manual'
+
+const KINDS = [
+  { label: l('An/aus (ja, nein)', 'On/off (ja, nein)'), value: 'boolean' },
+  { label: l('Menge (3, 10/10, unbegrenzt)', 'Amount (3, 10/10, unbegrenzt)'), value: 'allocation' },
+  { label: l('Monatskontingent (500, unbegrenzt)', 'Monthly allowance (500, unbegrenzt)'), value: 'consumable' },
+  { label: l('Zahl (50)', 'Number (50)'), value: 'number' },
+  { label: l('Text', 'Text'), value: 'string' },
+]
+
+/**
+ * Plans typed in by hand, used while the Subneo catalogue is not live (source "manual"). The shape
+ * mirrors Subneo's: groups, features with a type, plans with EUR prices and a value per feature.
+ * Single-language like Subneo; the overrides tab translates names and texts.
+ */
+const manualTab = (rowLabel: string) => ({
+  label: l('Pakete (manuell)', 'Plans (manual)'),
+  description: l(
+    'Nur aktiv, wenn die Datenquelle „Manuell gepflegt“ ist. Namen hier wie in Subneo (eine Sprache); Übersetzungen im Tab „Anpassungen“.',
+    'Only used when the data source is “Maintained by hand”. Names as in Subneo (one language); translations live in the “Overrides” tab.',
+  ),
+  fields: [
+    {
+      name: 'manualGroups',
+      type: 'array',
+      label: l('Gruppen der Vergleichstabelle', 'Comparison groups'),
+      labels: { singular: l('Gruppe', 'Group'), plural: l('Gruppen', 'Groups') },
+      admin: { initCollapsed: true, condition: isManual, components: { RowLabel: rowLabel } },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            text('code', l('Code', 'Code'), { required: true, admin: { width: '40%' } }),
+            text('name', l('Name', 'Name'), { required: true, admin: { width: '60%' } }),
+          ],
+        },
+      ],
+    },
+    {
+      name: 'manualFeatures',
+      type: 'array',
+      label: l('Leistungen', 'Features'),
+      labels: { singular: l('Leistung', 'Feature'), plural: l('Leistungen', 'Features') },
+      admin: {
+        initCollapsed: true,
+        condition: isManual,
+        components: { RowLabel: rowLabel },
+        description: l(
+          'Alle Leistungen, die Pakete enthalten können. Die Reihenfolge auf Karten und in der Tabelle kommt aus der Liste im Paket.',
+          'Every feature a plan can carry. The order on the cards and in the table comes from the list inside each plan.',
+        ),
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            text('code', l('Feature-Code', 'Feature code'), { required: true, admin: { width: '30%' } }),
+            text('name', l('Name', 'Name'), { required: true, admin: { width: '70%' } }),
+          ],
+        },
+        text('description', l('Beschreibung', 'Description')),
+        {
+          type: 'row',
+          fields: [
+            { name: 'kind', type: 'select', required: true, defaultValue: 'boolean', label: l('Art', 'Type'), options: KINDS, admin: { width: '50%' } },
+            text('group', l('Gruppe (Code)', 'Group (code)'), {
+              required: true,
+              admin: { width: '50%' },
+              validate: (value: unknown, { data }: { data: Partial<ManualCatalogue> }) =>
+                !value || (data?.manualGroups || []).some((g) => g.code === value) || 'Unbekannte Gruppe / Unknown group',
+            } as Partial<Field>),
+          ],
+        },
+      ],
+    },
+    {
+      name: 'manualPlans',
+      type: 'array',
+      label: l('Pakete', 'Plans'),
+      labels: { singular: l('Paket', 'Plan'), plural: l('Pakete', 'Plans') },
+      admin: {
+        initCollapsed: true,
+        condition: isManual,
+        components: { RowLabel: rowLabel },
+        description: l('Die Reihenfolge innerhalb einer Familie ist die Reihenfolge auf der Seite.', 'The order within a family is the order on the page.'),
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            text('code', l('Paket-Code', 'Plan code'), { required: true, admin: { width: '25%' } }),
+            text('name', l('Name', 'Name'), { required: true, admin: { width: '45%' } }),
+            text('family', l('Familie (Code)', 'Family (code)'), { required: true, admin: { width: '30%' } }),
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'monthlyPrice',
+              type: 'number',
+              min: 0,
+              label: l('Preis monatlich (€ pro Monat)', 'Monthly price (€ per month)'),
+              admin: { width: '50%', description: l('Beide Preise leer: Preis auf Anfrage.', 'Both prices empty: price on request.') },
+            },
+            {
+              name: 'yearlyPrice',
+              type: 'number',
+              min: 0,
+              label: l('Preis jährlich (€ pro Jahr, gesamt)', 'Yearly price (€ per year, total)'),
+              admin: { width: '50%', description: l('Z. B. 1080 = 90 € pro Monat. Leer: kein Jahrespaket.', 'E.g. 1080 = 90 € per month. Empty: no yearly plan.') },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            text('tagline', l('Für wen (eine Zeile)', 'Who it is for (one line)'), { admin: { width: '50%' } }),
+            text('badge', l('Badge', 'Badge'), { admin: { width: '30%' } }),
+            { name: 'featured', type: 'checkbox', defaultValue: false, label: l('Hervorheben', 'Featured'), admin: { width: '20%' } },
+          ],
+        },
+        {
+          name: 'entitlements',
+          type: 'array',
+          label: l('Leistungen und Mengen', 'Features and amounts'),
+          labels: { singular: l('Leistung', 'Feature'), plural: l('Leistungen', 'Features') },
+          admin: {
+            initCollapsed: true,
+            components: { RowLabel: rowLabel },
+            description: l(
+              'Wert je nach Art: „ja“/„nein“; Menge „3“ (mehr dazubuchbar), „10/10“ (enthalten/maximal) oder „unbegrenzt“; Monatskontingent „500“; Zahl „50“; Text wie geschrieben. Fehlt eine Leistung, zeigt die Tabelle „–“.',
+              'Value by type: “ja”/“nein”; amount “3” (more can be added), “10/10” (included/maximum) or “unbegrenzt”; monthly allowance “500”; number “50”; text as typed. A missing feature shows “–” in the table.',
+            ),
+          },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                text('featureCode', l('Feature-Code', 'Feature code'), { required: true, admin: { width: '50%' } }),
+                text('value', l('Wert', 'Value'), {
+                  required: true,
+                  admin: { width: '50%' },
+                  validate: (value: unknown, { data, siblingData }: { data: Partial<ManualCatalogue>; siblingData: { featureCode?: string } }) =>
+                    validateManualEntitlement(data, siblingData?.featureCode, typeof value === 'string' ? value : undefined),
+                } as Partial<Field>),
+              ],
+            },
+          ],
+        },
+        {
+          name: 'featureRates',
+          type: 'array',
+          label: l('Zukaufpreise (z. B. je weitere Datenquelle)', 'Add-on prices (e.g. per extra connection)'),
+          labels: { singular: l('Zukaufpreis', 'Add-on price'), plural: l('Zukaufpreise', 'Add-on prices') },
+          admin: { initCollapsed: true, components: { RowLabel: rowLabel } },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                text('featureCode', l('Feature-Code', 'Feature code'), { required: true, admin: { width: '40%' } }),
+                { name: 'price', type: 'number', required: true, min: 0, label: l('Preis (€)', 'Price (€)'), admin: { width: '30%' } },
+                {
+                  name: 'packageSize',
+                  type: 'number',
+                  min: 1,
+                  label: l('Pro Paket von', 'Per package of'),
+                  admin: { width: '30%', description: l('Leer: pro Einheit.', 'Empty: per unit.') },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ] as Field[],
 })

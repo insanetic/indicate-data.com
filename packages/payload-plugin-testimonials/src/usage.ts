@@ -2,6 +2,7 @@ import { selectForLayout } from './select'
 import { idsOf, type Id, type Reason, type Testimonial, type TestimonialsBlockData } from './types'
 
 export interface Usage {
+  collection: string
   docId: Id
   docTitle: string
   blockIndex: number
@@ -11,21 +12,31 @@ export interface Usage {
   shown: boolean
 }
 
-type Doc = { id: Id; title?: string | null } & Record<string, unknown>
+type Doc = { id: Id } & Record<string, unknown>
+
+/** Reads a dotted path (`content.layout`) from a document. */
+const getPath = (doc: Record<string, unknown>, path: string): unknown =>
+  path.split('.').reduce<unknown>((value, key) => (value && typeof value === 'object' ? (value as Record<string, unknown>)[key] : undefined), doc)
 
 /**
  * Where one testimonial appears: hand-picked or pinned references, plus automatic picks. Uses
  * the same selection as the site, so "auto" means "rendered there right now".
  */
 export const findUsage = ({
+  collection,
   docs,
-  field,
+  path,
+  titleField = 'title',
   blockSlug,
   pool,
   testimonialId,
 }: {
+  collection: string
   docs: Doc[]
-  field: string
+  /** Dotted path of the blocks field, e.g. `layout`. */
+  path: string
+  /** Field shown as the document's name (the collection's `useAsTitle`); falls back to the id. */
+  titleField?: string
   blockSlug: string
   pool: Testimonial[]
   testimonialId: Id
@@ -33,7 +44,8 @@ export const findUsage = ({
   const target = String(testimonialId)
   const usages: Usage[] = []
   for (const doc of docs) {
-    const layout = (doc[field] as unknown[] | null | undefined) || []
+    const value = getPath(doc, path)
+    const layout = Array.isArray(value) ? value : []
     const selected = selectForLayout({ layout, pool, blockSlug })
     layout.forEach((raw, blockIndex) => {
       const block = raw as TestimonialsBlockData & { header?: { heading?: string | null } }
@@ -44,9 +56,11 @@ export const findUsage = ({
           ? idsOf(block.testimonials).includes(target) ? 'manual' : null
           : idsOf(block.pinned).includes(target) ? 'pinned' : shownIds.includes(target) ? 'auto' : null
       if (!reason) return
+      const title = doc[titleField]
       usages.push({
+        collection,
         docId: doc.id,
-        docTitle: doc.title || String(doc.id),
+        docTitle: typeof title === 'string' && title ? title : String(doc.id),
         blockIndex,
         heading: block.header?.heading || null,
         reason,

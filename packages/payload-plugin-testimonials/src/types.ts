@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Field } from 'payload'
 
 export type Id = number | string
 
@@ -75,6 +75,24 @@ export interface ComponentPaths {
   selectionPreview: string
 }
 
+/** Payload's override shape (as in form-builder, search, SEO): replace or extend the default fields. */
+export type FieldsOverride = (args: { defaultFields: Field[] }) => Field[]
+
+/**
+ * Overrides for one of the plugin's collections. `access` and `admin` merge key by key over the
+ * defaults, `hooks` are appended after the plugin's own (which keep the cache fresh), `fields`
+ * gets the default fields, and every other key replaces the default. The slug comes from `slugs`.
+ */
+export type CollectionOverrides = Partial<Omit<CollectionConfig, 'fields' | 'slug'>> & { fields?: FieldsOverride }
+
+/** A blocks field that holds the testimonials block, found when the plugin runs. */
+export interface BlockLocation {
+  collection: string
+  /** Dotted path of the blocks field in the document, e.g. `layout` or `content.sections`. */
+  path: string
+  blockSlug: string
+}
+
 export interface TestimonialsPluginOptions {
   /** Set to `false` to leave the config untouched. */
   enabled?: boolean
@@ -87,27 +105,30 @@ export interface TestimonialsPluginOptions {
   adminGroup?: string | Record<string, string>
   /** Next cache tag of the loaded pool; default `testimonials`. */
   cacheTag?: string
-  /** Where the usage panel looks for blocks; default pages.layout. `false` hides the panel. */
-  usage?: false | { collection: string; field: string; blockSlug?: string }
+  /** `false` hides the "Shown on" panel. It looks in every collection whose blocks fields hold the testimonials block. */
+  usage?: boolean
   /** Import-map paths of the admin components. */
   componentPaths?: Partial<ComponentPaths>
-  /**
-   * Access overrides for the testimonials collection, merged key by key over the defaults
-   * (read: published for visitors, everything for logged-in users; create/update/delete: logged-in users).
-   */
-  access?: Partial<NonNullable<CollectionConfig['access']>>
+  /** Overrides for the testimonials collection. */
+  testimonialsOverrides?: CollectionOverrides
+  /** Overrides for the tags collection. */
+  tagsOverrides?: CollectionOverrides
 }
 
+/** The options after defaults, stored in `config.custom` so the block, the server helpers and the endpoints all read the same values. */
 export interface ResolvedOptions {
   slugs: { testimonials: string; tags: string }
   mediaSlug: string
   linkCollections: string[]
   adminGroup: string | Record<string, string>
   cacheTag: string
-  usage: false | { collection: string; field: string; blockSlug: string }
+  usage: boolean
   componentPaths: ComponentPaths
-  access: Partial<NonNullable<CollectionConfig['access']>>
+  testimonialsOverrides: CollectionOverrides
+  tagsOverrides: CollectionOverrides
   localized: boolean
+  /** Where the testimonials block is used; filled in by the plugin. */
+  locations: BlockLocation[]
 }
 
 export const resolveOptions = (options: TestimonialsPluginOptions = {}, localized = false): ResolvedOptions => ({
@@ -116,15 +137,26 @@ export const resolveOptions = (options: TestimonialsPluginOptions = {}, localize
   linkCollections: options.linkCollections ?? ['pages', 'posts'],
   adminGroup: options.adminGroup || { de: 'Kundenstimmen', en: 'Testimonials' },
   cacheTag: options.cacheTag || DEFAULT_CACHE_TAG,
-  usage:
-    options.usage === false
-      ? false
-      : { collection: 'pages', field: 'layout', blockSlug: 'testimonials', ...(options.usage || {}) },
+  usage: options.usage !== false,
   componentPaths: {
     usagePanel: '@subneo/payload-testimonials/admin#UsagePanel',
     selectionPreview: '@subneo/payload-testimonials/admin#SelectionPreview',
     ...(options.componentPaths || {}),
   },
-  access: options.access || {},
+  testimonialsOverrides: options.testimonialsOverrides || {},
+  tagsOverrides: options.tagsOverrides || {},
   localized,
+  locations: [],
 })
+
+/** Key under `config.custom` (and on the block's and its fields' `custom`). */
+export const PLUGIN_KEY = '@subneo/payload-testimonials'
+
+/**
+ * The plugin's resolved options, read from a Payload instance or config. Without the plugin
+ * (tests, or `enabled: false`) this is the defaults, so the helpers still work.
+ */
+export const getPluginOptions = (source?: { config?: { custom?: Record<string, unknown> }; custom?: Record<string, unknown> } | null): ResolvedOptions => {
+  const custom = source?.config?.custom ?? source?.custom
+  return (custom?.[PLUGIN_KEY] as ResolvedOptions | undefined) || resolveOptions()
+}

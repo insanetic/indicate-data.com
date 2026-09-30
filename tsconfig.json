@@ -40,6 +40,9 @@
       "@subneo/payload-pricing": [
         "./packages/payload-plugin-subneo-pricing/src/index.ts"
       ],
+      "@subneo/payload-pricing/admin": [
+        "./packages/payload-plugin-subneo-pricing/src/admin.ts"
+      ],
       "@subneo/payload-consent": [
         "./packages/payload-plugin-consent/src/index.ts"
       ],

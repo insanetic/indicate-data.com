@@ -1,7 +1,7 @@
 import type { Block, CollectionSlug, Field } from 'payload'
 
 import { l } from './labels'
-import { MAX_COUNT, DEFAULT_COUNT } from './types'
+import { MAX_COUNT, DEFAULT_COUNT, PLUGIN_KEY } from './types'
 
 export interface TestimonialsBlockOptions {
   slug?: string
@@ -14,10 +14,15 @@ export interface TestimonialsBlockOptions {
   after?: Field[]
   /** Site fields placed before `after`, e.g. legacy fields kept for a migration. */
   extraFields?: Field[]
-  testimonialsSlug?: string
-  tagsSlug?: string
-  selectionPreviewPath?: string
 }
+
+/**
+ * What a field of the block points at. The plugin finds the block by its `custom` marker and
+ * rewrites these fields to its configured slugs and component path, so the block needs no slugs
+ * of its own.
+ */
+export type BlockFieldRole = 'testimonials' | 'tags' | 'preview'
+const role = (r: BlockFieldRole) => ({ custom: { [PLUGIN_KEY]: r } })
 
 type Sibling = { mode?: string; tags?: unknown[] }
 const isAuto = (_: unknown, s: Sibling) => s?.mode !== 'manual'
@@ -25,12 +30,16 @@ const isManual = (_: unknown, s: Sibling) => s?.mode === 'manual'
 
 export const newSeed = () => Math.random().toString(36).slice(2, 10)
 
-// Slugs are configurable strings, so relationTo casts them: the site's generated
-// CollectionSlug union can't know them.
+// The defaults below are replaced by the plugin with its own slugs (see BlockFieldRole). They are
+// strings cast to CollectionSlug: the site's generated union can't know configurable slugs.
+const testimonialsSlug = 'testimonials'
+const tagsSlug = 'testimonial-tags'
 
 /**
  * The page block. It stores *which* testimonials a section shows (hand-picked, or a filter +
- * seed); the content lives in the testimonials collection and is resolved at render time.
+ * seed); the content lives in the testimonials collection and is resolved at render time. The
+ * block has no markup: each site renders it with its own component. Put it in a blocks field of
+ * a collection before `testimonialsPlugin` runs, and the plugin wires it to its collections.
  */
 export const createTestimonialsBlock = ({
   slug = 'testimonials',
@@ -38,12 +47,10 @@ export const createTestimonialsBlock = ({
   before = [],
   after = [],
   extraFields = [],
-  testimonialsSlug = 'testimonials',
-  tagsSlug = 'testimonial-tags',
-  selectionPreviewPath = '@subneo/payload-testimonials/admin#SelectionPreview',
 }: TestimonialsBlockOptions = {}): Block => ({
   slug,
   interfaceName,
+  custom: { [PLUGIN_KEY]: true },
   labels: { singular: l('Kundenstimmen', 'Testimonials'), plural: l('Kundenstimmen-Abschnitte', 'Testimonial sections') },
   fields: [
     ...before,
@@ -61,6 +68,7 @@ export const createTestimonialsBlock = ({
     {
       name: 'testimonials',
       type: 'relationship',
+      ...role('testimonials'),
       relationTo: testimonialsSlug as CollectionSlug,
       hasMany: true,
       label: l('Kundenstimmen (Reihenfolge = Anzeige)', 'Testimonials (order = display order)'),
@@ -73,6 +81,7 @@ export const createTestimonialsBlock = ({
         {
           name: 'tags',
           type: 'relationship',
+          ...role('tags'),
           relationTo: tagsSlug as CollectionSlug,
           hasMany: true,
           label: l('Nur mit Tags (leer = alle)', 'Only with tags (empty = all)'),
@@ -107,6 +116,7 @@ export const createTestimonialsBlock = ({
         {
           name: 'pinned',
           type: 'relationship',
+          ...role('testimonials'),
           relationTo: testimonialsSlug as CollectionSlug,
           hasMany: true,
           label: l('Immer zeigen (zuerst)', 'Always show (first)'),
@@ -115,6 +125,7 @@ export const createTestimonialsBlock = ({
         {
           name: 'exclude',
           type: 'relationship',
+          ...role('testimonials'),
           relationTo: testimonialsSlug as CollectionSlug,
           hasMany: true,
           label: l('Nie zeigen', 'Never show'),
@@ -126,9 +137,10 @@ export const createTestimonialsBlock = ({
     {
       name: 'preview',
       type: 'ui',
+      ...role('preview'),
       admin: {
         condition: isAuto,
-        components: { Field: { path: selectionPreviewPath, clientProps: { apiSlug: testimonialsSlug } } },
+        components: { Field: { path: '@subneo/payload-testimonials/admin#SelectionPreview', clientProps: { apiSlug: testimonialsSlug } } },
       },
     },
     ...extraFields,
