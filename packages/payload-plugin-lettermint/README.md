@@ -13,8 +13,9 @@ the admin, next to a token status and a test mail.
   process. Local development works without an account.
 - Adds a global `email-settings`: sender address and name, team recipients, Lettermint route,
   and a status panel (token set or missing, its last four characters, "check token", "send test
-  mail to me"). Only logged-in users can read or change it.
-- Adds `GET /api/lettermint/status` and `POST /api/lettermint/test` (logged-in users only; the
+  mail to me"). Only users of the admin collection (`admin.user`) can read or change it; API-key
+  users of other auth collections, such as MCP keys, cannot.
+- Adds `GET /api/lettermint/status` and `POST /api/lettermint/test` (admin users only; the
   test goes to the user's own address).
 
 ## Install

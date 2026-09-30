@@ -20,11 +20,11 @@ const setup = async () => {
   const endpoint = (path: string) => (config.endpoints as Endpoint[]).find((e) => e.path === path)!
   const custom = config.custom as Record<string, unknown>
   const req = (over: Record<string, unknown> = {}) => ({
-    user: { email: 'me@indicate-data.io' },
+    user: { email: 'me@indicate-data.io', collection: 'users' },
     i18n: { language: 'de' },
     searchParams: new URLSearchParams(),
     payload: {
-      config: { custom },
+      config: { custom, admin: { user: 'users' } },
       findGlobal: vi.fn(async () => ({})),
       logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
       sendEmail: vi.fn(async (_message?: unknown) => ({ message_id: 'm1', status: 'pending' })),
@@ -49,12 +49,16 @@ describe('lettermintPlugin', () => {
     expect((config.custom as Record<string, unknown>)[PLUGIN_KEY]).toMatchObject({ globalSlug: 'email-settings' })
   })
 
-  it('keeps the global away from visitors', async () => {
+  it('opens the global to admin users only', async () => {
     const { config } = await setup()
     const global = (config.globals as GlobalConfig[]).find((g) => g.slug === 'email-settings')!
-    const read = global.access!.read as (args: { req: { user?: unknown } }) => boolean
-    expect(read({ req: {} })).toBe(false)
-    expect(read({ req: { user: { id: 1 } } })).toBe(true)
+    const payload = { config: { admin: { user: 'users' } } }
+    for (const op of ['read', 'update'] as const) {
+      const access = global.access![op] as (args: { req: { user?: unknown; payload: unknown } }) => boolean
+      expect(access({ req: { payload } })).toBe(false)
+      expect(access({ req: { user: { id: 1, collection: 'payload-mcp-api-keys' }, payload } })).toBe(false)
+      expect(access({ req: { user: { id: 1, collection: 'users' }, payload } })).toBe(true)
+    }
   })
 
   it('leaves the config alone when disabled', async () => {
@@ -73,6 +77,11 @@ describe('GET /api/lettermint/status', () => {
   it('needs a logged-in user', async () => {
     const { endpoint, req } = await setup()
     expect((await endpoint('/lettermint/status').handler(req({ user: null }) as never)).status).toBe(401)
+  })
+
+  it('refuses an MCP API key', async () => {
+    const { endpoint, req } = await setup()
+    expect((await endpoint('/lettermint/status').handler(req({ user: { id: 1, collection: 'payload-mcp-api-keys', email: 'me@indicate-data.io' } }) as never)).status).toBe(401)
   })
 
   it('reports a missing token', async () => {
@@ -107,6 +116,14 @@ describe('POST /api/lettermint/test', () => {
   it('needs a logged-in user', async () => {
     const { endpoint, req } = await setup()
     expect((await endpoint('/lettermint/test').handler(req({ user: null }) as never)).status).toBe(401)
+  })
+
+  it('refuses an MCP API key', async () => {
+    process.env.LM_PLUGIN_TEST = 'lm_live_supersecret_9f3a'
+    const { endpoint, req } = await setup()
+    const r = req({ user: { id: 1, collection: 'payload-mcp-api-keys', email: 'me@indicate-data.io' } })
+    expect((await endpoint('/lettermint/test').handler(r as never)).status).toBe(401)
+    expect(r.payload.sendEmail).not.toHaveBeenCalled()
   })
 
   it('refuses without a token', async () => {

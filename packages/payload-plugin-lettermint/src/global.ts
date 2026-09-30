@@ -1,5 +1,6 @@
 import type { Field, GlobalConfig } from 'payload'
 
+import { isAdminUser } from './access'
 import { l } from './labels'
 import { bareAddress, splitAddressList } from './message'
 import type { ResolvedLettermintOptions } from './types'
@@ -19,13 +20,13 @@ export const validateAddressList = (value: unknown, options?: { req?: { i18n?: {
   return true
 }
 
-/** Sender, team recipients and route. Readable only by logged-in users; the token is never here. */
+/** Sender, team recipients and route. Readable only by admin users; the token is never here. */
 export const createEmailSettingsGlobal = (o: ResolvedLettermintOptions): GlobalConfig => ({
   slug: o.globalSlug,
   label: l('E-Mail', 'Email'),
   access: {
-    read: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
+    read: ({ req }) => isAdminUser(req),
+    update: ({ req }) => isAdminUser(req),
   },
   admin: {
     group: o.adminGroup,

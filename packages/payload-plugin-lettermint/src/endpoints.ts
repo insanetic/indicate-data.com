@@ -1,5 +1,6 @@
 import type { Endpoint } from 'payload'
 
+import { isAdminUser } from './access'
 import { LettermintError, pingToken } from './client'
 import { readEmailSettings } from './settings'
 import { readToken, tokenHint } from './token'
@@ -14,7 +15,7 @@ export const createStatusEndpoint = (o: ResolvedLettermintOptions, deps: { fetch
   path: `${ENDPOINT_BASE}/status`,
   method: 'get',
   handler: async (req) => {
-    if (!req.user) return unauthorized()
+    if (!isAdminUser(req)) return unauthorized()
     const token = readToken(o.env.apiToken)
     const settings = await readEmailSettings(req.payload, o)
     let valid: boolean | undefined
@@ -41,12 +42,12 @@ export const createStatusEndpoint = (o: ResolvedLettermintOptions, deps: { fetch
   },
 })
 
-/** POST /api/lettermint/test — a short mail to the logged-in user's own address, never anyone else. */
+/** POST /api/lettermint/test — a short mail to the admin user's own address, never anyone else. */
 export const createTestEndpoint = (o: ResolvedLettermintOptions): Endpoint => ({
   path: `${ENDPOINT_BASE}/test`,
   method: 'post',
   handler: async (req) => {
-    if (!req.user) return unauthorized()
+    if (!isAdminUser(req)) return unauthorized()
     const to = (req.user as { email?: unknown }).email
     if (typeof to !== 'string' || !to) {
       return Response.json({ ok: false, status: 400, message: 'Your account has no email address', errors: null }, { status: 400 })

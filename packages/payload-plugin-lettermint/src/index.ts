@@ -1,3 +1,4 @@
+export { isAdminUser } from './access'
 export { l } from './labels'
 export {
   bareAddress,
