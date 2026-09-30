@@ -1,7 +1,9 @@
 import type { Form } from '@/payload-types'
 
+import { CONTACT_FORM_TITLE, contactFormEmails } from './contact-form-emails'
+
 export const contactForm: Omit<Form, 'createdAt' | 'id' | 'updatedAt'> = {
-  title: 'Kontaktformular',
+  title: CONTACT_FORM_TITLE,
   confirmationType: 'message',
   confirmationMessage: {
     root: {
@@ -33,44 +35,7 @@ export const contactForm: Omit<Form, 'createdAt' | 'id' | 'updatedAt'> = {
       version: 1,
     },
   },
-  emails: [
-    {
-      emailFrom: '"Indicate Data" <hello@indicate-data.io>',
-      emailTo: 'hello@indicate-data.io',
-      language: 'all',
-      subject: 'Neue Kontaktanfrage über die Website',
-      message: {
-        root: {
-          type: 'root',
-          children: [
-            {
-              type: 'paragraph',
-              children: [
-                {
-                  type: 'text',
-                  detail: 0,
-                  format: 0,
-                  mode: 'normal',
-                  style: '',
-                  text: 'Neue Anfrage: {{name}}, {{email}}, {{hotel}}',
-                  version: 1,
-                },
-              ],
-              direction: 'ltr',
-              format: '',
-              indent: 0,
-              textFormat: 0,
-              version: 1,
-            },
-          ],
-          direction: 'ltr',
-          format: '',
-          indent: 0,
-          version: 1,
-        },
-      },
-    },
-  ],
+  emails: contactFormEmails,
   fields: [
     { name: 'name', blockName: 'name', blockType: 'text', label: 'Name', required: true, width: 50 },
     { name: 'email', blockName: 'email', blockType: 'email', label: 'E-Mail', required: true, width: 50 },
