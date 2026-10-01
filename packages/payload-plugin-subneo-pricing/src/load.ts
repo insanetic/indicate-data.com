@@ -26,13 +26,24 @@ export const getPricing = async (args: GetPricingArgs): Promise<PricingModel> =>
   const { payload, locale, familyCodes = [] } = args
   const options = resolveOptions(args)
 
-  const settings = (await payload.findGlobal({
-    // The slug is configurable, so it cannot be typed against the site's generated globals.
-    slug: options.globalSlug as Parameters<Payload['findGlobal']>[0]['slug'],
-    depth: 0,
-    overrideAccess: true,
-    ...(locale ? { locale: locale as 'all' } : {}),
-  })) as unknown as SubneoPricingSettings
+  // Read through a tagged cache, so a statically rendered page carries the tag and saving the
+  // global (afterChange hook) re-renders it in every mode, not only when plans come from the API.
+  // The API key stays out of the cache entry and is read separately below.
+  const readSettings = unstable_cache(
+    async (slug: string, loc: string | undefined) => {
+      const doc = (await payload.findGlobal({
+        // The slug is configurable, so it cannot be typed against the site's generated globals.
+        slug: slug as Parameters<Payload['findGlobal']>[0]['slug'],
+        depth: 0,
+        overrideAccess: true,
+        ...(loc ? { locale: loc as 'all' } : {}),
+      })) as unknown as SubneoPricingSettings
+      return { ...doc, apiKey: null }
+    },
+    ['subneo-pricing-settings', 'v1'],
+    { tags: [options.cacheTag] },
+  )
+  const settings = await readSettings(options.globalSlug, locale)
 
   const source = settings.source === 'subneo' || settings.source === 'manual' ? settings.source : 'fixture'
   const families = (settings.families || []).map((f) => f.code).filter((code) => familyCodes.length === 0 || familyCodes.includes(code))
@@ -48,7 +59,7 @@ export const getPricing = async (args: GetPricingArgs): Promise<PricingModel> =>
     return buildPricingModel({ settings, plansByFamily, familyCodes, source })
   }
 
-  const apiKey = settings.apiKey?.trim() || process.env[options.env.apiKey] || ''
+  const apiKey = (await readApiKey(payload, options.globalSlug)) || process.env[options.env.apiKey] || ''
   const baseUrl = settings.baseUrl?.trim() || process.env[options.env.baseUrl] || SUBNEO_API_URL
   const apiVersion = settings.apiVersion?.trim() || SUBNEO_API_VERSION
   const revalidate = Math.max(0, Number(settings.cacheSeconds ?? 300)) || false
@@ -88,4 +99,15 @@ const fingerprint = (value: string): string => {
   let hash = 5381
   for (let i = 0; i < value.length; i++) hash = ((hash << 5) + hash + value.charCodeAt(i)) | 0
   return (hash >>> 0).toString(16)
+}
+
+/** The key typed into the global, read uncached so it never lands in Next's data cache. */
+const readApiKey = async (payload: Payload, slug: string): Promise<string> => {
+  const doc = (await payload.findGlobal({
+    slug: slug as Parameters<Payload['findGlobal']>[0]['slug'],
+    depth: 0,
+    overrideAccess: true,
+    select: { apiKey: true } as never,
+  })) as unknown as SubneoPricingSettings
+  return doc.apiKey?.trim() || ''
 }
