@@ -10,6 +10,7 @@
 @import './scenes/morning.css';
 @import './scenes/widgets.css';
 @import './scenes/plane.css';
+@import './scenes/crew.css';
 
 @config '../../../tailwind.config.mjs';
 

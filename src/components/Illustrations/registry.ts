@@ -27,6 +27,9 @@ export const illustrationOptions = [
   { value: 'dimensions', label: { de: 'Dimensionen: Gruppierung und Perspektive (Loop)', en: 'Dimensions: grouping and perspective (loop)' } },
   { value: 'collections', label: { de: 'KPI-Sammlung: freigeben und teilen (Loop)', en: 'KPI collection: release and share (loop)' } },
   { value: 'paperPlane', label: { de: 'Bytes werden zum Papierflieger: Bericht geht raus (Loop, breit)', en: 'Bytes become a paper plane: the report goes out (loop, wide)' } },
+  { value: 'about', label: { de: 'Über uns: unsere Werte, Indicate in Offenburg, wie wir im Alltag arbeiten (Hero, Loop)', en: 'About us: our values, Indicate in Offenburg, how we work day to day (hero, loop)' } },
+  { value: 'partners', label: { de: 'Governance mit Partnern: Zentrale, Agentur, Berater sehen je ihren Teil (Loop, Spalte)', en: 'Governance with partners: head office, agency, consultant each see their part (loop, column)' } },
+  { value: 'careers', label: { de: 'Jobs: offene Stellen, deine Bewerbung, dein Start bei Indicate (Hero, Loop)', en: 'Jobs: open roles, your application, your start at Indicate (hero, loop)' } },
 ] as const
 
 export type IllustrationKey = (typeof illustrationOptions)[number]['value']

@@ -1428,7 +1428,7 @@ const governancePage = (t: T, refs: Refs): SeedPage =>
           'Partner bekommen ihren Platz im Space, ohne Passwörter zu tauschen. Der Verbindungslink holt die Freigabe beim Hotel, nicht bei Ihnen.',
           'Partners get their place in the space without swapping passwords. The connect link gets the authorisation from the hotel, not from you.',
         ),
-        illustration: 'team',
+        illustration: 'partners',
         layout: 'visual-right',
         background: 'tinted',
         points: [

@@ -13,6 +13,7 @@ import * as migration_20260925_163750_lettermint_email from './20260925_163750_l
 import * as migration_20260925_163800_convert_sections from './20260925_163800_convert_sections';
 import * as migration_20260930_121714_pricing_manual from './20260930_121714_pricing_manual';
 import * as migration_20260930_121800_pricing_manual_data from './20260930_121800_pricing_manual_data';
+import * as migration_20261001_083020_illustration_about_careers_partners from './20261001_083020_illustration_about_careers_partners';
 
 export const migrations = [
   {
@@ -89,5 +90,10 @@ export const migrations = [
     up: migration_20260930_121800_pricing_manual_data.up,
     down: migration_20260930_121800_pricing_manual_data.down,
     name: '20260930_121800_pricing_manual_data',
+  },
+  {
+    up: migration_20261001_083020_illustration_about_careers_partners.up,
+    down: migration_20261001_083020_illustration_about_careers_partners.down,
+    name: '20261001_083020_illustration_about_careers_partners'
   },
 ];

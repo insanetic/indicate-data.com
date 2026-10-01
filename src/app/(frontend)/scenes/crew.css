@@ -1,0 +1,149 @@
+/* --- About & Jobs (12 s, `about`, `careers`): who Indicate is, and how you join ------------- */
+/*                                                                                             */
+/* Both scenes reuse the team scene's tracks (`.loop-team-*`) and the hub's answer and outgoing */
+/* wire (`.loop-hub-a`, `.loop-hub-draw-out`); only these tracks are their own.                 */
+
+/* Application steps that tick over once per exchange (4 s clock): Bewerbung → Kennenlernen →   */
+/* Meet the team → Angebot → Dein Start. Step k lights at 0.7 + k × 0.25 s (the outgoing wire     */
+/* leaves at 1.6 s), and all of them hold until 3.55 s, then clear together.                    */
+@keyframes loop-crew-step-0 {
+  0%,
+  17.50% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  21.50%,
+  88.75% {
+    opacity: 1;
+    transform: none;
+  }
+  93.75%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes loop-crew-step-1 {
+  0%,
+  23.75% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  27.75%,
+  88.75% {
+    opacity: 1;
+    transform: none;
+  }
+  93.75%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes loop-crew-step-2 {
+  0%,
+  30.00% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  34.00%,
+  88.75% {
+    opacity: 1;
+    transform: none;
+  }
+  93.75%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes loop-crew-step-3 {
+  0%,
+  36.25% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  40.25%,
+  88.75% {
+    opacity: 1;
+    transform: none;
+  }
+  93.75%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes loop-crew-step-4 {
+  0%,
+  42.50% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  46.50%,
+  88.75% {
+    opacity: 1;
+    transform: none;
+  }
+  93.75%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+.loop .loop-crew-step {
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+.loop .loop-crew-step[data-step='0'] {
+  animation-name: loop-crew-step-0;
+}
+.loop .loop-crew-step[data-step='1'] {
+  animation-name: loop-crew-step-1;
+}
+.loop .loop-crew-step[data-step='2'] {
+  animation-name: loop-crew-step-2;
+}
+.loop .loop-crew-step[data-step='3'] {
+  animation-name: loop-crew-step-3;
+}
+.loop .loop-crew-step[data-step='4'] {
+  animation-name: loop-crew-step-4;
+}
+
+/* Confetti for the released feature on the About scene (12 s clock, `--delay` = slot × 4 s):   */
+/* each piece bursts out along its own vector (`--dx`, `--dy`, `--r`) at 2.0 s, falls a little   */
+/* and fades by 3.1 s. At rest it is hidden, so reduced motion shows none.                      */
+@keyframes loop-crew-confetti {
+  0%,
+  16.5% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0.6);
+  }
+  17.2% {
+    opacity: 1;
+  }
+  21.5% {
+    opacity: 1;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(1);
+  }
+  25.8%,
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), calc(var(--dy) + 10px)) rotate(calc(var(--r) * 2)) scale(1);
+  }
+}
+.loop-crew-confetti {
+  opacity: 0;
+}
+.loop .loop-crew-confetti {
+  animation-name: loop-crew-confetti;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Reduced motion: every step lit (the resting style). The step selectors match the            */
+/* `animation-name: none` reset in stage.css and load later, so they stop here.                */
+@media (prefers-reduced-motion: reduce) {
+  .loop .loop-crew-step[data-step] {
+    animation-name: none;
+  }
+}

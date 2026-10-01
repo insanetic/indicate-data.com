@@ -589,6 +589,9 @@ export interface HeroBlock {
           | 'dimensions'
           | 'collections'
           | 'paperPlane'
+          | 'about'
+          | 'partners'
+          | 'careers'
         )
       | null;
     image?: (number | null) | Media;
@@ -701,6 +704,9 @@ export interface MediaSectionBlock {
           | 'dimensions'
           | 'collections'
           | 'paperPlane'
+          | 'about'
+          | 'partners'
+          | 'careers'
         )
       | null;
     image?: (number | null) | Media;
@@ -955,6 +961,9 @@ export interface SplitBlock {
           | 'dimensions'
           | 'collections'
           | 'paperPlane'
+          | 'about'
+          | 'partners'
+          | 'careers'
         )
       | null;
     image?: (number | null) | Media;
@@ -1193,6 +1202,9 @@ export interface FeatureTabsBlock {
                 | 'dimensions'
                 | 'collections'
                 | 'paperPlane'
+                | 'about'
+                | 'partners'
+                | 'careers'
               )
             | null;
           image?: (number | null) | Media;
@@ -1282,6 +1294,9 @@ export interface FeatureStoryBlock {
           | 'dimensions'
           | 'collections'
           | 'paperPlane'
+          | 'about'
+          | 'partners'
+          | 'careers'
         )
       | null;
     image?: (number | null) | Media;
@@ -1589,6 +1604,9 @@ export interface IntegrationsBlock {
           | 'dimensions'
           | 'collections'
           | 'paperPlane'
+          | 'about'
+          | 'partners'
+          | 'careers'
         )
       | null;
     image?: (number | null) | Media;

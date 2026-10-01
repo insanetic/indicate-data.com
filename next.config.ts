@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
   // The dev indicator defaults to bottom-left, where the consent banner and the floating
   // cookie-settings button live; keep it out of their way (and out of the e2e click path).
   devIndicators: { position: 'bottom-right' },
+  // Dev only: `localhost:3000` can resolve to another local container over IPv6, so the dev
+  // site is opened at 127.0.0.1, whose requests for dev resources Next blocks by default.
+  allowedDevOrigins: ['127.0.0.1'],
   // Temporarily required on Windows until Next.js fixes Turbopack Sass resolution.
   // See: https://github.com/vercel/next.js/issues/86431
   sassOptions: {

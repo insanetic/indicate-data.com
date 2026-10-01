@@ -22,7 +22,7 @@ export const aboutPage = (t: T, refs: Refs): SeedPage => ({
       eyebrow: t('Über Indicate', 'About Indicate'),
       heading: t('Wir bauen die Zahlenbasis der Hotellerie.', 'We build the numbers hospitality runs on.'),
       lead: t('Ein Datenmodell für PMS, Vertrieb und Marketing, und Antworten, die jeder im Haus versteht.', 'One data model for PMS, distribution and marketing, and answers everyone in the hotel understands.'),
-      illustration: 'stage',
+      illustration: 'about',
       secondary: { url: '/contact', label: t('Kontakt aufnehmen', 'Get in touch') },
     }),
     {

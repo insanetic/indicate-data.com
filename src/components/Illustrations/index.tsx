@@ -4,6 +4,7 @@ import type { Media as MediaType } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
 
+import { AboutIllustration } from './About'
 import { AgentIllustration } from './Agent'
 import { AgentChatIllustration } from './AgentChat'
 import { CollectionsIllustration } from './Collections'
@@ -19,11 +20,13 @@ import { TemplatesIllustration } from './Templates'
 import { AlertsIllustration } from './Alerts'
 import { BuilderIllustration } from './Builder'
 import { CampaignsIllustration } from './Campaigns'
+import { CareersIllustration } from './Careers'
 import { ComparisonIllustration } from './Comparison'
 import { DashboardIllustration } from './Dashboard'
 import { FlyingKpisIllustration } from './FlyingKpis'
 import { IntegrationsIllustration } from './Integrations'
 import { PaperPlaneIllustration } from './PaperPlane'
+import { PartnersIllustration } from './Partners'
 import { PortfolioIllustration } from './Portfolio'
 import { SourcesIllustration } from './Sources'
 import { TeamIllustration } from './Team'
@@ -59,6 +62,9 @@ export const illustrations: Record<IllustrationKey, React.FC<IllustrationProps>>
   dimensions: DimensionsIllustration,
   collections: CollectionsIllustration,
   paperPlane: PaperPlaneIllustration,
+  about: AboutIllustration,
+  careers: CareersIllustration,
+  partners: PartnersIllustration,
 }
 
 export type VisualData = {
