@@ -2,37 +2,34 @@ import type { EmailField } from '@payloadcms/plugin-form-builder/types'
 import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form'
 
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import React from 'react'
 
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { controlClassName, Field, useFieldA11y, useFormLabels } from '../Field'
 
 export const Email: React.FC<
   EmailField & {
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
   }
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
+> = ({ name, defaultValue, label, register, required, width }) => {
+  const labels = useFormLabels()
+  const a11y = useFieldA11y(name, required)
+
   return (
-    <Width width={width}>
-      <Label htmlFor={name}>
-        {label}
-
-        {required && (
-          <span className="required">
-            * <span className="sr-only">(required)</span>
-          </span>
-        )}
-      </Label>
+    <Field label={label} name={name} required={required} width={width}>
       <Input
+        autoComplete="email"
+        className={controlClassName}
         defaultValue={defaultValue}
-        id={name}
-        type="text"
-        {...register(name, { pattern: /^\S[^\s@]*@\S+$/, required })}
+        inputMode="email"
+        spellCheck={false}
+        type="email"
+        {...a11y}
+        {...register(name, {
+          pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: labels.invalidEmail },
+          required: required ? labels.required : false,
+        })}
       />
-
-      {errors[name] && <Error name={name} />}
-    </Width>
+    </Field>
   )
 }

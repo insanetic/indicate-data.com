@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import React from 'react'
 
 import { Error } from '../Error'
+import { useFieldA11y, useFormLabels } from '../Field'
 import { Width } from '../Width'
 
 export const Checkbox: React.FC<
@@ -16,27 +17,26 @@ export const Checkbox: React.FC<
     register: UseFormRegister<FieldValues>
   }
 > = ({ name, defaultValue, errors, label, register, required, width }) => {
-  const props = register(name, { required: required })
+  const labels = useFormLabels()
+  const a11y = useFieldA11y(name, required)
+  const props = register(name, { required: required ? labels.required : false })
   const { setValue } = useFormContext()
 
   return (
     <Width width={width}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-start gap-3">
         <CheckboxUi
+          className="mt-0.5 size-5 border-line-strong bg-surface aria-invalid:border-destructive"
           defaultChecked={defaultValue}
-          id={name}
           {...props}
+          {...a11y}
           onCheckedChange={(checked) => {
-            setValue(props.name, checked)
+            setValue(props.name, checked, { shouldValidate: true })
           }}
         />
-        <Label htmlFor={name}>
-          {required && (
-            <span className="required">
-              * <span className="sr-only">(required)</span>
-            </span>
-          )}
+        <Label className="cursor-pointer text-[0.9375rem] font-normal leading-snug text-ink-2" htmlFor={name}>
           {label}
+          {!required && <span className="ml-2 text-xs text-ink-3">{labels.optional}</span>}
         </Label>
       </div>
       {errors[name] && <Error name={name} />}

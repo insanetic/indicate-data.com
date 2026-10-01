@@ -79,7 +79,7 @@ export const seed = async ({ payload, req }: { payload: Payload; req: PayloadReq
     (await payload.create({ collection: 'forms', data: contactFormData, req, context }))
 
   payload.logger.info('— Contact page')
-  const contactId = await upsertPage(payload, req, 'contact', (locale) => contactPage(pick(locale), form.id))
+  const contactId = await upsertPage(payload, req, 'contact', (locale) => contactPage(pick(locale), form.id, productLinks.demoUrl))
 
   payload.logger.info('— Sidebar: Rechtliches')
   const sidebarId = await upsertSidebar(payload, req, 'Rechtliches', () => ({ title: 'Rechtliches', groups: [{ title: '—', links: [] }] }))

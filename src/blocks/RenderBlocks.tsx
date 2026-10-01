@@ -7,6 +7,7 @@ import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { DocumentBlock } from '@/blocks/Document/Component'
+import { FormAside } from '@/blocks/Form/Aside'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ActionsBlock } from '@/blocks/Actions/Component'
@@ -76,6 +77,12 @@ export const blockComponents: Record<BlockType, React.FC<any>> = {
   mediaBlock: MediaBlock,
 }
 
+/** A left- or right-aligned heading directly before a form sits beside it instead of above it. */
+const headsForm = (blocks: Block[], index: number) => {
+  const block = blocks[index]
+  return block?.blockType === 'heading' && block.header?.align !== 'center' && blocks[index + 1]?.blockType === 'formBlock'
+}
+
 /** Starter-template blocks that render their own spacing and have no section settings. */
 const legacyBlocks: BlockType[] = ['archive', 'content', 'cta', 'formBlock', 'mediaBlock']
 
@@ -100,6 +107,30 @@ export const RenderBlocks: React.FC<{
         const { blockType } = block
         const Block = blockComponents[blockType]
         if (!Block) return null
+
+        // Rendered together with the form that follows it.
+        if (headsForm(blocks, index)) return null
+
+        if (blockType === 'formBlock' && headsForm(blocks, index - 1)) {
+          const heading = blocks[index - 1] as Extract<Block, { blockType: 'heading' }>
+          const settings = heading.settings as Settings | undefined
+          return (
+            <Section
+              background={settings?.background}
+              bottom={rhythm[index].bottom}
+              groupEnd={rhythm[index].groupEnd}
+              groupStart={rhythm[index - 1].groupStart}
+              id={settings?.anchor}
+              key={block.id || index}
+              top={rhythm[index - 1].top}
+            >
+              <FormBlock
+                {...(block as unknown as React.ComponentProps<typeof FormBlock>)}
+                aside={<FormAside as={index === 1 ? 'h1' : 'h2'} header={heading.header} links={heading.links} />}
+              />
+            </Section>
+          )
+        }
 
         if (legacyBlocks.includes(blockType)) {
           return (

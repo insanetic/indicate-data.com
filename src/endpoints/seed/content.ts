@@ -800,7 +800,7 @@ export const homePage = (t: T, refs: Refs): SeedPage => ({
   ],
 })
 
-export const contactPage = (t: T, formId: number): Partial<PageData> => ({
+export const contactPage = (t: T, formId: number, demoUrl: string): Partial<PageData> => ({
   title: t('Kontakt', 'Contact'),
   slug: 'contact',
   _status: 'published',
@@ -812,10 +812,11 @@ export const contactPage = (t: T, formId: number): Partial<PageData> => ({
       'Talk to the Indicate team about your hotel numbers.',
     ),
   },
+  // A heading right before the form sits beside it (see RenderBlocks).
   layout: [
     {
-      blockType: 'hero',
-      blockName: 'Hero',
+      blockType: 'heading',
+      blockName: t('Kontakt', 'Contact'),
       header: {
         eyebrow: t('Kontakt', 'Contact'),
         heading: t('Sprechen wir über Ihre Zahlen.', 'Let’s talk about your numbers.'),
@@ -825,9 +826,9 @@ export const contactPage = (t: T, formId: number): Partial<PageData> => ({
         ),
         align: 'left',
       },
-      links: [],
-      visual: { type: 'illustration', illustration: 'agent' },
-      settings: { background: 'default', spacing: 'compact' },
+      links: [
+        external(demoUrl, t('Lieber gleich eine Demo buchen', 'Rather book a demo'), 'outline'),
+      ],
     },
     {
       blockType: 'formBlock',

@@ -37,6 +37,15 @@ const de = {
   copyLink: 'Link zu diesem Abschnitt',
   contactQuestions: 'Fragen dazu?',
   print: 'Drucken',
+  form: {
+    optional: 'optional',
+    required: 'Bitte füllen Sie dieses Feld aus.',
+    invalidEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+    choose: 'Bitte wählen',
+    sending: 'Wird gesendet …',
+    sent: 'Nachricht gesendet',
+    failed: 'Das hat nicht geklappt. Bitte versuchen Sie es gleich noch einmal.',
+  },
   pricing: {
     billing: 'Abrechnung',
     monthly: 'Monatlich',
@@ -111,6 +120,15 @@ const en: typeof de = {
   copyLink: 'Link to this section',
   contactQuestions: 'Questions?',
   print: 'Print',
+  form: {
+    optional: 'optional',
+    required: 'Please fill in this field.',
+    invalidEmail: 'Please enter a valid email address.',
+    choose: 'Please choose',
+    sending: 'Sending …',
+    sent: 'Message sent',
+    failed: 'That did not work. Please try again in a moment.',
+  },
   pricing: {
     billing: 'Billing',
     monthly: 'Monthly',
